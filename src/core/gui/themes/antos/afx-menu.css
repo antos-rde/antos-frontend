@@ -1,0 +1,85 @@
+
+afx-menu {
+    position:relative;
+    display:inline-block;
+    /*z-index: 100000;*/
+}
+afx-menu a{
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: #414339;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+afx-menu ul{
+    padding:0;
+    margin: 0;
+}
+afx-menu afx-menu ul {
+    padding: 0;
+    border:1px solid #a6a6a6;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    /*box-shadow: 2px 2px 2px #cbcbcb;*/
+    box-shadow: 1px 1px 1px #9f9F9F;
+    background-color: #e7e7e7;
+}
+afx-menu ul > li{
+    list-style:none;
+    margin:0;
+    position: relative;
+    float: left;
+    padding:3px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+afx-menu  afx-menu {
+    top:100%;
+    left:0;
+    position: absolute;
+    display:none;
+}
+afx-menu  afx-menu i{
+    margin-right: 5px;
+}
+afx-menu  afx-menu li{
+    float:none;
+    width: 150px;
+}
+afx-menu  afx-menu afx-menu{
+    top:-4px;
+    left: 100%;
+}
+
+afx-menu li:hover  {
+    background-color: #2786F3;
+}
+afx-menu li:hover > a {
+    color: white;
+}
+
+afx-menu li:hover > afx-menu
+{
+    display: block;
+}
+afx-menu li.afx-corner-fix{
+    height: 3px;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+afx-menu li.afx-corner-fix:hover{
+    background-color: transparent;
+}
+
+afx-menu afx-menu .afx-submenu:before {
+    content: "\f054"; 
+    font-family: "FontAwesome";
+    font-size: 10px;
+    left:93%;
+    color: #414339;
+    position:absolute;
+    top:25%;
+ }

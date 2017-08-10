@@ -6,27 +6,31 @@
                 <i class = {icon} ></i>{ text }
             </a>
             
-            <afx-menu if={child != null} child={child} observable = {parent.observable} ></afx-menu>
+            <afx-menu if={child != null} child={child} observable = {parent.root.observable} ></afx-menu>
         </li>
          <li class="afx-corner-fix"></li>
     </ul>
     <script>
         this.items = opts.child
         if(opts.observable)
-            this.observable = opts.observable
+        {
+            this.root.observable = opts.observable
+        }
         else
         {
-            this.observable = riot.observable()
-            this.observable.on('select',function(data){
-                if(opts.onselect)
-                    opts.onselect(data)
+            this.root.observable = riot.observable()
+            this.root.observable.on('menuselect',function(data){
+                if(opts.onmenuselect)
+                {
+                    opts.onmenuselect(data)
+                }
             })
         }
 
+
         onselect(event)
         {
-            
-           this.observable.trigger('select',event.item)
+           this.root.observable.trigger('menuselect',event.item)
            event.preventDefault()
         }
 

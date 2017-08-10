@@ -1,0 +1,20 @@
+afx-button button{
+    outline: none;
+    padding: 4px;
+    border: 1px solid #a6a6a6;
+    background-color: white;
+    color: #414339;
+    border-radius: 6px;
+    font-family: "Ubuntu";
+    font-size: 13px;
+}
+
+afx-button button[disabled]{
+    color: #a6a6a6;
+}
+
+afx-button button:active {
+    background-color: #2786F3;
+    color: white;
+    border: 1px solid #dedede;
+}

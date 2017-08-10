@@ -1,0 +1,24 @@
+afx-apps-dock{
+    float: left;
+    bottom: 3px;
+    top: 3px;
+    width: 32px;
+    background-color:#e7e7e7;
+    position: absolute;
+    padding:2px;
+    padding-top: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border:1px solid #a6a6a6;
+    overflow: hidden;
+    box-shadow: 1px 1px 1px #9f9F9F;
+}
+afx-apps-dock afx-button button{
+    width: 32px;
+    height: 32px;
+    font-size: 19px;
+    margin-bottom: 0px;
+    border:0;
+    background-color: transparent;
+    
+}

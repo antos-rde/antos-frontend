@@ -1,6 +1,3 @@
-#define the base API functions
-self = this
-_API = self.OS.API
 self.OS.API = 
     # the handler object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
@@ -16,11 +13,14 @@ self.OS.API =
         _API.request 'config', (result) ->
             console.log  result
     
-    resource: (resource,callback) ->
-        path = "resources/#{resource}"
-        $.get path 
+    get:(p,c)=>
+        $.get p 
         .done (data) -> 
-            callback(data) 
+            c(data) 
         .fail ->
             alert "cannot get data"
-            callback(null)
+            c(null)
+    resource: (resource,callback) ->
+        path = "resources/#{resource}"
+        _API.get path,callback
+        
