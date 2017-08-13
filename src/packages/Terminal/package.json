@@ -1,0 +1,12 @@
+{
+    "app":"Terminal",
+    "name":"Unix terminal like",
+    "description":"Access Unix terminal from web",
+    "author":{
+        "name": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "category":"System",
+    "iconclass":"fa fa-terminal",
+    "mimes":["*"]
+}

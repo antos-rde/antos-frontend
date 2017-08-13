@@ -1,0 +1,12 @@
+{
+    "app":"ActivityMonitor",
+    "name":"Activity monitor",
+    "description":"Processes monitor and manager",
+    "author":{
+        "name": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "category":"System",
+    "iconclass":"fa fa-heartbeat",
+    "mimes":["*"]
+}

@@ -13,13 +13,12 @@ self.OS.API =
         _API.request 'config', (result) ->
             console.log  result
     
-    get:(p,c)=>
+    get:(p,c,f)->
         $.get p 
         .done (data) -> 
             c(data) 
         .fail ->
-            alert "cannot get data"
-            c(null)
+            f()
     resource: (resource,callback) ->
         path = "resources/#{resource}"
         _API.get path,callback

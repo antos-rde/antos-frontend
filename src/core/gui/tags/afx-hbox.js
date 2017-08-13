@@ -4,14 +4,30 @@
     </div>
     <script>
         var self = this
+        self.root.set = function(k,v)
+        {
+            if(k == "*")
+                for(var i in v)
+                    self[i] = v[i]
+            else
+                self[k] = v
+            self.update()
+        }
+        self.root.get = function(k)
+        {
+            return self[k]
+        }
+        self.root.update = function()
+        {
+            self.update()
+        }
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")
                 .css("flex-direction","column")
                 .css("width","100%")
-                .css("background-color","red")
-                .css("table-layout","fixed")
-                .css("overflow", "hidden")
+                //.css("background-color","red")
+                //.css("overflow", "hidden")
 
             calibrate_size()
 
@@ -36,7 +52,7 @@
                     this.observable = self.root.observable
                     $(this)
                         .css("flex-grow","1")
-                        .css("border","1px solid black")
+                        //.css("border","1px solid black")
                     var dw = $(this).attr("data-height")
                     if(dw)
                     {

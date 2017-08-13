@@ -7,6 +7,6 @@
         "email": "xsang.le@gmail.com"
     },
     "category":"System",
-    "icon":"",
+    "iconclass":"fa fa-pencil-square-o",
     "mimes":["*"]
 }

@@ -6,8 +6,6 @@ afx-menu {
 }
 afx-menu a{
     text-decoration: none;
-    width: 100%;
-    height: 100%;
     color: #414339;
     display: inline-block;
     width: 100%;
@@ -17,6 +15,14 @@ afx-menu ul{
     padding:0;
     margin: 0;
 }
+afx-menu i.icon-style {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    float:left;
+}
+
+
 afx-menu afx-menu ul {
     padding: 0;
     border:1px solid #a6a6a6;
@@ -35,6 +41,18 @@ afx-menu ul > li{
     padding-left: 5px;
     padding-right: 5px;
 }
+afx-menu ul > li.fix_padding{
+    padding-top:1px;
+    padding-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+afx-menu afx-menu ul > li.fix_padding{
+    padding:3px;
+    padding-left: 5px;
+    padding-right: 5px;
+} 
 afx-menu  afx-menu {
     top:100%;
     left:0;
@@ -46,7 +64,7 @@ afx-menu  afx-menu i{
 }
 afx-menu  afx-menu li{
     float:none;
-    width: 150px;
+    min-width: 150px;
 }
 afx-menu  afx-menu afx-menu{
     top:-4px;
@@ -74,11 +92,11 @@ afx-menu li.afx-corner-fix:hover{
     background-color: transparent;
 }
 
-afx-menu afx-menu .afx-submenu:before {
+afx-menu afx-menu .afx_submenu:before {
     content: "\f054"; 
     font-family: "FontAwesome";
     font-size: 10px;
-    left:93%;
+    right:5px;
     color: #414339;
     position:absolute;
     top:25%;

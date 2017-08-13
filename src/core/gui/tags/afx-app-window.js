@@ -1,8 +1,8 @@
-<afx-app-window ref = "window">
-    <div  class = "afx-window-wrapper" >
-        <ul class= "afx-window-top">
-            <li class = "afx-window-close"></li>
-             <li class = "afx-window-minimize"></li>
+<afx-app-window ref = "window" >
+    <div   class = "afx-window-wrapper">
+        <ul class= "afx-window-top" >
+            <li class = "afx-window-close" onclick = {close}></li>
+             <li class = "afx-window-minimize" onclick = {minimize}></li>
              <li class = "afx-window-maximize" onclick={maximize}></li>
              <li  ref = "dragger" class = "afx-window-title">{ apptitle }</li>
         </ul>
@@ -25,6 +25,32 @@
         var height = opts.height || 300
         this.root.observable = opts.observable || riot.observable()
         if(!window._zidex) window._zidex = 10
+        this.shown = false
+        self.root.set = function(k,v)
+        {
+            if(k == "*")
+                for(var i in v)
+                    self[i] = v[i]
+            else
+                self[k] = v
+            self.update()
+        }
+        self.root.get = function(k)
+        {
+            return self[k]
+        }
+        self.root.update = function()
+        {
+            self.update()
+        }
+        minimize()
+        {
+            this.root.observable.trigger("hide")
+        }
+        close()
+        {
+            this.root.observable.trigger("exit")
+        }
         this.on('mount', function() {
             var left,top 
             left = 20 + Math.floor(Math.random() *  width)
@@ -37,8 +63,13 @@
                 .css("height", height + "px")
                 .css("z-index",window._zidex++)
             $(self.refs.window).on("mousedown", function(e){
-                window._zidex++
-                $(self.refs.window).css("z-index",window._zidex)
+                if(self.shown == false)
+                    self.root.observable.trigger("focus")
+            })
+            $(self.refs.window).click(function(e) {
+                //e.stopPropagation()
+                //e.windowactive = true
+                //self.root.observable.trigger("windowselect")
             })
             enable_dragging()
             if(isResize)
@@ -48,6 +79,34 @@
             })
             $(self.refs.content).children().each(function(e){
                 this.observable = self.root.observable
+            })
+
+            self.root.observable.on("focus",function(){
+                window._zidex++
+                $(self.refs.window)
+                    .show()
+                    .css("z-index",window._zidex)
+                    .removeClass("unactive")
+
+                self.shown = true
+            })
+            self.root.observable.on("blur", function(){
+                self.shown = false
+                $(self.refs.window)
+                    .addClass("unactive")
+                // add css to blur app :)
+            })
+            self.root.observable.on("hide", function()
+            {
+                $(self.refs.window).hide()
+                self.shown = false
+            })
+
+            self.root.observable.on("toggle", function(){
+                if(self.shown)
+                    self.root.observable.trigger("hide")
+                else 
+                    self.root.observable.trigger("focus")
             })
         })
         var enable_dragging = function()
@@ -112,7 +171,8 @@
                         .css("width", w +"px")
                         .css("height",h + "px")
                     isMaxi = false
-                    self.root.observable.trigger('resize',w,h)
+                    self.root.observable.trigger('resize',
+                        {id:$(self.root).attr("data-id"),w:w,h:h})
                 })
                 $(window).on("mouseup", function(e){
                     $(window).unbind("mousemove", null)
@@ -137,7 +197,8 @@
                     .css("width", w + "px")
                     .css("height", h + "px")
                     .css("top","0").css("left","0")
-                self.root.observable.trigger('resize',w,h)
+                self.root.observable.trigger('resize',
+                    {id:$(self.root).attr("data-id"),w:w,h:h})
                 isMaxi = true
             }
             else
@@ -147,7 +208,8 @@
                     .css("width",history.width)
                     .css("height",history.height)
                     .css("top",history.top).css("left",history.left)
-                self.root.observable.trigger('resize',history.width, history.height)
+                self.root.observable.trigger('resize',
+                    {id:$(self.root).attr("data-id"),w:history.width,h:history.height} )
             }
             
         }

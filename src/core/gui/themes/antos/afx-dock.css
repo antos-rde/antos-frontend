@@ -17,8 +17,20 @@ afx-apps-dock afx-button button{
     width: 32px;
     height: 32px;
     font-size: 19px;
+    margin-bottom: 3px;
+    padding:0px;
+    background-color: transparent;
+    border:0;
+}
+afx-apps-dock afx-button .icon-style{
+    width: 24px;
+    height: 24px;
     margin-bottom: 0px;
     border:0;
-    background-color: transparent;
-    
+}
+
+afx-apps-dock afx-button.selected > button {
+    background-color: #2786F3;
+    color: white;
+    border: 1px solid #dedede;
 }

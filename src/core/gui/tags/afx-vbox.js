@@ -4,6 +4,23 @@
     </div>
     <script>
         var self = this
+        self.root.set = function(k,v)
+        {
+            if(k == "*")
+                for(var i in v)
+                    self[i] = v[i]
+            else
+                self[k] = v
+            self.update()
+        }
+        self.root.get = function(k)
+        {
+            return self[k]
+        }
+        self.root.update = function()
+        {
+            self.update()
+        }
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")

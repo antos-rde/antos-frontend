@@ -3,16 +3,15 @@ afx-app-window div.afx-window-wrapper{
     /*box-shadow: 1px 1px 1px #cbcbcb;*/
     box-shadow: 1px 1px 1px #9f9F9F;
     border-radius: 5px;
-    background-color:#e7e7e7;
+    background-color:#dfdfdf;
     padding:0;
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
 }
-afx-app-window{
-    /*width: 600px;
-    height: 400px;*/
+afx-app-window.unactive > div.afx-window-wrapper{
+    background-color: #f6f6f6;
 }
 
 afx-app-window ul.afx-window-top{

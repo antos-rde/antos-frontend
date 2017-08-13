@@ -12,7 +12,12 @@ afx-button button{
 afx-button button[disabled]{
     color: #a6a6a6;
 }
-
+afx-button i.icon-style {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    float:left;
+}
 afx-button button:active {
     background-color: #2786F3;
     color: white;

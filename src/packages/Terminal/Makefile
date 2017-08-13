@@ -13,7 +13,7 @@ NC=\033[0m
 main: title clean js css copy
 
 title:
-	@echo "$(BLUE)======= Package NotePad =======$(NC)"
+	@echo "$(BLUE)======= Package Terminal =======$(NC)"
 
 coffee:
 	- mkdir build

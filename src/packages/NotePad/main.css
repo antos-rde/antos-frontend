@@ -1,3 +1,9 @@
-fut{
-    background-color: black
+
+afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"]{
+    margin:2px;
+}
+
+afx-app-window[data-id="notepad"] span[data-id="editorstat"]{
+    padding:5px;
+    display: inline-block;
 }

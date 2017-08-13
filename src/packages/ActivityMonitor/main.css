@@ -1,0 +1,8 @@
+afx-app-window[data-id="am-window"] afx-button{
+    margin: 3px;
+}
+
+afx-app-window[data-id="am-window"] afx-grid-view{
+    padding-left:10px;
+    padding-right: 10px;
+}

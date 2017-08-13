@@ -4,7 +4,7 @@ jsfiles =
 
 cssfiles = main.css
 
-copyfiles = scheme.html package.json
+copyfiles = scheme.html package.json 
 
 
 BLUE=\033[1;34m
@@ -13,7 +13,7 @@ NC=\033[0m
 main: title clean js css copy
 
 title:
-	@echo "$(BLUE)======= Package NotePad =======$(NC)"
+	@echo "$(BLUE)======= Package ActivityMonitor =======$(NC)"
 
 coffee:
 	- mkdir build
