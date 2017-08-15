@@ -52,7 +52,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
             else 
                 me.gdata.processes[i] = undefined
         @grid.set "rows",activeList
-    exit: (e) ->
+    cleanup: (e) ->
         clearTimeout @timer if @timer
 
 ActivityMonitor.singleton = true

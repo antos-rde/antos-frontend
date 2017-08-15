@@ -66,6 +66,6 @@ class wTerm extends this.OS.GUI.BaseApplication
             me.socket = null
             console.log "socket closed"
             #el.style.display = "block"
-    exit: (e)->
+    cleanup: (e)->
         @socket.close() if @socket
 this.OS.register "wTerm",wTerm

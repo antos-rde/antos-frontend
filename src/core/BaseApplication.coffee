@@ -47,7 +47,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
             ($ @scheme).remove()
     
     baseMenu: ->
-        menu =
+        mn =
             [{
                 text: _APP[@name].meta.name,
                 child: [
@@ -55,8 +55,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
                     { text: "Exit", dataid: "#{@name}-exit" }
                 ]
             }]
-        menu = menu.concat @menu() || []
-        menu
+        mn = mn.concat @menu() || []
+        mn
             
     main: ->
         #main program
