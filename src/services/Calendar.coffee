@@ -13,10 +13,10 @@ class Calendar extends this.OS.GUI.BaseService
                     "#{now.getHours()}:#{now.getMinutes()}:#{now.getSeconds()}"
             me.update()
        
-    awake: ->
+    awake: (e) ->
         console.log @name,@pid
         # do nothing
-    cleanup: ->
+    cleanup: (evt) ->
         console.log "cleanup for quit"
         # do nothing
 

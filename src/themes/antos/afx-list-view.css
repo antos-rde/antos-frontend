@@ -24,6 +24,7 @@ afx-list-view  li{
     padding-bottom: 3px;
     color: #414339;
     background-color: white;
+    position: relative;
 }
 afx-list-view li:nth-child(odd){
     background-color: #f5F5F5;
@@ -33,6 +34,22 @@ afx-list-view  i.icon-style {
     height: 16px;
     display: inline-block;
     float:left;
+}
+afx-list-view  i.closable{
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    cursor: pointer;
+}
+afx-list-view  i.closable:before{
+    content: "\f00d"; 
+    font-family: "FontAwesome";
+    font-size: 10px;
+    right:5px;
+    color: #414339;
+    position:absolute;
+    font-style: normal;
+    top:5px;
 }
 
 afx-list-view   li > i {

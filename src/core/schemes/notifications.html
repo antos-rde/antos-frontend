@@ -1,0 +1,36 @@
+<afx-dummy>
+    <afx-overlay data-id = "notifyzone" width = "250">
+        <afx-list-view data-id="notifylist"></afx-list-view>
+        <style>
+            afx-overlay[data-id = "notifyzone"]{
+                background-color: rgba(215,215,215,0.7);
+                
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding:3px;
+                margin: 0;
+            }
+            afx-list-view[data-id = "notifylist"]
+            {
+                padding:0;
+            }
+            afx-list-view[data-id = "notifylist"] li{
+                border:1px solid #a6a6a6;
+                border-radius: 6px;
+                margin-bottom: 2px;
+            }
+        </style>
+    </afx-overlay>
+    <afx-feed data-id = "notifeed"  style = "display: none;"  closable="true">
+        <!--afx-button text = "click me"></afx-button-->
+        <style>
+            afx-feed[data-id = "notifeed"]{
+                position: absolute;
+                width: 250px;
+            }
+            afx-feed[data-id = "notifeed"] > div{
+                box-shadow: 1px 1px 1px #9f9F9F;
+            }
+        </style>
+    </afx-feed>
+</afx-dummy>

@@ -1,10 +1,12 @@
+_GUI = this.OS.GUI
 class DummyApp extends this.OS.GUI.BaseApplication
     constructor: () ->
         super "DummyApp"
     main: () ->
         self = @
         @on "btclick", (e)->
-            alert "#{self.name}: Happy pola"
+            self.notify "this is a dummy notify"
+            _GUI.pushService "Budgy"
         @on "resize", (w,h)->
             console.log "#{self.name}: resize"
         #@on "listselect", (i)->

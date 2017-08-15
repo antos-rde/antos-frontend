@@ -5,21 +5,19 @@ self.OS.API =
     handler: new Object()
 
     #request a user data
-    request: (query,callback) ->
+    request: (query, callback) ->
         # definition here
-        handle.request query,callback
+        handle.request query, callback
 
     systemConfig: ->
         _API.request 'config', (result) ->
             console.log  result
     
-    get:(p,c,f)->
-        $.get p 
-        .done (data) -> 
-            c(data) 
-        .fail ->
-            f()
-    resource: (resource,callback) ->
+    get: (p, c, f) ->
+        $.get p
+            .done (data) -> c(data)
+            .fail -> f()
+    resource: (resource, callback) ->
         path = "resources/#{resource}"
-        _API.get path,callback
+        _API.get path, callback
         

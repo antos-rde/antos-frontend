@@ -1,16 +1,15 @@
 self = this
 _PM = self.OS.PM
 _APP = self.OS.APP
-class BaseApplication
-    constructor: (@name) ->
-        @observable = riot.observable()
-        @pid = 0
-        @_api = self.OS.API
+_MAIL = self.OS.courrier
+class BaseApplication extends this.OS.GUI.BaseModel
+    constructor: (name) ->
+        super name
 
     init: ->
         me = @
         # first register some base event to the app
-        @on "exit", () -> me.quit()
+        
         @on "focus", () ->
             me.sysdock.set "selectedApp", me
             me.appmenu.pid = me.pid
@@ -20,40 +19,32 @@ class BaseApplication
         @on "hide", () ->
             me.sysdock.set "selectedApp", null
             me.appmenu.set "items", []
-        @on "menuselect", (item) ->
-            switch item.data.dataid
+        @on "menuselect", (d) ->
+            switch d.e.item.data.dataid
                 when "#{me.name}-about" then alert "About " + me.pid + me.name
                 when  "#{me.name}-exit" then me.trigger "exit"
         #now load the scheme
         path = "packages/#{@name}/scheme.html"
-        _GUI.loadScheme path , @
+        @.render path
 
-    on: (e, f) -> @observable.on e, f
-
-    trigger: (e, d) -> @observable.trigger e, d
-    
     show: () ->
-        @observable.trigger "focus"
+        @trigger "focus"
     
     blur: () ->
         @.appmenu.set "items", [] if @.appmenu and @.pid == @.appmenu.pid
-        @observable.trigger "blur"
+        @trigger "blur"
     
     hide: () ->
-        @observable.trigger "hide"
+        @trigger "hide"
     
     toggle: () ->
-        @observable.trigger "toggle"
+        @trigger "toggle"
     
-    quit: () ->
-        evt = new _GUI.BaseEvent("exit")
-        @exit(evt)
+    onexit: (evt) ->
+        @cleanup(evt)
         if not evt.prevent
             @.appmenu.set "items", [] if @.pid == @.appmenu.pid
-            _PM.kill @
             ($ @scheme).remove()
-    
-    find: (id) -> ($ "[data-id='#{id}']", @scheme)[0]
     
     baseMenu: ->
         menu =
@@ -81,7 +72,7 @@ class BaseApplication
         # to return app data
     update:->
         #implement by subclasses
-    exit: (e) ->
+    cleanup: (e) ->
         #implement by subclasses
         # to handle the exit event
         # use e.preventDefault() to

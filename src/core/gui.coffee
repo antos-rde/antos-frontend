@@ -5,23 +5,35 @@ self.OS.GUI =
             data: "#{_GUI.tagPath}/tags.json"
         self.OS.API.request query, ()->
             
-    loadScheme: (path, app) ->
+    loadScheme: (path, app, parent) ->
         _API.get path,
         (x) ->
             return null unless x
             scheme =  $.parseHTML x
-            ($ "#desktop").append scheme
+            ($ parent).append scheme
             riot.mount ($ scheme), { observable: app.observable }
             app.scheme = scheme[0]
             app.main()
             app.show()
         , (f) ->
+            _courrier.trigger "fail",
+                    {id: 0, data: {
+                        m: "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})",e: e, s: s },
+                    name:"OS"
+                    }
             alert "cannot load scheme"
 
     loadTheme: (name) ->
         path = "resources/themes/#{name}/#{name}.css"
         $ "head link#ostheme"
             .attr "href", path
+
+    pushServices: (srvs) ->
+        f = (v) ->
+            _courrier.observable.one "srvroutineready", () -> _GUI.pushService v
+        _GUI.pushService srvs[0]
+        srvs.splice 0, 1
+        f i for i in srvs
 
     pushService: (srv) ->
         return _PM.createProcess srv, _APP[srv] if _APP[srv]
@@ -30,9 +42,10 @@ self.OS.GUI =
             .done (e, s) ->
                 _PM.createProcess srv, _APP[srv]
             .fail (e, s) ->
+                _courrier.trigger "srvroutineready", srv
                 _courrier.trigger "fail",
-                    { m: "Cannot read service script: #{srv} ",
-                    e: e, s: s }
+                    { id:0,data:{m: "Cannot read service script: #{srv} ", e: e, s: s },
+                    name:"0S"}
     
     launch: (app) ->
         if not _APP[app]
@@ -54,14 +67,13 @@ self.OS.GUI =
                                 console.log "Fist time loading " + app
                             , (e, s) ->
                                 _courrier.trigger "fail",
-                                    { m: "Cannot read application metadata: #{app} ",
-                                    e: e, s: s }
+                                    {id:0, data:{ m: "Cannot read application metadata: #{app} ",e: e, s: s }, name:"OS"}
                                 alert "cannot read application, meta-data"
                 .fail (e,s) ->
                     #BUG report here
                     _courrier.trigger "fail",
-                        { m: "Cannot load application script: #{app}", 
-                        e: e, s:s } 
+                        {id :0, data:{m: "Cannot load application script: #{app}", 
+                        e: e, s:s }, name:"OS"}
                     console.log "bug report", e, s, path
         else
             # now launch it

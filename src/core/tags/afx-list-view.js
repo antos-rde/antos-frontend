@@ -8,11 +8,12 @@
             <i if={iconclass} class = {iconclass} ></i>
             <i if={icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
             { text }
+            <i if = {closable} class = "closable" click = {parent._remove}></i>
         </li>
     </ul>
     </div>
     <script>
-        this.items = opts.child
+        this.items = opts.child || []
         var self = this
         self.selidx = -1
         self.selectedText = ""
@@ -34,7 +35,16 @@
                 return self.items[self.selidx]
             return self[k]
         }
-        
+        self.root.push = function(e,u)
+        {
+            self.items.push(e)
+            if(u) self.update()
+        }
+        self.root.unshift = function(e,u)
+        {
+            self.items.unshift(e)
+            if(u) self.update()
+        }
         if(opts.observable)
             this.root.observable = opts.observable
         else
@@ -72,6 +82,17 @@
                 $(self.refs.mlist).css("top","100%")
             $(self.refs.mlist).show()
         }
+        _remove(event)
+        {
+            if(self.selidx != -1)
+            {
+                self.items[self.selidx].selected =false
+                self.selidx = -1
+            }
+            self.items.splice(self.items.indexOf(event.item),1)
+            event.target = self.root
+            self.update()
+        }
         _select(event)
         {
             var data = {
@@ -81,7 +102,10 @@
             if(self.selidx != -1)
                 self.items[self.selidx].selected =false
             self.selidx = data.idx
-            self.items[self.selidx].selected = true
+            if(!self.items[self.selidx])
+                return
+            
+            self.items[self.selidx].selected = true    
             if(opts.dropdown  == "true")
             {
                 $(self.refs.mlist).hide()
@@ -90,7 +114,7 @@
             if(self.onlistselect)
                 self.onlistselect(data)
             this.root.observable.trigger('listselect',data)
-            event.preventDefault()
+            //event.preventDefault()
         }
     </script>
 </afx-list-view>

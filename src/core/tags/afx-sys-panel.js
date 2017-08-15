@@ -15,23 +15,31 @@
                             {text:"NotePad",type:"app", iconclass:"fa fa-commenting"},
                             {text:"ActivityMonitor",type:"app"},
                             {text:"DummyApp",type:"app"}
-                        ]},
+                        ],
+                        onmenuselect: function(d)
+                        {
+                            if(d.e.item.data.type == "app")
+                                window.OS.GUI.launch(d.e.item.data.text)
+                        }
+                    },
                     {text:"Logout"}
                     ]}
-                ],onmenuselect: function(item)
-                {
-                    if(item.data.type == "app")
-                        window.OS.GUI.launch(item.data.text)
-                }
+                ]
             }
         this.appmenu = { child: [] }
-        this.systray = { child: [], onmenuselect: function(item){item.data.awake()}}
+        this.systray = { 
+            child: [], 
+            onmenuselect: function(d){
+                if(d.root)
+                    d.e.item.data.awake(d.e)
+            }
+        }
 
         var self = this
         self.root.attachservice = function(s)
         {
-            s.attach(self.refs.aTray)
             self.refs.aTray.root.unshift(s,true)
+            s.attach(self.refs.aTray)
         }
         self.root.detachservice = function(s)
         {

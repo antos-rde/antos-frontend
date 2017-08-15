@@ -14,7 +14,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
             app = _PM.appByPid item[0].value
             app.quit() if app
 
-        header = [{width:50,value:"Pid"},{value:"Name"}, {value:"Type", width:75},{width:70,value:"Alive (ms)"}]
+        header = [{width:50,value:"Pid"},{value:"Name"}, {value:"Type", width:80},{width:75,value:"Alive (ms)"}]
         @gdata = 
             processes:{}
             alive:[]

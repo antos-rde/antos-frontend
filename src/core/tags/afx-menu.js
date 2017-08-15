@@ -1,14 +1,14 @@
 <afx-menu >
     <ul class={context: opts.context == "true"}>
         <li class="afx-corner-fix"></li>
-        <li ref = "container" each={ item,i in items } class = {afx_submenu:item.child != null, fix_padding:item.icon} no-reorder>
+        <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null, fix_padding:data.icon} no-reorder>
             <a href="#" onclick = {parent.onselect}>
-                <i if={item.iconclass} class = {item.iconclass} ></i>
-                <i if={item.icon} class="icon-style" style = { "background: url("+item.icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-                { item.text }
+                <i if={data.iconclass} class = {data.iconclass} ></i>
+                <i if={data.icon} class="icon-style" style = { "background: url("+data.icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
+                { data.text }
             </a>
             
-            <afx-menu  if={item.child != null} child={item.child}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
+            <afx-menu  if={data.child != null} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
         </li>
          <li class="afx-corner-fix"></li>
     </ul>
@@ -126,8 +126,9 @@
 
         onselect(event)
         {
-            var data = {id:self.rid, data:event.item.item, root:isRoot}
+            var data = {id:self.rid, root:isRoot, e:event}
             this.root.observable.trigger('menuselect',data)
+            if( this.onmenuselect && !isRoot)  this.onmenuselect(data)
             event.preventDefault()
             $(document).unbind("click",mnhide)
             if(opts.context == "true") return
