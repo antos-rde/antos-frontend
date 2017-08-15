@@ -1,7 +1,7 @@
 self.OS.PM =
-    pidalloc:0
+    pidalloc: 0
     processes: new Object
-    createProcess: (app,cls) ->
+    createProcess: (app, cls) ->
         #if it is single ton
         # and a process is existing
         # just return it
@@ -9,27 +9,28 @@ self.OS.PM =
             _PM.processes[app][0].show()
             return _PM.processes[app][0]
         else
-            _PM.processes[app] = [] if not _PM.processes[app] 
+            _PM.processes[app] = [] if not _PM.processes[app]
             obj = new cls
             obj.birth = (new Date).getTime()
             _PM.pidalloc++
             obj.pid = _PM.pidalloc
             _PM.processes[app].push obj
-            _GUI.dock obj,cls.meta
+            if cls.type is 1 then _GUI.dock obj, cls.meta else _GUI.attachservice obj
     appByPid:(pid)->
         app = undefined
         find = (l) ->
             return a for a in l when a.pid is pid
-        for k,v of _PM.processes
+        for k, v of _PM.processes
             app = find v
             break if app
-        app           
+        app
         
     kill: (app) ->
         return if not _PM.processes[app.name]
 
         i = _PM.processes[app.name].indexOf app
         if i >= 0
-            _GUI.undock _PM.processes[app.name][i]
+            p = _PM.processes[app.name][i]
+            if _APP[app.name].type == 1 then _GUI.undock p else _GUI.detachservice p
             delete _PM.processes[app.name][i]
-            _PM.processes[app.name].splice i,1
+            _PM.processes[app.name].splice i, 1

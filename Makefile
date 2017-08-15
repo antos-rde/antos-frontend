@@ -10,6 +10,7 @@ coffees= 	src/define.coffee\
         	src/core/handlers/InBrowserHandler.coffee\
         	src/core/gui/gui.coffee\
 			src/core/gui/BaseApplication.coffee\
+			src/core/gui/BaseService.coffee\
 			src/core/gui/BaseEvent.coffee\
         	src/antos.coffee
 
@@ -39,11 +40,13 @@ antos_themes = 	src/core/gui/themes/antos/font-awesome.css\
 
 
 
-packages = NotePad Terminal ActivityMonitor
+packages = NotePad wTerm ActivityMonitor DummyApp
+services = PushNotification Spotlight Calendar
 
-main: clean build_coffee build_tag build_theme schemes libs build_packages
+main: clean build_coffee build_tag build_theme schemes libs build_services build_packages
 	- cp src/index.html $(BUILDDIR)/
 
+lite: build_coffee build_tag build_theme schemes  build_services build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 
@@ -84,8 +87,14 @@ antos_themes_build:
 	cp src/core/gui/themes/antos/wallpaper.jpg $(BUILDDIR)/resources/themes/antos/
 
 
+build_services:
+	@echo "=======$(BLUE)Building services=======$(NC)"
+	-mkdir -p $(BUILDDIR)/services
+	-rm -rf $(BUILDDIR)/services/*
+	for f in $(services); do (coffee -cs < "src/services/$$f.coffee" >$(BUILDDIR)/services/"$$f.js");done
 build_packages:
 	- mkdir $(BUILDDIR)/packages
+	- for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d && rm -rf $(BUILDDIR)/packages/$$d/* ); done
 	for d in $(packages); do (cd src/packages/$$d; make);done
 	for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d || mkdir -p $(BUILDDIR)/packages/$$d && cp -rf src/packages/$$d/build/* $(BUILDDIR)/packages/$$d/);done
 	for d in $(packages); do ( test -d src/packages/$$d/build && rm -r src/packages/$$d/build ); done

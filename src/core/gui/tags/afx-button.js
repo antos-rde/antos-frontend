@@ -23,10 +23,6 @@
         {
             return self[k]
         }
-        self.root.update = function()
-        {
-            self.update()
-        }
         this._onbtclick = function(e)
         {
             if(typeof opts.onbtclick == 'string')

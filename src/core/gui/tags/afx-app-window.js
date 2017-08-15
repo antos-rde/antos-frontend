@@ -39,10 +39,6 @@
         {
             return self[k]
         }
-        self.root.update = function()
-        {
-            self.update()
-        }
         minimize()
         {
             this.root.observable.trigger("hide")
@@ -108,6 +104,7 @@
                 else 
                     self.root.observable.trigger("focus")
             })
+            self.root.observable.trigger("loaded", self.root)
         })
         var enable_dragging = function()
         {

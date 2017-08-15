@@ -66,7 +66,7 @@ afx-menu  afx-menu li{
     float:none;
     min-width: 150px;
 }
-afx-menu  afx-menu afx-menu{
+afx-menu  afx-menu afx-menu, afx-menu  ul.context afx-menu{
     top:-4px;
     left: 100%;
 }
@@ -78,7 +78,7 @@ afx-menu li:hover > a {
     color: white;
 }
 
-afx-menu li:hover > afx-menu
+afx-menu afx-menu   li:hover > afx-menu, ul.context  li:hover > afx-menu
 {
     display: block;
 }
@@ -92,7 +92,7 @@ afx-menu li.afx-corner-fix:hover{
     background-color: transparent;
 }
 
-afx-menu afx-menu .afx_submenu:before {
+afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before{
     content: "\f054"; 
     font-family: "FontAwesome";
     font-size: 10px;
@@ -100,4 +100,20 @@ afx-menu afx-menu .afx_submenu:before {
     color: #414339;
     position:absolute;
     top:25%;
+ }
+
+ afx-menu ul.context{
+    position: absolute;
+    z-index: 1000000;
+    padding: 0;
+    border:1px solid #a6a6a6;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    /*box-shadow: 2px 2px 2px #cbcbcb;*/
+    box-shadow: 1px 1px 1px #9f9F9F;
+    background-color: #e7e7e7;
+ }
+ afx-menu  ul.context li{
+     clear:float;
+     min-width: 150px;
  }

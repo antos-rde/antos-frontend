@@ -14,7 +14,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             enableBasicAutocompletion: true,
             enableSnippets: true,
             enableLiveAutocompletion: true,
-            fontSize: "10pt"
+            fontSize: "9pt"
         }
         @.editor.completers.push {getCompletions:(editor, session, pos, prefix, callback)->}
         @.editor.getSession().setUseWrapMode true
@@ -34,8 +34,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             l = me.editor.session.getLength()
             $(stat).html "Row #{c.row}, col #{c.column}, lines: #{l}"
         stup(0)
-        @.editor.getSession().selection.on "changeCursor", (e)->
-            stup(e)
+        @.editor.getSession().selection.on "changeCursor", (e)->stup(e)
 
         @on "resize", ()-> me.editor.resize()
         @on "focus", ()->me.editor.focus()

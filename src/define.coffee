@@ -5,6 +5,7 @@ self.OS or=
     GUI: new Object()
     APP: new Object()
     PM: new Object()
+    courrier: riot.observable()
     register: (name,x)->
         # load the metadata first
         _APP[name] = x
@@ -15,4 +16,8 @@ self.OS or=
         _GUI = self.OS.GUI
         _GUI.loadTheme "antos"
         _GUI.initDM()
-        #_GUI.loadScheme "resources/schemes/test.html",null 
+        _courrier.on "syspanelloaded", () ->
+            _GUI.pushService "PushNotification"
+            _GUI.pushService "Spotlight"
+            _GUI.pushService "Calendar"
+        

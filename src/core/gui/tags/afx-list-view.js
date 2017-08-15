@@ -28,10 +28,6 @@
                 self[k] = v
             self.update()
         }
-        self.root.update = function()
-        {
-            self.update()
-        }
         self.root.get = function(k)
         {
             if(k == "selected")
@@ -69,7 +65,6 @@
         {
             var desktoph = $("#desktop").height()
             var off = $(self.root).offset().top + $(self.refs.mlist).height()
-            console.log(desktoph,off)
             if( off > desktoph )
                 $(self.refs.mlist)
                     .css("top","-" +  $(self.refs.mlist).outerHeight() + "px")

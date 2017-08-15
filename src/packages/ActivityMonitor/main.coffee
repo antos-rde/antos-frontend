@@ -14,7 +14,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
             app = _PM.appByPid item[0].value
             app.quit() if app
 
-        header = [{width:50,value:"Pid"},{value:"Name"},{width:100,value:"Alive (ms)"}]
+        header = [{width:50,value:"Pid"},{value:"Name"}, {value:"Type", width:75},{width:70,value:"Alive (ms)"}]
         @gdata = 
             processes:{}
             alive:[]
@@ -29,11 +29,14 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         $.each _PM.processes, (i,d)->
             $.each d , (j,a)->
                 if me.gdata.processes[a.pid] #update it
-                    me.gdata.processes[a.pid][2].value = now - a.birth
+                    me.gdata.processes[a.pid][3].value = now - a.birth
                 else #add it
                     me.gdata.processes[a.pid] = [
                         {value:a.pid},
-                        {icon:_APP[a.name].meta.icon,iconclass:_APP[a.name].meta.iconclass,value:a.name},
+                        {icon:if _APP[a.name].type == 1 then _APP[a.name].meta.icon else a.icon,
+                        iconclass:if _APP[a.name].type == 1 then _APP[a.name].meta.iconclass else a.iconclass,
+                        value:a.name},
+                        {value: if _APP[a.name].type == 1 then "Application" else "Service"}
                         {value: now - a.birth}
                     ]
                 me.gdata.alive.push a.pid

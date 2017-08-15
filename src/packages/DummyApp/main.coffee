@@ -1,6 +1,6 @@
-class Terminal extends this.OS.GUI.BaseApplication
+class DummyApp extends this.OS.GUI.BaseApplication
     constructor: () ->
-        super "Terminal"
+        super "DummyApp"
     main: () ->
         self = @
         @on "btclick", (e)->
@@ -19,7 +19,7 @@ class Terminal extends this.OS.GUI.BaseApplication
         tdata = {
             name: 'My Tree',
             nodes: [
-                { name: 'hello', icon:'packages/NotePad/icon.png'},
+                { name: 'hello', icon:'fa fa-car'},
                 { name: 'wat' },
                 {
                     name: 'child folder',
@@ -76,5 +76,12 @@ class Terminal extends this.OS.GUI.BaseApplication
         list.set "onlistselect", (e)->
             console.log e
 
-Terminal.singleton = false
-this.OS.register "Terminal",Terminal
+        @scheme.set "apptitle", "AntOS feature showcase"
+
+        @scheme.contextmenuHandler = (e, m) ->
+            mdata = [ { text: " Child 1" }, { text: "child2", child: [{text: "sub child", child:[{text:"sub sub child"}] }]}]
+            m.set "items", mdata
+            m.show(e)
+
+DummyApp.singleton = false
+this.OS.register "DummyApp",DummyApp

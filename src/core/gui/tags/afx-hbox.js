@@ -4,23 +4,6 @@
     </div>
     <script>
         var self = this
-        self.root.set = function(k,v)
-        {
-            if(k == "*")
-                for(var i in v)
-                    self[i] = v[i]
-            else
-                self[k] = v
-            self.update()
-        }
-        self.root.get = function(k)
-        {
-            return self[k]
-        }
-        self.root.update = function()
-        {
-            self.update()
-        }
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")
@@ -44,6 +27,7 @@
             var auto_height = []
             var csize, ocheight = 0, avaiheight;
             avaiheight = $(self.root).parent().height()
+            avaiwidth = $(self.root).parent().width()
             $(self.refs.container).css("height",avaiheight + "px")
             $(self.refs.container)
                 .children()
@@ -69,6 +53,8 @@
             {
                 $(v).css("height", csize + "px")
             })
+            self.root.observable.trigger("hboxchange",
+                {id:$(self.root).attr("data-id"), w:avaiwidth, h:csize})
         }
     </script>
 </afx-hbox>

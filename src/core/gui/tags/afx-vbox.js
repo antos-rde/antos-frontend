@@ -4,23 +4,6 @@
     </div>
     <script>
         var self = this
-        self.root.set = function(k,v)
-        {
-            if(k == "*")
-                for(var i in v)
-                    self[i] = v[i]
-            else
-                self[k] = v
-            self.update()
-        }
-        self.root.get = function(k)
-        {
-            return self[k]
-        }
-        self.root.update = function()
-        {
-            self.update()
-        }
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")
@@ -36,7 +19,6 @@
                     })
                 }
         })
-
         var calibrate_size = function()
         {
             var auto_width = []
@@ -51,6 +33,7 @@
                     this.observable = self.root.observable
                     $(this)
                         .css("flex-grow","1")
+                        //.css("height",avaiheight + "px")
                     var dw = $(this).attr("data-width")
                     if(dw)
                     {
@@ -67,6 +50,8 @@
             {
                 $(v).css("width", csize + "px")
             })
+            self.root.observable.trigger("vboxchange",
+                {id:$(self.root).attr("data-id"), w:csize, h:avaiheight})
         }
     </script>
 </afx-vbox>

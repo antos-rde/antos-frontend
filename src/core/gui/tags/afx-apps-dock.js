@@ -51,10 +51,9 @@
         {
             return self[k]
         }
-        self.root.update = function()
-        {
-            self.update()
-        }
+        this.on("mount", function(){
+            window.OS.courrier.trigger("sysdockloaded")
+        })
         
     </script>
 </afx-apps-dock>

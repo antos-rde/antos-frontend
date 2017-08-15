@@ -49,10 +49,6 @@
                 self[k] = v
             self.update()
         }
-        self.root.update = function()
-        {
-            self.update()
-        }
         self.root.get = function(k)
         {
             return self[k]

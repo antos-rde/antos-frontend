@@ -1,5 +1,5 @@
 {
-    "app":"Terminal",
+    "app":"wTerm",
     "name":"Unix terminal like",
     "description":"Access Unix terminal from web",
     "author":{

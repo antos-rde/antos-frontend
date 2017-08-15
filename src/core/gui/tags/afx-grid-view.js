@@ -82,7 +82,6 @@
                     data:event.item}
             if(opts.onlistselect)
                 opts.onlistselect(data)
-            console.log(data)
             if(self.selidx != -1)
                 self.rows[self.selidx].selected =false
             self.selidx = event.item.i

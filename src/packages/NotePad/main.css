@@ -1,9 +1,16 @@
+afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"] {
+    margin: 2px;
+    margin-right: 5px;
+}
 
-afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"]{
-    margin:2px;
+afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"] div.list-container{
+    z-index: 10;
 }
 
 afx-app-window[data-id="notepad"] span[data-id="editorstat"]{
     padding:5px;
     display: inline-block;
+}
+afx-app-window[data-id="notepad"] afx-vbox[data-id="bottom-vbox"]{
+    background-color: #dfdfdf;
 }
