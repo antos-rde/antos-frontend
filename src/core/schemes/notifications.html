@@ -1,5 +1,6 @@
 <afx-dummy>
     <afx-overlay data-id = "notifyzone" width = "250">
+        <afx-button text = "Clear all" data-id = "btclear"></afx-button>
         <afx-list-view data-id="notifylist"></afx-list-view>
         <style>
             afx-overlay[data-id = "notifyzone"]{
@@ -9,6 +10,13 @@
                 overflow-x: hidden;
                 padding:3px;
                 margin: 0;
+            }
+            afx-overlay[data-id = "notifyzone"] afx-button button{
+                width: 250px;
+                background-color: rgba(215,215,215,0.9);
+            }
+            afx-overlay[data-id = "notifyzone"] afx-button button:active{
+                color:#414339;
             }
             afx-list-view[data-id = "notifylist"]
             {
@@ -21,7 +29,7 @@
             }
         </style>
     </afx-overlay>
-    <afx-feed data-id = "notifeed"  style = "display: none;"  closable="true">
+    <afx-feed data-id = "notifeed"  style = "display: none;">
         <!--afx-button text = "click me"></afx-button-->
         <style>
             afx-feed[data-id = "notifeed"]{

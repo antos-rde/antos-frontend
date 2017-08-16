@@ -6,14 +6,10 @@
         </div>
     </div>
     <script>
-        this.rows= []
-        if(opts.data)
-        {
-            this.header = opts.data.header 
-            this.rows = opts.data.data
-        }
+        this.header = opts.header 
+        this.rows = opts.rows || []
         var self = this 
-        this.rid = $(self.root).attr("data-id")
+        this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.selidx = -1
         self.nrow = 0
         self.root.set = function(k,v)
@@ -27,7 +23,7 @@
                 self[k] = v
             self.update()
         }
-        var calibrate_size = function()
+        this.calibrate_size = function()
         {
             if(self.header)
             {
@@ -58,10 +54,10 @@
                 .css("display","flex")
                 .css("flex-direction","column")
                 .css("width","100%")
-            calibrate_size()
+            self.calibrate_size()
 
             this.root.observable.on("resize",function(){
-                calibrate_size()
+                self.calibrate_size()
                 if(self.refs.gridhead)
                     self.refs.gridhead.calibrate_size()
             })
@@ -71,7 +67,7 @@
                 self.selidx = -1
             if(self.nrow == self.rows.length) return
             self.nrow = self.rows.length
-            calibrate_size()
+            self.calibrate_size()
             if(self.refs.gridhead)
                 self.refs.gridhead.calibrate_size()
         })

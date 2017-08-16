@@ -1,6 +1,7 @@
 afx-grid-view{
     overflow: hidden;
     padding:5px;
+    display: block;
 }
 afx-grid-view afx-grid-row div{
     padding:3px;

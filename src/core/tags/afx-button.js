@@ -9,7 +9,7 @@
         this.icon = opts.icon
         this.iconclass = opts.iconclass
         var self = this
-        
+        this.onbtclick = opts.onbtclick
         self.root.set = function(k,v)
         {
             if(k == "*")
@@ -25,10 +25,10 @@
         }
         this._onbtclick = function(e)
         {
-            if(typeof opts.onbtclick == 'string')
-                eval(opts.onbtclick())
-            else if(opts.onbtclick)
-                opts.onbtclick()
+            if(typeof self.onbtclick == 'string')
+                eval(self.onbtclick)
+            else if(self.onbtclick)
+                self.onbtclick(e)
             if(self.root.observable)
             {
                 self.root.observable.trigger("btclick",{id:$(self.root).attr("data-id"),data:self.root})

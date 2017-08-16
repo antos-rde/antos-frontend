@@ -6,7 +6,6 @@ _GUI  = self.OS.GUI
 class BaseModel
     constructor: (@name) ->
         @observable = riot.observable()
-        @pid = 0
         @_api = self.OS.API
         me = @
         @on "exit", () -> me.quit()
@@ -31,16 +30,20 @@ class BaseModel
     trigger: (e, d) -> @observable.trigger e, d
 
     subscribe: (e, f) -> _MAIL.on e, f, @
-    meta: () -> _APP[@name].meta
+
     publish: (t, m) ->
         mt = @meta()
         _MAIL.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass } }
+
     notify: (m) ->
         @publish "notification", m
+
     warn: (m) ->
         @publish "warning", m
+
     error: (m) ->
         @publish "error", m
+        
     fail: (m) ->
         @publish "fail", m
 

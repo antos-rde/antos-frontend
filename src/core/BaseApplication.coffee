@@ -45,7 +45,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
         if not evt.prevent
             @.appmenu.set "items", [] if @.pid == @.appmenu.pid
             ($ @scheme).remove()
-    
+    meta: () -> _APP[@name].meta
     baseMenu: ->
         mn =
             [{

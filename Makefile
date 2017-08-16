@@ -13,34 +13,8 @@ coffees= 	src/core/core.coffee\
 			src/core/BaseService.coffee\
 			src/core/BaseEvent.coffee\
         	src/antos.coffee
+ 
 
-tags=	src/core/tags/afx-button.js\
-        src/core/tags/afx-menu.js\
-        src/core/tags/afx-sys-panel.js\
-        src/core/tags/afx-apps-dock.js\
-        src/core/tags/afx-app-window.js\
-        src/core/tags/afx-vbox.js\
-        src/core/tags/afx-hbox.js\
-        src/core/tags/afx-list-view.js\
-		src/core/tags/afx-tree-view.js \
-		src/core/tags/afx-overlay.js\
-		src/core/tags/afx-dummy.js\
-		src/core/tags/afx-feed.js\
-		src/core/tags/afx-grid-view.js 
-
-antos_themes = 	src/themes/antos/font-awesome.css\
-        		src/themes/antos/ubuntu-regular.css\
-        		src/themes/antos/hermit-light.css\
-        		src/themes/antos/antos.css\
-        		src/themes/antos/afx-button.css\
-        		src/themes/antos/afx-menu.css\
-        		src/themes/antos/afx-sys-panel.css\
-        		src/themes/antos/afx-dock.css\
-				src/themes/antos/afx-list-view.css\
-				src/themes/antos/afx-tree-view.css\
-				src/themes/antos/afx-grid-view.css\
-				src/themes/antos/afx-feed.css\
-        		src/themes/antos/afx-app-window.css 
 
 
 
@@ -76,7 +50,7 @@ build_tags:
 	@echo "=======$(BLUE)Building tag files=======$(NC)"
 	-mkdir $(BUILDDIR)/resources 
 	-rm $(BUILDDIR)/resources/antos_tags.js
-	for f in $(tags); do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
+	for f in src/core/tags/*; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
 build_themes: antos_themes_build
 
@@ -85,7 +59,7 @@ antos_themes_build:
 	@echo "=======$(BLUE)Building themes name: antos=======$(NC)"
 	-rm -rf $(BUILDDIR)/resources/themes/antos/*
 	-mkdir -p $(BUILDDIR)/resources/themes/antos
-	for f in $(antos_themes); do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css; done
+	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
 	-mkdir -p $(BUILDDIR)/resources/themes/antos/fonts
 	cp -rf src/themes/antos/fonts/* $(BUILDDIR)/resources/themes/antos/fonts
 	cp src/themes/antos/wallpaper.jpg $(BUILDDIR)/resources/themes/antos/

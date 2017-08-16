@@ -13,8 +13,10 @@ class PushNotification extends this.OS.GUI.BaseService
     main: ->
         me = @
         mfeed = @find "notifeed"
-        @scheme = @find "notifyzone"
+        @nzone = @find "notifyzone"
         mlist = @find "notifylist"
+        (@find "btclear").set "onbtclick", (e) -> mlist.set "items", []
+        #mlist.set "onlistselect", (e) -> console.log e
         @subscribe "notification", (o) ->
             d = {
                 header: "#{o.name} (#{o.id})"
@@ -37,7 +39,7 @@ class PushNotification extends this.OS.GUI.BaseService
             mlist.push d, true
             me.notifeed d, mfeed
 
-        ($ @scheme).css "right", 0
+        ($ @nzone).css "right", 0
             .css "top", "-3px"
             .css "height", ""
             .css "bottom", "0"
@@ -46,22 +48,22 @@ class PushNotification extends this.OS.GUI.BaseService
             .css "top", "0"
 
     notifeed: (d, mfeed) ->
-        mfeed.set "*", d
+        mfeed.push d, true
         ($ mfeed).show()
         timer = setTimeout () ->
-             ($ mfeed).hide()
-             clearTimeout timer
+                mfeed.remove d, true
+                clearTimeout timer
         , 3000
 
     awake: (e) ->
-        if  @view then ($ @scheme).hide() else ($ @scheme).show()
+        if  @view then ($ @nzone).hide() else ($ @nzone).show()
         @view = not @view
         me = @
         if not @cb
             @cb = (e) ->
                 return if e.originalEvent.item and e.originalEvent.item.closable
-                if not ($ e.target).closest($ me.scheme).length and not ($ e.target).closest($ me.holder.root).length
-                    ($ me.scheme).hide()
+                if not ($ e.target).closest($ me.nzone).length and not ($ e.target).closest($ me.holder.root).length
+                    ($ me.nzone).hide()
                     $(document).unbind "click", me.cb
                     me.view = not me.view
         if @view

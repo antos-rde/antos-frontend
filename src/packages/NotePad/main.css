@@ -1,9 +1,9 @@
-afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"] {
+afx-app-window[data-id="notepad"] afx-list-view {
     margin: 2px;
     margin-right: 5px;
 }
 
-afx-app-window[data-id="notepad"] afx-list-view[data-id="modelist"] div.list-container{
+afx-app-window[data-id="notepad"] afx-list-view div.list-container{
     z-index: 10;
 }
 
