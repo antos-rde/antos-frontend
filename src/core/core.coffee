@@ -19,7 +19,8 @@ self.OS or=
             _courrier.observable.off i.e, i.f for i in _courrier.listeners[app.pid]
             delete _courrier.listeners[app.pid]
             _courrier.listeners[app.pid] = []
-    register: (name, x) -> _APP[name] = x
+    register: (name, x) ->
+        if x.type is 3 then self.OS.GUI.dialog[name] = x else _APP[name] = x
     
     PM:
         pidalloc: 0

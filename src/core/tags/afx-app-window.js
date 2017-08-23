@@ -2,8 +2,8 @@
     <div   class = "afx-window-wrapper">
         <ul class= "afx-window-top" >
             <li class = "afx-window-close" onclick = {close}></li>
-             <li class = "afx-window-minimize" onclick = {minimize}></li>
-             <li class = "afx-window-maximize" onclick={maximize}></li>
+             <li if = {minimizable == true} class = "afx-window-minimize" onclick = {minimize}></li>
+             <li if = {maximizable == true} class = "afx-window-maximize" onclick={maximize}></li>
              <li  ref = "dragger" class = "afx-window-title">{ apptitle }</li>
         </ul>
         <div class = "afx-clear"></div>
@@ -15,6 +15,8 @@
 
     <script>
         this.apptitle = opts.apptitle || ""
+        this.minimizable = eval(opts.minimizable) || true
+        this.maximizable = eval(opts.maximizable) || true
         var self = this
         var offset = {top:0,left:0}
         var desktop_pos = $("#desktop").offset()
@@ -24,7 +26,7 @@
         var width = opts.width || 400
         var height = opts.height || 300
         this.root.observable = opts.observable || riot.observable()
-        if(!window._zidex) window._zidex = 10
+        if(!window._zindex) window._zindex = 10
         this.shown = false
         self.root.set = function(k,v)
         {
@@ -49,15 +51,15 @@
         }
         this.on('mount', function() {
             var left,top 
-            left = 20 + Math.floor(Math.random() *  width)
-            top = 20 + Math.floor(Math.random() *  height)
+            left = 20 + Math.floor(Math.random() *  ($("#desktop").width()  - width))
+            top = 20 + Math.floor(Math.random() *  ($("#desktop").height() - height))
             $(self.refs.window)
                 .css("position",'absolute')
                 .css("left",left + "px")
                 .css("top",top + "px")
                 .css("width",width + "px")
                 .css("height", height + "px")
-                .css("z-index",window._zidex++)
+                .css("z-index",window._zindex++)
             $(self.refs.window).on("mousedown", function(e){
                 if(self.shown == false)
                     self.root.observable.trigger("focus")
@@ -78,10 +80,10 @@
             })
 
             self.root.observable.on("focus",function(){
-                window._zidex++
+                window._zindex++
                 $(self.refs.window)
                     .show()
-                    .css("z-index",window._zidex)
+                    .css("z-index",window._zindex)
                     .removeClass("unactive")
 
                 self.shown = true
@@ -179,6 +181,7 @@
 
         var toggle_window = function()
         {
+            if(!self.maximizable) return;
             if(isMaxi == false)
             {
                 history = {

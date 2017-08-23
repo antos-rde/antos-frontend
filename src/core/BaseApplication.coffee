@@ -1,7 +1,4 @@
 self = this
-_PM = self.OS.PM
-_APP = self.OS.APP
-_MAIL = self.OS.courrier
 class BaseApplication extends this.OS.GUI.BaseModel
     constructor: (name) ->
         super name
@@ -16,9 +13,11 @@ class BaseApplication extends this.OS.GUI.BaseModel
             me.appmenu.set "items", (me.baseMenu() || [])
             me.appmenu.set "onmenuselect", (d) ->
                 me.trigger("menuselect", d)
+            me.dialog.show() if me.dialog
         @on "hide", () ->
             me.sysdock.set "selectedApp", null
             me.appmenu.set "items", []
+            me.dialog.hide() if me.dialog
         @on "menuselect", (d) ->
             switch d.e.item.data.dataid
                 when "#{me.name}-about" then alert "About " + me.pid + me.name

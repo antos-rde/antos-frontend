@@ -1,5 +1,3 @@
-MAIL = this.OS.courrier
-_API = this.OS.API
 class BaseService extends this.OS.GUI.BaseModel
     constructor: (name) ->
         super name
@@ -13,7 +11,8 @@ class BaseService extends this.OS.GUI.BaseModel
         #implement by user
         # event registe, etc
         # scheme loader
-
+    meta: () ->
+        @
     attach: (h) ->
         @holder = h
 

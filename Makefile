@@ -12,6 +12,7 @@ coffees= 	src/core/core.coffee\
 			src/core/BaseApplication.coffee\
 			src/core/BaseService.coffee\
 			src/core/BaseEvent.coffee\
+			src/core/BaseDialog.coffee\
         	src/antos.coffee
  
 

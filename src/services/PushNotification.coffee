@@ -12,46 +12,44 @@ class PushNotification extends this.OS.GUI.BaseService
 
     main: ->
         me = @
-        mfeed = @find "notifeed"
+        @mlist = @find "notifylist"
+        @mfeed = @find "notifeed"
         @nzone = @find "notifyzone"
-        mlist = @find "notifylist"
-        (@find "btclear").set "onbtclick", (e) -> mlist.set "items", []
+        (@find "btclear").set "onbtclick", (e) -> me.mlist.set "items", []
         #mlist.set "onlistselect", (e) -> console.log e
-        @subscribe "notification", (o) ->
-            d = {
-                header: "#{o.name} (#{o.id})"
-                text: "INFO: #{o.name} (#{o.id}): #{o.data.m}",
-                lite: o.data.m
-                icon: o.data.icon,
-                iconclass: o.data.iconclass,
-                closable: true }
-            mlist.push d, true
-            me.notifeed d, mfeed
-        
-        @subscribe "fail", (o) ->
-            d = {
-                header: "#{o.name} (#{o.id})"
-                text: "FAIL: #{o.name} (#{o.id}): #{o.data.m}",
-                lite: o.data.m
-                icon: o.data.icon,
-                iconclass: o.data.iconclass,
-                closable: true }
-            mlist.push d, true
-            me.notifeed d, mfeed
+        @subscribe "notification", (o) -> me.pushout 'INFO', o
+        @subscribe "fail", (o) -> me.pushout 'FAIL', o
+        @subscribe "error", (o) -> me.pushout 'ERROR', o
 
         ($ @nzone).css "right", 0
             .css "top", "-3px"
             .css "height", ""
             .css "bottom", "0"
             .hide()
-        ($ mfeed).css "right", "5px"
+        ($ @mfeed).css "right", "5px"
             .css "top", "0"
 
-    notifeed: (d, mfeed) ->
-        mfeed.push d, true
-        ($ mfeed).show()
+    pushout: (s, o, mfeed) ->
+        d = {
+            text: "#{o.name} (#{o.id}) - #{s}: #{o.data.m}",
+            icon: o.data.icon,
+            iconclass: o.data.iconclass,
+            closable: true }
+        d1 = {
+            header: "#{o.name} (#{o.id})"
+            text: "#{s}: #{o.data.m}",
+            icon: o.data.icon,
+            iconclass: o.data.iconclass,
+            closable: true }
+        @mlist.push d, true
+        @notifeed d1
+
+    notifeed: (d) ->
+        me = @
+        @mfeed.push d, true
+        ($ @mfeed).show()
         timer = setTimeout () ->
-                mfeed.remove d, true
+                me.mfeed.remove d, true
                 clearTimeout timer
         , 3000
 

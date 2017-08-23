@@ -1,20 +1,22 @@
 self.OS.GUI =
+    dialog: new Object()
     init: () ->
         query =
             path: 'VFS/get'
             data: "#{_GUI.tagPath}/tags.json"
         self.OS.API.request query, ()->
-            
+    htmlToScheme: (html, app, parent) ->
+        scheme =  $.parseHTML html
+        ($ parent).append scheme
+        riot.mount ($ scheme), { observable: app.observable }
+        app.scheme = scheme[0]
+        app.main()
+        app.show()
     loadScheme: (path, app, parent) ->
         _API.get path,
         (x) ->
             return null unless x
-            scheme =  $.parseHTML x
-            ($ parent).append scheme
-            riot.mount ($ scheme), { observable: app.observable }
-            app.scheme = scheme[0]
-            app.main()
-            app.show()
+            _GUI.htmlToScheme x, app, parent
         , (f) ->
             _courrier.trigger "fail",
                     {id: 0, data: {

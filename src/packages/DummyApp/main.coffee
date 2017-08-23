@@ -5,8 +5,8 @@ class DummyApp extends this.OS.GUI.BaseApplication
     main: () ->
         self = @
         @on "btclick", (e)->
-            self.notify "this is a dummy notify"
-            _GUI.pushService "Budgy"
+            #_GUI.pushService "Budgy"
+            self.openDialog "CalendarDialog", (d) -> console.log d
         @on "resize", (w,h)->
             console.log "#{self.name}: resize"
         #@on "listselect", (i)->
@@ -15,6 +15,8 @@ class DummyApp extends this.OS.GUI.BaseApplication
             console.log self.name,i
         @on "focus", ()->
             console.log self.name, "is focused"
+        @on "dayselect", (e) -> console.log "cellselected", e
+        @on "gridselect", (e) -> console.log "GRID selected", e
         tree = @find "mytree"
         
         @scheme.set "apptitle", "Terminal"

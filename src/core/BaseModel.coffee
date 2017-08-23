@@ -1,24 +1,21 @@
-self = this
-_PM = self.OS.PM
-_APP = self.OS.APP
-_MAIL = self.OS.courrier
-_GUI  = self.OS.GUI
 class BaseModel
     constructor: (@name) ->
         @observable = riot.observable()
         @_api = self.OS.API
         me = @
         @on "exit", () -> me.quit()
-        @parent = "#desktop"
+        @host = "#desktop"
+        @dialog = undefined
 
     render: (p) ->
-        _GUI.loadScheme p, @, @parent
+        _GUI.loadScheme p, @, @host
 
     quit: () ->
         evt = new _GUI.BaseEvent("exit")
         @onexit(evt)
         if not evt.prevent
             delete @.observable
+            @dialog.quit() if @dialog
             _PM.kill @
 
     init: ->
@@ -29,11 +26,23 @@ class BaseModel
 
     trigger: (e, d) -> @observable.trigger e, d
 
-    subscribe: (e, f) -> _MAIL.on e, f, @
+    subscribe: (e, f) -> _courrier.on e, f, @
+
+    openDialog: (d, f) ->
+        if @dialog
+            @dialog.show()
+            return
+        if not _GUI.dialog[d]
+            @error "Dialog #{d} not found"
+            return
+        @dialog = new _GUI.dialog[d]()
+        @dialog.parent = @
+        @dialog.handler = f
+        @dialog.pid = @pid
 
     publish: (t, m) ->
         mt = @meta()
-        _MAIL.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass } }
+        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass } }
 
     notify: (m) ->
         @publish "notification", m

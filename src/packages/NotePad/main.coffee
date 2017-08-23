@@ -37,7 +37,6 @@ class NotePad extends this.OS.GUI.BaseApplication
             mode: m.theme,
             selected: if m.theme is "ace/theme/monokai" then true else false
         } for k, m of themes.themesByName
-        console.log themes.themesByName
         themelist.set "items", ldata
         themelist.set "onlistselect", (e) ->
             me.editor.setTheme e.data.mode
@@ -49,7 +48,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             l = me.editor.session.getLength()
             $(stat).html "Row #{c.row}, col #{c.column}, lines: #{l}"
         stup(0)
-        @.editor.getSession().selection.on "changeCursor", (e)->stup(e)
+        @.editor.getSession().selection.on "changeCursor", (e) -> stup(e)
 
         @on "resize", () -> me.editor.resize()
         @on "focus", () -> me.editor.focus()
@@ -64,4 +63,4 @@ class NotePad extends this.OS.GUI.BaseApplication
             }]
         menu
 NotePad.singleton = false
-this.OS.register "NotePad",NotePad
+this.OS.register "NotePad", NotePad
