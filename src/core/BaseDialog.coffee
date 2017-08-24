@@ -44,13 +44,14 @@ class BasicDialog extends BaseDialog
                 <afx-hbox>"
         html += "<#{@conf.tag} data-id = 'content'></#{@conf.tag}>"
         html += "<div data-height = '40' style='padding:5px; text-align:right;'>"
-        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:5px;'></afx-button>" for k,v of @conf.buttons
+        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:3px;'></afx-button>" for k,v of @conf.buttons
         html += "</div></afx-hbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     
     main: () ->
         @scheme.set "minimizable", false
+        @scheme.set "resizable", @conf.resizable if @conf.resizable isnt undefined
         me = @
         f = (_v) -> () -> _v.onclick me
         # bind action to button
@@ -64,6 +65,7 @@ class CalendarDialog extends BasicDialog
             tag: 'afx-calendar-view',
             width: 300,
             height: 220,
+            resizable: false,
             buttons: [
                 {
                     label: 'Ok',
@@ -83,3 +85,28 @@ class CalendarDialog extends BasicDialog
         }
 this.OS.register "CalendarDialog", CalendarDialog
 
+class ColorPickerDialog extends BasicDialog
+    constructor: () ->
+        super "ColorPickerDialog", {
+            tag: 'afx-color-picker',
+            width: 313,
+            height: 220,
+            resizable: false,
+            buttons: [
+                {
+                    label: 'Ok',
+                    onclick: (d) ->
+                        c = (d.find "content").get "selectedColor"
+                        if c
+                            d.handler c if d.handler
+                            d.quit()
+                        else
+                            d.notify "Please select a color"
+                },
+                {
+                    label: 'Cancel',
+                    onclick: (d) -> d.quit()
+                }
+            ]
+        }
+this.OS.register "ColorPickerDialog", ColorPickerDialog

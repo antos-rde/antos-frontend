@@ -41,3 +41,15 @@ html,body{
     cursor: default;
     padding:0px;
 }
+input {
+    outline: none;
+    padding: 2px;
+    height:23px;
+    border: 1px solid #a6a6a6;
+    background-color: white;
+    color: #414339;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: "Ubuntu";
+    font-size: 13px;
+}

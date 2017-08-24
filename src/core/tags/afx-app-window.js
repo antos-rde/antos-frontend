@@ -3,20 +3,20 @@
         <ul class= "afx-window-top" >
             <li class = "afx-window-close" onclick = {close}></li>
              <li if = {minimizable == true} class = "afx-window-minimize" onclick = {minimize}></li>
-             <li if = {maximizable == true} class = "afx-window-maximize" onclick={maximize}></li>
+             <li if = {resizable == true} class = "afx-window-maximize" onclick={maximize}></li>
              <li  ref = "dragger" class = "afx-window-title">{ apptitle }</li>
         </ul>
         <div class = "afx-clear"></div>
         <div ref = "content" class = "afx-window-content">
             <yield/>
         </div>
-        <div ref = "grip" class = "afx-window-grip">
+        <div if = {resizable == true} ref = "grip" class = "afx-window-grip">
     </div>
 
     <script>
         this.apptitle = opts.apptitle || ""
         this.minimizable = eval(opts.minimizable) || true
-        this.maximizable = eval(opts.maximizable) || true
+        this.resizable = eval(opts.resizable) || true
         var self = this
         var offset = {top:0,left:0}
         var desktop_pos = $("#desktop").offset()
@@ -147,6 +147,7 @@
 
         var enable_resize = function()
         {
+            if(!self.resizable) return
             $(self.refs.grip)
                 .css("user-select","none")
                 .css("cursor","default")
@@ -181,7 +182,7 @@
 
         var toggle_window = function()
         {
-            if(!self.maximizable) return;
+            if(!self.resizable) return
             if(isMaxi == false)
             {
                 history = {

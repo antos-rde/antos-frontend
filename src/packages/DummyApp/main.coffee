@@ -6,7 +6,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
         self = @
         @on "btclick", (e)->
             #_GUI.pushService "Budgy"
-            self.openDialog "CalendarDialog", (d) -> console.log d
+            self.openDialog "ColorPickerDialog", (d) -> console.log d
         @on "resize", (w,h)->
             console.log "#{self.name}: resize"
         #@on "listselect", (i)->

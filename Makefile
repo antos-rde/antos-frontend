@@ -19,7 +19,7 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = NotePad wTerm ActivityMonitor DummyApp
+packages = NotePad wTerm ActivityMonitor DummyApp Files
 services = PushNotification Spotlight Calendar
 
 main: clean build_coffees build_tags build_themes schemes libs build_services build_packages
