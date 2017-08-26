@@ -44,9 +44,9 @@ class Files extends this.OS.GUI.BaseApplication
                 text: "View",
                 child: [
                     { text: "Refresh", dataid: "#{@name}-refresh" },
-                    { text: "Sidebar", dataid: "#{@name}-side" },
-                    { text: "Navigation bar", dataid: "#{@name}-nav" },
-                    { text: "Hidden files", dataid: "#{@name}-hidden" },
+                    { text: "Sidebar", switch: true, dataid: "#{@name}-side" },
+                    { text: "Navigation bar", switch: true , dataid: "#{@name}-nav" },
+                    { text: "Hidden files", switch: true, dataid: "#{@name}-hidden" },
                     { text: "Type", child: [
                         { text: "Icon view", radio: true, dataid: "#{@name}-icon", type: 'icon' },
                         { text: "List view", radio:true, checked: true, dataid: "#{@name}-list", type: 'list' },

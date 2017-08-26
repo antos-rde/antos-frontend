@@ -26,6 +26,8 @@ afx-list-view  li{
     color: #414339;
     background-color: white;
     position: relative;
+    -webkit-user-select:none;
+    cursor:default;
 }
 afx-list-view li:nth-child(odd){
     background-color: #f5F5F5;
@@ -49,6 +51,7 @@ afx-list-view  i.closable:before{
 
 afx-list-view   li > i {
     margin-right: 3px;
+    
 }
 afx-list-view   li.selected {
     background-color: #116cd6;

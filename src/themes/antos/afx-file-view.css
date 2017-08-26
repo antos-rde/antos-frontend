@@ -107,3 +107,8 @@ afx-file-view afx-tree-view i.file:before{
     font-style: normal;
     font-weight: normal;
 }
+
+afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{
+    background-color: #116cd6;
+    color:white;
+}

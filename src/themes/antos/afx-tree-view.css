@@ -20,6 +20,8 @@ afx-tree-view li{
 afx-tree-view div{
     padding:3px;
     background-color: white;
+    -webkit-user-select:none;
+    cursor:default;
 }
 afx-tree-view i.icon-style {
     width: 16px;
