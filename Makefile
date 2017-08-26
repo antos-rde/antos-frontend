@@ -6,7 +6,7 @@ NC=\033[0m
 
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
-        	src/core/handlers/InBrowserHandler.coffee\
+        	src/core/handlers/TestHandler.coffee\
         	src/core/gui.coffee\
 			src/core/BaseModel.coffee\
 			src/core/BaseApplication.coffee\
@@ -30,7 +30,7 @@ lite: build_coffee build_tag build_theme schemes  build_services build_packages
 #		coffee --compile $< 
 
 build_coffees:
-	@echo "$(BLUE)=======Building coffee files=======$(NC)"
+	@echo "$(BLUE)Building coffee files$(NC)"
 	- mkdir $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
 	for f in $(coffees); do (cat "$${f}"; echo) >> $(BUILDDIR)/scripts/antos.coffee; done
@@ -39,16 +39,20 @@ build_coffees:
 
 
 libs:
-	@echo "$(BLUE)=======Copy lib files=======$(NC)"
+	@echo "$(BLUE)Copy lib files$(NC)"
 	cp -rf src/libs/* $(BUILDDIR)/scripts/
 
 schemes:
-	@echo "$(BLUE)=======Copy schemes files======= $(NC)"
+	@echo "$(BLUE)Copy schemes files$(NC)"
 	- mkdir -p $(BUILDDIR)/resources/schemes
 	cp src/core/schemes/* $(BUILDDIR)/resources/schemes/
-	
+
+testdata:
+	@echo "$(BLUE)Copy JSON test files$(NC)"
+	- mkdir -p $(BUILDDIR)/resources/jsons
+	cp src/core/handlers/jsons/* $(BUILDDIR)/resources/jsons
 build_tags:
-	@echo "=======$(BLUE)Building tag files=======$(NC)"
+	@echo "$(BLUE)Building tag files$(NC)"
 	-mkdir $(BUILDDIR)/resources 
 	-rm $(BUILDDIR)/resources/antos_tags.js
 	for f in src/core/tags/*; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
@@ -57,7 +61,7 @@ build_themes: antos_themes_build
 
 
 antos_themes_build:
-	@echo "=======$(BLUE)Building themes name: antos=======$(NC)"
+	@echo "$(BLUE)Building themes name: antos$(NC)"
 	-rm -rf $(BUILDDIR)/resources/themes/antos/*
 	-mkdir -p $(BUILDDIR)/resources/themes/antos
 	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
@@ -67,7 +71,7 @@ antos_themes_build:
 
 
 build_services:
-	@echo "=======$(BLUE)Building services=======$(NC)"
+	@echo "$(BLUE)Building services$(NC)"
 	-mkdir -p $(BUILDDIR)/services
 	-rm -rf $(BUILDDIR)/services/*
 	for f in $(services); do (coffee -cs < "src/services/$$f.coffee" >$(BUILDDIR)/services/"$$f.js");done

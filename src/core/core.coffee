@@ -8,6 +8,7 @@ self.OS or=
 
     courrier:
         observable: riot.observable()
+        quota: 0
         listeners: new Object
         on: (e, f, a) ->
             _courrier.listeners[a.pid] = [] unless _courrier.listeners[a.pid]
@@ -19,6 +20,9 @@ self.OS or=
             _courrier.observable.off i.e, i.f for i in _courrier.listeners[app.pid]
             delete _courrier.listeners[app.pid]
             _courrier.listeners[app.pid] = []
+        getMID: () -> 
+            _courrier.quota += 1
+            _courrier.quota
     register: (name, x) ->
         if x.type is 3 then self.OS.GUI.dialog[name] = x else _APP[name] = x
     

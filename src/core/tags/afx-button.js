@@ -1,13 +1,12 @@
 <afx-button>
     <button disabled={ enable == "false" } onclick="{ _onbtclick }"  > 
-        <i if={iconclass} class = {iconclass} ></i>
-        <i if={icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-        { opts.text }
+        <afx-label icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
     </button>
     <script>
         this.enable = opts.enable
         this.icon = opts.icon
         this.iconclass = opts.iconclass
+        this.text = opts.text || ""
         var self = this
         this.onbtclick = opts.onbtclick
         self.root.set = function(k,v)

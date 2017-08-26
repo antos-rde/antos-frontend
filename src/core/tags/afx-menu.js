@@ -3,9 +3,7 @@
         <li class="afx-corner-fix"></li>
         <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null, fix_padding:data.icon} no-reorder>
             <a href="#" onclick = {parent.onselect}>
-                <i if={data.iconclass} class = {data.iconclass} ></i>
-                <i if={data.icon} class="icon-style" style = { "background: url("+data.icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-                { data.text }
+                <afx-label iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
             </a>
             
             <afx-menu  if={data.child != null} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
@@ -126,7 +124,7 @@
 
         onselect(event)
         {
-            var data = {id:self.rid, root:isRoot, e:event}
+            var data = {id:self.rid, root:isRoot, e:event, item:event.item}
             this.root.observable.trigger('menuselect',data)
             if( this.onmenuselect && !isRoot)  this.onmenuselect(data)
             event.preventDefault()

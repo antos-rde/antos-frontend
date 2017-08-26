@@ -1,0 +1,324 @@
+{
+    "result": [
+        {
+            "permissions": " (755)",
+            "type": "dir",
+            "mtime": "2017-07-23T22:53:10",
+            "size": 102,
+            "path": "home:////.desktop",
+            "ctime": "2017-07-23T22:53:10",
+            "filename": ".desktop",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": true
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                }
+            },
+            "mime": "",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2017-07-23T22:51:57",
+            "size": 6148,
+            "path": "home:////.DS_Store",
+            "ctime": "2017-07-23T22:51:57",
+            "filename": ".DS_Store",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "application/octet-stream",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (755)",
+            "type": "dir",
+            "mtime": "2017-07-23T21:45:59",
+            "size": 68,
+            "path": "home:////.packages",
+            "ctime": "2017-07-23T21:45:59",
+            "filename": ".packages",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": true
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                }
+            },
+            "mime": "",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2017-07-30T00:55:34",
+            "size": 2821,
+            "path": "home:////.settings.json",
+            "ctime": "2017-07-30T00:55:34",
+            "filename": ".settings.json",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "application/json",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2017-07-11T20:30:51",
+            "size": 575,
+            "path": "home:////helloworld.xml",
+            "ctime": "2017-07-11T20:30:51",
+            "filename": "helloworld.xml",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "application/xml",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2017-05-15T14:47:59",
+            "size": 4420074,
+            "path": "home:////Last Reunion - Peter Roe.mp3",
+            "ctime": "2017-07-11T21:27:28",
+            "filename": "Last Reunion - Peter Roe.mp3",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "audio/mpeg",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2016-05-07T15:45:47",
+            "size": 3409596,
+            "path": "home:////Nobody Home.mp3",
+            "ctime": "2017-07-11T21:33:26",
+            "filename": "Nobody Home.mp3",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "audio/mpeg",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2014-03-28T18:15:53",
+            "size": 1953,
+            "path": "home:////opencvcurl.cpp",
+            "ctime": "2017-07-23T13:39:31",
+            "filename": "opencvcurl.cpp",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "text/cpp",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (755)",
+            "type": "dir",
+            "mtime": "2017-07-11T20:27:40",
+            "size": 68,
+            "path": "home:////Public",
+            "ctime": "2017-07-11T20:27:40",
+            "filename": "Public",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": true
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": true
+                }
+            },
+            "mime": "",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2017-07-11T20:31:04",
+            "size": 69,
+            "path": "home:////test.lua",
+            "ctime": "2017-07-11T20:31:04",
+            "filename": "test.lua",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "text/lua",
+            "uid": 501,
+            "gid": 20
+        },
+        {
+            "permissions": " (644)",
+            "type": "file",
+            "mtime": "2016-08-01T14:54:34",
+            "size": 3974373,
+            "path": "home:////The sound of silence.mp3",
+            "ctime": "2017-07-11T20:29:04",
+            "filename": "The sound of silence.mp3",
+            "perm": {
+                "owner": {
+                    "write": true,
+                    "read": true,
+                    "exec": false
+                },
+                "group": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                },
+                "other": {
+                    "write": false,
+                    "read": true,
+                    "exec": false
+                }
+            },
+            "mime": "audio/mpeg",
+            "uid": 501,
+            "gid": 20
+        }
+    ],
+    "error": false
+}

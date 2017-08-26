@@ -17,13 +17,12 @@ self.OS.GUI =
         (x) ->
             return null unless x
             _GUI.htmlToScheme x, app, parent
-        , (f) ->
+        , (e, s) ->
             _courrier.trigger "fail",
                     {id: 0, data: {
                         m: "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})",e: e, s: s },
                     name:"OS"
                     }
-            alert "cannot load scheme"
 
     loadTheme: (name) ->
         path = "resources/themes/#{name}/#{name}.css"
@@ -40,10 +39,10 @@ self.OS.GUI =
     pushService: (srv) ->
         return _PM.createProcess srv, _APP[srv] if _APP[srv]
         path = "services/#{srv}.js"
-        $.getScript path
-            .done (e, s) ->
+        _API.script path,
+            (d) ->
                 _PM.createProcess srv, _APP[srv]
-            .fail (e, s) ->
+            , (e, s) ->
                 _courrier.trigger "srvroutineready", srv
                 _courrier.trigger "fail",
                     { id:0,data:{m: "Cannot read service script: #{srv} ", e: e, s: s },
@@ -53,12 +52,14 @@ self.OS.GUI =
         if not _APP[app]
             # first load it
             path = "packages/#{app}/"
-            $.getScript path + "main.js"
-                .done (e, s) ->
+            _API.script path + "main.js",
+                (d) ->
                     #load css file
-                    $.get "#{path}main.css", () ->
-                        $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{path}main.css" }
-                            .appendTo 'head'
+                    _API.get "#{path}main.css",
+                        () ->
+                            $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{path}main.css" }
+                                .appendTo 'head'
+                        , () ->
                     #launch
                     if _APP[app]
                         # load app meta data
@@ -66,12 +67,11 @@ self.OS.GUI =
                             (data) ->
                                 _APP[app].meta = data
                                 _PM.createProcess app, _APP[app]
-                                console.log "Fist time loading " + app
                             , (e, s) ->
                                 _courrier.trigger "fail",
                                     {id:0, data:{ m: "Cannot read application metadata: #{app} ",e: e, s: s }, name:"OS"}
                                 alert "cannot read application, meta-data"
-                .fail (e,s) ->
+                , (e, s) ->
                     #BUG report here
                     _courrier.trigger "fail",
                         {id :0, data:{m: "Cannot load application script: #{app}", 
@@ -81,23 +81,24 @@ self.OS.GUI =
             # now launch it
             if _APP[app]
                 _PM.createProcess app, _APP[app]
-    dock: (app,meta) ->
+    dock: (app, meta) ->
         # dock an application to a dock
         # create a data object
         data =
             icon: null
             iconclass: meta.iconclass || ""
-            app:app
-            onbtclick: () ->
-                app.toggle()
+            app: app
+            onbtclick: () -> app.toggle()
         data.icon = "packages/#{meta.app}/#{meta.icon}" if meta.icon
+        # TODO: add default app icon class in system setting
+        # so that it can be themed
         data.iconclass = "fa fa-cogs" if (not meta.icon) and (not meta.iconclass)
         dock = $ "#sysdock"
-        dock.get(0).newapp data
-        app.sysdock = dock.get(0)
-        app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
+        app.one "rendered", () ->
+            dock.get(0).newapp data
+            app.sysdock = dock.get(0)
+            app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
         app.init()
-        #app.show() -- notwork, sice the scheme is not loaded yet
 
     undock: (app) ->
         ($ "#sysdock").get(0).removeapp app
@@ -112,7 +113,6 @@ self.OS.GUI =
             if e.contextmenuHandler
                 e.contextmenuHandler event, ($ "#contextmenu")[0]
             else
-                #console.log ($ "#workspace").get(0), ($ e).parent().get(0)
                 p = $(e).parent().get(0)
                 handler p if p isnt ($ "#workspace").get(0)
         handler event.target

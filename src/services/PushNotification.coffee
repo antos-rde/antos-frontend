@@ -1,33 +1,55 @@
 class PushNotification extends this.OS.GUI.BaseService
     constructor: () ->
         super "PushNotification"
-        @iconclass = "fa fa-commenting"
+        @iconclass = "fa fa-bars"
         @onmenuselect = (e) -> console.log e
         @cb = undefined
-        
+        @pending = []
     init: ->
         @view = false
         path = "resources/schemes/notifications.html"
         @render path
+
+    spin: (b) ->
+        if b and @iconclass is "fa fa-bars"
+            @iconclass = "fa fa-spinner fa-spin"
+            @update()
+        else if not b and @iconclass is "fa fa-spinner fa-spin"
+            @iconclass = "fa fa-bars"
+            @update()
 
     main: ->
         me = @
         @mlist = @find "notifylist"
         @mfeed = @find "notifeed"
         @nzone = @find "notifyzone"
+        @fzone = @find "feedzone"
         (@find "btclear").set "onbtclick", (e) -> me.mlist.set "items", []
         #mlist.set "onlistselect", (e) -> console.log e
         @subscribe "notification", (o) -> me.pushout 'INFO', o
         @subscribe "fail", (o) -> me.pushout 'FAIL', o
         @subscribe "error", (o) -> me.pushout 'ERROR', o
+        
+        @subscribe "loading", (o) ->
+            me.pending.push o.id
+            me.spin true
 
+        @subscribe "loaded", (o) ->
+            i = me.pending.indexOf o.id
+            me.pending.splice i, 1 if i >= 0
+            me.spin false if me.pending.length is 0
+            
         ($ @nzone).css "right", 0
             .css "top", "-3px"
             .css "height", ""
             .css "bottom", "0"
+            .css "z-index", 1000000
             .hide()
-        ($ @mfeed).css "right", "5px"
-            .css "top", "0"
+        ($ @fzone)
+            #.css("z-index", 99999)
+            .css("bottom", "0")
+            .css("height", "")
+            .hide()
 
     pushout: (s, o, mfeed) ->
         d = {
@@ -35,19 +57,13 @@ class PushNotification extends this.OS.GUI.BaseService
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             closable: true }
-        d1 = {
-            header: "#{o.name} (#{o.id})"
-            text: "#{s}: #{o.data.m}",
-            icon: o.data.icon,
-            iconclass: o.data.iconclass,
-            closable: true }
-        @mlist.push d, true
-        @notifeed d1
+        @mlist.unshift d, true
+        @notifeed d
 
     notifeed: (d) ->
         me = @
-        @mfeed.push d, true
-        ($ @mfeed).show()
+        @mfeed.unshift d, true
+        ($ @fzone).show()
         timer = setTimeout () ->
                 me.mfeed.remove d, true
                 clearTimeout timer
@@ -59,7 +75,7 @@ class PushNotification extends this.OS.GUI.BaseService
         me = @
         if not @cb
             @cb = (e) ->
-                return if e.originalEvent.item and e.originalEvent.item.closable
+                return if e.originalEvent.item and e.originalEvent.item.i isnt undefined
                 if not ($ e.target).closest($ me.nzone).length and not ($ e.target).closest($ me.holder.root).length
                     ($ me.nzone).hide()
                     $(document).unbind "click", me.cb

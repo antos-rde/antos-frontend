@@ -15,12 +15,6 @@ afx-menu ul{
     padding:0;
     margin: 0;
 }
-afx-menu i.icon-style {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    float:left;
-}
 
 
 afx-menu afx-menu ul {

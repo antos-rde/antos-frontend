@@ -1,6 +1,6 @@
 <afx-calendar-view>
     <div><i class ="prevmonth" onclick={prevmonth}></i>{text}<i onclick={nextmonth} class="nextmonth"></i></div>
-    <afx-grid-view data-id ={"grid_" + rid}  style = "height:100%;" ref = "grid"  header = {header} observable = {root.observable}> </afx-grid-view>
+    <afx-grid-view data-id ={"grid_" + rid}  style = "height:100%;" ref = "grid"  header = {header}> </afx-grid-view>
 
     <script >
     this.header = [{value:"Sun"},{value:"Mon"},{value:"Tue"},{value:"Wed"},{value:"Thu"},{value:"Fri"},{value:"Sat"}]

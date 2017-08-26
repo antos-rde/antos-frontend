@@ -12,9 +12,9 @@ class Calendar extends this.OS.GUI.BaseService
             me.text = "#{now.getDate()}/#{(now.getMonth()+1)}/#{now.getFullYear()} " +
                     "#{now.getHours()}:#{now.getMinutes()}:#{now.getSeconds()}"
             me.update()
-       
+
     awake: (e) ->
-        @.openDialog "CalendarDialog", (d) -> 
+        @.openDialog "CalendarDialog", (d) ->  console.log d
         # do nothing
     cleanup: (evt) ->
         console.log "cleanup for quit"

@@ -1,22 +1,56 @@
-self.OS.API = 
+self.OS.API =
     # the handler object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
     # handlers are defined in /src/handlers
-    handler: new Object()
-
+    handler: {}
+    VFS:
+        scandir: (p, c, f) ->
+            _API.handler.request "scandir", { path: p }, c, f
     #request a user data
-    request: (query, callback) ->
-        # definition here
-        handle.request query, callback
+    post: (p, d, c, f) ->
+        q = _courrier.getMID()
+        _API.loading q, p
+        $.ajax {
+            type: "POST",
+            url: p,
+            data: d,
+            success: null,
+            dataType: 'json'
+        }
+        .done (data) ->
+            _API.loaded q, p, "OK"
+            c(data)
+        .fail (e, s) ->
+            _API.loaded q, p, "FAIL"
+            f(e, s)
 
     systemConfig: ->
         _API.request 'config', (result) ->
             console.log  result
-    
+    loading: (q, p) ->
+        _courrier.trigger "loading", { id: q, data: { m: "#{p}", s: true }, name: "OS" }
+    loaded: (q, p, m ) ->
+        _courrier.trigger "loaded", { id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
     get: (p, c, f) ->
+        q = _courrier.getMID()
+        _API.loading q, p
         $.get p
-            .done (data) -> c(data)
-            .fail -> f()
+            .done (data) ->
+                _API.loaded q, p, "OK"
+                c(data)
+            .fail (e, s) ->
+                _API.loaded q, p, "FAIL"
+                f(e, s)
+    script: (p, c, f) ->
+        q = _courrier.getMID()
+        _API.loading q, p
+        $.getScript p
+            .done (data) ->
+                _API.loaded q, p, "OK"
+                c(data)
+            .fail (e, s) ->
+                _API.loaded q, p, "FAIL"
+                f(e, s)
     resource: (resource, callback) ->
         path = "resources/#{resource}"
         _API.get path, callback

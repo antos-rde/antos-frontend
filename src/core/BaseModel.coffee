@@ -22,6 +22,7 @@ class BaseModel
         #implement by sub class
     onexit: (e) ->
         #implement by subclass
+    one: (e, f) -> @observable.one e, f
     on: (e, f) -> @observable.on e, f
 
     trigger: (e, d) -> @observable.trigger e, d
@@ -39,6 +40,7 @@ class BaseModel
         @dialog.parent = @
         @dialog.handler = f
         @dialog.pid = @pid
+        @dialog.init()
 
     publish: (t, m) ->
         mt = @meta()

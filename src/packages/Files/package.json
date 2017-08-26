@@ -2,11 +2,12 @@
     "app":"Files",
     "name":"Files manager",
     "description":"System files manager",
-    "author":{
-        "name": "Xuan Sang LE",
+    "info":{
+        "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
+    "version":"0.1a",
     "category":"System",
-    "iconclass":"fa fa-archive",
+    "iconclass":"fa fa-hdd-o",
     "mimes":["*"]
 }

@@ -12,6 +12,8 @@ class BaseDialog extends this.OS.GUI.BaseModel
             @parent.dialog = undefined if @parent
             ($ @scheme).remove() if @scheme
             @dialog.quit() if @dialog
+    init: () ->
+    main: () ->
     meta: () ->
         @parent.meta()
     show: () ->
@@ -40,7 +42,9 @@ this.OS.GUI.BaseDialog = BaseDialog
 class BasicDialog extends BaseDialog
     constructor: ( name, @conf ) ->
         super name
-        html = "<afx-app-window  data-id = 'dia-window' apptitle='#{name}' width='#{@conf.width}' height='#{@conf.height}'>
+    
+    init: () ->
+        html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@name}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-hbox>"
         html += "<#{@conf.tag} data-id = 'content'></#{@conf.tag}>"
         html += "<div data-height = '40' style='padding:5px; text-align:right;'>"
@@ -110,3 +114,23 @@ class ColorPickerDialog extends BasicDialog
             ]
         }
 this.OS.register "ColorPickerDialog", ColorPickerDialog
+
+class AboutDialog extends BaseDialog
+    constructor: () ->
+        super "AboutDialog"
+
+    init: () ->
+        @render "resources/schemes/about.html"
+
+    main: () ->
+        mt = @meta()
+        @scheme.set "apptitle", "About: #{mt.name}"
+        (@find "mylabel").set "*", {icon:mt.icon, iconclass:mt.iconclass, text:"#{mt.name}(v#{mt.version})"}
+        ($ @find "mydesc").html mt.description
+        # grid data for author info
+        return unless mt.info
+        rows = []
+        rows.push [ { value: k }, { value: v } ] for k, v of mt.info
+        (@find "mygrid").set "rows", rows
+        
+this.OS.register "AboutDialog", AboutDialog

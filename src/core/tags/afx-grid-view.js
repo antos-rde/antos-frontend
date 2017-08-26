@@ -1,5 +1,5 @@
 <afx-grid-view>
-    <afx-grid-row ref="gridhead" rootid = {rid} observable = {root.observable} header="true" class = {grid_row_header:header} if = {header} cols = {header}> </afx-grid-row>
+    <afx-grid-row ref="gridhead" rootid = {rid} observable = {root.observable}  header="true" class = {grid_row_header:header} if = {header} cols = {header}> </afx-grid-row>
     <div ref = "scroller" style="width:100%; overflow:auto;">
         <div ref = "container">
             <afx-grid-row each={ child, i in rows } class = {selected: child.selected}  rootid = {parent.rid} observable = {parent.root.observable} index = {i}  cols = {child}  onclick = {parent._select} head = {parent.refs.gridhead} ></afx-grid-row>
@@ -12,6 +12,8 @@
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.selidx = -1
         self.nrow = 0
+        self.ongridselect = opts.ongridselect
+        self.root.observable = opts.observable 
         self.root.set = function(k,v)
         {
             if(k == "selected")
@@ -43,16 +45,16 @@
             return self[k]
         }
 
-        this.root.observable = opts.observable || riot.observable()
-
         this.on("mount", function(){
+            if(self.refs.gridhead)
+                self.refs.gridhead.observable = self.root.observable
             $(self.refs.container)
                 .css("display","table")
                 //.css("flex-direction","column")
                 .css("width","100%")
             self.calibrate_size()
 
-            this.root.observable.on("resize",function(){
+            self.root.observable.on("resize",function(){
                 self.calibrate_size()
             })
         })
@@ -68,13 +70,13 @@
             var data = {
                     id:self.rid, 
                     data:event.item}
-            if(opts.onlistselect)
-                opts.onlistselect(data)
+            if(self.ongridselect)
+                self.ongridselect(data)
             if(self.selidx != -1)
                 self.rows[self.selidx].selected =false
             self.selidx = event.item.i
             self.rows[self.selidx].selected = true
-            this.root.observable.trigger('gridselect',data)
+            self.root.observable.trigger('gridselect',data)
             event.preventUpdate = true
             self.update()
             //event.preventDefault()
@@ -85,18 +87,16 @@
 
 <afx-grid-row>
     <div style = {!header? "display: table-cell;" :""} onclick = {parent._cell_select}  each = { child,i in cols } class = {string:typeof child.value == "string", number: typeof child.value == "number", cellselected: parent._auto_cell_select(child,i)} >
-        <i if={child.iconclass} class = {child.iconclass} ></i>
-        <i if={child.icon} class="icon-style" style = { "background: url("+child.icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-        {child.value}
+        <afx-label icon = {child.icon} iconclass = {child.iconclass} text = {child.value} ></afx-label>
     </div>
     <script>
         this.cols = opts.cols || []
         var self = this
         this.rid = opts.rootid
         this.index = opts.index
-        this.header = opts.header||false
+        this.header = eval(opts.header)||false
         this.head = opts.head
-        this.selidx = -1;
+        this.selidx = -1
         self.observable = opts.observable
         this.colssize = []
         var update_header_size = function()
@@ -173,6 +173,9 @@
                     self.cols[self.selidx].selected = false
                     self.selidx = -1
                 }
+            })
+            self.observable.on("resize",function(){
+                self.update()
             })
         })
         _cell_select(event)

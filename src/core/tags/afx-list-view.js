@@ -4,19 +4,18 @@
     </div>
     <ul  ref = "mlist">
         <li each={item,i in items } class={selected: parent._autoselect(item,i)}  onclick = {parent._select}>
-            <i if={item.iconclass} class = {item.iconclass} ></i>
-            <i if={item.icon} class="icon-style" style = { "background: url("+item.icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-            { item.text }
+            <afx-label iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
             <i if = {item.closable} class = "closable" click = {parent._remove}></i>
         </li>
     </ul>
     </div>
     <script>
-        this.items = opts.child || []
+        this.items = opts.items || []
         var self = this
         self.selidx = -1
         self.onlistselect = opts.onlistselect
         var onclose = false
+        this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.root.set = function(k,v)
         {
             if(k == "selected")
@@ -47,6 +46,22 @@
         {
             self.items.unshift(e)
             if(u) self.update()
+        }
+        self.root.remove = function(e,u)
+        {
+            var i = self.items.indexOf(e)
+            if(i >= 0)
+            {
+                if(self.selidx != -1)
+                {
+                    self.items[self.selidx].selected =false
+                    self.selidx = -1
+                }
+                self.items.splice(i, 1)
+                if(u)
+                    self.update()
+                onclose = true
+            }
         }
         if(opts.observable)
             this.root.observable = opts.observable
@@ -89,20 +104,13 @@
         }
         _remove(event)
         {
-            if(self.selidx != -1)
-            {
-                self.items[self.selidx].selected =false
-                self.selidx = -1
-            }
-            self.items.splice(self.items.indexOf(event.item),1)
-            self.update()
-            onclose = true
+            self.root.remove(event.item.item, true)
         }
         _autoselect(it,i)
         {
             if(!it.selected || it.selected == false) return false
             var data = {
-                    id:$(self.root).attr("data-id"), 
+                    id:self.rid, 
                     data:it, 
                     idx:i}
             //if(self.selidx != -1)

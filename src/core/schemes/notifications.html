@@ -29,16 +29,30 @@
             }
         </style>
     </afx-overlay>
-    <afx-feed data-id = "notifeed"  style = "display: none;">
-        <!--afx-button text = "click me"></afx-button-->
+    <afx-overlay data-id = "feedzone" width = "250">
+        <afx-list-view data-id = "notifeed">
+        </afx-list-view>
         <style>
-            afx-feed[data-id = "notifeed"]{
-                position: absolute;
-                width: 250px;
+            afx-overlay[data-id = "feedzone"]{
+                overflow: hidden;
+                background-color:transparent;
+                right:5px;
+                margin: 0;
+                padding:0;
+                top:0;
             }
-            afx-feed[data-id = "notifeed"] > div{
+            afx-list-view[data-id = "notifeed"]
+            {
+                padding:0;
+                margin:0;
+            }
+            afx-list-view[data-id = "notifeed"] li{
                 box-shadow: 1px 1px 1px #9f9F9F;
+                border:1px solid #a6a6a6;
+                border-radius: 6px;
+                margin-bottom: 2px;
+                z-index: 99999;
             }
         </style>
-    </afx-feed>
+    </afx-overlay>
 </afx-dummy>

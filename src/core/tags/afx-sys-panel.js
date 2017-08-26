@@ -14,7 +14,8 @@
                             {text:"wTerm",type:"app"},
                             {text:"NotePad",type:"app", iconclass:"fa fa-commenting"},
                             {text:"ActivityMonitor",type:"app"},
-                            {text:"DummyApp",type:"app"}
+                            {text:"DummyApp",type:"app"},
+                            {text:"Files",type:"app"}
                         ],
                         onmenuselect: function(d)
                         {

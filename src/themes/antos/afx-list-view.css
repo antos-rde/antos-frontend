@@ -1,6 +1,7 @@
 afx-list-view{
     overflow:auto;
     padding: 5px;
+    display: block;
 }
 /*
 afx-list-view div.list-container{
@@ -28,12 +29,6 @@ afx-list-view  li{
 }
 afx-list-view li:nth-child(odd){
     background-color: #f5F5F5;
-}
-afx-list-view  i.icon-style {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    float:left;
 }
 afx-list-view  i.closable{
     width: 16px;

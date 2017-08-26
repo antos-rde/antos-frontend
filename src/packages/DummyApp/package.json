@@ -2,10 +2,13 @@
     "app":"DummyApp",
     "name":"DummyApp",
     "description":"App for test",
-    "author":{
-        "name": "Xuan Sang LE",
-        "email": "xsang.le@gmail.com"
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "credit": "dedicated to some one here",
+        "licences": "MIT"
     },
+    "version":"0.1a",
     "category":"System",
     "iconclass":"fa fa-user-circle-o",
     "mimes":["*"]

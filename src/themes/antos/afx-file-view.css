@@ -1,0 +1,87 @@
+afx-file-view {
+    position: relative;
+}
+afx-file-view div.status{
+    position: absolute;
+    bottom: 0px;
+    left:0px;
+    padding:3px;
+    right: 0px;
+    height: 15px;
+    background-color: #dfdfdf;
+    border-top: 1px solid #a6A6a6;
+}
+afx-file-view afx-list-view li{
+    float:left;
+    display: block;
+    width:70px;
+    height: 60px;
+    background-color: transparent;
+    text-align: center;
+    padding:3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+afx-file-view afx-list-view li:nth-child(odd){
+    background-color: transparent;
+}
+afx-file-view afx-list-view i.afx-dir:before{
+    content: "\f07b"; 
+    font-family: "FontAwesome";
+    font-size: 32px;
+    color: #414339;
+    font-weight: normal;
+    font-style: normal;
+}
+afx-file-view afx-list-view i{
+    width: 32px;
+    height: 32px;
+    display: block;
+    margin-left: 19px;
+}
+
+
+afx-file-view afx-list-view i.afx-file:before{
+    content: "\f016"; 
+    font-family: "FontAwesome";
+    font-size: 28px;
+    color: #414339;
+    font-style: normal;
+    font-weight: normal;
+}
+
+afx-file-view afx-list-view  li.selected, afx-file-view afx-list-view  li.selected  i:before {
+    background-color: #116cd6;
+    color:white;
+    border-radius: 6px;
+}
+
+afx-file-view afx-grid-view i.afx-file:before{
+    content: "\f016"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    color: #414339;
+    font-style: normal;
+    font-weight: normal;
+}
+afx-file-view afx-grid-view i.afx-dir:before{
+    content: "\f07b"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    color: #414339;
+    font-style: normal;
+    font-weight: normal;
+}
+afx-file-view afx-grid-view i{
+    display: inline-block;
+    margin-right: 5px;
+}
+afx-file-view afx-grid-view afx-grid-row.selected i:before{
+    color:white;
+}
+afx-file-view afx-grid-view afx-grid-row.grid_row_header{
+    background-color: #dfdfdf;
+}
+afx-file-view afx-grid-view afx-grid-row.grid_row_header div{
+    border: 1px solid #a6a6a6;
+}

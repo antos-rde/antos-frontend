@@ -7,6 +7,9 @@ afx-grid-view afx-grid-row div{
     padding:3px;
     padding-left: 5px;
     padding-right: 5px;
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:default;
 }
 
 afx-grid-view afx-grid-row:nth-child(even){
@@ -15,13 +18,9 @@ afx-grid-view afx-grid-row:nth-child(even){
 
 afx-grid-view afx-grid-row.grid_row_header div{
     border-right: 2px solid #e5e5e5;
-}
-
-afx-grid-view afx-grid-row i.icon-style {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    float:left;
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:default;
 }
 afx-grid-view afx-grid-row.selected {
     background-color: #116cd6;

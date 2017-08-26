@@ -20,7 +20,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
             me.dialog.hide() if me.dialog
         @on "menuselect", (d) ->
             switch d.e.item.data.dataid
-                when "#{me.name}-about" then alert "About " + me.pid + me.name
+                when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
         #now load the scheme
         path = "packages/#{@name}/scheme.html"
