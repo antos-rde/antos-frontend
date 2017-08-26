@@ -4,16 +4,16 @@
         this.swon = opts.swon || false
         var self = this
         this.root.observable = opts.observable
+        this.enable = opts.enable || true
         this.onchange = opts.onchange
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
-        console.log(this.swon)
         self.root.set = function(k,v)
         {
             if(k == "*")
                 for(var i in v)
-                    self[i] = v[i]
+                    opts[i] = v[i]
             else
-                self[k] = v
+                opts[k] = v
             self.update()
         }
         self.root.get = function(k)
@@ -22,16 +22,20 @@
         }
         this.root.toggle = function()
         {
-            self.swon = !self.swon
+            opts.swon = !self.swon
             self.update()
         }
-
+        this.on("update", function(e){
+            self.swon = opts.swon
+            self.onchange = opts.onchange
+        })
         toggle(e)
         {
-            self.swon = !self.swon
+            if(!self.enable) return
+            opts.swon = !self.swon
             var data = {
                 id: self.rid,
-                data: self.swon
+                data: opts.swon
             }
             if(self.onchange)
                 self.onchange(data)

@@ -11,8 +11,10 @@ class Files extends this.OS.GUI.BaseApplication
             m.show(e)
         @on "fileselect", (d) -> console.log d
         #load home directory
-        @_api.VFS.scandir 'home:///',
+        p = 'home:///'
+        @_api.VFS.scandir p,
             (d) ->
+                me.view.set "path", p
                 me.view.set "data", d.result
             , (e, s) ->
                 alert "cannot open dir"
@@ -46,9 +48,9 @@ class Files extends this.OS.GUI.BaseApplication
                     { text: "Navigation bar", dataid: "#{@name}-nav" },
                     { text: "Hidden files", dataid: "#{@name}-hidden" },
                     { text: "Type", child: [
-                        { text: "Icon view", dataid: "#{@name}-icon", type: 'icon' },
-                        { text: "List view", dataid: "#{@name}-list", type: 'list' },
-                        { text: "Tree view", dataid: "#{@name}-tree", type: 'tree' }
+                        { text: "Icon view", radio: true, dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "List view", radio:true, checked: true, dataid: "#{@name}-list", type: 'list' },
+                        { text: "Tree view", radio:true, dataid: "#{@name}-tree", type: 'tree' }
                      ], onmenuselect: (e) ->
                         me.view.set 'view', e.item.data.type
                     },

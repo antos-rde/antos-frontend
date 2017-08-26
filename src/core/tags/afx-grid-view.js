@@ -27,7 +27,7 @@
         }
         this.calibrate_size = function()
         {
-            if(self.header)
+            if(self.header && self.refs.gridhead)
             {
                 $(self.refs.scroller).css("height",
                     $(self.root).height() - $(self.refs.gridhead.root).children().first().height()
@@ -55,7 +55,8 @@
             self.calibrate_size()
 
             self.root.observable.on("resize",function(){
-                self.calibrate_size()
+                if(self.root)
+                    self.calibrate_size()
             })
         })
         this.on("updated",function(){

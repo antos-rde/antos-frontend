@@ -16,6 +16,12 @@ afx-menu ul{
     margin: 0;
 }
 
+afx-menu afx-switch span{
+    width: 20px;
+    height: 16px;
+    font-size: 16px;
+    /*margin-top:5px;*/
+}
 
 afx-menu afx-menu ul {
     padding: 0;

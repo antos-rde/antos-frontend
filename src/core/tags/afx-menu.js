@@ -3,6 +3,7 @@
         <li class="afx-corner-fix"></li>
         <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null, fix_padding:data.icon} no-reorder>
             <a href="#" onclick = {parent.onselect}>
+                <afx-switch if = {data.switch || data.radio} class = {checked:parent.checkItem(data)} enable = false swon = {data.checked} ></afx-switch>
                 <afx-label iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
             </a>
             
@@ -13,6 +14,7 @@
     <script>
         this.items = opts.child || []
         var isRoot
+        var lastChecked = undefined
         if(opts.rootid)
         {
             this.rid = opts.rootid
@@ -25,6 +27,17 @@
         }
         var self = this
         this.onmenuselect = opts.onmenuselect
+        checkItem(d)
+        {
+            if(d.checked == true && d.radio)
+            {
+                if(lastChecked)
+                    lastChecked.checked = false
+                lastChecked = d
+                lastChecked.checked = true
+            } 
+            return false
+        }
         self.root.set = function(k,v)
         {
             if(k == "*")
@@ -125,6 +138,18 @@
         onselect(event)
         {
             var data = {id:self.rid, root:isRoot, e:event, item:event.item}
+            if(event.item.data.switch)
+            {
+                event.item.data.checked = !event.item.data.checked
+            } else if(event.item.data.radio)
+            {
+                if(lastChecked)
+                {
+                    lastChecked.checked = false
+                }
+                event.item.data.checked = true   
+                lastChecked = event.item.data
+            }
             this.root.observable.trigger('menuselect',data)
             if( this.onmenuselect && !isRoot)  this.onmenuselect(data)
             event.preventDefault()

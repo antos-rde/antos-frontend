@@ -11,20 +11,24 @@
 
   <ul if={ isFolder() } show={ isFolder() && open }>
     <li each={ child, i in nodes }>
-      <afx-tree-view data={child} indent={indent+1} observable = {parent.root.observable} path = {parent.path + ">" + i} treeroot= {parent.treeroot}></afx-tree-view>
+      <afx-tree-view ontreeselect = {parent.ontreeselect} data={child} indent={indent+1} observable = {parent.root.observable} path = {parent.path + ">" + i} treeroot= {parent.treeroot}></afx-tree-view>
     </li>
   </ul>
 
     <script>
         var self = this
+        self.open = true
         if(opts.data)
         {
             self.name = opts.data.name
             self.nodes = opts.data.nodes
-            self.icon = opts.data.icon   
+            self.icon = opts.data.icon
+            self.open = opts.data.open == undefined?true:opts.data.open
+            self.iconclass = opts.data.iconclass  
         }
+        this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
+        self.ontreeselect = opts.ontreeselect
         self.indent = opts.indent || 1
-        self.open = true
         var istoggle = false
         if(opts.treeroot)
         {
@@ -66,7 +70,7 @@
         })
 
         isFolder() {
-            return self.nodes && self.nodes.length
+            return self.nodes //&& self.nodes.length
         }
 
         toggle(e) {
@@ -83,12 +87,12 @@
                 return
             }
             var data = {
-                id:$(self.treeroot.root).attr("data-id"), 
+                id:self.rid, 
                 data:event.item,
                 path:self.path
             } 
-            if(opts.ontreeselect)
-                opts.ontreeselect(data)
+            if(self.ontreeselect)
+                self.ontreeselect(data)
             self.treeroot.selectedItem = data
            this.root.observable.trigger('treeselect',data)
            event.preventUpdate = true

@@ -22,7 +22,7 @@
             {
                 if(self.selidx != -1)
                     self.items[self.selidx].selected =false
-                self.items[v].selected = true
+                if(self.items[v]) self.items[v].selected = true
             }
             else if(k == "*")
                 for(var i in v)
@@ -137,25 +137,6 @@
             if(self.selidx != -1)
                 self.items[self.selidx].selected =false
             event.item.item.selected = true
-            /*var data = {
-                    id:$(self.root).attr("data-id"), 
-                    data:event.item.item, 
-                    idx:event.item.i}
-            
-            self.selidx = data.idx
-            if(!self.items[self.selidx])
-                return 
-            
-            self.items[self.selidx].selected = true    
-            if(opts.dropdown  == "true")
-            {
-                $(self.refs.mlist).hide()
-                self.selectedText = self.items[self.selidx].text
-            }
-            
-            this.root.observable.trigger('listselect',data)
-            //event.preventDefault()*/
-
         }
     </script>
 </afx-list-view>

@@ -25,7 +25,7 @@ afx-file-view afx-list-view li{
 afx-file-view afx-list-view li:nth-child(odd){
     background-color: transparent;
 }
-afx-file-view afx-list-view i.afx-dir:before{
+afx-file-view afx-list-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 32px;
@@ -41,7 +41,7 @@ afx-file-view afx-list-view i{
 }
 
 
-afx-file-view afx-list-view i.afx-file:before{
+afx-file-view afx-list-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
     font-size: 28px;
@@ -56,7 +56,7 @@ afx-file-view afx-list-view  li.selected, afx-file-view afx-list-view  li.select
     border-radius: 6px;
 }
 
-afx-file-view afx-grid-view i.afx-file:before{
+afx-file-view afx-grid-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
     font-size: 16px;
@@ -64,7 +64,7 @@ afx-file-view afx-grid-view i.afx-file:before{
     font-style: normal;
     font-weight: normal;
 }
-afx-file-view afx-grid-view i.afx-dir:before{
+afx-file-view afx-grid-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 16px;
@@ -84,4 +84,26 @@ afx-file-view afx-grid-view afx-grid-row.grid_row_header{
 }
 afx-file-view afx-grid-view afx-grid-row.grid_row_header div{
     border: 1px solid #a6a6a6;
+}
+
+afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
+    content: "\f07b"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+}
+afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
+    content: "\f07c"; 
+    font-family: "FontAwesome";
+    font-size: 16px;   
+}
+afx-file-view afx-tree-view {
+    margin:0;
+}
+afx-file-view afx-tree-view i.file:before{
+    content: "\f016"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    color: #414339;
+    font-style: normal;
+    font-weight: normal;
 }

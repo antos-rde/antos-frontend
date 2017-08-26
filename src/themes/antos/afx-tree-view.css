@@ -2,6 +2,7 @@ afx-tree-view{
     color: #414339;
     padding:3px;
     overflow: auto;
+    display: block;
 }
 afx-tree-view afx-tree-view{
     padding:0;

@@ -22,7 +22,6 @@
         var desktop_pos = $("#desktop").offset()
         var isMaxi = false
         var history = {}
-        var isResize = opts.resize || true
         var width = opts.width || 400
         var height = opts.height || 300
         this.root.observable = opts.observable || riot.observable()
@@ -70,7 +69,7 @@
                 //self.root.observable.trigger("windowselect")
             })
             enable_dragging()
-            if(isResize)
+            if(self.resizable)
                 enable_resize()
             $(self.refs.dragger).dblclick(function(e){
                 toggle_window()

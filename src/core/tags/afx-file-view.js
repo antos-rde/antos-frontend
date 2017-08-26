@@ -1,15 +1,17 @@
 <afx-file-view>
-    <afx-list-view if = {view == 'icon'} ref="listview"  observable = {root.observable}></afx-list-view>
-    <afx-grid-view if = {view == 'list'} ref = "gridview" header = {header}  observable = {root.observable}></afx-grid-view>
-    <afx-tree-view if = {view == 'tree'} ref = "treeview" observable = {root.observable}></afx-tree-view>
+    <afx-list-view  ref="listview"  observable = {root.observable}></afx-list-view>
+    <afx-grid-view  ref = "gridview" header = {header}  observable = {root.observable}></afx-grid-view>
+    <afx-tree-view  ref = "treeview" observable = {root.observable}></afx-tree-view>
     <div if = {status == true} class = "status" ref = "stbar"></div>
     <script>
         var self = this
         self.root.observable = opts.observable || riot.observable()
         self.view = opts.view || 'list'
         self.data = opts.data || []
+        self.path = opts.path || "os://"
         self.onfileselect
         this.status = opts.status == undefined?true:opts.status
+        this.selectedFile = undefined
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         this.header = [{value:"File name"},{value: "Type", width:100}, {value: "Size", width:70}]
 
@@ -20,6 +22,8 @@
                     self[i] = v[i]
             else
                 self[k] = v
+            if(k == 'view')
+                switchView()
             self.update()
         }
         self.root.get = function(k)
@@ -35,67 +39,103 @@
             var h = $(self.root).height()
             if(self.refs.stbar)
                 h -= $(self.refs.stbar).height()
-            if(self.refs.listview)
-                $(self.refs.listview.root).css("height", h + "px")
-            else if(self.refs.gridview)
-                $(self.refs.gridview.root).css("height", h + "px")
-            else if(self.refs.treeview)
-                $(self.refs.treeview.root).css("height", h + "px")
+            $(self.refs.listview.root).css("height", h + "px")
+            $(self.refs.gridview.root).css("height", h + "px")
+            $(self.refs.treeview.root).css("height", h + "px")
         }
         var refreshList = function(){
             $.each(self.data, function(i, v){
                 v.text = v.filename
                 if(v.text.length > 10)
                     v.text = v.text.substring(0,9) + "..."
-                if(v.type == 'file')
-                    v.iconclass = 'afx-file'
-                else 
-                    v.iconclass = 'afx-dir'
+                v.iconclass = v.type
             })
             self.refs.listview.root.set("items", self.data)
         }
         var refreshGrid = function(){
             var rows = []
             $.each(self.data, function(i,v){
-                var row = [{value:v.filename, iconclass: v.type == "dir"?"afx-dir":"afx-file" },{value:v.mime},{value:v.size}]
+                var row = [{value:v.filename, iconclass: v.type},{value:v.mime},{value:v.size}]
                 rows.push(row)
             })
             self.refs.gridview.root.set("rows",rows)
         }
+        var refreshTree = function(){
+            var tdata = {}
+            tdata.name = self.path
+            tdata.nodes = []
+            $.each(self.data, function(i,v){
+                v.name = v.filename
+                if(v.type == 'dir')
+                {
+                    v.nodes = []
+                    v.open = false
+                }
+                v.iconclass = v.type
+                tdata.nodes.push(v)
+            })
+            self.refs.treeview.root.set("*", tdata)
+        }
         var refreshData = function(){
             self.data.sort(sortByType)
-            if(self.refs.listview)
+            if(self.view == "icon")
                 refreshList()
-            else if(self.refs.gridview)
+            else if(self.view == "list")
                 refreshGrid()
+            else 
+                refreshTree()
+        }
+        var switchView = function()
+        {
+            $(self.refs.listview.root).hide()
+            $(self.refs.gridview.root).hide()
+            $(self.refs.treeview.root).hide()
+            self.selectedFile = undefined
+            self.refs.listview.root.set("selected", -1)
+            self.refs.treeview.selectedItem = undefined
+            $(self.refs.stbar).html("")
+            switch (self.view) {
+                case 'icon':
+                    $(self.refs.listview.root).show()
+                    break;
+                case 'list':
+                    $(self.refs.gridview.root).show()
+                    break;
+                case 'tree':
+                    $(self.refs.treeview.root).show()
+                    break;
+                default:
+                    break;
+            }
+            calibre_size()
         }
         self.on("updated", function(){
             refreshData()
             calibre_size()
         })
         self.on("mount", function(){
-            if(self.refs.listview)
+            switchView()
+            self.refs.listview.onlistselect = function(data)
             {
-                self.refs.listview.onlistselect = function(data)
-                {
-                    data.id = self.rid
-                    self.root.observable.trigger("fileselect",data)
-                }
+                data.id = self.rid
+                self.root.observable.trigger("fileselect",data)
             }
-            if(self.refs.gridview)
+            self.refs.gridview.root.observable = self.root.observable
+            self.refs.gridview.ongridselect = function(d)
             {
-                self.refs.gridview.root.observable = self.root.observable
-                self.refs.gridview.ongridselect = function(d)
-                {
-                    var data = {id:self.rid, data:self.data[d.data.i], idx:d.data.i}
-                    self.root.observable.trigger("fileselect",data)
-                }
+                var data = {id:self.rid, data:self.data[d.data.i], idx:d.data.i}
+                self.root.observable.trigger("fileselect",data)
+            }
+            self.refs.treeview.ontreeselect = function(d)
+            {
+                var data = {id:self.rid, data:d.data.child, idx:d.data.i}
+                self.root.observable.trigger("fileselect",data)
             }
             self.root.observable.on("fileselect", function(e){
                 if(e.id != self.rid) return
+                self.selectedFile = e.data
                 $(self.refs.stbar).html("Selected: " + e.data.filename + " (" + e.data.size + " bytes)")
             })
-
             calibre_size()
             self.root.observable.on("resize", function(e){
                 calibre_size()

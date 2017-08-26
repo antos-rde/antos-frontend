@@ -8,8 +8,9 @@
     <script>
         this.osmenu = {child:[
                 {text:"",iconclass:"fa fa-eercast", child:[
-                    {text:"About"},
-                    {text:"System Preferences", iconclass:"fa fa-commenting"},
+                    {text:"About", radio:true},
+                    {text:"App Store", radio:true},
+                    {text:"System Preferences", switch:true, iconclass:"fa fa-commenting"},
                     {text:"Applications",child:[
                             {text:"wTerm",type:"app"},
                             {text:"NotePad",type:"app", iconclass:"fa fa-commenting"},
