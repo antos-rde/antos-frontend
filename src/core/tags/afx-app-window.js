@@ -77,7 +77,15 @@
             $(self.refs.content).children().each(function(e){
                 this.observable = self.root.observable
             })
-
+            var fn = function()
+            {
+                var ch = $(self.refs.content).height()/ $(self.refs.content).children().length
+                $(self.refs.content).children().each(function(e){
+                    $(this).css("height",ch+"px")
+                })
+            }
+            fn()
+            self.root.observable.on("resize", function(){ fn()})
             self.root.observable.on("focus",function(){
                 window._zindex++
                 $(self.refs.window)

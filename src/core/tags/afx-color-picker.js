@@ -56,6 +56,12 @@
         colorctx.fillRect(0, 0, colorctx.canvas.width, colorctx.canvas.height)
         //$(self.refs.palette).css("position", "absolute")
         // now add mouse move event
+        var getHex = function(c)
+        {
+            s = c.toString(16)
+            if(s.length == 1) s = "0" + s
+            return s
+        }
         var pick_color = function(e)
         {
             $(self.refs.palette).css("cursor","crosshair")
@@ -68,7 +74,7 @@
                 g:color.data[1],
                 b:color.data[2],
                 text:'rgb(' + color.data[0] + ', ' + color.data[1] + ', ' + color.data[2] + ')',
-                hex:'#' + color.data[0].toString(16) + color.data[1].toString(16) + color.data[2].toString(16)
+                hex:'#' + getHex(color.data[0]) + getHex(color.data[1]) + getHex(color.data[2])
             }
             return data
         }

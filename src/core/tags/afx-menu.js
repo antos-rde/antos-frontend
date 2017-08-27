@@ -4,7 +4,7 @@
         <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null, fix_padding:data.icon} no-reorder>
             <a href="#" onclick = {parent.onselect}>
                 <afx-switch if = {data.switch || data.radio} class = {checked:parent.checkItem(data)} enable = false swon = {data.checked} ></afx-switch>
-                <afx-label iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
+                <afx-label color = {data.color} iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
             </a>
             
             <afx-menu  if={data.child != null} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
@@ -22,7 +22,7 @@
         }
         else
         {
-            this.rid = $(this.root).attr("data-id")
+            this.rid = $(this.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
             isRoot = true
         }
         var self = this
@@ -94,7 +94,6 @@
         {
             this.root.observable = riot.observable()
             this.root.observable.on('menuselect',function(data){
-                //console.log("From root",self.root)
                 if(self.onmenuselect)
                     self.onmenuselect(data)
 

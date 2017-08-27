@@ -18,11 +18,11 @@ self.OS.GUI =
             return null unless x
             _GUI.htmlToScheme x, app, parent
         , (e, s) ->
-            _courrier.trigger "fail",
-                    {id: 0, data: {
-                        m: "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})",e: e, s: s },
-                    name:"OS"
-                    }
+            _courrier.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})",e,s
+
+    clearTheme: () ->
+         $ "head link#ostheme"
+            .attr "href", ""
 
     loadTheme: (name) ->
         path = "resources/themes/#{name}/#{name}.css"
@@ -37,19 +37,23 @@ self.OS.GUI =
         f i for i in srvs
 
     pushService: (srv) ->
-        return _PM.createProcess srv, _APP[srv] if _APP[srv]
+        return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
         path = "services/#{srv}.js"
         _API.script path,
             (d) ->
-                _PM.createProcess srv, _APP[srv]
+                _PM.createProcess srv, _OS.APP[srv]
             , (e, s) ->
                 _courrier.trigger "srvroutineready", srv
-                _courrier.trigger "fail",
-                    { id:0,data:{m: "Cannot read service script: #{srv} ", e: e, s: s },
-                    name:"0S"}
+                _courrier.osfail "Cannot read service script: #{srv} ", e, s
     
-    launch: (app) ->
-        if not _APP[app]
+    forceLaunch: (app, args) ->
+        console.log "This method is used for developing only, please use the launch method instead"
+        _PM.killAll app
+        _OS.APP[app] = undefined
+        _GUI.launch app, args
+
+    launch: (app, args) ->
+        if not _OS.APP[app]
             # first load it
             path = "packages/#{app}/"
             _API.script path + "main.js",
@@ -61,26 +65,23 @@ self.OS.GUI =
                                 .appendTo 'head'
                         , () ->
                     #launch
-                    if _APP[app]
+                    if _OS.APP[app]
                         # load app meta data
                         _API.get "#{path}package.json",
                             (data) ->
-                                _APP[app].meta = data
-                                _PM.createProcess app, _APP[app]
+                                _OS.APP[app].meta = data
+                                _PM.createProcess app, _OS.APP[app], args
                             , (e, s) ->
-                                _courrier.trigger "fail",
-                                    {id:0, data:{ m: "Cannot read application metadata: #{app} ",e: e, s: s }, name:"OS"}
+                                _courrier.osfail "Cannot read application metadata: #{app}", e, s
                                 alert "cannot read application, meta-data"
                 , (e, s) ->
                     #BUG report here
-                    _courrier.trigger "fail",
-                        {id :0, data:{m: "Cannot load application script: #{app}", 
-                        e: e, s:s }, name:"OS"}
+                    _courrier.osfail "Cannot load application script: #{app}", e, s
                     console.log "bug report", e, s, path
         else
             # now launch it
-            if _APP[app]
-                _PM.createProcess app, _APP[app]
+            if _OS.APP[app]
+                _PM.createProcess app, _OS.APP[app], args
     dock: (app, meta) ->
         # dock an application to a dock
         # create a data object
@@ -118,6 +119,7 @@ self.OS.GUI =
         handler event.target
         event.preventDefault()
     initDM: ->
+        # check login first
         _API.resource "schemes/dm.html", (x) ->
             return null unless x
             scheme =  $.parseHTML x
@@ -135,3 +137,41 @@ self.OS.GUI =
             # system menu
             riot.mount ($ "#syspanel", $ "#wrapper")
             riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }
+        , (e, s) ->
+            alert "System fall: Cannot init desktop manager"
+    
+    login: () ->
+        ($ "#wrapper").empty()
+        _GUI.clearTheme()
+        _API.resource "schemes/login.html", (x) ->
+            return null unless x
+            scheme = $.parseHTML x
+            ($ "#wrapper").append scheme
+            ($ "#btlogin").click () ->
+                data =
+                    username: ($ "#txtuser").val(),
+                    password: ($ "#txtpass").val()
+                _API.handler.login data, (d) ->
+                    console.log d
+                    if d.error then ($ "#login_error").html d.error else _GUI.startAntOS d.result
+        , (e, s) ->
+            alert "System fall: Cannot init login screen"
+    
+    startAntOS: (conf) ->
+        ($ "#wrapper").empty()
+        _GUI.clearTheme()
+        _courrier.observable = riot.observable()
+        _OS.APP = {}
+        _PM.processes = {}
+        _PM.pidalloc = 0
+        _OS.setting.applications = conf.applications if conf.applications
+        _OS.setting.appearance = conf.appearance if conf.appearance
+        _OS.setting.user = conf.user
+        # get setting from conf
+        # load packages list
+        # load theme
+        # initDM
+        _GUI.loadTheme "antos"
+        _GUI.initDM()
+        _courrier.observable.one "syspanelloaded", () ->
+            _GUI.pushServices ["PushNotification", "Spotlight", "Calendar"]

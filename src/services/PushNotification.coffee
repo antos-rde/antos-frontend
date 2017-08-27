@@ -1,6 +1,6 @@
 class PushNotification extends this.OS.GUI.BaseService
-    constructor: () ->
-        super "PushNotification"
+    constructor: (args) ->
+        super "PushNotification", args
         @iconclass = "fa fa-bars"
         @onmenuselect = (e) -> console.log e
         @cb = undefined
@@ -13,9 +13,11 @@ class PushNotification extends this.OS.GUI.BaseService
     spin: (b) ->
         if b and @iconclass is "fa fa-bars"
             @iconclass = "fa fa-spinner fa-spin"
+            @color = "#f90e00"
             @update()
         else if not b and @iconclass is "fa fa-spinner fa-spin"
             @iconclass = "fa fa-bars"
+            @color = "#414339"
             @update()
 
     main: ->

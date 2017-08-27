@@ -1,7 +1,7 @@
 self = this
 class BaseApplication extends this.OS.GUI.BaseModel
-    constructor: (name) ->
-        super name
+    constructor: (name, args) ->
+        super name, args
 
     init: ->
         me = @
@@ -44,11 +44,11 @@ class BaseApplication extends this.OS.GUI.BaseModel
         if not evt.prevent
             @.appmenu.set "items", [] if @.pid == @.appmenu.pid
             ($ @scheme).remove()
-    meta: () -> _APP[@name].meta
+    meta: () -> _OS.APP[@name].meta
     baseMenu: ->
         mn =
             [{
-                text: _APP[@name].meta.name,
+                text: _OS.APP[@name].meta.name,
                 child: [
                     { text: "About", dataid: "#{@name}-about" },
                     { text: "Exit", dataid: "#{@name}-exit" }

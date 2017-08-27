@@ -1,8 +1,8 @@
 _PM = this.OS.PM
 _APP = this.OS.APP
 class ActivityMonitor extends this.OS.GUI.BaseApplication
-    constructor: () ->
-        super "ActivityMonitor"
+    constructor: (args) ->
+        super "ActivityMonitor", args
     main: () ->
         me = @
         @scheme.set "apptitle", "Activity Monitor"

@@ -1,7 +1,7 @@
 _GUI = this.OS.GUI
 class DummyApp extends this.OS.GUI.BaseApplication
-    constructor: () ->
-        super "DummyApp"
+    constructor: (args) ->
+        super "DummyApp", args
     main: () ->
         self = @
         @on "btclick", (e)->
@@ -83,7 +83,14 @@ class DummyApp extends this.OS.GUI.BaseApplication
         @scheme.set "apptitle", "AntOS feature showcase"
 
         @scheme.contextmenuHandler = (e, m) ->
-            mdata = [ { text: " Child 1" }, { text: "child2", child: [{text: "sub child", child:[{text:"sub sub child"}] }]}]
+            mdata = [ 
+                { text: " Child 1" }, 
+                { text: "child2", child: [
+                    {text: "sub child", child:[{text:"sub sub child"}] },
+                    {text: "sub child 1" }
+                    ], onmenuselect: (e) -> console.log e
+                }
+            ]
             m.set "items", mdata
             m.show(e)
 

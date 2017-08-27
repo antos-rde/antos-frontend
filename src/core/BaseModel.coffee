@@ -1,10 +1,12 @@
 class BaseModel
-    constructor: (@name) ->
+    constructor: (@name, @args) ->
         @observable = riot.observable()
         @_api = self.OS.API
         me = @
         @on "exit", () -> me.quit()
         @host = "#desktop"
+        _OS.setting.applications[@name] = {} if not _OS.setting.applications[@name]
+        @setting = _OS.setting.applications[@name]
         @dialog = undefined
 
     render: (p) ->
@@ -29,7 +31,7 @@ class BaseModel
 
     subscribe: (e, f) -> _courrier.on e, f, @
 
-    openDialog: (d, f) ->
+    openDialog: (d, f, data) ->
         if @dialog
             @dialog.show()
             return
@@ -40,6 +42,7 @@ class BaseModel
         @dialog.parent = @
         @dialog.handler = f
         @dialog.pid = @pid
+        @dialog.data = data
         @dialog.init()
 
     publish: (t, m) ->

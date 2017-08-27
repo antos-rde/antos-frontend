@@ -1,6 +1,6 @@
 class Calendar extends this.OS.GUI.BaseService
-    constructor: () ->
-        super "Calendar"
+    constructor: (args) ->
+        super "Calendar", args
         #@iconclass = "fa fa-commenting"
         @text = ""
         @iconclass = "fa fa-calendar"

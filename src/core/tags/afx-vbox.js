@@ -1,4 +1,4 @@
-<afx-vbox>
+<afx-vbox style = "display:block;">
     <div ref = "container" class="afx-vbox-container">
          <yield/>
     </div>
@@ -23,8 +23,8 @@
         {
             var auto_width = []
             var csize, ocwidth = 0, avaiheight;
-            avaiheight = $(self.root).parent().height()
-            avaiWidth = $(self.root).parent().width()
+            avaiheight = $(self.root).height()
+            avaiWidth = $(self.root).width()
             $(self.refs.container).css("height",avaiheight + "px")
             $(self.refs.container)
                 .children()

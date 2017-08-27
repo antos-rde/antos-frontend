@@ -14,3 +14,6 @@ afx-app-window[data-id="notepad"] span[data-id="editorstat"]{
 afx-app-window[data-id="notepad"] afx-vbox[data-id="bottom-vbox"]{
     background-color: #dfdfdf;
 }
+afx-app-window[data-id="notepad"] .afx-window-content {
+    background-color: #f6F6F6;
+}

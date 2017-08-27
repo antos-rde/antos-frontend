@@ -1,5 +1,5 @@
 <afx-label>
-    <span>
+    <span style = {color?"color:" + color:""} >
         <i if={iconclass} class = {iconclass} ></i>
         <i if={icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
         { text }
@@ -8,11 +8,13 @@
         this.iconclass = opts.iconclass
         this.icon = opts.icon
         this.text = opts.text
+        this.color = opts.color
         var self = this
         this.on("update",function(){
             self.iconclass = opts.iconclass
             self.icon = opts.icon
             self.text = opts.text
+            self.color = opts.color
         })
         self.root.set = function(k,v)
         {

@@ -1,6 +1,6 @@
 class BaseDialog extends this.OS.GUI.BaseModel
     constructor: (name) ->
-        super name
+        super name, null
         @parent = undefined
         @modal = false
         @handler = undefined
@@ -47,8 +47,8 @@ class BasicDialog extends BaseDialog
         html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@name}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-hbox>"
         html += "<#{@conf.tag} data-id = 'content'></#{@conf.tag}>"
-        html += "<div data-height = '40' style='padding:5px; text-align:right;'>"
-        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:3px;'></afx-button>" for k,v of @conf.buttons
+        html += "<div data-height = '40' style=' text-align:right;padding-top:3px;'>"
+        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div></afx-hbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
@@ -60,6 +60,7 @@ class BasicDialog extends BaseDialog
         f = (_v) -> () -> _v.onclick me
         # bind action to button
         ( (me.find "bt#{k}").set "onbtclick", f(v) ) for k, v of @conf.buttons
+        @conf.filldata @ if @conf.filldata
 
 this.OS.GUI.BasicDialog = BasicDialog
 
@@ -114,6 +115,22 @@ class ColorPickerDialog extends BasicDialog
             ]
         }
 this.OS.register "ColorPickerDialog", ColorPickerDialog
+
+class InfoDialog extends BasicDialog
+    constructor: () ->
+        super "InfoDialog", {
+            tag: 'afx-grid-view',
+            width: 250,
+            height: 300,
+            resizable: true,
+            buttons: [ { label: 'Cancel', onclick: (d) -> d.quit() } ],
+            filldata: (d) ->
+                return unless d.data
+                rows = []
+                rows.push [ { value: k }, { value: v } ] for k, v of d.data
+                (d.find "content").set "rows", rows
+        }
+this.OS.register "InfoDialog", InfoDialog
 
 class AboutDialog extends BaseDialog
     constructor: () ->

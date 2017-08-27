@@ -21,12 +21,17 @@
                         onmenuselect: function(d)
                         {
                             if(d.e.item.data.type == "app")
-                                window.OS.GUI.launch(d.e.item.data.text)
+                                window.OS.GUI.launch(d.e.item.data.text, null)
                         }
                     },
-                    {text:"Logout"}
+                    {text:"Logout", dataid: "sys-logout"}
                     ]}
-                ]
+                ],
+                onmenuselect: function(d)
+                {
+                    if(d.e.item.data.dataid == "sys-logout")
+                        window.OS.API.handler.logout()
+                }
             }
         this.appmenu = { child: [] }
         this.systray = { 

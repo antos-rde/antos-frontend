@@ -3,8 +3,8 @@
     <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":"min-width:150px;"}  onclick = {show_list}>
     </div>
     <ul  ref = "mlist">
-        <li each={item,i in items } class={selected: parent._autoselect(item,i)}  onclick = {parent._select}>
-            <afx-label iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
+        <li each={item,i in items } class={selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onclick = {parent._select} oncontextmenu = {parent._select}>
+            <afx-label color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
             <i if = {item.closable} class = "closable" click = {parent._remove}></i>
         </li>
     </ul>
@@ -14,6 +14,7 @@
         var self = this
         self.selidx = -1
         self.onlistselect = opts.onlistselect
+        self.onlistdbclick = opts.onlistdbclick
         var onclose = false
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.root.set = function(k,v)
@@ -137,6 +138,16 @@
             if(self.selidx != -1)
                 self.items[self.selidx].selected =false
             event.item.item.selected = true
+        }
+        _dbclick(event)
+        {
+            data =  {
+                    id:self.rid, 
+                    data:event.item.item,
+                    idx: event.item.i}
+            if(self.onlistdbclick)
+                self.onlistdbclick(data)
+            self.root.observable.trigger('listdbclick', data)
         }
     </script>
 </afx-list-view>

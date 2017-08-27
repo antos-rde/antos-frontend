@@ -1,4 +1,4 @@
-<afx-hbox>
+<afx-hbox style = "display:block;">
     <div ref = "container" class="afx-hbox-container">
          <yield/>
     </div>
@@ -26,8 +26,8 @@
         {
             var auto_height = []
             var csize, ocheight = 0, avaiheight;
-            avaiheight = $(self.root).parent().height()
-            avaiwidth = $(self.root).parent().width()
+            avaiheight = $(self.root).height()
+            avaiwidth = $(self.root).width()
             $(self.refs.container).css("height",avaiheight + "px")
             $(self.refs.container)
                 .children()

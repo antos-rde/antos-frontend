@@ -1,10 +1,12 @@
 class NotePad extends this.OS.GUI.BaseApplication
-    constructor: () ->
-        super "NotePad"
+    constructor: (args) ->
+        super "NotePad", args
     main: () ->
         me = @
         @scheme.set "apptitle", "NotePad"
-        
+        @sidebar = @find "sidebar"
+        @location = @find "location"
+        @fileview = @find "fileview"
         div = @find "datarea"
         ace.require "ace/ext/language_tools"
         @.editor = ace.edit div
@@ -52,7 +54,32 @@ class NotePad extends this.OS.GUI.BaseApplication
 
         @on "resize", () -> me.editor.resize()
         @on "focus", () -> me.editor.focus()
+
+        @fileview.set "chdir", (d) -> me.chdir d
+        @fileview.set "fetch", (e, f) ->
+            return unless e.child
+            me._api.handler.scandir e.child.path,
+                (d) -> f d.result
+                , (e, s) -> me.error "Cannot fetch child dir #{e.child.path}"
         
+        @location.set "onlistselect", (e) -> me.chdir e.data.path
+        @location.set "items", [
+            { text: "Home", path: 'home:///', iconclass:"fa fa-home", selected:true},
+            { text: "OS", path: 'os:///', iconclass:"fa fa-inbox" },
+            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
+        ]
+
+    chdir: (p) ->
+        me = @
+        me._api.handler.scandir p,
+            (d) ->
+                if(d.error)
+                    return me.error "Resource not found #{p}"
+                me.fileview.set "path", p
+                me.fileview.set "data", d.result
+            , (e, s) ->
+                me.error "Cannot chdir #{p}"
+
     menu: ()->
         menu = [{
                 text:"File", 

@@ -1,6 +1,6 @@
 class wTerm extends this.OS.GUI.BaseApplication
-    constructor: () ->
-        super "wTerm"
+    constructor: (args) ->
+        super "wTerm", args
     
     main: () ->
         me = @

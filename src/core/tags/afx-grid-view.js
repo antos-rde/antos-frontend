@@ -1,8 +1,8 @@
 <afx-grid-view>
     <afx-grid-row ref="gridhead" rootid = {rid} observable = {root.observable}  header="true" class = {grid_row_header:header} if = {header} cols = {header}> </afx-grid-row>
     <div ref = "scroller" style="width:100%; overflow:auto;">
-        <div ref = "container">
-            <afx-grid-row each={ child, i in rows } class = {selected: child.selected}  rootid = {parent.rid} observable = {parent.root.observable} index = {i}  cols = {child}  onclick = {parent._select} head = {parent.refs.gridhead} ></afx-grid-row>
+        <div ref = "container" style ="padding-bottom:10px">
+            <afx-grid-row each={ child, i in rows } class = {selected: child.selected}  rootid = {parent.rid} observable = {parent.root.observable} index = {i}  cols = {child} ondblclick = {parent._dbclick} onclick = {parent._select} oncontextmenu = {parent._select} head = {parent.refs.gridhead} ></afx-grid-row>
         </div>
     </div>
     <script>
@@ -13,6 +13,7 @@
         self.selidx = -1
         self.nrow = 0
         self.ongridselect = opts.ongridselect
+        self.ongriddbclick = opts.ongriddbclick
         self.root.observable = opts.observable 
         self.root.set = function(k,v)
         {
@@ -82,13 +83,22 @@
             self.update()
             //event.preventDefault()
         }
+        _dbclick(event)
+        {
+            data =  {
+                    id:self.rid, 
+                    data:event.item}
+            if(self.ongriddbclick)
+                self.ongriddbclick(data)
+            self.root.observable.trigger('griddbclick', data)
+        }
         
     </script>
 </afx-grid-view>
 
 <afx-grid-row>
     <div style = {!header? "display: table-cell;" :""} onclick = {parent._cell_select}  each = { child,i in cols } class = {string:typeof child.value == "string", number: typeof child.value == "number", cellselected: parent._auto_cell_select(child,i)} >
-        <afx-label icon = {child.icon} iconclass = {child.iconclass} text = {child.value} ></afx-label>
+        <afx-label color={child.color} icon = {child.icon} iconclass = {child.iconclass} text = {child.value} ></afx-label>
     </div>
     <script>
         this.cols = opts.cols || []

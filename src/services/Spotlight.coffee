@@ -1,6 +1,6 @@
 class Spotlight extends this.OS.GUI.BaseService
-    constructor: () ->
-        super "Spotlight"
+    constructor: (args) ->
+        super "Spotlight", args
         @iconclass = "fa fa-search"
     init: ->
         @child = [

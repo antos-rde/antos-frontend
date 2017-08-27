@@ -1,11 +1,12 @@
 <afx-button>
     <button disabled={ enable == "false" } onclick="{ _onbtclick }"  > 
-        <afx-label icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
+        <afx-label color = {color} icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
     </button>
     <script>
         this.enable = opts.enable
         this.icon = opts.icon
         this.iconclass = opts.iconclass
+        this.color = opts.color
         this.text = opts.text || ""
         var self = this
         this.onbtclick = opts.onbtclick

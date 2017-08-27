@@ -7,6 +7,7 @@ afx-tree-view{
 afx-tree-view afx-tree-view{
     padding:0;
     overflow: hidden;
+    display: block;
 }
 afx-tree-view ul{
     margin:0;

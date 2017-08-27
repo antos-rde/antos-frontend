@@ -3,20 +3,20 @@ self.OS.API =
     # fetch user data, used by the API to make requests
     # handlers are defined in /src/handlers
     handler: {}
-    VFS:
-        scandir: (p, c, f) ->
-            _API.handler.request "scandir", { path: p }, c, f
     #request a user data
     post: (p, d, c, f) ->
         q = _courrier.getMID()
         _API.loading q, p
+        
         $.ajax {
-            type: "POST",
+            type: 'POST',
             url: p,
-            data: d,
-            success: null,
-            dataType: 'json'
+            contentType: 'application/json',
+            data: JSON.stringify d,
+            dataType: 'json',
+            success: null
         }
+        #$.getJSON p, d
         .done (data) ->
             _API.loaded q, p, "OK"
             c(data)
@@ -51,7 +51,7 @@ self.OS.API =
             .fail (e, s) ->
                 _API.loaded q, p, "FAIL"
                 f(e, s)
-    resource: (resource, callback) ->
-        path = "resources/#{resource}"
-        _API.get path, callback
+    resource: (r, c, f) ->
+        path = "resources/#{r}"
+        _API.get path, c, f
         

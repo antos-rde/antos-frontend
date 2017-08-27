@@ -1,17 +1,22 @@
 <afx-tree-view>
 
-  <div ref = namediv class={afx_tree_item_selected:treeroot.selectedItem && treeroot.selectedItem.path == path, afx_folder_item: isFolder(), afx_tree_item_odd: index%2 != 0  } click={select}>
-    <i if={ !isFolder() && iconclass} class = {iconclass} ></i>
-    <i if={!isFolder() && icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
+  <div class={afx_tree_item_selected:treeroot.selectedItem && treeroot.selectedItem.path == path, afx_folder_item: isFolder(), afx_tree_item_odd: index%2 != 0  } onclick={select} ondblclick = {_dbclick} oncontextmenu = {select}>
+    <ul style = "padding:0;margin:0;white-space: nowrap;">
+        <li ref = "padding" ></li>
+        <li class = "itemname" style="display:inline-block;" >
+            <i if={ !isFolder() && iconclass} class = {iconclass} ></i>
+            <i if={!isFolder() && icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
 
-    <span onclick={ toggle } if={ isFolder() } class={open ? 'afx-tree-view-folder-open' : 'afx-tree-view-folder-close'}></span>
-    { name }
+            <span onclick={ toggle } if={ isFolder() } class={open ? 'afx-tree-view-folder-open' : 'afx-tree-view-folder-close'}></span>
+            { name }
+        </li>
+    </ul>
   </div>
 
 
   <ul if={ isFolder() } show={ isFolder() && open }>
     <li each={ child, i in nodes }>
-      <afx-tree-view ontreeselect = {parent.ontreeselect} data={child} indent={indent+1} observable = {parent.root.observable} path = {parent.path + ">" + i} treeroot= {parent.treeroot}></afx-tree-view>
+      <afx-tree-view ontreeselect = {parent.ontreeselect} fetch = {parent.fetch} ontreedbclick = {parent.ontreedbclick} data={child} indent={indent+1} observable = {parent.root.observable} path = {parent.path + ">" + i} treeroot= {parent.treeroot}></afx-tree-view>
     </li>
   </ul>
 
@@ -28,6 +33,8 @@
         }
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.ontreeselect = opts.ontreeselect
+        self.ontreedbclick = opts.ontreedbclick
+        self.fetch = opts.fetch
         self.indent = opts.indent || 1
         var istoggle = false
         if(opts.treeroot)
@@ -66,7 +73,13 @@
         }
         
         this.on("mount", function(){
-            $(self.refs.namediv).css("padding-left", self.indent*15 + "px" )
+            $(self.refs.padding)
+                .css("display", "inline-block")
+                .css("height","1px")
+                .css("padding",0)
+                .css("margin", 0)
+                .css("background-color","transparent")
+                .css("width", self.indent*15 + "px" )
         })
 
         isFolder() {
@@ -77,6 +90,11 @@
             self.open = !self.open
             e.preventDefault()
             istoggle = true
+            if(self.open && self.nodes.length == 0 && self.fetch)
+                self.fetch(e.item, function(d){
+                    self.nodes = d
+                    self.update()
+                })
         }
 
         select(event)
@@ -98,6 +116,23 @@
            event.preventUpdate = true
            self.treeroot.update()
            event.preventDefault()
+        }
+        _dbclick(event)
+        {
+            if(istoggle)
+            {
+                istoggle = false 
+                return
+            }
+            data =  {
+                    id:self.rid, 
+                    data:event.item,
+                    path: self.path}
+            if(self.ontreedbclick)
+            {
+                self.ontreedbclick(data)
+            }
+            self.root.observable.trigger('treedbclick', data)
         }
     </script>
 </afx-tree-view>

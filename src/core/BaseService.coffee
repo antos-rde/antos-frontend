@@ -1,6 +1,6 @@
 class BaseService extends this.OS.GUI.BaseModel
-    constructor: (name) ->
-        super name
+    constructor: (name, args) ->
+        super name, args
         @icon = undefined
         @iconclass = "fa-paper-plane-o"
         @text = ""

@@ -3,13 +3,13 @@ afx-file-view {
 }
 afx-file-view div.status{
     position: absolute;
-    bottom: 0px;
+    bottom: 1px;
     left:0px;
     padding:3px;
     right: 0px;
     height: 15px;
-    background-color: #dfdfdf;
-    border-top: 1px solid #a6A6a6;
+    background-color: #f6F6F6;
+    border-top: 1px solid #cbcbcb;
 }
 afx-file-view afx-list-view li{
     float:left;
@@ -29,7 +29,7 @@ afx-file-view afx-list-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 32px;
-    color: #414339;
+    color: #76D2F9;
     font-weight: normal;
     font-style: normal;
 }
@@ -55,7 +55,9 @@ afx-file-view afx-list-view  li.selected, afx-file-view afx-list-view  li.select
     color:white;
     border-radius: 6px;
 }
-
+afx-file-view afx-grid-view{
+    padding:0;
+}
 afx-file-view afx-grid-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
@@ -68,7 +70,7 @@ afx-file-view afx-grid-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 16px;
-    color: #414339;
+    color: #76D2F9;
     font-style: normal;
     font-weight: normal;
 }
@@ -83,21 +85,30 @@ afx-file-view afx-grid-view afx-grid-row.grid_row_header{
     background-color: #dfdfdf;
 }
 afx-file-view afx-grid-view afx-grid-row.grid_row_header div{
-    border: 1px solid #a6a6a6;
+    border-top: 1px solid #a6a6a6;
+    border-right: 1px solid #a6a6a6;
 }
 
 afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 16px;
+    color:#76D2F9;
 }
 afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
     content: "\f07c"; 
     font-family: "FontAwesome";
+    color:#76D2F9;
     font-size: 16px;   
 }
-afx-file-view afx-tree-view {
+afx-file-view afx-tree-view{
     margin:0;
+    overflow: hidden;
+    display: inline-block;
+    background-color: transparent;
+}
+afx-file-view afx-tree-view .afx_tree_item_odd{
+    background-color: transparent;
 }
 afx-file-view afx-tree-view i.file:before{
     content: "\f016"; 
@@ -107,8 +118,41 @@ afx-file-view afx-tree-view i.file:before{
     font-style: normal;
     font-weight: normal;
 }
+afx-file-view afx-tree-view div{
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: transparent;
+    padding:0;
+}
+afx-file-view  div.treecontainer{
+    display: block;
+    overflow: auto;
+    padding:0;
+    margin:0;
+}
+afx-file-view afx-tree-view div.afx_tree_item_selected, afx-file-view afx-tree-view div.afx_tree_item_selected:hover{
+    background-color: transparent;
+    color:#414339;
+}
 
-afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{
+afx-file-view afx-tree-view li.itemname{
+    padding:3px;
+    padding-right: 5px;
+}
+afx-file-view afx-tree-view div.afx_tree_item_selected .itemname{
     background-color: #116cd6;
     color:white;
+    border-radius: 3px;
+    
+}
+afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{
+    color:white;
+}
+
+afx-file-view afx-tree-view .afx_folder_item{
+    font-weight: normal;
+}
+
+afx-file-view afx-tree-view afx-tree-view{
+    display: inline-block;
 }

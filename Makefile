@@ -6,7 +6,7 @@ NC=\033[0m
 
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
-        	src/core/handlers/TestHandler.coffee\
+        	src/core/handlers/RemoteHandler.coffee\
         	src/core/gui.coffee\
 			src/core/BaseModel.coffee\
 			src/core/BaseApplication.coffee\
@@ -22,7 +22,7 @@ coffees= 	src/core/core.coffee\
 packages = NotePad wTerm ActivityMonitor DummyApp Files
 services = PushNotification Spotlight Calendar
 
-main: clean build_coffees build_tags build_themes schemes libs build_services build_packages
+main:  build_coffees build_tags build_themes schemes libs build_services build_packages
 	- cp src/index.html $(BUILDDIR)/
 
 lite: build_coffee build_tag build_theme schemes  build_services build_packages
@@ -67,7 +67,7 @@ antos_themes_build:
 	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
 	-mkdir -p $(BUILDDIR)/resources/themes/antos/fonts
 	cp -rf src/themes/antos/fonts/* $(BUILDDIR)/resources/themes/antos/fonts
-	cp src/themes/antos/wallpaper.jpg $(BUILDDIR)/resources/themes/antos/
+	cp src/themes/antos/wp.png $(BUILDDIR)/resources/themes/antos/
 
 
 build_services:

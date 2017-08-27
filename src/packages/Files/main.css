@@ -1,0 +1,36 @@
+afx-app-window[data-id ='files-app-window'] afx-list-view{
+    border-top:1px solid #A6A6A6;
+}
+afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri']{
+    background-color: #f6F6F6;
+    border-right: 1px solid #cbcbcb;
+    border-top:1px solid #A6A6A6;
+    padding:0;
+}
+
+afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri'] li{
+    background-color: transparent;
+}
+afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri']   li.selected {
+    background-color: #cecece;
+    color:#414339;
+}
+afx-app-window[data-id ='files-app-window'] .afx-window-top{
+    border-bottom: 0;
+}
+afx-app-window[data-id ='files-app-window'] afx-vbox[data-id = "nav-bar"]{
+    background-color: #dfdfdf;
+}
+afx-app-window[data-id ='files-app-window'] afx-grid-view afx-grid-row.grid_row_header div{
+    border-top:1px solid #A6A6A6;
+}
+afx-app-window[data-id ='files-app-window'] button{
+    height: 23px;
+    border-radius: 3px;
+    padding-top:2px;
+    margin-left: 5px;
+}
+
+afx-app-window[data-id ='files-app-window'] input{
+    border-radius: 3px;
+}
