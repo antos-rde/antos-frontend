@@ -141,8 +141,7 @@ self.OS.GUI =
             alert "System fall: Cannot init desktop manager"
     
     login: () ->
-        ($ "#wrapper").empty()
-        _GUI.clearTheme()
+        _OS.cleanup()
         _API.resource "schemes/login.html", (x) ->
             return null unless x
             scheme = $.parseHTML x
@@ -158,12 +157,7 @@ self.OS.GUI =
             alert "System fall: Cannot init login screen"
     
     startAntOS: (conf) ->
-        ($ "#wrapper").empty()
-        _GUI.clearTheme()
-        _courrier.observable = riot.observable()
-        _OS.APP = {}
-        _PM.processes = {}
-        _PM.pidalloc = 0
+        _OS.cleanup()
         _OS.setting.applications = conf.applications if conf.applications
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user

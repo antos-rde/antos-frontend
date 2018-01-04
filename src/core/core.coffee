@@ -79,6 +79,14 @@ self.OS or=
             tmp.push a for a in _PM.processes[app]
             a.quit() for a in tmp
 
+    cleanup: ->
+        ($ "#wrapper").empty()
+        _GUI.clearTheme()
+        _courrier.observable = riot.observable()
+        _OS.APP = {}
+        _PM.processes = {}
+        _PM.pidalloc = 0
+        
     boot: ->
         #first login
         _API.handler.auth (d) ->

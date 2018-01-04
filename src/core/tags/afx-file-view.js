@@ -29,6 +29,8 @@
                 self[k] = v
             if(k == 'view')
                 switchView()
+            if(k == "data")
+                self.selectedFile = undefined
             self.update()
         }
         self.root.get = function(k)
