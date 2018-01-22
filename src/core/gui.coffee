@@ -36,48 +36,58 @@ self.OS.GUI =
         srvs.splice 0, 1
         f i for i in srvs
 
-    pushService: (srv) ->
+    pushService: (ph) ->
+        arr = ph.split "/"
+        srv = arr[1]
+        app = arr[0]
         return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
-        path = "services/#{srv}.js"
-        _API.script path,
-            (d) ->
-                _PM.createProcess srv, _OS.APP[srv]
-            , (e, s) ->
+        _GUI.loadApp app,
+            (a)->
+                return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
+            (e, s) ->
                 _courrier.trigger "srvroutineready", srv
                 _courrier.osfail "Cannot read service script: #{srv} ", e, s
-    
+
     forceLaunch: (app, args) ->
         console.log "This method is used for developing only, please use the launch method instead"
         _PM.killAll app
         _OS.APP[app] = undefined
         _GUI.launch app, args
 
+    loadApp:(app, ok, err) ->
+        path = "packages/#{app}/"
+        _API.script path + "main.js",
+            (d) ->
+                #load css file
+                _API.get "#{path}main.css",
+                    () ->
+                        $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{path}main.css" }
+                            .appendTo 'head'
+                    , () ->
+                #launch
+                if _OS.APP[app]
+                    # load app meta data
+                    _API.get "#{path}package.json",
+                        (data) ->
+                            _OS.APP[app].meta = data
+                            ok app
+                        , (e, s) ->
+                            _courrier.osfail "Cannot read application metadata: #{app}", e, s
+                            err e, s
+                else
+                    ok app
+            , (e, s) ->
+                #BUG report here
+                _courrier.osfail "Cannot load application script: #{app}", e, s
+                console.log "bug report", e, s, path
+                err e,s
     launch: (app, args) ->
         if not _OS.APP[app]
             # first load it
-            path = "packages/#{app}/"
-            _API.script path + "main.js",
-                (d) ->
-                    #load css file
-                    _API.get "#{path}main.css",
-                        () ->
-                            $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{path}main.css" }
-                                .appendTo 'head'
-                        , () ->
-                    #launch
-                    if _OS.APP[app]
-                        # load app meta data
-                        _API.get "#{path}package.json",
-                            (data) ->
-                                _OS.APP[app].meta = data
-                                _PM.createProcess app, _OS.APP[app], args
-                            , (e, s) ->
-                                _courrier.osfail "Cannot read application metadata: #{app}", e, s
-                                alert "cannot read application, meta-data"
+            _GUI.loadApp app,
+                (a)->
+                    _PM.createProcess a, _OS.APP[a], args
                 , (e, s) ->
-                    #BUG report here
-                    _courrier.osfail "Cannot load application script: #{app}", e, s
-                    console.log "bug report", e, s, path
         else
             # now launch it
             if _OS.APP[app]
@@ -168,4 +178,5 @@ self.OS.GUI =
         _GUI.loadTheme "antos"
         _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
-            _GUI.pushServices ["PushNotification", "Spotlight", "Calendar"]
+            #_GUI.loadApp "CoreServices", (a) ->
+            _GUI.pushServices ["CoreServices/PushNotification", "CoreServices/Spotlight", "CoreServices/Calendar"]

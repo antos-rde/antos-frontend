@@ -9,7 +9,6 @@ class Files extends this.OS.GUI.BaseApplication
         @navbar = @find "nav-bar"
         @prepaths = []
         @favo = @find "favouri"
-        @loadSetting()
 
         @view.contextmenuHandler = (e, m) ->
             m.set "items", [ me.mnFile(), me.mnEdit() ]
@@ -34,13 +33,7 @@ class Files extends this.OS.GUI.BaseApplication
             me._api.handler.scandir e.child.path,
                 (d) -> f d.result
                 , (e, s) -> me.error "Cannot fetch child dir #{e.child.path}"
-
-        @favo.set "items", @setting.favorite
-
-    loadSetting: () ->
-        # view setting
-        @view.set "view", @setting.view if @setting.view
-        @view.set "showhidden", @setting.showhidden if @setting.showhidden
+        
         @setting.favorite = [
             { text: "Applications", path: 'apps:///', iconclass:"fa  fa-adn"},
             { text: "Home", path: 'home:///', iconclass:"fa fa-home", selected:true},
@@ -48,8 +41,15 @@ class Files extends this.OS.GUI.BaseApplication
             { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
         ] if not @setting.favorite
         @setting.sidebar = true if @setting.sidebar is undefined
-        @toggleSidebar @setting.sidebar
         @setting.nav = true if @setting.nav is undefined
+        @favo.set "items", @setting.favorite
+        @applySetting()
+
+    applySetting: (k) ->
+        # view setting
+        @view.set "view", @setting.view if @setting.view
+        @view.set "showhidden", @setting.showhidden if @setting.showhidden
+        @toggleSidebar @setting.sidebar
         @toggleNav @setting.nav
 
     chdir: (p, push) ->
@@ -123,16 +123,19 @@ class Files extends this.OS.GUI.BaseApplication
     actionView: (e) ->
         switch e.item.data.dataid
             when "#{@name}-hidden"
-                @.view.set "showhidden", e.item.data.checked
-                @.setting.showhidden = e.item.data.checked
+                #@.view.set "showhidden", e.item.data.checked
+                @registry "showhidden",e.item.data.checked
+                #@.setting.showhidden = e.item.data.checked
             when "#{@name}-refresh"
                 @.chdir ($ @.navinput).val(), false
             when "#{@name}-side"
-                @setting.sidebar = e.item.data.checked
-                @toggleSidebar e.item.data.checked
+                @registry "sidebar",e.item.data.checked
+                #@setting.sidebar = e.item.data.checked
+                #@toggleSidebar e.item.data.checked
             when "#{@name}-nav"
-                @setting.nav = e.item.data.checked
-                @toggleNav e.item.data.checked
+                @registry "nav", e.item.data.checked
+                #@setting.nav = e.item.data.checked
+                #@toggleNav e.item.data.checked
 
     actionEdit: (e) ->
         switch e.item.data.dataid

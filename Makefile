@@ -19,13 +19,12 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = NotePad wTerm ActivityMonitor DummyApp Files
-services = PushNotification Spotlight Calendar
+packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files
 
-main:  build_coffees build_tags build_themes schemes libs build_services build_packages
+main:  build_coffees build_tags build_themes schemes libs  build_packages
 	- cp src/index.html $(BUILDDIR)/
 
-lite: build_coffee build_tag build_theme schemes  build_services build_packages
+lite: build_coffee build_tag build_theme schemes   build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 
@@ -33,6 +32,7 @@ build_coffees:
 	@echo "$(BLUE)Building coffee files$(NC)"
 	- mkdir $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
+	- rm $(BUILDDIR)/scripts/antos.coffee
 	for f in $(coffees); do (cat "$${f}"; echo) >> $(BUILDDIR)/scripts/antos.coffee; done
 	coffee --compile $(BUILDDIR)/scripts/antos.coffee
 	- rm $(BUILDDIR)/scripts/antos.coffee
@@ -70,11 +70,6 @@ antos_themes_build:
 	cp src/themes/antos/wp.png $(BUILDDIR)/resources/themes/antos/
 
 
-build_services:
-	@echo "$(BLUE)Building services$(NC)"
-	-mkdir -p $(BUILDDIR)/services
-	-rm -rf $(BUILDDIR)/services/*
-	for f in $(services); do (coffee -cs < "src/services/$$f.coffee" >$(BUILDDIR)/services/"$$f.js");done
 build_packages:
 	- mkdir $(BUILDDIR)/packages
 	- for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d && rm -rf $(BUILDDIR)/packages/$$d/* ); done

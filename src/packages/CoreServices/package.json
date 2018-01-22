@@ -1,0 +1,14 @@
+{
+    "app":"CoreServices",
+    "name":"CoreServices",
+    "description":"This is the core services",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "credit": "dedicated to some one here",
+        "licences": "MIT"
+    },
+    "version":"0.1a",
+    "category":"System",
+    "mimes":["*"]
+}

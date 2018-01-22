@@ -8,6 +8,13 @@ class BaseModel
         _OS.setting.applications[@name] = {} if not _OS.setting.applications[@name]
         @setting = _OS.setting.applications[@name]
         @dialog = undefined
+        @subscribe "appregistry"
+            ,(m)->
+                me.applySetting m.data.m if (m.name is me.name)
+
+    registry: (k,v) ->
+        @setting[k] = v
+        @publish "appregistry",k
 
     render: (p) ->
         _GUI.loadScheme p, @, @host
@@ -24,12 +31,14 @@ class BaseModel
         #implement by sub class
     onexit: (e) ->
         #implement by subclass
+    applySetting: (k) ->
     one: (e, f) -> @observable.one e, f
     on: (e, f) -> @observable.on e, f
 
     trigger: (e, d) -> @observable.trigger e, d
 
-    subscribe: (e, f) -> _courrier.on e, f, @
+    subscribe: (e, f) -> 
+        _courrier.on e, f, @
 
     openDialog: (d, f, data) ->
         if @dialog
