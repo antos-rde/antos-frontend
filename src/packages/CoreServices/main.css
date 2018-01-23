@@ -1,0 +1,45 @@
+afx-overlay[data-id = "notifyzone"]{
+    background-color: rgba(215,215,215,0.7);
+    
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding:3px;
+    margin: 0;
+}
+afx-overlay[data-id = "notifyzone"] afx-button button{
+    width: 250px;
+    background-color: rgba(215,215,215,0.9);
+}
+afx-overlay[data-id = "notifyzone"] afx-button button:active{
+    color:#414339;
+}
+afx-list-view[data-id = "notifylist"]
+{
+    padding:0;
+}
+afx-list-view[data-id = "notifylist"] li{
+    border:1px solid #a6a6a6;
+    border-radius: 6px;
+    margin-bottom: 2px;
+}
+
+afx-overlay[data-id = "feedzone"]{
+    overflow: hidden;
+    background-color:transparent;
+    right:5px;
+    margin: 0;
+    padding:0;
+    top:0;
+}
+afx-list-view[data-id = "notifeed"]
+{
+    padding:0;
+    margin:0;
+}
+afx-list-view[data-id = "notifeed"] li{
+    box-shadow: 1px 1px 1px #9f9F9F;
+    border:1px solid #a6a6a6;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    z-index: 99999;
+}
