@@ -2,8 +2,9 @@ self.OS.API.handler =
     scandir: (p, c ) ->
         path = "lua-api/fs/scandir"
         _API.post path, { path: p }, c, (e, s) ->
-            _courrier.osfail "Fail to make request: #{path}", e, s
-    
+            _courrier.osfail "Fail to scan directory: #{path}", e, s
+    scanapp: (p, c ) ->
+        path = "lua-api/system/application"
     auth: (c) ->
         p = "lua-api/system/auth"
         _API.post p, {}, c, () ->

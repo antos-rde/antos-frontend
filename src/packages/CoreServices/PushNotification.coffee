@@ -7,7 +7,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @pending = []
     init: ->
         @view = false
-        path = "resources/schemes/notifications.html"
+        path = path = "packages/CoreServices/notifications.html"
         @render path
 
     spin: (b) ->

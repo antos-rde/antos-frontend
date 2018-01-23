@@ -2,9 +2,9 @@ coffee_files = Calendar.coffee PushNotification.coffee Spotlight.coffee
 
 jsfiles =
 
-cssfiles = 
+cssfiles = main.css
 
-copyfiles = package.json
+copyfiles = package.json notifications.html
 
 
 PKG_NAME=CoreServices
