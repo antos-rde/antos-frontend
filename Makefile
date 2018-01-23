@@ -7,7 +7,8 @@ NC=\033[0m
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
         	src/core/handlers/RemoteHandler.coffee\
-        	src/core/gui.coffee\
+        	src/core/vfs.coffee\
+			src/core/gui.coffee\
 			src/core/BaseModel.coffee\
 			src/core/BaseApplication.coffee\
 			src/core/BaseService.coffee\

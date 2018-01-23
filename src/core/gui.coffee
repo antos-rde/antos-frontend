@@ -1,10 +1,5 @@
 self.OS.GUI =
     dialog: new Object()
-    init: () ->
-        query =
-            path: 'VFS/get'
-            data: "#{_GUI.tagPath}/tags.json"
-        self.OS.API.request query, ()->
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
         ($ parent).append scheme

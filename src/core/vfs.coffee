@@ -1,15 +1,104 @@
-self.OS.API.VFS =
-    readdir: (p, c, er) ->
-        h = _API.VFS.pathHandler p
-        h p,
-            (d ) -> c d
-            , (e, s) -> er e, s
+String.prototype.hash = () ->
+    hash = 5381
+    i = this.length
+    hash = (hash * 33) ^ this.charCodeAt(--i) while i
+    hash >>> 0
 
-    pathHandler: (p) ->
-        list = p.split "///"
-        switch list[0]
-            when "app:"
-                return _API.handler.scanapp
-            else
-                return _API.handler.scandir
+String.prototype.asFileHandler = () ->
+    list = this.split ":///"
+    switch list[0]
+        when "app"
+            return new ApplicationHandler(this)
+        else
+            return new RemoteFileHandler(this)
+
+this.OS.API.VFS = {}
+
+class BasicFileHandler
+    constructor: (@path) ->
+        list = @path.split ":///"
+        @protocol = list[0]
+        return unless list.length > 1
+        re = list[1].replace(/^\/+|\/+$/g, '')
+        return if re is ""
+        @genealogy = re.split("/")
+        @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
+        @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
+        @ready = false
+
+
+    isRoot: () -> (not @genealogy) or (@genealogy.size is 0)
     
+    isHidden: () ->
+        return false if not @basename
+        @basename[0] is "."
+
+    hash: () -> @path.hash()
+
+    parent: () ->
+        return @ if @isRoot()
+        (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/").asFileHandler()
+
+    onready: (f, e) ->
+        # read meta data
+        return f() if @ready
+        me = @
+        me.meta (d) ->
+            return e d.error if d.error
+            me.meta = d.result
+            me.ready = true
+            f()
+
+    #public interface for all action on file
+    do: (a, f, e) ->
+        return e "Action #{a} not found" if not @[a]
+        me = @
+        @onready (() -> me[a] f), e
+
+    
+    # methods implemented by subclasses used as private methods
+    meta: (f) ->
+
+    read: (f) ->
+
+    write: (f) ->
+
+    remove: (f) ->
+
+    execute: (f) ->
+
+    ls: (f) ->
+    
+    mk: (f) ->
+
+# now export the class
+self.OS.API.VFS.BasicFileHandler = BasicFileHandler
+
+# Remote file handle
+class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
+    constructor: (path) ->
+        super path
+
+    meta: (f) ->
+        _API.handler.fileinfo @path, f
+    
+    ls: (f) ->
+       return f(@) if @meta.type is "file"
+       _API.handler.scandir @path, f
+
+self.OS.API.VFS.RemoteFileHandler = RemoteFileHandler
+
+# Application Handler
+class ApplicationHandler extends self.OS.API.VFS.BasicFileHandler
+    constructor: (path) ->
+        super path
+
+self.OS.API.VFS.ApplicationHandler = ApplicationHandler
+
+
+# GoogleDrive File Handler
+class GoogleDriveHandler extends self.OS.API.VFS.BasicFileHandler
+    constructor: (path) ->
+        super path
+
+self.OS.API.VFS.GoogleDriveHandler = GoogleDriveHandler

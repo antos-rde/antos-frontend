@@ -2,7 +2,7 @@ self.OS.API =
     # the handler object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
     # handlers are defined in /src/handlers
-    handler: {}
+    handler: { }
     #request a user data
     post: (p, d, c, f) ->
         q = _courrier.getMID()

@@ -1,4 +1,3 @@
-self = this
 class BaseApplication extends this.OS.GUI.BaseModel
     constructor: (name, args) ->
         super name, args
