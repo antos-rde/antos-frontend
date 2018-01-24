@@ -37,7 +37,7 @@ class BasicFileHandler
 
     parent: () ->
         return @ if @isRoot()
-        (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/").asFileHandler()
+        return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
 
     onready: (f) ->
         # read meta data
@@ -49,25 +49,37 @@ class BasicFileHandler
             me.ready = true
             f()
 
-    #public interface for all action on file
-    do: (a, f) ->
-        return _courrier.osfail "VFS unknown action: #{a}", (_API.throwe "OS.VFS"), a if not @[a]
-        me = @
-        @onready (() -> me[a] f)
-
-    
-    # methods implemented by subclasses used as private methods
-    meta: (f) ->
-
     read: (f) ->
+        me = @
+        @onready (() -> me.action "read", null, f)
 
-    write: (f) ->
-
+    write: (d, f) ->
+        @action "write", d, f
+    
+    mk: (d, f) ->
+        me = @
+        @onready (() -> me.action "mk", d, f)
+    
     remove: (f) ->
+        me = @
+        @onready (() -> me.action "remove", null, f)
+
+    move: (d, f) ->
+        me = @
+        @onready (() -> me action "move", d, f)
 
     execute: (f) ->
-    
-    mk: (f) ->
+        me = @
+        @onready (() -> me.action "execute", null, f)
+
+    #mk: (f) ->
+
+    meta: (f) ->
+
+    # for main action read, write, remove, execute
+    # must be implemented by subclasses
+    action: (n, p, f) ->
+        return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 # now export the class
 self.OS.API.VFS.BasicFileHandler = BasicFileHandler
@@ -80,10 +92,17 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
     meta: (f) ->
         _API.handler.fileinfo @path, f
     
-    read: (f) ->
-        return _API.handler.scandir @path, f if @meta.type is "dir"
-        #read the file
-        _API.handler.readfile @path, f
+    action: (n, p, f) ->
+        switch n
+            when "read"
+                return _API.handler.scandir @path, f if @meta.type is "dir"
+                #read the file
+                _API.handler.readfile @path, f
+            when "mk"
+                return f { error: "#{@path} is not a directory" } if @meta.type is "file"
+                _API.handler.mkdir "#{@path}/#{p}", f
+            else
+                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 self.OS.API.VFS.RemoteFileHandler = RemoteFileHandler
 

@@ -1,11 +1,16 @@
 class BaseApplication extends this.OS.GUI.BaseModel
     constructor: (name, args) ->
         super name, args
-
+        _OS.setting.applications[@name] = {} if not _OS.setting.applications[@name]
+        @setting = _OS.setting.applications[@name]
+        
     init: ->
         me = @
         # first register some base event to the app
-        
+        @subscribe "appregistry"
+            , ( m ) ->
+                me.applySetting m.data.m if (m.name is me.name)
+
         @on "focus", () ->
             me.sysdock.set "selectedApp", me
             me.appmenu.pid = me.pid
@@ -24,6 +29,11 @@ class BaseApplication extends this.OS.GUI.BaseModel
         #now load the scheme
         path = "packages/#{@name}/scheme.html"
         @.render path
+
+    applySetting: (k) ->
+    registry: (k, v) ->
+        @setting[k] = v
+        @publish "appregistry", k
 
     show: () ->
         @trigger "focus"

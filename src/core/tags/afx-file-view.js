@@ -70,7 +70,7 @@
             var rows = []
             $.each(self.data, function(i,v){
                 if(v.filename[0] == '.' && !self.showhidden) return
-                var row = [{value:v.filename, iconclass: v.type},{value:v.mime},{value:v.size}]
+                var row = [{value:v.filename, iconclass: v.type},{value:v.mime},{value:v.size},{idx:i}]
                 rows.push(row)
             })
             self.refs.gridview.root.set("rows",rows)
@@ -156,7 +156,7 @@
             self.refs.gridview.root.observable = self.root.observable
             self.refs.gridview.ongridselect = function(d)
             {
-                var data = {id:self.rid, data:self.data[d.data.i], idx:d.data.i}
+                var data = {id:self.rid, data:self.data[d.data.child[3].idx], idx:d.data.child[3].idx}
                 self.root.observable.trigger("fileselect",data)
             }
             self.refs.gridview.ongriddbclick = function(d)

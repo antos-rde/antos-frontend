@@ -1,13 +1,14 @@
 class Files extends this.OS.GUI.BaseApplication
     constructor: (args) ->
         super "Files", args
+    
     main: () ->
         me = @
         @scheme.set "apptitle", "Files manager"
         @view = @find "fileview"
         @navinput = @find "navinput"
         @navbar = @find "nav-bar"
-        @prepaths = []
+        @currdir = undefined
         @favo = @find "favouri"
 
         @view.contextmenuHandler = (e, m) ->
@@ -19,8 +20,8 @@ class Files extends this.OS.GUI.BaseApplication
         @favo.set "onlistselect", (e) -> me.chdir e.data.path, true
         
         ($ @find "btback").click () ->
-            return if me.prepaths.length is 0
-            p = me.prepaths.pop()
+            return if me.currdir.isRoot()
+            p = me.currdir.parent()
             me.favo.set "selected", -1
             me.chdir p, false
 
@@ -35,36 +36,34 @@ class Files extends this.OS.GUI.BaseApplication
                 , (e, s) -> me.error "Cannot fetch child dir #{e.child.path}"
         
         @setting.favorite = [
-            { text: "Applications", path: 'apps:///', iconclass:"fa  fa-adn"},
-            { text: "Home", path: 'home:///', iconclass:"fa fa-home", selected:true},
-            { text: "OS", path: 'os:///', iconclass:"fa fa-inbox" },
+            { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn" },
+            { text: "Home", path: 'home:///', iconclass: "fa fa-home", selected: true },
+            { text: "OS", path: 'os:///', iconclass: "fa fa-inbox" },
             { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
         ] if not @setting.favorite
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
+        @setting.showhidden = false if @setting.showhidden is undefined
         @favo.set "items", @setting.favorite
         @applySetting()
 
     applySetting: (k) ->
         # view setting
         @view.set "view", @setting.view if @setting.view
-        @view.set "showhidden", @setting.showhidden if @setting.showhidden
+        @view.set "showhidden", @setting.showhidden
         @toggleSidebar @setting.sidebar
         @toggleNav @setting.nav
 
     chdir: (p, push) ->
         me = @
-        me._api.handler.scandir p,
-            (d) ->
+        dir = p.asFileHandler()
+        dir.read (d) ->
                 if(d.error)
                     return me.error "Resource not found #{p}"
-                v = ($ me.navinput).val()
-                me.prepaths.push v if push and v isnt ""
+                me.currdir = dir
                 ($ me.navinput).val p
                 me.view.set "path", p
                 me.view.set "data", d.result
-            , (e, s) ->
-                me.error "Cannot chdir #{p}"
 
     mnFile:() ->
         {
