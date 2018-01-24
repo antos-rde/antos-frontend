@@ -161,7 +161,7 @@
             }
             self.refs.gridview.ongriddbclick = function(d)
             {
-                var data = {id:self.rid, data:self.data[d.data.i], idx:d.data.i}
+                var data = {id:self.rid, data:self.data[d.data.child[3].idx], idx:d.data.child[3].idx}
                 self.root.observable.trigger("filedbclick",data)
             }
             self.refs.treeview.ontreeselect = function(d)
