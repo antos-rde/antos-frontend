@@ -127,7 +127,7 @@ class Files extends this.OS.GUI.BaseApplication
                 @registry "showhidden",e.item.data.checked
                 #@.setting.showhidden = e.item.data.checked
             when "#{@name}-refresh"
-                @.chdir ($ @.navinput).val()
+                @.chdir null
             when "#{@name}-side"
                 @registry "sidebar",e.item.data.checked
                 #@setting.sidebar = e.item.data.checked
