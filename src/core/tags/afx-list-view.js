@@ -135,7 +135,7 @@
                 event.preventUpdate = true
                 return
             }
-            if(self.selidx != -1)
+            if(self.selidx != -1 && self.selidx < self.items.length)
                 self.items[self.selidx].selected =false
             event.item.item.selected = true
         }

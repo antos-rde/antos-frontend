@@ -18,6 +18,11 @@ self.OS.API.handler =
         _API.get path + p, c, (e, s) ->
             _courrier.osfail "Fail to read file: #{p}",e , s
 
+    write: (p, d , c) ->
+        path = "lua-api/fs/write"
+        _API.post path, { path: p, data: d }, c, (e, s) ->
+            _courrier.osfail "Fail to write to file: #{p}", e, s
+
     scanapp: (p, c ) ->
         path = "lua-api/system/application"
     auth: (c) ->

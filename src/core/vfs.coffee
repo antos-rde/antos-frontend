@@ -101,6 +101,8 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
             when "mk"
                 return f { error: "#{@path} is not a directory" } if @meta.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f
+            when "write"
+                _API.handler.write @path, p, f
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 

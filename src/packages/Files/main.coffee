@@ -17,18 +17,18 @@ class Files extends this.OS.GUI.BaseApplication
         #@on "fileselect", (d) -> console.log d
         @on "filedbclick", (e) ->
             #if e.data.type is 'dir' then me.chdir e.data.path, true
-        @favo.set "onlistselect", (e) -> me.chdir e.data.path, true
+        @favo.set "onlistselect", (e) -> me.chdir e.data.path
         
         ($ @find "btback").click () ->
             return if me.currdir.isRoot()
             p = me.currdir.parent()
             me.favo.set "selected", -1
-            me.chdir p, false
+            me.chdir p
 
         ($ @navinput).keyup (e) ->
             me.chdir ($ me.navinput).val() if e.keyCode is 13 #enter
         
-        @view.set "chdir", (p) -> me.chdir p, true
+        @view.set "chdir", (p) -> me.chdir p
         @view.set "fetch", (e, f) ->
             return unless e.child
             me._api.handler.scandir e.child.path,
@@ -56,7 +56,7 @@ class Files extends this.OS.GUI.BaseApplication
 
     chdir: (p, push) ->
         me = @
-        dir = p.asFileHandler()
+        dir = if p then p.asFileHandler() else me.currdir
         dir.read (d) ->
                 if(d.error)
                     return me.error "Resource not found #{p}"
@@ -66,13 +66,14 @@ class Files extends this.OS.GUI.BaseApplication
                 me.view.set "data", d.result
 
     mnFile:() ->
+        me = @
         {
             text: "File",
             child: [
                 { text: "New file", dataid: "#{@name}-mkf" },
                 { text: "New folder", dataid: "#{@name}-mkdir" },
                 { text: "Upload", dataid: "#{@name}-upload" }
-            ]
+            ], onmenuselect: (e) -> me.actionFile e
         }
     mnEdit: () ->
         me = @
@@ -126,7 +127,7 @@ class Files extends this.OS.GUI.BaseApplication
                 @registry "showhidden",e.item.data.checked
                 #@.setting.showhidden = e.item.data.checked
             when "#{@name}-refresh"
-                @.chdir ($ @.navinput).val(), false
+                @.chdir ($ @.navinput).val()
             when "#{@name}-side"
                 @registry "sidebar",e.item.data.checked
                 #@setting.sidebar = e.item.data.checked
@@ -138,11 +139,33 @@ class Files extends this.OS.GUI.BaseApplication
 
     actionEdit: (e) ->
         switch e.item.data.dataid
-            when "#{@.name}-info"
+            when "#{@name}-info"
                 file = @view.get "selectedFile"
                 return unless file
                 @openDialog "InfoDialog", null, file
+            when "#{@name}-mkdir"
+                console.log "mkdir"
+                @openDialog "PromptDialog", (d) -> console.log d
             else
                 @_api.handler.setting()
+    
+    actionFile: (e) ->
+        me = @
+        switch e.item.data.dataid
+            when "#{@name}-mkdir"
+                @openDialog "PromptDialog",
+                    (d) ->
+                        me.currdir.mk d, (r) ->
+                            if r.result then me.chdir null else me.error "Fail to create #{d}"
+                    , "New folder"
+            when "#{@name}-mkf"
+                @openDialog "PromptDialog",
+                    (d) ->
+                        fp = "#{me.currdir.path}/#{d}".asFileHandler()
+                        fp.write "", (r) ->
+                            if r.result then me.chdir null else me.error "Fail to create #{d}"
+                    , "New file"
+            else
+                console.log e
 
 this.OS.register "Files", Files

@@ -46,7 +46,7 @@ class BasicDialog extends BaseDialog
     init: () ->
         html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@name}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-hbox>"
-        html += "<#{@conf.tag} data-id = 'content'></#{@conf.tag}>"
+        html += "<#{@conf.tag} #{@conf.att} data-id = 'content'></#{@conf.tag}>"
         html += "<div data-height = '40' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div></afx-hbox></afx-app-window>"
@@ -63,6 +63,33 @@ class BasicDialog extends BaseDialog
         @conf.filldata @ if @conf.filldata
 
 this.OS.GUI.BasicDialog = BasicDialog
+
+class PromptDialog extends BasicDialog
+    constructor: () ->
+        super "PromptDialog", {
+            tag: "input",
+            width: 200,
+            height: 90,
+            resizable: false,
+            buttons: [
+                {
+                    label: "0k",
+                    onclick: (d) ->
+                        txt = (d.find "content").value
+                        return d.quit() if txt is ""
+                        d.handler txt if d.handler
+                        d.quit()
+                },
+                {
+                    label: "Cancel",
+                    onclick: (d) -> d.quit()
+                }
+            ],
+            filldata: (d) ->
+                d.scheme.set "apptitle", d.data if d.data
+        }
+
+this.OS.register "PromptDialog", PromptDialog
 
 class CalendarDialog extends BasicDialog
     constructor: () ->
@@ -129,6 +156,7 @@ class InfoDialog extends BasicDialog
                 rows = []
                 rows.push [ { value: k }, { value: v } ] for k, v of d.data
                 (d.find "content").set "rows", rows
+                d.scheme.set "apptitle", d.data.filename
         }
 this.OS.register "InfoDialog", InfoDialog
 
