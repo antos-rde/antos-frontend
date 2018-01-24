@@ -9,12 +9,12 @@ class BaseModel
         @setting = _OS.setting.applications[@name]
         @dialog = undefined
         @subscribe "appregistry"
-            ,(m)->
+            , ( m ) ->
                 me.applySetting m.data.m if (m.name is me.name)
 
-    registry: (k,v) ->
+    registry: (k, v) ->
         @setting[k] = v
-        @publish "appregistry",k
+        @publish "appregistry", k
 
     render: (p) ->
         _GUI.loadScheme p, @, @host
@@ -70,6 +70,8 @@ class BaseModel
     fail: (m) ->
         @publish "fail", m
 
+    throwe: () ->
+        @_api.throwe @name
     
     find: (id) -> ($ "[data-id='#{id}']", @scheme)[0] if @scheme
     

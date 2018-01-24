@@ -37,7 +37,7 @@ self.OS.GUI =
         app = arr[0]
         return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
         _GUI.loadApp app,
-            (a)->
+            (a) ->
                 return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
             (e, s) ->
                 _courrier.trigger "srvroutineready", srv
@@ -49,7 +49,7 @@ self.OS.GUI =
         _OS.APP[app] = undefined
         _GUI.launch app, args
 
-    loadApp:(app, ok, err) ->
+    loadApp: (app, ok, err) ->
         path = "packages/#{app}/"
         _API.script path + "main.js",
             (d) ->

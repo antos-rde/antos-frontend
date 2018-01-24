@@ -54,4 +54,13 @@ self.OS.API =
     resource: (r, c, f) ->
         path = "resources/#{r}"
         _API.get path, c, f
+    
+    throwe: (n) ->
+        err = undefined
+        try
+            throw new Error(n)
+        catch e
+            err = e
+        return "" if not err
+        return err.stack
         

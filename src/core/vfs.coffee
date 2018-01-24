@@ -39,21 +39,21 @@ class BasicFileHandler
         return @ if @isRoot()
         (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/").asFileHandler()
 
-    onready: (f, e) ->
+    onready: (f) ->
         # read meta data
         return f() if @ready
         me = @
         me.meta (d) ->
-            return e d.error if d.error
+            return _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error  if d.error
             me.meta = d.result
             me.ready = true
             f()
 
     #public interface for all action on file
-    do: (a, f, e) ->
-        return e "Action #{a} not found" if not @[a]
+    do: (a, f) ->
+        return _courrier.osfail "VFS unknown action: #{a}", (_API.throwe "OS.VFS"), a if not @[a]
         me = @
-        @onready (() -> me[a] f), e
+        @onready (() -> me[a] f)
 
     
     # methods implemented by subclasses used as private methods
@@ -66,8 +66,6 @@ class BasicFileHandler
     remove: (f) ->
 
     execute: (f) ->
-
-    ls: (f) ->
     
     mk: (f) ->
 
@@ -82,9 +80,10 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
     meta: (f) ->
         _API.handler.fileinfo @path, f
     
-    ls: (f) ->
-       return f(@) if @meta.type is "file"
-       _API.handler.scandir @path, f
+    read: (f) ->
+        return _API.handler.scandir @path, f if @meta.type is "dir"
+        #read the file
+        _API.handler.readfile @path, f
 
 self.OS.API.VFS.RemoteFileHandler = RemoteFileHandler
 

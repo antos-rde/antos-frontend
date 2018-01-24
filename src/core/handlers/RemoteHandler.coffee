@@ -2,13 +2,18 @@ self.OS.API.handler =
     scandir: (p, c ) ->
         path = "lua-api/fs/scandir"
         _API.post path, { path: p }, c, (e, s) ->
-            _courrier.osfail "Fail to scan directory: #{path}", e, s
+            _courrier.osfail "Fail to scan directory: #{p}", e, s
 
     fileinfo: (p, c) ->
         path = "lua-api/fs/fileinfo"
         _API.post path, { path: p }, c, (e, s) ->
-            _courrier.osfail "Fail to get file metadata: #{path}", e, s
-            
+            _courrier.osfail "Fail to get file metadata: #{p}", e, s
+
+    readfile: (p, c) ->
+        path = "lua-api/fs/get/"
+        _API.get path + p, c, (e, s) ->
+            _courrier.osfail "Fail to read file: #{p}",e , s
+
     scanapp: (p, c ) ->
         path = "lua-api/system/application"
     auth: (c) ->
