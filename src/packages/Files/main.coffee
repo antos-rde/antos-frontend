@@ -143,9 +143,6 @@ class Files extends this.OS.GUI.BaseApplication
                 file = @view.get "selectedFile"
                 return unless file
                 @openDialog "InfoDialog", null, file
-            when "#{@name}-mkdir"
-                console.log "mkdir"
-                @openDialog "PromptDialog", (d) -> console.log d
             else
                 @_api.handler.setting()
     
