@@ -16,7 +16,27 @@ self.OS.API.handler =
     readfile: (p, c) ->
         path = "lua-api/fs/get/"
         _API.get path + p, c, (e, s) ->
-            _courrier.osfail "Fail to read file: #{p}",e , s
+            _courrier.osfail "Fail to read file: #{p}", e, s
+
+    move: (s, d, c) ->
+        path = "lua-api/fs/move"
+        _API.post path, { src: s, dest: d }, c, (e, s) ->
+            _courrier.osfail "Fail to move file: #{s} -> #{d}", e, s
+
+    delete: (p , c) ->
+        path = "lua-api/fs/delete"
+        _API.post path, { path: p }, c, (e, s) ->
+            _courrier.osfail "Fail to delete: #{p}", e, s
+
+    fileblob: (p, c) ->
+        path = "lua-api/fs/get/"
+        _API.blob path + p, c, (e, s)  ->
+            _courrier.osfail "Fail to read file: #{p}", e, s
+
+    upload: (d, c) ->
+        path = "lua-api/fs/upload"
+        _API.upload path, d, c, (e, s) ->
+            _courrier.osfail "Fail to upload file to: #{d}", e, s
 
     write: (p, d , c) ->
         path = "lua-api/fs/write"

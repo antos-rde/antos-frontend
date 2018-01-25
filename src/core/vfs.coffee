@@ -64,9 +64,17 @@ class BasicFileHandler
         me = @
         @onready (() -> me.action "remove", null, f)
 
+    upload: (f) ->
+        me = @
+        @onready (() -> me.action "upload", null, f)
+
+    download: (f) ->
+        me = @
+        @onready (() -> me.action "download", null, f)
+
     move: (d, f) ->
         me = @
-        @onready (() -> me action "move", d, f)
+        @onready (() -> me.action "move", d, f)
 
     execute: (f) ->
         me = @
@@ -93,6 +101,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
         _API.handler.fileinfo @path, f
     
     action: (n, p, f) ->
+        me = @
         switch n
             when "read"
                 return _API.handler.scandir @path, f if @meta.type is "dir"
@@ -103,6 +112,18 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
                 _API.handler.mkdir "#{@path}/#{p}", f
             when "write"
                 _API.handler.write @path, p, f
+            when "upload"
+                return if @meta.type is "file"
+                _API.handler.upload @path, f
+            when "remove"
+                _API.handler.delete @path, f
+            when "download"
+                return if @meta.type is "dir"
+                _API.handler.fileblob @path, (d) ->
+                    blob = new Blob [d], { type: "octet/stream" }
+                    _API.saveblob me.basename, blob
+            when "move"
+                _API.handler.move @path, p, f
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 

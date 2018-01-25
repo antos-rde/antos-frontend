@@ -156,7 +156,6 @@ self.OS.GUI =
                     username: ($ "#txtuser").val(),
                     password: ($ "#txtpass").val()
                 _API.handler.login data, (d) ->
-                    console.log d
                     if d.error then ($ "#login_error").html d.error else _GUI.startAntOS d.result
         , (e, s) ->
             alert "System fall: Cannot init login screen"

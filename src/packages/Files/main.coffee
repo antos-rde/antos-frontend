@@ -10,6 +10,7 @@ class Files extends this.OS.GUI.BaseApplication
         @navbar = @find "nav-bar"
         @currdir = undefined
         @favo = @find "favouri"
+        @clipboard = undefined
 
         @view.contextmenuHandler = (e, m) ->
             m.set "items", [ me.mnFile(), me.mnEdit() ]
@@ -61,8 +62,8 @@ class Files extends this.OS.GUI.BaseApplication
                 if(d.error)
                     return me.error "Resource not found #{p}"
                 me.currdir = dir
-                ($ me.navinput).val p
-                me.view.set "path", p
+                ($ me.navinput).val dir.path
+                me.view.set "path", dir.path
                 me.view.set "data", d.result
 
     mnFile:() ->
@@ -72,7 +73,10 @@ class Files extends this.OS.GUI.BaseApplication
             child: [
                 { text: "New file", dataid: "#{@name}-mkf" },
                 { text: "New folder", dataid: "#{@name}-mkdir" },
-                { text: "Upload", dataid: "#{@name}-upload" }
+                { text: "Open with", dataid: "#{@name}-open" },
+                { text: "Upload", dataid: "#{@name}-upload" },
+                { text: "Download", dataid: "#{@name}-download" },
+                { text: "Properties", dataid: "#{@name}-info" }
             ], onmenuselect: (e) -> me.actionFile e
         }
     mnEdit: () ->
@@ -82,9 +86,9 @@ class Files extends this.OS.GUI.BaseApplication
             child: [
                 { text: "Rename", dataid: "#{@name}-mv" },
                 { text: "Delete", dataid: "#{@name}-rm" },
-                { text: "Information", dataid: "#{@name}-info" },
-                { text: "Open with", dataid: "#{@name}-open" },
-                { text: "Download", dataid: "#{@name}-download" },
+                { text: "Cut", dataid: "#{@name}-cut" },
+                { text: "Copy", dataid: "#{@name}-copy" },
+                { text: "Paste", dataid: "#{@name}-paste" }
             ], onmenuselect: (e) -> me.actionEdit e
         }
     menu: () ->
@@ -138,30 +142,90 @@ class Files extends this.OS.GUI.BaseApplication
                 #@toggleNav e.item.data.checked
 
     actionEdit: (e) ->
+        me = @
+        file = @view.get "selectedFile"
         switch e.item.data.dataid
-            when "#{@name}-info"
-                file = @view.get "selectedFile"
+            when "#{@name}-mv"
                 return unless file
-                @openDialog "InfoDialog", null, file
+                @openDialog "PromptDialog",
+                    (d) ->
+                        return if d is file.filename
+                        file.path.asFileHandler()
+                            .move "#{me.currdir.path}/#{d}", (r) ->
+                                if r.result then me.chdir null else me.error "Fail to rename to #{d}: #{r.error}"
+                    , "Rename", file.filename
+            
+            when "#{@name}-rm"
+                return unless file
+                @openDialog "YesNoDialog",
+                    (d) ->
+                        return unless d
+                        file.path.asFileHandler()
+                            .remove (r) ->
+                                if r.result then me.chdir null else me.error "Fail to delete #{file.filename}: #{r.error}"
+                , "Delete" ,
+                { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{file.filename} ?" }
+            
+            when "#{@name}-cut"
+                return unless file
+                @clipboard =
+                    cut: true
+                    file: file.path.asFileHandler()
+                @notify "File #{file.filename} cut"
+            
+            when "#{@name}-copy"
+                return unless file
+                @clipboard =
+                    cut: false
+                    file: file.path.asFileHandler()
+                @notify "File #{file.filename} copied"
+
+            when "#{@name}-paste"
+                me = @
+                return unless @clipboard
+                if @clipboard.cut
+                    @clipboard.file # duplicate file check
+                            .move "#{me.currdir.path}/#{@clipboard.file.basename}", (r) ->
+                                me.clipboard = undefined
+                                if r.result then me.chdir null else me.error "Fail to paste: #{r.error}"
+                else
+                    @notify "Copy not yet implemented"
+                    @clipboard = undefined
             else
                 @_api.handler.setting()
     
     actionFile: (e) ->
         me = @
+        file = @view.get "selectedFile"
         switch e.item.data.dataid
+
             when "#{@name}-mkdir"
                 @openDialog "PromptDialog",
                     (d) ->
                         me.currdir.mk d, (r) ->
-                            if r.result then me.chdir null else me.error "Fail to create #{d}"
+                            if r.result then me.chdir null else me.error "Fail to create #{d}: #{r.error}"
                     , "New folder"
+            
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
                     (d) ->
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
                         fp.write "", (r) ->
-                            if r.result then me.chdir null else me.error "Fail to create #{d}"
+                            if r.result then me.chdir null else me.error "Fail to create #{d}: #{r.error}"
                     , "New file"
+            
+            when "#{@name}-info"
+                return unless file
+                @openDialog "InfoDialog", null, file.filename, file
+            
+            when "#{@name}-upload"
+                me = @
+                @currdir.upload (r) ->
+                    if r.result then me.chdir null else me.error "Faile to upload to: #{d}: #{r.error}"
+
+            when "#{@name}-download"
+                return unless file
+                file.path.asFileHandler().download ()->
             else
                 console.log e
 

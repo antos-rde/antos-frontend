@@ -40,11 +40,12 @@ this.OS.GUI.BaseDialog = BaseDialog
     }
 ###
 class BasicDialog extends BaseDialog
-    constructor: ( name, @conf ) ->
+    constructor: ( name, @conf, @title) ->
         super name
     
     init: () ->
-        html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@name}' width='#{@conf.width}' height='#{@conf.height}'>
+        @title = @name if not @title
+        html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@title}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-hbox>"
         html += "<#{@conf.tag} #{@conf.att} data-id = 'content'></#{@conf.tag}>"
         html += "<div data-height = '40' style=' text-align:right;padding-top:3px;'>"
@@ -70,6 +71,7 @@ class PromptDialog extends BasicDialog
             tag: "input",
             width: 200,
             height: 90,
+            att: "type = 'text'"
             resizable: false,
             buttons: [
                 {
@@ -86,7 +88,8 @@ class PromptDialog extends BasicDialog
                 }
             ],
             filldata: (d) ->
-                d.scheme.set "apptitle", d.data if d.data
+                return unless d.data
+                (d.find "content").value = d.data
         }
 
 this.OS.register "PromptDialog", PromptDialog
@@ -156,9 +159,37 @@ class InfoDialog extends BasicDialog
                 rows = []
                 rows.push [ { value: k }, { value: v } ] for k, v of d.data
                 (d.find "content").set "rows", rows
-                d.scheme.set "apptitle", d.data.filename
         }
 this.OS.register "InfoDialog", InfoDialog
+
+
+class YesNoDialog extends BasicDialog
+    constructor: () ->
+        super "YesNoDialog", {
+            tag: "afx-label",
+            width: 300,
+            height: 100,
+            att:"style = 'padding:10px;'"
+            resizable: true,
+            buttons: [
+                {
+                    label: "Yes", onclick: (d) ->
+                        d.handler true if d.handler
+                        d.quit()
+                },
+                {
+                    label: "No", onclick: (d) ->
+                        d handler false if dhandler
+                        d.quit()
+                }
+            ],
+            filldata: (d) ->
+                return unless d.data
+                l = d.find "content"
+                for k, v of d.data
+                    l.set k, v
+        }
+this.OS.register "YesNoDialog", YesNoDialog
 
 class AboutDialog extends BaseDialog
     constructor: () ->

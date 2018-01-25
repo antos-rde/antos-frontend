@@ -31,7 +31,7 @@ class BaseModel
     subscribe: (e, f) -> 
         _courrier.on e, f, @
 
-    openDialog: (d, f, data) ->
+    openDialog: (d, f, title, data) ->
         if @dialog
             @dialog.show()
             return
@@ -43,6 +43,7 @@ class BaseModel
         @dialog.handler = f
         @dialog.pid = @pid
         @dialog.data = data
+        @dialog.title = title
         @dialog.init()
 
     publish: (t, m) ->

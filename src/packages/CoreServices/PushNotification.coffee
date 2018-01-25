@@ -55,7 +55,7 @@ class PushNotification extends this.OS.GUI.BaseService
 
     pushout: (s, o, mfeed) ->
         d = {
-            text: "[#{s}] #{o.name} (#{o.id}): #{o.data.m} : #{o.data.e}",
+            text: "[#{s}] #{o.name} (#{o.id}): #{o.data.m}",
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             closable: true }
