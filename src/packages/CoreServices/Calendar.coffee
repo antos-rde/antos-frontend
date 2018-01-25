@@ -14,7 +14,9 @@ class Calendar extends this.OS.GUI.BaseService
             me.update()
 
     awake: (e) ->
-        @.openDialog "CalendarDialog", (d) ->  console.log d
+        @.openDialog "CalendarDialog", (d) ->
+            console.log d
+        , "Calendar"
         # do nothing
     cleanup: (evt) ->
         console.log "cleanup for quit"

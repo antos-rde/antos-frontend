@@ -10,7 +10,7 @@
         self.root.observable = opts.observable || riot.observable()
         self.view = opts.view || 'list'
         self.data = opts.data || []
-        self.path = opts.path || "os://"
+        self.path = opts.path || "home:///"
         self.onfileselect
         this.status = opts.status == undefined?true:opts.status
         this.selectedFile = undefined
