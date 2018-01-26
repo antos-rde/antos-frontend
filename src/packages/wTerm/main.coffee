@@ -64,6 +64,7 @@ class wTerm extends this.OS.GUI.BaseApplication
         @socket.onmessage =  (e) -> me.term.write e.data if me.term and e.data
         @socket.onclose = () ->
             me.socket = null
+            me.quit()
             console.log "socket closed"
             #el.style.display = "block"
     cleanup: (e)->

@@ -39,12 +39,13 @@ class BasicFileHandler
         return @ if @isRoot()
         return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
 
-    onready: (f) ->
+    onready: (f, err) ->
         # read meta data
         return f() if @ready
         me = @
         me.meta (d) ->
-            return _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error  if d.error
+            if d.error
+                return if err then err d else _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error
             me.meta = d.result
             me.ready = true
             f()

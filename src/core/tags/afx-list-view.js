@@ -35,7 +35,10 @@
         self.root.get = function(k)
         {
             if(k == "selected")
-                return self.items[self.selidx]
+                if(self.selidx != -1)
+                    return self.items[self.selidx]
+                else
+                    return undefined
             return self[k]
         }
         self.root.push = function(e,u)

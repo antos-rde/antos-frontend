@@ -27,11 +27,12 @@ class PushNotification extends this.OS.GUI.BaseService
         @nzone = @find "notifyzone"
         @fzone = @find "feedzone"
         (@find "btclear").set "onbtclick", (e) -> me.mlist.set "items", []
-        #mlist.set "onlistselect", (e) -> console.log e
+        @subscribe "fail", (e) -> console.log e
         @subscribe "notification", (o) -> me.pushout 'INFO', o
         @subscribe "fail", (o) -> me.pushout 'FAIL', o
         @subscribe "error", (o) -> me.pushout 'ERROR', o
-        
+        @subscribe "info", (o) -> me.pushout 'INFO', o
+
         @subscribe "loading", (o) ->
             me.pending.push o.id
             me.spin true
@@ -59,6 +60,8 @@ class PushNotification extends this.OS.GUI.BaseService
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             closable: true }
+        console.log o.data.s
+        console.log o.data.e
         @mlist.unshift d, true
         @notifeed d
 

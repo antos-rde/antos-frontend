@@ -50,8 +50,10 @@
         }
         this.on('mount', function() {
             var left,top 
-            left = 20 + Math.floor(Math.random() *  ($("#desktop").width()  - width))
-            top = 20 + Math.floor(Math.random() *  ($("#desktop").height() - height))
+            //left = 20 + Math.floor(Math.random() *  ($("#desktop").width()  - width))
+            //top = 20 + Math.floor(Math.random() *  ($("#desktop").height() - height))
+            left = ($("#desktop").width()  - width)/2
+            top = ($("#desktop").height() - height)/2
             $(self.refs.window)
                 .css("position",'absolute')
                 .css("left",left + "px")

@@ -191,6 +191,31 @@ class YesNoDialog extends BasicDialog
         }
 this.OS.register "YesNoDialog", YesNoDialog
 
+class SelectionDialog extends BasicDialog
+    constructor: () ->
+        super "SelectionDialog", {
+            tag: "afx-list-view",
+            att: "",
+            width: 250,
+            height: 300,
+            resizable: false,
+            buttons: [
+                {
+                    label: "Ok", onclick: (d) ->
+                        el = d.find "content"
+                        it = el.get "selected"
+                        return unless it
+                        d.handler it if d.handler
+                        d.quit()
+                },
+                { label: "Cancel", onclick: (d) -> d.quit() }
+            ],
+            filldata: (d) ->
+                return unless d.data
+                (d.find "content").set "items", d.data
+        }
+this.OS.register "SelectionDialog", SelectionDialog
+
 class AboutDialog extends BaseDialog
     constructor: () ->
         super "AboutDialog"

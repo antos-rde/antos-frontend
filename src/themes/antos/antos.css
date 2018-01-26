@@ -42,6 +42,48 @@ html,body{
     cursor: default;
     padding:0px;
 }
+#desktop > div.float_list_item {
+    display:block;
+    background-color:transparent;
+    text-align: center;
+    width: 70px;
+    color: white;
+    padding:3px;
+}
+
+#desktop > div.float_list_item_selected {
+    display:block;
+    background-color: #116cd6;
+    color:white;
+    border-radius: 6px;
+    text-align: center;
+    width: 70px;
+    color: white;
+    padding:3px;
+}
+
+#desktop > div.float_list_item i.file:before{
+    content: "\f15b\a"; 
+    font-family: "FontAwesome";
+    font-size: 32px;
+    display: block;
+    color: white;
+    font-style: normal;
+    font-weight: normal;
+}
+#desktop > div.float_list_item span{
+    width: 100%;
+    word-wrap: break-word;
+}
+#desktop > div.float_list_item i.dir:before{
+    display: block;
+    content: "\f07b\a"; 
+    font-family: "FontAwesome";
+    font-size: 32px;
+    color: #76D2F9;
+    font-weight: normal;
+    font-style: normal;
+}
 input {
     outline: none;
     padding: 2px;

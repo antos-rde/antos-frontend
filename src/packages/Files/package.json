@@ -9,5 +9,5 @@
     "version":"0.1a",
     "category":"System",
     "iconclass":"fa fa-hdd-o",
-    "mimes":["*"]
+    "mimes":["dir"]
 }

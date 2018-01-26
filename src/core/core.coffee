@@ -8,6 +8,7 @@ self.OS or=
     setting:
         user: {}
         applications: {}
+        desktop: {}
         appearance: {}
     courrier:
         observable: riot.observable()
@@ -22,6 +23,8 @@ self.OS or=
             _courrier.ostrigger "fail", { m: m,  e: e, s: s }
         oserror: (m, e, s) ->
             _courrier.ostrigger "error", { m: m,  e: e, s: s }
+        osinfo: (m) ->
+            _courrier.ostrigger "info", { m: m,  e: null, s: null }
         ostrigger: (e, d) ->
             _courrier.trigger e, { id: 0, data: d, name: "OS" }
         unregister: (app) ->
@@ -33,7 +36,7 @@ self.OS or=
             _courrier.quota += 1
             _courrier.quota
     register: (name, x) ->
-        if x.type is 3 then self.OS.GUI.dialog[name] = x else _OS.APP[name] = x
+        if x.type is 3 then self.OS.GUI.dialogs[name] = x else _OS.APP[name] = x
     
     PM:
         pidalloc: 0

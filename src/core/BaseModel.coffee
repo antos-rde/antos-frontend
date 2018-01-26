@@ -2,9 +2,10 @@ class BaseModel
     constructor: (@name, @args) ->
         @observable = riot.observable()
         @_api = self.OS.API
+        @_gui = self.OS.GUI
         me = @
         @on "exit", () -> me.quit()
-        @host = "#desktop"
+        @host = "#workingenv"
         @dialog = undefined
 
     render: (p) ->
@@ -35,10 +36,10 @@ class BaseModel
         if @dialog
             @dialog.show()
             return
-        if not _GUI.dialog[d]
+        if not _GUI.dialogs[d]
             @error "Dialog #{d} not found"
             return
-        @dialog = new _GUI.dialog[d]()
+        @dialog = new _GUI.dialogs[d]()
         @dialog.parent = @
         @dialog.handler = f
         @dialog.pid = @pid

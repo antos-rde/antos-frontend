@@ -8,7 +8,7 @@ class Files extends this.OS.GUI.BaseApplication
         @view = @find "fileview"
         @navinput = @find "navinput"
         @navbar = @find "nav-bar"
-        @currdir = undefined
+        @currdir = if @args and @args.length > 0 then @args[0].asFileHandler() else "home:///".asFileHandler()
         @favo = @find "favouri"
         @clipboard = undefined
 
@@ -17,7 +17,9 @@ class Files extends this.OS.GUI.BaseApplication
             m.show(e)
         #@on "fileselect", (d) -> console.log d
         @on "filedbclick", (e) ->
-            #if e.data.type is 'dir' then me.chdir e.data.path, true
+            return unless e.data
+            return if e.data.type is "dir"
+            me._gui.openWith e.data
         @favo.set "onlistselect", (e) -> me.chdir e.data.path
         
         ($ @find "btback").click () ->
@@ -38,15 +40,17 @@ class Files extends this.OS.GUI.BaseApplication
         
         @setting.favorite = [
             { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn" },
-            { text: "Home", path: 'home:///', iconclass: "fa fa-home", selected: true },
+            { text: "Home", path: 'home:///', iconclass: "fa fa-home" },
             { text: "OS", path: 'os:///', iconclass: "fa fa-inbox" },
             { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
         ] if not @setting.favorite
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
-        @favo.set "items", @setting.favorite
+        
+        @favo.set "items", $.extend true, {}, @setting.favorite
         @applySetting()
+        @chdir null
 
     applySetting: (k) ->
         # view setting

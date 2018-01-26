@@ -117,5 +117,5 @@ self.OS.API =
         catch e
             err = e
         return "" if not err
-        return err.stack
+        return err
         

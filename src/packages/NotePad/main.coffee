@@ -1,5 +1,5 @@
 class NotePad extends this.OS.GUI.BaseApplication
-    constructor: (args) ->
+    constructor: ( args ) ->
         super "NotePad", args
     main: () ->
         me = @
@@ -9,6 +9,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         @fileview = @find "fileview"
         div = @find "datarea"
         ace.require "ace/ext/language_tools"
+        @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else undefined
         @.editor = ace.edit div
         @.editor.setOptions {
             enableBasicAutocompletion: true,
@@ -16,7 +17,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             enableLiveAutocompletion: true,
             fontSize: "9pt"
         }
-        @.editor.completers.push {getCompletions:(editor, session, pos, prefix, callback)->}
+        @.editor.completers.push { getCompletions: ( editor, session, pos, prefix, callback ) -> }
         @.editor.getSession().setUseWrapMode true
 
         list = @find "modelist"
@@ -64,10 +65,19 @@ class NotePad extends this.OS.GUI.BaseApplication
         
         @location.set "onlistselect", (e) -> me.chdir e.data.path
         @location.set "items", [
-            { text: "Home", path: 'home:///', iconclass:"fa fa-home", selected:true},
-            { text: "OS", path: 'os:///', iconclass:"fa fa-inbox" },
+            { text: "Home", path: 'home:///', iconclass: "fa fa-home", selected: true },
+            { text: "OS", path: 'os:///', iconclass: "fa fa-inbox" },
             { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
         ]
+
+        @open @currfile if @currfile
+    
+    open: (file) ->
+        me = @
+        file.read (d) ->
+            return unless d
+            me.scheme.set "apptitle", file.basename
+            me.editor.setValue d, -1
 
     chdir: (p) ->
         me = @
@@ -82,10 +92,10 @@ class NotePad extends this.OS.GUI.BaseApplication
 
     menu: ()->
         menu = [{
-                text:"File", 
-                child:[
-                    {text:"Open", dataid:"#{@name}-Open"},
-                    {text:"Close", dataid:"#{@name}-Close"}
+                text: "File",
+                child: [
+                    { text: "Open", dataid: "#{@name}-Open" },
+                    { text: "Close", dataid: "#{@name}-Close" }
                 ]
             }]
         menu

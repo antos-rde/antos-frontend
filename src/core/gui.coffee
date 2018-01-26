@@ -1,5 +1,6 @@
 self.OS.GUI =
-    dialog: new Object()
+    dialogs: new Object()
+    dialog: undefined
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
         ($ parent).append scheme
@@ -19,7 +20,8 @@ self.OS.GUI =
          $ "head link#ostheme"
             .attr "href", ""
 
-    loadTheme: (name) ->
+    loadTheme: (name, force) ->
+        _GUI.clearTheme() if force
         path = "resources/themes/#{name}/#{name}.css"
         $ "head link#ostheme"
             .attr "href", path
@@ -30,6 +32,21 @@ self.OS.GUI =
         _GUI.pushService srvs[0]
         srvs.splice 0, 1
         f i for i in srvs
+
+    openDialog: (d, f, title, data) ->
+        if _GUI.dialog
+            _GUI.dialog.show()
+            return
+        if not _GUI.dialogs[d]
+            ex = _API.throwe "Dialog"
+            return _courrier.oserror "Dialog #{d} not found", ex, null
+        _GUI.dialog = new _GUI.dialogs[d]()
+        _GUI.dialog.parent = _GUI
+        _GUI.dialog.handler = f
+        _GUI.dialog.pid = -1
+        _GUI.dialog.data = data
+        _GUI.dialog.title = title
+        _GUI.dialog.init()
 
     pushService: (ph) ->
         arr = ph.split "/"
@@ -42,6 +59,32 @@ self.OS.GUI =
             (e, s) ->
                 _courrier.trigger "srvroutineready", srv
                 _courrier.osfail "Cannot read service script: #{srv} ", e, s
+
+    appsByMime: (mime) ->
+        metas = ( a.meta for k, a of _OS.APP when a.type is 1)
+        mimes = ( m.mimes for m in metas )
+        apps = []
+        # search app by mimes
+        f = ( arr, idx ) ->
+            arr.filter (m, i) ->
+                if mime.match (new RegExp m, "g")
+                    apps.push metas[idx]
+                    return false
+                return false
+
+        f m, i for m, i in mimes
+        return apps
+       
+    openWith: (it) ->
+        return unless it
+        console.log "open #{it.path}"
+        apps = _GUI.appsByMime ( if it.type is "dir" then "dir" else it.mime )
+        return OS.info "No application available to open #{it.filename}" if apps.length is 0
+        return _GUI.launch apps[0].app, [it.path] if apps.length is 1
+        list = ( { text: e.app, icon: e.icon, iconclass: e.iconclass } for e in apps )
+        _GUI.openDialog "SelectionDialog", ( d ) ->
+            _GUI.launch d.text, [it.path]
+        , "Open width", list
 
     forceLaunch: (app, args) ->
         console.log "This method is used for developing only, please use the launch method instead"
@@ -129,19 +172,71 @@ self.OS.GUI =
             return null unless x
             scheme =  $.parseHTML x
             ($ "#wrapper").append scheme
+            
+            # system menu and dock
+            riot.mount ($ "#syspanel", $ "#wrapper")
+            riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }
+
             # context menu
             riot.mount ($ "#contextmenu")
             ($ "#workspace").contextmenu (e) -> _GUI.bindContextMenu e
-            #desktop
-            desktop = ($ "#desktop")
-            desktop.on "click", (e) ->
-                return if e.target isnt desktop.get(0)
-                ($ "#sysdock").get(0).set "selectedApp", null
-            desktop.get(0).contextmenuHandler = (e, m) ->
-                console.log "context menu handler for desktop"
-            # system menu
-            riot.mount ($ "#syspanel", $ "#wrapper")
-            riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }
+            
+            # desktop default file manager
+            desktop = $ "#desktop"
+            desktop[0].fetch = () ->
+                fp = _OS.setting.desktop.path.asFileHandler()
+                fn = () ->
+                    fp.read (d) ->
+                        return _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error if d.error
+                        items = []
+                        $.each d.result,  (i, v) ->
+                            return if v.filename[0] is '.' and  not _OS.setting.desktop.showhidden
+                            v.text = v.filename
+                            #v.text = v.text.substring(0,9) + "..." ifv.text.length > 10
+                            v.iconclass = v.type
+                            items.push(v)
+                        desktop[0].set "items", items
+                        desktop[0].refresh()
+
+                fp.onready () ->
+                        fn()
+                    , ( e ) -> # try to create the path
+                        console.log "#{fp.path} not found"
+                        name = fp.basename
+                        fp.parent().asFileHandler().mk name, (r) ->
+                            ex = _API.throwe "OS.VFS"
+                            if r.error then _courrier.osfail d.error, ex, d.error else fn()
+                
+            desktop[0].ready = (e) ->
+                e.observable = _courrier
+                window.onresize = () ->
+                    _courrier.trigger "desktopresize"
+                    e.refresh()
+
+                desktop[0].set "onlistselect", (d) ->
+                    ($ "#sysdock").get(0).set "selectedApp", null
+            
+                desktop[0].set "onlistdbclick", ( d ) ->
+                    ($ "#sysdock").get(0).set "selectedApp", null
+                    it = desktop[0].get "selected"
+                    _GUI.openWith it
+
+                ($ "#workingenv").on "click", (e) ->
+                     desktop[0].set "selected", -1
+
+                desktop.on "click", (e) ->
+                    ($ "#sysdock").get(0).set "selectedApp", null
+                    desktop[0].set "selected", -1 if e.target is desktop[0]
+                    console.log "desktop clicked"
+            
+                desktop[0].contextmenuHandler = (e, m) ->
+                    desktop[0].set "selected", -1 if e.target is desktop[0]
+                    console.log "context menu handler for desktop"
+                
+                desktop[0].fetch()
+                _courrier.trigger "desktoploaded"
+            # mount it
+            riot.mount desktop
         , (e, s) ->
             alert "System fall: Cannot init desktop manager"
     
@@ -161,16 +256,25 @@ self.OS.GUI =
             alert "System fall: Cannot init login screen"
     
     startAntOS: (conf) ->
+        # clean up things
         _OS.cleanup()
+        # get setting from conf
+        _OS.setting.desktop = conf.desktop if conf.desktop
         _OS.setting.applications = conf.applications if conf.applications
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user
-        # get setting from conf
-        # load packages list
+        _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
         # load theme
-        # initDM
         _GUI.loadTheme "antos"
+        # initDM
         _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
-            #_GUI.loadApp "CoreServices", (a) ->
+            # TODO load packages list then build system menu
+            # push startup services
+            # TODO: get services list from user setting
             _GUI.pushServices ["CoreServices/PushNotification", "CoreServices/Spotlight", "CoreServices/Calendar"]
+
+        # startup application here
+        _courrier.observable.one "desktoploaded", () ->
+            _GUI.launch "Files"
+            _GUI.launch "NotePad"
