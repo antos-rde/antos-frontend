@@ -72,7 +72,7 @@ self.OS.GUI =
                     return false
                 return false
 
-        f m, i for m, i in mimes
+        ( f m, i if m ) for m, i in mimes
         return apps
        
     openWith: (it) ->
