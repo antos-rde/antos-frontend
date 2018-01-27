@@ -1,0 +1,17 @@
+afx-tab-container {
+    display: block;
+    width: 100%;
+    
+}
+afx-tab-container afx-list-view {
+    padding:0;
+    margin:0;
+}
+afx-tab-container afx-list-view li{
+    float:left;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-bottom: 2px;
+    padding-top:2px;
+    border:1px solid #c3c3c3;
+}

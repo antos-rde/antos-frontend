@@ -15,6 +15,7 @@
         self.selidx = -1
         self.onlistselect = opts.onlistselect
         self.onlistdbclick = opts.onlistdbclick
+        self.onitemclose = opts.onitemclose
         var onclose = false
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.root.set = function(k,v)
@@ -39,6 +40,8 @@
                     return self.items[self.selidx]
                 else
                     return undefined
+            else if(k == "count")
+                return self.items.length
             return self[k]
         }
         self.root.push = function(e,u)
@@ -73,6 +76,7 @@
         {
             this.root.observable = riot.observable()
         }
+        
         this.on("mount", function(){
             if(opts.dropdown == "true")
             {
@@ -108,7 +112,11 @@
         }
         _remove(event)
         {
-            self.root.remove(event.item.item, true)
+            r = true
+            if(self.onitemclose)
+                r = self.onitemclose(event)
+            if(r)
+                self.root.remove(event.item.item, true)
         }
         _autoselect(it,i)
         {

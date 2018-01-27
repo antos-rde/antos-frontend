@@ -5,7 +5,7 @@ class BaseModel
         @_gui = self.OS.GUI
         me = @
         @on "exit", () -> me.quit()
-        @host = "#workingenv"
+        @host = "#desktop"
         @dialog = undefined
 
     render: (p) ->

@@ -15,7 +15,15 @@ String.prototype.asFileHandler = () ->
 this.OS.API.VFS = {}
 
 class BasicFileHandler
-    constructor: (@path) ->
+    constructor: (path) ->
+        @setPath path
+
+    setPath: (p) ->
+        @ready = false
+        @dirty = false
+        @cache = undefined
+        return unless p
+        @path = p
         list = @path.split ":///"
         @protocol = list[0]
         return unless list.length > 1
@@ -24,8 +32,6 @@ class BasicFileHandler
         @genealogy = re.split("/")
         @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
         @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
-        @ready = false
-
 
     isRoot: () -> (not @genealogy) or (@genealogy.size is 0)
     
@@ -33,7 +39,9 @@ class BasicFileHandler
         return false if not @basename
         @basename[0] is "."
 
-    hash: () -> @path.hash()
+    hash: () -> 
+        return -1 unless @path
+        return @path.hash()
 
     parent: () ->
         return @ if @isRoot()

@@ -70,14 +70,28 @@ class NotePad extends this.OS.GUI.BaseApplication
             { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
         ]
 
-        @open @currfile if @currfile
+        @tabarea = @find "tabarea"
+        #@tabarea.set "closable", true
+        @open @currfile
     
     open: (file) ->
+        #find table
+        @newtab "undefined".asFileHandler() unless file
+        return @newtab "undefined".asFileHandler() unless file
         me = @
         file.read (d) ->
             return unless d
             me.scheme.set "apptitle", file.basename
-            me.editor.setValue d, -1
+            file.cache = d
+            me.newtab file
+
+    newtab: (file) ->
+        file.text = if file.basename then file.basename else "undefined"
+        file.cache = "" unless file.cache
+        cnt = @tabarea.get "count"
+        @tabarea.push file, true
+        @tabarea.set "selected", cnt
+        @editor.setValue file.cache, -1
 
     chdir: (p) ->
         me = @

@@ -17,7 +17,8 @@
                 { 
                     for(var i in self.items)
                         self.items[i].app.blur()
-                    //v.show()
+                    if(v)
+                        $("#desktop")[0].set("selected", -1)
                 }
             }
             self.update()

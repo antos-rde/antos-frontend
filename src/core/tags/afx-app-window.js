@@ -27,6 +27,9 @@
         this.root.observable = opts.observable || riot.observable()
         if(!window._zindex) window._zindex = 10
         this.shown = false
+
+        self.root.contextmenuHandler = function (e) {}
+
         self.root.set = function(k,v)
         {
             if(k == "*")

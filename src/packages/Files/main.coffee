@@ -48,7 +48,10 @@ class Files extends this.OS.GUI.BaseApplication
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
         
-        @favo.set "items", $.extend true, {}, @setting.favorite
+        el.selected = false for el, i in @setting.favorite
+
+        @favo.set "items", @setting.favorite
+        #@favo.set "selected", -1
         @applySetting()
         @chdir null
 

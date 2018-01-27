@@ -76,9 +76,16 @@ class DummyApp extends this.OS.GUI.BaseApplication
             {text:"some thing"},
             {text:"some thing"}
         ]
-        list.set "items",ldata
+        #list.set "items",ldata
         list.set "onlistselect", (e)->
             console.log e
+
+        tabs = @find "mytabs"
+        tabdatas = [
+            {text:"file1.txt"},
+            {text:"file2.cpp"}
+        ]
+        tabs.set "items", tabdatas 
 
         @scheme.set "apptitle", "AntOS feature showcase"
 

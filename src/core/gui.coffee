@@ -221,16 +221,18 @@ self.OS.GUI =
                     it = desktop[0].get "selected"
                     _GUI.openWith it
 
-                ($ "#workingenv").on "click", (e) ->
-                     desktop[0].set "selected", -1
+                #($ "#workingenv").on "click", (e) ->
+                #     desktop[0].set "selected", -1
 
                 desktop.on "click", (e) ->
+                    return unless e.target is desktop[0]
+                    desktop[0].set "selected", -1
                     ($ "#sysdock").get(0).set "selectedApp", null
-                    desktop[0].set "selected", -1 if e.target is desktop[0]
                     console.log "desktop clicked"
             
                 desktop[0].contextmenuHandler = (e, m) ->
                     desktop[0].set "selected", -1 if e.target is desktop[0]
+                    ($ "#sysdock").get(0).set "selectedApp", null
                     console.log "context menu handler for desktop"
                 
                 desktop[0].fetch()
@@ -264,8 +266,9 @@ self.OS.GUI =
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user
         _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
+        _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
-        _GUI.loadTheme "antos"
+        _GUI.loadTheme _OS.setting.appearance.theme
         # initDM
         _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
@@ -276,5 +279,5 @@ self.OS.GUI =
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
-            _GUI.launch "Files"
-            _GUI.launch "NotePad"
+            _GUI.launch "DummyApp"
+            #_GUI.launch "NotePad"

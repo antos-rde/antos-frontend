@@ -1,8 +1,9 @@
 <afx-float-list ref = "container">
-    <div each={item,i in items } class={float_list_item:true, float_list_item_selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onmousedown = {parent._select} oncontextmenu = {parent._select}>
-        <afx-label color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
+    <div ref = "list">
+        <div each={item,i in items } class={float_list_item:true, float_list_item_selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onmousedown = {parent._select} oncontextmenu = {parent._select}>
+            <afx-label color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
+        </div>
     </div>
-
     <script>
         this.items = opts.items || []
         var self = this
@@ -82,7 +83,7 @@
             var cleft = 20
             var gw = $(self.refs.container).width()
             var gh = $(self.refs.container).height()
-            $(self.refs.container)
+            $(self.refs.list)
             .children()
             .each(function(e)
             {
