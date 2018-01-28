@@ -246,6 +246,7 @@ class FileDiaLog extends BaseDialog
     main: () ->
         fileview = @find "fileview"
         location = @find "location"
+        filename = @find "filename"
         me = @
         @scheme.set "apptitle", "#{@title}"
         fileview.set "fetch", (e, f) ->
@@ -262,14 +263,20 @@ class FileDiaLog extends BaseDialog
                 fileview.set "data", d.result
         location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
         location.set "selected", 0 unless location.get "selected"
+        fileview.set "onfileselect", (f) ->
+           ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
             return unless f
-            return unless f.type is "file" or ( me.data  and me.data.seldir )
-            me.handler f if me.handler
+            d = f.path
+            d = f.path.asFileHandler().parent() if f.type is "file"
+            me.handler d, ($ filename).val() if me.handler
+            #sel = if  me.data and me.data.selection then me.data.selection else "file"
+            #me.handler f, ($ filename).val() if me.handler and ((f.type is sel) or (sel is "*"))
             me.quit()
 
         (@find "bt-cancel").set "onbtclick", (e) ->
             me.quit()
-        
+        ($ filename).css("display", "block").val @data.file.basename or "Untitled" if @data and @data.file
+
 this.OS.register "FileDiaLog", FileDiaLog

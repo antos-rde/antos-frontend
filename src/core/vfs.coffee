@@ -4,6 +4,12 @@ String.prototype.hash = () ->
     hash = (hash * 33) ^ this.charCodeAt(--i) while i
     hash >>> 0
 
+String.prototype.asBase64 = () ->
+    tmp = encodeURIComponent this
+    return btoa ( tmp.replace /%([0-9A-F]{2})/g, (match, p1) ->
+        return String.fromCharCode (parseInt p1, 16)
+    )
+
 String.prototype.asFileHandler = () ->
     list = this.split ":///"
     switch list[0]
@@ -16,12 +22,12 @@ this.OS.API.VFS = {}
 
 class BasicFileHandler
     constructor: (path) ->
+        @dirty = false
+        @cache = undefined
         @setPath path
 
     setPath: (p) ->
         @ready = false
-        @dirty = false
-        @cache = undefined
         return unless p
         @path = p
         list = @path.split ":///"
@@ -39,10 +45,14 @@ class BasicFileHandler
         return false if not @basename
         @basename[0] is "."
 
-    hash: () -> 
+    hash: () ->
         return -1 unless @path
         return @path.hash()
 
+    getb64: (m) ->
+        return "" unless @cache
+        b64 = @cache.asBase64()
+        return "data:#{m};base64,#{b64}"
     parent: () ->
         return @ if @isRoot()
         return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")

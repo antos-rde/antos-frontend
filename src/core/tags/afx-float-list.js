@@ -141,6 +141,7 @@
         }
         _autoselect(it,i)
         {
+            if(self.selidx == i) return true
             if(!it.selected || it.selected == false) return false
             var data = {
                     id:self.rid, 

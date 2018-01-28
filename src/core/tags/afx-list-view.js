@@ -22,7 +22,6 @@
         {
             if(k == "selected")
             {
-                console.log("selected", v)
                 if(self.selidx != -1)
                     self.items[self.selidx].selected =false
                 if(self.items[v]) self.items[v].selected = true
@@ -122,7 +121,7 @@
         _autoselect(it,i)
         {
             if(!it.selected || it.selected == false) return false
-            //if(self.selidx == i) return false 
+            if(self.selidx == i) return true 
             var data = {
                     id:self.rid, 
                     data:it, 

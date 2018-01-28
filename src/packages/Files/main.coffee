@@ -36,6 +36,7 @@ class Files extends this.OS.GUI.BaseApplication
         @view.set "chdir", (p) -> me.chdir p
         @view.set "fetch", (e, f) ->
             return unless e.child
+            return if e.child.filename is "[..]"
             e.child.path.asFileHandler().read (d) ->
                 return me.error "Resource not found #{e.child.path}" if d.error
                 f d.result
@@ -66,6 +67,12 @@ class Files extends this.OS.GUI.BaseApplication
                 if(d.error)
                     return me.error "Resource not found #{p}"
                 me.currdir = dir
+                if not dir.isRoot()
+                    p = dir.parent().asFileHandler()
+                    p.filename = "[..]"
+                    p.type = "dir"
+                    #p.size = 0
+                    d.result.unshift p
                 ($ me.navinput).val dir.path
                 me.view.set "path", dir.path
                 me.view.set "data", d.result

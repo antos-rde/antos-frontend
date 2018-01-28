@@ -180,13 +180,15 @@
             self.root.observable.on("fileselect", function(e){
                 if(e.id != self.rid) return
                 self.selectedFile = e.data
+                if(self.onfileselect)
+                    self.onfileselect(e.data)
                 $(self.refs.stbar).html("Selected: " + e.data.filename + " (" + e.data.size + " bytes)")
             })
             self.root.observable.on("filedbclick", function(e){
                 if(e.id != self.rid ) return
                 if(e.data.type == "file" && self.onfileopen)
                     self.onfileopen(e.data)
-                else if(self.chdir)
+                else if(self.chdir && e.data.type == "dir")
                     self.chdir(e.data.path)
             })
             calibre_size()

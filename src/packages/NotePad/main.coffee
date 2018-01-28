@@ -43,9 +43,9 @@ class NotePad extends this.OS.GUI.BaseApplication
             mode: m.theme,
             selected: if m.theme is "ace/theme/monokai" then true else false
         } for k, m of themes.themesByName
-        themelist.set "items", ldata
         themelist.set "onlistselect", (e) ->
             me.editor.setTheme e.data.mode
+        themelist.set "items", ldata
 
         stat = @find "editorstat"
         #status
@@ -71,12 +71,15 @@ class NotePad extends this.OS.GUI.BaseApplication
         @fileview.set "chdir", (d) -> me.chdir d
         @fileview.set "fetch", (e, f) ->
             return unless e.child
+            return if e.child.filename is "[..]"
             e.child.path.asFileHandler().read (d) ->
                 return me.error "Resource not found #{e.child.path}" if d.error
                 f d.result
         @fileview.set "onfileopen", (e) ->
+            return if e.type is "dir"
             me.open e.path.asFileHandler()
-        @location.set "onlistselect", (e) -> me.chdir e.data.path
+        @location.set "onlistselect", (e) ->
+            me.chdir e.data.path
         @location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
         @location.set "selected", 0 unless @location.get "selected"
         @tabarea = @find "tabarea"
@@ -101,10 +104,17 @@ class NotePad extends this.OS.GUI.BaseApplication
         return @newtab file if file.path.toString() is "Untitled"
         me = @
         file.read (_d) ->
-            d = if typeof _d is "string" then _d else JSON.stringify _d
-            me.scheme.set "apptitle", file.basename
+            d = if typeof _d is "string" then _d else JSON.stringify _d #TODO
             file.cache = d or ""
             me.newtab file
+
+    save: (file) ->
+        me = @
+        file.write (file.getb64 "text/plain"), (d) ->
+            return me.error "Error saving file #{file.basename}" if d.error
+            file.dirty = false
+            file.text = file.basename
+            me.tabarea.update()
 
     findTabByFile: (file) ->
         lst = @tabarea.get "items"
@@ -136,6 +146,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         #return if i is @tabarea.get "selidx"
         file = (@tabarea.get "items")[i]
         return unless file
+        @scheme.set "apptitle", file.text.toString()
         #return if file is @currfile
         if @currfile isnt file
             @currfile.cache = @editor.getValue()
@@ -155,16 +166,23 @@ class NotePad extends this.OS.GUI.BaseApplication
             @editor.selection.moveTo file.cursor.row, file.cursor.column
         @editor.focus()
 
-    chdir: (p) ->
+    chdir: (pth) ->
+        #console.log "called", @_api.throwe("FCK")
+        return unless pth
         me = @
-        me._api.handler.scandir p,
-            (d) ->
-                if(d.error)
-                    return me.error "Resource not found #{p}"
-                me.fileview.set "path", p
-                me.fileview.set "data", d.result
-            , (e, s) ->
-                me.error "Cannot chdir #{p}"
+        dir = pth.asFileHandler()
+        dir.read (d) ->
+            if(d.error)
+                return me.error "Resource not found #{p}"
+            if not dir.isRoot()
+                p = dir.parent().asFileHandler()
+                p.filename = "[..]"
+                p.type = "dir"
+                #p.size = 0
+                d.result.unshift p
+            ($ me.navinput).val dir.path
+            me.fileview.set "path", pth
+            me.fileview.set "data", d.result
 
     menu: () ->
         me = @
@@ -172,16 +190,33 @@ class NotePad extends this.OS.GUI.BaseApplication
                 text: "File",
                 child: [
                     { text: "Open", dataid: "#{@name}-Open" },
-                    { text: "Close", dataid: "#{@name}-Close" }
+                    { text: "Save", dataid: "#{@name}-Save" },
+                    { text: "Save as", dataid: "#{@name}-Saveas" }
                 ],
                 onmenuselect: (e) -> me.actionFile e
             }]
         menu
     
     actionFile: (e) ->
+        me = @
+        saveas = () ->
+            me.openDialog "FileDiaLog", (d, n) ->
+                me.currfile.setPath "#{d}/#{n}"
+                me.save me.currfile
+            , "Save as", { file: me.currfile }
         switch e.item.data.dataid
             when "#{@name}-Open"
-                @openDialog "FileDiaLog", null, "Select file", { seldir: true }
+                @openDialog "FileDiaLog", ( d, f ) ->
+                    me.open "#{d}/#{f}".asFileHandler()
+                , "Open file"
+            when "#{@name}-Save"
+                @currfile.cache = @editor.getValue()
+                return @save @currfile if @currfile.basename
+                saveas()
+            when "#{@name}-Saveas"
+                @currfile.cache = @editor.getValue()
+                saveas()
+                
 
 NotePad.singleton = false
 this.OS.register "NotePad", NotePad
