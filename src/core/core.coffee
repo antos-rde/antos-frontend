@@ -10,6 +10,7 @@ self.OS or=
         applications: {}
         desktop: {}
         appearance: {}
+        VFS: {}
     courrier:
         observable: riot.observable()
         quota: 0

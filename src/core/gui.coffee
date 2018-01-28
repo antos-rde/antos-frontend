@@ -61,16 +61,19 @@ self.OS.GUI =
                 _courrier.osfail "Cannot read service script: #{srv} ", e, s
 
     appsByMime: (mime) ->
-        metas = ( a.meta for k, a of _OS.APP when a.type is 1)
-        mimes = ( m.mimes for m in metas )
+        metas = ( a.meta for k, a of _OS.APP when a and a.type is 1)
+        mimes = ( m.mimes for m in metas when m)
         apps = []
         # search app by mimes
         f = ( arr, idx ) ->
-            arr.filter (m, i) ->
-                if mime.match (new RegExp m, "g")
-                    apps.push metas[idx]
+            try
+                arr.filter (m, i) ->
+                    if mime.match (new RegExp m, "g")
+                        apps.push metas[idx]
+                        return false
                     return false
-                return false
+            catch e
+                _courrier.osfail "Find app by mimes #{mime}", e, mime
 
         ( f m, i if m ) for m, i in mimes
         return apps
@@ -265,6 +268,14 @@ self.OS.GUI =
         _OS.setting.applications = conf.applications if conf.applications
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user
+        _OS.setting.VFS = conf.VFS if conf.VFS
+        _OS.setting.VFS.mountpoints = [ #TODO: multi app try to write to this object, it neet to be cloned
+            { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
+            { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
+            { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
+            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop", type: "fs"},
+        ] if not _OS.setting.VFS.mountpoints
+
         _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
         _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
@@ -279,5 +290,5 @@ self.OS.GUI =
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
-            _GUI.launch "DummyApp"
-            #_GUI.launch "NotePad"
+            #_GUI.launch "DummyApp"
+            _GUI.launch "NotePad"

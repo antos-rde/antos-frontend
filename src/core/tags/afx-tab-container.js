@@ -4,6 +4,7 @@
         var self = this
         this.closable = opts.closable || false
         self.root.observable = opts.observable || riot.observable()
+        self.ontabselect = opts.ontabselect
         get_observable(){
             return self.root.observable
         }
@@ -12,6 +13,9 @@
             return self.refs.list.root.get(k)
         }
 
+        self.root.update = function(){
+            self.update()
+        }
 
         self.on("mount", function(){
             self.refs.list.root.observable = self.root.observable
@@ -19,7 +23,10 @@
                 console.log("list select")
             })*/
             self.refs.list.root.set ("onlistselect",function (e) {
+                //console.log("tab is seleced")
                 self.root.observable.trigger("tabselect", e)
+                if(self.ontabselect)
+                    self.ontabselect(e)
             })
         })
 
@@ -31,6 +38,8 @@
             {
                 self.closable = v
             }
+            else if(k == "ontabselect")
+                self.ontabselect = v
             else
             {
                 if(k == "items")
@@ -56,5 +65,6 @@
         {
             self.refs.list.root.remove(e,u)
         }
+
     </script>
 </afx-tab-container>

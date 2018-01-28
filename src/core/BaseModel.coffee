@@ -3,6 +3,7 @@ class BaseModel
         @observable = riot.observable()
         @_api = self.OS.API
         @_gui = self.OS.GUI
+        @systemsetting = self.OS.setting
         me = @
         @on "exit", () -> me.quit()
         @host = "#desktop"

@@ -16,10 +16,12 @@ class Files extends this.OS.GUI.BaseApplication
             m.set "items", [ me.mnFile(), me.mnEdit() ]
             m.show(e)
         #@on "fileselect", (d) -> console.log d
-        @on "filedbclick", (e) ->
-            return unless e.data
-            return if e.data.type is "dir"
-            me._gui.openWith e.data
+        @view.set "onfileopen", (e) ->
+            return unless e
+            return if e.type is "dir"
+            #console.log e
+            me._gui.openWith e
+
         @favo.set "onlistselect", (e) -> me.chdir e.data.path
         
         ($ @find "btback").click () ->
@@ -34,23 +36,18 @@ class Files extends this.OS.GUI.BaseApplication
         @view.set "chdir", (p) -> me.chdir p
         @view.set "fetch", (e, f) ->
             return unless e.child
-            me._api.handler.scandir e.child.path,
-                (d) -> f d.result
-                , (e, s) -> me.error "Cannot fetch child dir #{e.child.path}"
+            e.child.path.asFileHandler().read (d) ->
+                return me.error "Resource not found #{e.child.path}" if d.error
+                f d.result
         
-        @setting.favorite = [
-            { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn" },
-            { text: "Home", path: 'home:///', iconclass: "fa fa-home" },
-            { text: "OS", path: 'os:///', iconclass: "fa fa-inbox" },
-            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
-        ] if not @setting.favorite
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
         
-        el.selected = false for el, i in @setting.favorite
+        mntpoints = @systemsetting.VFS.mountpoints
+        el.selected = false for el, i in mntpoints
 
-        @favo.set "items", @setting.favorite
+        @favo.set "items", mntpoints
         #@favo.set "selected", -1
         @applySetting()
         @chdir null

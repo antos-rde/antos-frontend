@@ -12,6 +12,7 @@
         self.data = opts.data || []
         self.path = opts.path || "home:///"
         self.onfileselect
+        self.onfileopen
         this.status = opts.status == undefined?true:opts.status
         this.selectedFile = undefined
         this.showhidden = opts.showhidden
@@ -182,8 +183,11 @@
                 $(self.refs.stbar).html("Selected: " + e.data.filename + " (" + e.data.size + " bytes)")
             })
             self.root.observable.on("filedbclick", function(e){
-                if(e.id != self.rid || e.data.type == 'file' || !self.chdir) return
-                self.chdir(e.data.path)
+                if(e.id != self.rid ) return
+                if(e.data.type == "file" && self.onfileopen)
+                    self.onfileopen(e.data)
+                else if(self.chdir)
+                    self.chdir(e.data.path)
             })
             calibre_size()
             self.root.observable.on("resize", function(e){

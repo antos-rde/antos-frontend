@@ -22,6 +22,7 @@
         {
             if(k == "selected")
             {
+                console.log("selected", v)
                 if(self.selidx != -1)
                     self.items[self.selidx].selected =false
                 if(self.items[v]) self.items[v].selected = true
@@ -121,6 +122,7 @@
         _autoselect(it,i)
         {
             if(!it.selected || it.selected == false) return false
+            //if(self.selidx == i) return false 
             var data = {
                     id:self.rid, 
                     data:it, 
@@ -133,9 +135,11 @@
                 $(self.refs.mlist).hide()
                 $(self.refs.current).html(it.text)
             }
+            
             if(self.onlistselect)
                 self.onlistselect(data)
             this.root.observable.trigger('listselect',data)
+            //console.log("list select")
             return true
         }
         _select(event)

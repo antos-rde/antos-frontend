@@ -9,7 +9,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         @fileview = @find "fileview"
         div = @find "datarea"
         ace.require "ace/ext/language_tools"
-        @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else undefined
+        @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else "Untitled".asFileHandler()
         @.editor = ace.edit div
         @.editor.setOptions {
             enableBasicAutocompletion: true,
@@ -20,16 +20,19 @@ class NotePad extends this.OS.GUI.BaseApplication
         @.editor.completers.push { getCompletions: ( editor, session, pos, prefix, callback ) -> }
         @.editor.getSession().setUseWrapMode true
 
-        list = @find "modelist"
+        @mlist = @find "modelist"
         @modes = ace.require "ace/ext/modelist"
         ldata = []
-        ldata.push {
-            text: m.name,
-            mode: m.mode,
-            selected: if m.mode is 'ace/mode/text' then true else false
-        } for m in @modes.modes
-        list.set "items", ldata
-        list.set "onlistselect", (e) ->
+        f = (m, i) ->
+            ldata.push {
+                text: m.name,
+                mode: m.mode,
+                selected: if m.mode is 'ace/mode/text' then true else false
+            }
+            m.idx = i
+        f(m, i) for m, i in @modes.modes
+        @mlist.set "items", ldata
+        @mlist.set "onlistselect", (e) ->
             me.editor.session.setMode e.data.mode
 
         themelist = @find "themelist"
@@ -52,6 +55,15 @@ class NotePad extends this.OS.GUI.BaseApplication
             $(stat).html "Row #{c.row}, col #{c.column}, lines: #{l}"
         stup(0)
         @.editor.getSession().selection.on "changeCursor", (e) -> stup(e)
+        @editormux = false
+        @editor.on "input", () ->
+            if me.editormux
+                me.editormux = false
+                return false
+            if not me.currfile.dirty
+                me.currfile.dirty = true
+                me.currfile.text += "*"
+                me.tabarea.update()
 
         @on "resize", () -> me.editor.resize()
         @on "focus", () -> me.editor.focus()
@@ -59,39 +71,89 @@ class NotePad extends this.OS.GUI.BaseApplication
         @fileview.set "chdir", (d) -> me.chdir d
         @fileview.set "fetch", (e, f) ->
             return unless e.child
-            me._api.handler.scandir e.child.path,
-                (d) -> f d.result
-                , (e, s) -> me.error "Cannot fetch child dir #{e.child.path}"
-        
+            e.child.path.asFileHandler().read (d) ->
+                return me.error "Resource not found #{e.child.path}" if d.error
+                f d.result
+        @fileview.set "onfileopen", (e) ->
+            me.open e.path.asFileHandler()
         @location.set "onlistselect", (e) -> me.chdir e.data.path
-        @location.set "items", [
-            { text: "Home", path: 'home:///', iconclass: "fa fa-home", selected: true },
-            { text: "OS", path: 'os:///', iconclass: "fa fa-inbox" },
-            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop" },
-        ]
-
+        @location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
+        @location.set "selected", 0 unless @location.get "selected"
         @tabarea = @find "tabarea"
+        @tabarea.set "ontabselect", (e) ->
+            me.selecteTab e.idx
+        @tabarea.set "onitemclose", (e) ->
+            it = e.item.item
+            return false unless it
+            return me.closeTab it unless it.dirty
+            me.openDialog "YesNoDialog", (d) ->
+                return me.closeTab it if d
+                me.editor.focus()
+            , "Close tab", { text: "Close without saving ?" }
+            return false
         #@tabarea.set "closable", true
         @open @currfile
     
     open: (file) ->
         #find table
-        @newtab "undefined".asFileHandler() unless file
-        return @newtab "undefined".asFileHandler() unless file
+        i = @findTabByFile file
+        return @tabarea.set "selected", i if i isnt -1
+        return @newtab file if file.path.toString() is "Untitled"
         me = @
-        file.read (d) ->
-            return unless d
+        file.read (_d) ->
+            d = if typeof _d is "string" then _d else JSON.stringify _d
             me.scheme.set "apptitle", file.basename
-            file.cache = d
+            file.cache = d or ""
             me.newtab file
 
-    newtab: (file) ->
-        file.text = if file.basename then file.basename else "undefined"
-        file.cache = "" unless file.cache
+    findTabByFile: (file) ->
+        lst = @tabarea.get "items"
+        its = ( i for d, i in lst when d.hash() is file.hash() )
+        return -1 if its.length is 0
+        return its[0]
+
+    closeTab: (it) ->
+        @tabarea.remove it, false
         cnt = @tabarea.get "count"
+        if cnt is 0
+            @open "Untitled".asFileHandler()
+            return false
+        @tabarea.set "selected", cnt - 1
+        return false
+
+    newtab: (file) ->
+        file.text = if file.basename then file.basename else file.path
+        file.cache = "" unless file.cache
+        file.um = new ace.UndoManager()
+        @currfile.selected = false
+        file.selected = true
+        #console.log cnt
         @tabarea.push file, true
-        @tabarea.set "selected", cnt
+        #@currfile = @file
+        #TODO: fix problem : @tabarea.set "selected", cnt
+
+    selecteTab: (i) ->
+        #return if i is @tabarea.get "selidx"
+        file = (@tabarea.get "items")[i]
+        return unless file
+        #return if file is @currfile
+        if @currfile isnt file
+            @currfile.cache = @editor.getValue()
+            @currfile.cursor = @editor.selection.getCursor()
+            @currfile = file
+
+        m = "ace/mode/text"
+        m = (@modes.getModeForPath file.path) if file.path.toString() isnt "Untitled"
+        @mlist.set "selected", m.idx
+        
+        @editormux = true
         @editor.setValue file.cache, -1
+        @editor.session.setMode m.mode
+        @editor.session.setUndoManager file.um
+        if file.cursor
+            @editor.renderer.scrollCursorIntoView { row: file.cursor.row, column: file.cursor.column }, 0.5
+            @editor.selection.moveTo file.cursor.row, file.cursor.column
+        @editor.focus()
 
     chdir: (p) ->
         me = @
@@ -104,14 +166,22 @@ class NotePad extends this.OS.GUI.BaseApplication
             , (e, s) ->
                 me.error "Cannot chdir #{p}"
 
-    menu: ()->
+    menu: () ->
+        me = @
         menu = [{
                 text: "File",
                 child: [
                     { text: "Open", dataid: "#{@name}-Open" },
                     { text: "Close", dataid: "#{@name}-Close" }
-                ]
+                ],
+                onmenuselect: (e) -> me.actionFile e
             }]
         menu
+    
+    actionFile: (e) ->
+        switch e.item.data.dataid
+            when "#{@name}-Open"
+                @openDialog "FileDiaLog", null, "Select file", { seldir: true }
+
 NotePad.singleton = false
 this.OS.register "NotePad", NotePad

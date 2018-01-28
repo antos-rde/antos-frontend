@@ -179,7 +179,7 @@ class YesNoDialog extends BasicDialog
                 },
                 {
                     label: "No", onclick: (d) ->
-                        d handler false if dhandler
+                        d.handler false if d.handler
                         d.quit()
                 }
             ],
@@ -235,3 +235,41 @@ class AboutDialog extends BaseDialog
         (@find "mygrid").set "rows", rows
         
 this.OS.register "AboutDialog", AboutDialog
+
+class FileDiaLog extends BaseDialog
+    constructor: () ->
+        super "FileDiaLog"
+    
+    init: () ->
+        @render "resources/schemes/filedialog.html"
+    
+    main: () ->
+        fileview = @find "fileview"
+        location = @find "location"
+        me = @
+        @scheme.set "apptitle", "#{@title}"
+        fileview.set "fetch", (e, f) ->
+            return unless e.child
+            e.child.path.asFileHandler().read (d) ->
+                return me.error "Resource not found #{e.child.path}" if d.error
+                f d.result
+        location.set "onlistselect", (e) ->
+            return unless e and e.data.path
+            e.data.path.asFileHandler().read (d) ->
+                if(d.error)
+                    return me.error "Resource not found #{e.data.path}"
+                fileview.set "path", e.data.path
+                fileview.set "data", d.result
+        location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
+        location.set "selected", 0 unless location.get "selected"
+        (@find "bt-ok").set "onbtclick", (e) ->
+            f = fileview.get "selectedFile"
+            return unless f
+            return unless f.type is "file" or ( me.data  and me.data.seldir )
+            me.handler f if me.handler
+            me.quit()
+
+        (@find "bt-cancel").set "onbtclick", (e) ->
+            me.quit()
+        
+this.OS.register "FileDiaLog", FileDiaLog

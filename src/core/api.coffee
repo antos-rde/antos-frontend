@@ -13,7 +13,7 @@ self.OS.API =
             url: p,
             contentType: 'application/json',
             data: JSON.stringify d,
-            dataType: 'json',
+            dataType: 'json', # data type need to be configurable
             success: null
         }
         #$.getJSON p, d
@@ -89,7 +89,7 @@ self.OS.API =
     get: (p, c, f) ->
         q = _courrier.getMID()
         _API.loading q, p
-        $.get p
+        $.get p # TODO add return type setting support
             .done (data) ->
                 _API.loaded q, p, "OK"
                 c(data)
