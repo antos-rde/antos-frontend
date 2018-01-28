@@ -69,4 +69,4 @@ class wTerm extends this.OS.GUI.BaseApplication
             #el.style.display = "block"
     cleanup: (e)->
         @socket.close() if @socket
-this.OS.register "wTerm",wTerm
+this.OS.register "wTerm", wTerm

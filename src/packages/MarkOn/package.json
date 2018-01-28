@@ -1,0 +1,13 @@
+{
+    "app":"MarkOn",
+    "name":"Mardown editor",
+    "description":"Simple markdown editor",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.1a",
+    "category":"Utils",
+    "iconclass":"fa fa-leanpub",
+    "mimes":["text/.*"]
+}
