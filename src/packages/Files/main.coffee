@@ -22,7 +22,8 @@ class Files extends this.OS.GUI.BaseApplication
             #console.log e
             me._gui.openWith e
 
-        @favo.set "onlistselect", (e) -> me.chdir e.data.path
+        @favo.set "onlistselect", (e) -> 
+            me.chdir e.data.path
         
         ($ @find "btback").click () ->
             return if me.currdir.isRoot()
@@ -60,12 +61,13 @@ class Files extends this.OS.GUI.BaseApplication
         @toggleSidebar @setting.sidebar
         @toggleNav @setting.nav
 
-    chdir: (p, push) ->
+    chdir: (p) ->
         me = @
         dir = if p then p.asFileHandler() else me.currdir
         dir.read (d) ->
                 if(d.error)
                     return me.error "Resource not found #{p}"
+                    console.log "error"
                 me.currdir = dir
                 if not dir.isRoot()
                     p = dir.parent().asFileHandler()

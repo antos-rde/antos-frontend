@@ -29,7 +29,7 @@ class BasicFileHandler
     setPath: (p) ->
         @ready = false
         return unless p
-        @path = p
+        @path = p.toString()
         list = @path.split ":///"
         @protocol = list[0]
         return unless list.length > 1

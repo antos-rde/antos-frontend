@@ -27,7 +27,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @nzone = @find "notifyzone"
         @fzone = @find "feedzone"
         (@find "btclear").set "onbtclick", (e) -> me.mlist.set "items", []
-        @subscribe "fail", (e) -> console.log e
+        #@subscribe "fail", (e) -> console.log e
         @subscribe "notification", (o) -> me.pushout 'INFO', o
         @subscribe "fail", (o) -> me.pushout 'FAIL', o
         @subscribe "error", (o) -> me.pushout 'ERROR', o
