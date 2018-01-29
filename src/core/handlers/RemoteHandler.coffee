@@ -17,6 +17,7 @@ self.OS.API.handler =
         path = "lua-api/fs/get/"
         _API.get path + p, c, (e, s) ->
             _courrier.osfail "Fail to read file: #{p}", e, s
+        , "text"
 
     move: (s, d, c) ->
         path = "lua-api/fs/move"
@@ -32,6 +33,11 @@ self.OS.API.handler =
         path = "lua-api/fs/get/"
         _API.blob path + p, c, (e, s)  ->
             _courrier.osfail "Fail to read file: #{p}", e, s
+
+    packages: (d, c) ->
+        path = "lua-api/system/packages"
+        _API.post path, d, c, (e, s) ->
+            _courrier.osfail "Fail to #{d.command} package", e, s
 
     upload: (d, c) ->
         path = "lua-api/fs/upload"

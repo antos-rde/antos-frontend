@@ -13,7 +13,7 @@ self.OS.API =
             url: p,
             contentType: 'application/json',
             data: JSON.stringify d,
-            dataType: 'json', # data type need to be configurable
+            dataType: 'json',
             success: null
         }
         #$.getJSON p, d
@@ -86,10 +86,15 @@ self.OS.API =
         _courrier.trigger "loading", { id: q, data: { m: "#{p}", s: true }, name: "OS" }
     loaded: (q, p, m ) ->
         _courrier.trigger "loaded", { id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
-    get: (p, c, f) ->
+    get: (p, c, f, t) ->
+        conf =
+            type: 'GET',
+            url: p,
+        conf.dataType = t if t
+
         q = _courrier.getMID()
         _API.loading q, p
-        $.get p # TODO add return type setting support
+        $.ajax conf
             .done (data) ->
                 _API.loaded q, p, "OK"
                 c(data)
@@ -109,6 +114,12 @@ self.OS.API =
     resource: (r, c, f) ->
         path = "resources/#{r}"
         _API.get path, c, f
+    
+    packages:
+        fetch: (f) ->
+            _API.handler.packages {
+                command: "list", args: { paths: _OS.setting.system.pkgpaths }
+            }, f
 
     throwe: (n) ->
         err = undefined

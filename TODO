@@ -1,3 +1,2 @@
 VFS mountpoints object (selected) is changed between apps, which is not a good ideal
-API handler readfile function return JSON object in reading JSON file, need to be text
 Some error in event handle using observable

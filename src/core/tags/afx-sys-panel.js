@@ -6,33 +6,7 @@
     </div>
     
     <script>
-        this.osmenu = {child:[
-                {text:"",iconclass:"fa fa-eercast", child:[
-                    {text:"About", radio:true},
-                    {text:"App Store", radio:true},
-                    {text:"System Preferences", switch:true, iconclass:"fa fa-commenting"},
-                    {text:"Applications",child:[
-                            {text:"wTerm",type:"app"},
-                            {text:"NotePad",type:"app", iconclass:"fa fa-commenting"},
-                            {text:"ActivityMonitor",type:"app"},
-                            {text:"DummyApp",type:"app"},
-                            {text:"Files",type:"app"}
-                        ],
-                        onmenuselect: function(d)
-                        {
-                            if(d.e.item.data.type == "app")
-                                window.OS.GUI.launch(d.e.item.data.text, null)
-                        }
-                    },
-                    {text:"Logout", dataid: "sys-logout"}
-                    ]}
-                ],
-                onmenuselect: function(d)
-                {
-                    if(d.e.item.data.dataid == "sys-logout")
-                        window.OS.API.handler.logout()
-                }
-            }
+        this.osmenu = { child: [] }
         this.appmenu = { child: [] }
         this.systray = { 
             child: [], 

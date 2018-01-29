@@ -14,7 +14,7 @@ self.OS.GUI =
             return null unless x
             _GUI.htmlToScheme x, app, parent
         , (e, s) ->
-            _courrier.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})",e,s
+            _courrier.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})", e, s
 
     clearTheme: () ->
          $ "head link#ostheme"
@@ -244,7 +244,44 @@ self.OS.GUI =
             riot.mount desktop
         , (e, s) ->
             alert "System fall: Cannot init desktop manager"
-    
+            console.log s, e
+
+
+    buildSystemMenu: () ->
+        
+        menu =
+            text: ""
+            iconclass: "fa fa-eercast"
+            dataid: "sys-menu-root"
+            child: [
+                {
+                    text: "Application",
+                    child: [],
+                    dataid: "sys-apps"
+                    iconclass: "fa fa-adn",
+                    onmenuselect: (d) ->
+                        _GUI.launch d.item.data.app
+                }
+            ]
+        menu.child = menu.child.concat _OS.setting.system.menu
+        menu.child.push
+            text: "Log out",
+            dataid: "sys-logout",
+            iconclass: "fa fa-user-times"
+        menu.onmenuselect = (d) ->
+            console.log d
+            return _API.handler.logout() if d.item.data.dataid is "sys-logout"
+            _GUI.launch d.item.data.app unless d.item.data.dataid
+        
+        #now get app list
+        _API.packages.fetch (r) ->
+            if r.result
+                v.text = v.name for k, v of r.result
+            menu.child[0].child = r.result if r.result
+            ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
+        #console.log menu
+        
+        
     login: () ->
         _OS.cleanup()
         _API.resource "schemes/login.html", (x) ->
@@ -269,13 +306,20 @@ self.OS.GUI =
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user
         _OS.setting.VFS = conf.VFS if conf.VFS
-        _OS.setting.VFS.mountpoints = [ #TODO: multi app try to write to this object, it neet to be cloned
+        _OS.setting.VFS.mountpoints = [
+            #TODO: multi app try to write to this object, it neet to be cloned
             { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
             { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
             { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
-            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop", type: "fs"},
+            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop", type: "fs" },
         ] if not _OS.setting.VFS.mountpoints
 
+        _OS.setting.system = conf.system if conf.system
+        _OS.setting.system.pkgpaths = [
+            "home:///.packages",
+            "os:///packages"
+        ] unless _OS.setting.system.pkgpaths
+        _OS.setting.system.menu = [] unless _OS.setting.system.menu
         _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
         _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
@@ -286,9 +330,14 @@ self.OS.GUI =
             # TODO load packages list then build system menu
             # push startup services
             # TODO: get services list from user setting
-            _GUI.pushServices ["CoreServices/PushNotification", "CoreServices/Spotlight", "CoreServices/Calendar"]
+            _GUI.buildSystemMenu()
+            _GUI.pushServices [
+                "CoreServices/PushNotification",
+                "CoreServices/Spotlight",
+                "CoreServices/Calendar"
+            ]
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
             #_GUI.launch "DummyApp"
-            _GUI.launch "NotePad"
+            #_GUI.launch "NotePad"

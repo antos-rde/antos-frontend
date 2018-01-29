@@ -103,8 +103,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         return @tabarea.set "selected", i if i isnt -1
         return @newtab file if file.path.toString() is "Untitled"
         me = @
-        file.read (_d) ->
-            d = if typeof _d is "string" then _d else JSON.stringify _d #TODO
+        file.read (d) ->
             file.cache = d or ""
             me.newtab file
 

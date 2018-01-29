@@ -11,6 +11,7 @@ self.OS or=
         desktop: {}
         appearance: {}
         VFS: {}
+        system: {}
     courrier:
         observable: riot.observable()
         quota: 0
@@ -33,7 +34,7 @@ self.OS or=
             _courrier.observable.off i.e, i.f for i in _courrier.listeners[app.pid]
             delete _courrier.listeners[app.pid]
             _courrier.listeners[app.pid] = []
-        getMID: () -> 
+        getMID: () ->
             _courrier.quota += 1
             _courrier.quota
     register: (name, x) ->
