@@ -276,6 +276,7 @@ self.OS.GUI =
         #now get app list
         _API.packages.fetch (r) ->
             if r.result
+                r.result = ( it for it in r.result when it.app )
                 v.text = v.name for k, v of r.result
             menu.child[0].child = r.result if r.result
             ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
