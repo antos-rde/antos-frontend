@@ -215,7 +215,17 @@ class NotePad extends this.OS.GUI.BaseApplication
             when "#{@name}-Saveas"
                 @currfile.cache = @editor.getValue()
                 saveas()
-                
+    
+    cleanup: (evt) ->
+        dirties = ( v for v in  @tabarea.get "items" when v.dirty )
+        return if dirties.length is 0
+        me = @
+        evt.preventDefault()
+        @.openDialog "YesNoDialog", (d) ->
+            if d
+                v.dirty = false for v in dirties
+                me.quit()
+        , "Quit", { text: "Ignore all #{dirties.length} unsaved files ?" }
 
 NotePad.singleton = false
 this.OS.register "NotePad", NotePad

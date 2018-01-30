@@ -1,5 +1,5 @@
 <afx-hbox style = "display:block;">
-    <div ref = "container" class="afx-hbox-container">
+    <div ref = "container" class="afx-vbox-container">
          <yield/>
     </div>
     <script>
@@ -7,27 +7,24 @@
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")
-                .css("flex-direction","column")
+                .css("flex-direction","row")
                 .css("width","100%")
-                //.css("background-color","red")
-                //.css("overflow", "hidden")
 
-            calibrate_size()
+                calibrate_size()
 
-            if(self.root.observable)
-            {
-                self.root.observable.on("resize", function(w,h){
-                    calibrate_size()
-                })
-            }
+                if(self.root.observable)
+                {
+                    self.root.observable.on("resize", function(w,h){
+                        calibrate_size()
+                    })
+                }
         })
-
         var calibrate_size = function()
         {
-            var auto_height = []
-            var csize, ocheight = 0, avaiheight;
+            var auto_width = []
+            var csize, ocwidth = 0, avaiheight;
             avaiheight = $(self.root).height()
-            avaiwidth = $(self.root).width()
+            avaiWidth = $(self.root).width()
             $(self.refs.container).css("height",avaiheight + "px")
             $(self.refs.container)
                 .children()
@@ -36,25 +33,25 @@
                     this.observable = self.root.observable
                     $(this)
                         .css("flex-grow","1")
-                        //.css("border","1px solid black")
-                    var dw = $(this).attr("data-height")
+                        //.css("height",avaiheight + "px")
+                    var dw = $(this).attr("data-width")
                     if(dw)
                     {
-                        $(this).css("height",dw + "px")
-                        ocheight += Number(dw)
+                        $(this).css("width",dw + "px")
+                        ocwidth += Number(dw)
                     }
                     else
                     {
-                        auto_height.push(this)
+                        auto_width.push(this)
                     }
                 })
-            csize = (avaiheight - ocheight)/ (auto_height.length)
-            $.each(auto_height, function(i,v)
+            csize = (avaiWidth - ocwidth)/ (auto_width.length)
+            $.each(auto_width, function(i,v)
             {
-                $(v).css("height", csize + "px")
+                $(v).css("width", csize + "px")
             })
-            self.root.observable.trigger("hboxchange",
-                {id:$(self.root).attr("data-id"), w:avaiwidth, h:csize})
+            self.root.observable.trigger("vboxchange",
+                {id:$(self.root).attr("data-id"), w:csize, h:avaiheight})
         }
     </script>
 </afx-hbox>

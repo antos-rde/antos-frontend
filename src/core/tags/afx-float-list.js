@@ -21,7 +21,10 @@
             {
                 if(self.selidx != -1)
                     self.items[self.selidx].selected =false
-                if(self.items[v]) self.items[v].selected = true
+                if(v == -1)
+                    self.selidx = -1
+                else
+                    if(self.items[v]) self.items[v].selected = true
             }
             else if(k == "*")
                 for(var i in v)

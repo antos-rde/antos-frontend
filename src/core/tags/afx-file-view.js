@@ -169,7 +169,14 @@
             }
             self.refs.treeview.ontreeselect = function(d)
             {
-                if(!d.data) return;
+                if(!d) return;
+                if(!d.data)// select the root
+                {
+                    var r = self.path.asFileHandler()
+                    r.size = 0
+                    r.filename = r.path
+                    d.data = { child: r , i:0  }
+                }
                 var data = {id:self.rid, data:d.data.child, idx:d.data.i}
                 self.root.observable.trigger("fileselect",data)
             }

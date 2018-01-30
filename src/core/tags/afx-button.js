@@ -1,5 +1,5 @@
 <afx-button>
-    <button disabled={ enable == "false" } onclick="{ _onbtclick }"  > 
+    <button disabled={ enable == "false" } onclick="{ _onbtclick }" ref = "mybtn" > 
         <afx-label color = {color} icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
     </button>
     <script>
@@ -18,6 +18,10 @@
             else
                 self[k] = v
             self.update()
+        }
+        self.root.trigger = function()
+        {
+            $(self.refs.mybtn).trigger("click")
         }
         self.root.get = function(k)
         {

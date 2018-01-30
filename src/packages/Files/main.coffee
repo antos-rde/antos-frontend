@@ -81,13 +81,20 @@ class Files extends this.OS.GUI.BaseApplication
                 me.view.set "data", d.result
 
     mnFile:() ->
+        #console.log file
         me = @
+        f = () ->
+            console.log "called"
+            file = me.view.get "selectedFile"
+            return undefined unless file
+            return me._gui.appsByMime file.mime
+        
         {
             text: "File",
             child: [
                 { text: "New file", dataid: "#{@name}-mkf" },
                 { text: "New folder", dataid: "#{@name}-mkdir" },
-                { text: "Open", dataid: "#{@name}-open" },
+                { text: "Open with", dataid: "#{@name}-open", child: f },
                 { text: "Upload", dataid: "#{@name}-upload" },
                 { text: "Download", dataid: "#{@name}-download" },
                 { text: "Properties", dataid: "#{@name}-info" }

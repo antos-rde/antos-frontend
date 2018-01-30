@@ -77,10 +77,16 @@ self.OS.GUI =
 
         ( f m, i if m ) for m, i in mimes
         return apps
-       
+    
+    appsWithServices: () ->
+        o = {}
+        o[k] = v for k, v of _OS.setting.system.packages when v.services and v.services.length > 0
+        o
+
     openWith: (it) ->
         return unless it
         return _GUI.launch it.app if it.type is "app" and it.app
+        return _courrier.osinfo "Application#{it.text} is not executable" if it.type is "app"
         apps = _GUI.appsByMime ( if it.type is "dir" then "dir" else it.mime )
         return _courrier.osinfo "No application available to open #{it.filename}" if apps.length is 0
         return _GUI.launch apps[0].app, [it.path] if apps.length is 1
@@ -169,6 +175,7 @@ self.OS.GUI =
                 handler p if p isnt ($ "#workspace").get(0)
         handler event.target
         event.preventDefault()
+
     initDM: ->
         # check login first
         _API.resource "schemes/dm.html", (x) ->
@@ -236,7 +243,25 @@ self.OS.GUI =
                 desktop[0].contextmenuHandler = (e, m) ->
                     desktop[0].set "selected", -1 if e.target is desktop[0]
                     ($ "#sysdock").get(0).set "selectedApp", null
-                    console.log "context menu handler for desktop"
+                    menu = [
+                        { text: "Open", dataid: "desktop-open" },
+                        { text: "Refresh", dataid: "desktop-refresh" }
+                    ]
+                    menu = menu.concat _OS.setting.desktop.menu
+                    m.set "items", menu
+                    m.set "onmenuselect", (evt) ->
+                        switch evt.item.data.dataid
+                            when "desktop-open"
+                                it = desktop[0].get "selected"
+                                return _GUI.openWith it if it
+                                it = _OS.setting.desktop.path.asFileHandler()
+                                it.mime = "dir"
+                                _GUI.openWith it
+                            when "desktop-refresh"
+                                desktop[0].fetch()
+                            else
+                                _GUI.launch evt.item.data.app if evt.item.data.app
+                    m.show(e)
                 
                 desktop[0].fetch()
                 _courrier.observable.on "VFS", (d) ->
@@ -303,12 +328,14 @@ self.OS.GUI =
         _OS.setting.appearance = conf.appearance if conf.appearance
         _OS.setting.user = conf.user
         _OS.setting.VFS = conf.VFS if conf.VFS
+        _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
+        _OS.setting.desktop.menu = [] unless _OS.setting.desktop.menu
         _OS.setting.VFS.mountpoints = [
             #TODO: multi app try to write to this object, it neet to be cloned
             { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
             { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
             { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
-            { text: "Desktop", path: 'home:///.desktop', iconclass: "fa fa-desktop", type: "fs" },
+            { text: "Desktop", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
         ] if not _OS.setting.VFS.mountpoints
 
         _OS.setting.system = conf.system if conf.system
@@ -317,7 +344,7 @@ self.OS.GUI =
             "os:///packages"
         ] unless _OS.setting.system.pkgpaths
         _OS.setting.system.menu = [] unless _OS.setting.system.menu
-        _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
+       
         _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme

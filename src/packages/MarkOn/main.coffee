@@ -8,6 +8,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
         @container = @find "mycontainer"
         @previewOn = false
         @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else "Untitled".asFileHandler()
+        @editormux = false
         @editor = new SimpleMDE
             element: markarea
             autofocus: true
@@ -38,7 +39,10 @@ class MarkOn extends this.OS.GUI.BaseApplication
             ]
         
         @editor.codemirror.on "change", () ->
-            console.log "thing changed"
+            return if me.editormux
+            if me.currfile.dirty is false
+                me.currfile.dirty = true
+                me.scheme.set "apptitle", "#{me.currfile.basename}*"
         @on "vboxchange", (e) -> me.resizeContent()
         @resizeContent()
         @open @currfile
@@ -53,9 +57,14 @@ class MarkOn extends this.OS.GUI.BaseApplication
     
     open: (file) ->
         #find table
+        return if file.path is "Untitled"
         me = @
+        file.dirty = false
         file.read (d) ->
+            me.editormux = true
             me.editor.value d
+            me.scheme.set "apptitle", "#{me.currfile.basename}"
+            me.editormux = false
             
 
     save: (file) ->
@@ -64,6 +73,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
             return me.error "Error saving file #{file.basename}" if d.error
             file.dirty = false
             file.text = file.basename
+            me.scheme.set "apptitle", "#{me.currfile.basename}"
     
     menu: () ->
         me = @
@@ -97,4 +107,15 @@ class MarkOn extends this.OS.GUI.BaseApplication
             when "#{@name}-Saveas"
                 @currfile.cache = @editor.value()
                 saveas()
+    
+    cleanup: (evt) ->
+        return unless @currfile.dirty
+        me = @
+        evt.preventDefault()
+        @.openDialog "YesNoDialog", (d) ->
+            if d
+                me.currfile.dirty = false
+                me.quit()
+        , "Quit", { text: "Quit without saving ?" }
+
 this.OS.register "MarkOn", MarkOn

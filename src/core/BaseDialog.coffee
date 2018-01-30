@@ -46,11 +46,11 @@ class BasicDialog extends BaseDialog
     init: () ->
         @title = @name if not @title
         html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@title}' width='#{@conf.width}' height='#{@conf.height}'>
-                <afx-hbox>"
+                <afx-vbox>"
         html += "<#{@conf.tag} #{@conf.att} data-id = 'content'></#{@conf.tag}>"
         html += "<div data-height = '40' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div></afx-hbox></afx-app-window>"
+        html += "</div></afx-vbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     
@@ -62,6 +62,7 @@ class BasicDialog extends BaseDialog
         # bind action to button
         ( (me.find "bt#{k}").set "onbtclick", f(v) ) for k, v of @conf.buttons
         @conf.filldata @ if @conf.filldata
+        @conf.xtra @ if @conf.xtra
 
 this.OS.GUI.BasicDialog = BasicDialog
 
@@ -90,6 +91,9 @@ class PromptDialog extends BasicDialog
             filldata: (d) ->
                 return unless d.data
                 (d.find "content").value = d.data
+            xtra: (d) ->
+                $( d.find "content" ).keyup (e) ->
+                    (d.find "bt0").trigger() if e.which is 13
         }
 
 this.OS.register "PromptDialog", PromptDialog
@@ -157,7 +161,7 @@ class InfoDialog extends BasicDialog
             filldata: (d) ->
                 return unless d.data
                 rows = []
-                rows.push [ { value: k }, { value: v } ] for k, v of d.data
+                rows.push [ { value: k }, { value: v } ] for v, k in d.data
                 (d.find "content").set "rows", rows
         }
 this.OS.register "InfoDialog", InfoDialog
@@ -213,6 +217,10 @@ class SelectionDialog extends BasicDialog
             filldata: (d) ->
                 return unless d.data
                 (d.find "content").set "items", d.data
+            xtra: (d) ->
+                ( d.find "content" ).set "onlistdbclick", (e) ->
+                    (d.find "bt0").trigger()
+            
         }
 this.OS.register "SelectionDialog", SelectionDialog
 

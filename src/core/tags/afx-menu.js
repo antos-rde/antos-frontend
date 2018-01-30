@@ -7,7 +7,7 @@
                 <afx-label color = {data.color} iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
             </a>
             
-            <afx-menu  if={data.child != null} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
+            <afx-menu  if={data.child != null} child={data.child.constructor === Array?data.child:data.child()} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
         </li>
          <li class="afx-corner-fix"></li>
     </ul>

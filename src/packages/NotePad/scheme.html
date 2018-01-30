@@ -1,18 +1,18 @@
 <afx-app-window apptitle="" width="600" height="400" data-id="notepad">
-    <afx-vbox>
-        <afx-hbox data-width = "175" data-id = "sidebar">
+    <afx-hbox>
+        <afx-vbox data-width = "175" data-id = "sidebar">
             <afx-list-view data-id = "location" dropdown = "true" data-height= "30" width = "150"></afx-list-view>
             <afx-file-view data-id = "fileview" view='tree' status = false></afx-file-view>
-        </afx-hbox>
-        <afx-hbox>
+        </afx-vbox>
+        <afx-vbox>
             <afx-tab-container data-id="tabarea" data-height="26" closable = true></afx-tab-container>
             <div data-id="datarea"></div>
-            <afx-vbox data-height="30" data-id="bottom-vbox">
+            <afx-hbox data-height="30" data-id="bottom-vbox">
                 <div ><span data-id = "editorstat"></span></div>
                 <afx-list-view data-width="160" data-id = "themelist" dropdown = "true" width="135"></afx-list-view>
                 <afx-list-view data-width="125" data-id = "modelist" dropdown = "true" width="100"></afx-list-view>
                 
-            </afx-vbox>
-        </afx-hbox>
-    </afx-vbox>
+            </afx-hbox>
+        </afx-vbox>
+    </afx-hbox>
 </afx-app-window>
