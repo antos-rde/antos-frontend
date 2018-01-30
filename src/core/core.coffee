@@ -88,7 +88,15 @@ self.OS or=
         ($ "#wrapper").empty()
         _GUI.clearTheme()
         _courrier.observable = riot.observable()
+        _courrier.quota = 0
         _OS.APP = {}
+        _OS.setting =
+            user: {}
+            applications: {}
+            desktop: {}
+            appearance: {}
+            VFS: {}
+            system: {}
         _PM.processes = {}
         _PM.pidalloc = 0
         

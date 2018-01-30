@@ -19,7 +19,6 @@ class Files extends this.OS.GUI.BaseApplication
         @view.set "onfileopen", (e) ->
             return unless e
             return if e.type is "dir"
-            #console.log e
             me._gui.openWith e
 
         @favo.set "onlistselect", (e) -> 
@@ -52,6 +51,8 @@ class Files extends this.OS.GUI.BaseApplication
         @favo.set "items", mntpoints
         #@favo.set "selected", -1
         @applySetting()
+        @subscribe "VFS", (d) ->
+            me.chdir null if d.data.file.hash() is me.currdir.hash() or d.data.file.parent().hash() is me.currdir.hash()
         @chdir null
 
     applySetting: (k) ->
@@ -86,7 +87,7 @@ class Files extends this.OS.GUI.BaseApplication
             child: [
                 { text: "New file", dataid: "#{@name}-mkf" },
                 { text: "New folder", dataid: "#{@name}-mkdir" },
-                { text: "Open with", dataid: "#{@name}-open" },
+                { text: "Open", dataid: "#{@name}-open" },
                 { text: "Upload", dataid: "#{@name}-upload" },
                 { text: "Download", dataid: "#{@name}-download" },
                 { text: "Properties", dataid: "#{@name}-info" }
@@ -165,7 +166,7 @@ class Files extends this.OS.GUI.BaseApplication
                         return if d is file.filename
                         file.path.asFileHandler()
                             .move "#{me.currdir.path}/#{d}", (r) ->
-                                if r.result then me.chdir null else me.error "Fail to rename to #{d}: #{r.error}"
+                                me.error "Fail to rename to #{d}: #{r.error}" if r.error
                     , "Rename", file.filename
             
             when "#{@name}-rm"
@@ -175,7 +176,7 @@ class Files extends this.OS.GUI.BaseApplication
                         return unless d
                         file.path.asFileHandler()
                             .remove (r) ->
-                                if r.result then me.chdir null else me.error "Fail to delete #{file.filename}: #{r.error}"
+                                me.error "Fail to delete #{file.filename}: #{r.error}" if r.error
                 , "Delete" ,
                 { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{file.filename} ?" }
             
@@ -200,7 +201,7 @@ class Files extends this.OS.GUI.BaseApplication
                     @clipboard.file # duplicate file check
                             .move "#{me.currdir.path}/#{@clipboard.file.basename}", (r) ->
                                 me.clipboard = undefined
-                                if r.result then me.chdir null else me.error "Fail to paste: #{r.error}"
+                                me.error "Fail to paste: #{r.error}" if r.error
                 else
                     @notify "Copy not yet implemented"
                     @clipboard = undefined
@@ -216,7 +217,7 @@ class Files extends this.OS.GUI.BaseApplication
                 @openDialog "PromptDialog",
                     (d) ->
                         me.currdir.mk d, (r) ->
-                            if r.result then me.chdir null else me.error "Fail to create #{d}: #{r.error}"
+                             me.error "Fail to create #{d}: #{r.error}" if r.error
                     , "New folder"
             
             when "#{@name}-mkf"
@@ -224,7 +225,7 @@ class Files extends this.OS.GUI.BaseApplication
                     (d) ->
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
                         fp.write "", (r) ->
-                            if r.result then me.chdir null else me.error "Fail to create #{d}: #{r.error}"
+                            me.error "Fail to create #{d}: #{r.error}" if r.error
                     , "New file"
             
             when "#{@name}-info"
@@ -234,11 +235,14 @@ class Files extends this.OS.GUI.BaseApplication
             when "#{@name}-upload"
                 me = @
                 @currdir.upload (r) ->
-                    if r.result then me.chdir null else me.error "Faile to upload to: #{d}: #{r.error}"
+                    me.error "Faile to upload to: #{d}: #{r.error}" if r.error
 
             when "#{@name}-download"
                 return unless file
                 file.path.asFileHandler().download ()->
+            when "#{@name}-open"
+                return unless file
+                @_gui.openWith file
             else
                 console.log e
 

@@ -62,7 +62,8 @@
                 v.text = v.filename
                 if(v.text.length > 10)
                     v.text = v.text.substring(0,9) + "..."
-                v.iconclass = v.type
+                v.iconclass = v.iconclass?v.iconclass:v.type
+                v.icon = v.icon
                 items.push(v)
             })
             self.refs.listview.root.set("items", items)
@@ -71,7 +72,7 @@
             var rows = []
             $.each(self.data, function(i,v){
                 if(v.filename[0] == '.' && !self.showhidden) return
-                var row = [{value:v.filename, iconclass: v.type},{value:v.mime},{value:v.size},{idx:i}]
+                var row = [{value:v.filename, iconclass: v.iconclass?v.iconclass:v.type, icon:v.icon},{value:v.mime},{value:v.size},{idx:i}]
                 rows.push(row)
             })
             self.refs.gridview.root.set("rows",rows)
@@ -94,7 +95,8 @@
                     v.nodes = []
                     v.open = false
                 }
-                v.iconclass = v.type
+                v.iconclass = v.iconclass?v.iconclass:v.type
+                v.icon = v.icon
                 nodes.push(v)
             })
             return nodes
@@ -186,7 +188,7 @@
             })
             self.root.observable.on("filedbclick", function(e){
                 if(e.id != self.rid ) return
-                if(e.data.type == "file" && self.onfileopen)
+                if(e.data.type != "dir" && self.onfileopen)
                     self.onfileopen(e.data)
                 else if(self.chdir && e.data.type == "dir")
                     self.chdir(e.data.path)

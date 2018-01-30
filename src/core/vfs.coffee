@@ -64,7 +64,7 @@ class BasicFileHandler
         me.meta (d) ->
             if d.error
                 return if err then err d else _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error
-            me.meta = d.result
+            me.info = d.result
             me.ready = true
             f()
 
@@ -73,19 +73,28 @@ class BasicFileHandler
         @onready (() -> me.action "read", null, f)
 
     write: (d, f) ->
-        @action "write", d, f
+        me = @
+        @action "write", d, (r) ->
+            _courrier.ostrigger "VFS", { m: "write", file: me } if r.result
+            f r
     
     mk: (d, f) ->
         me = @
-        @onready (() -> me.action "mk", d, f)
+        @onready (() -> me.action "mk", d, (r) ->
+            _courrier.ostrigger "VFS", { m: "mk", file: me } if r.result
+            f r)
     
     remove: (f) ->
         me = @
-        @onready (() -> me.action "remove", null, f)
+        @onready (() -> me.action "remove", null, (r) ->
+            _courrier.ostrigger "VFS", { m: "remove", file: me } if r.result
+            f r)
 
     upload: (f) ->
         me = @
-        @onready (() -> me.action "upload", null, f)
+        @onready (() -> me.action "upload", null, (r) ->
+            _courrier.ostrigger "VFS", { m: "upload", file: me } if r.result
+            f r)
 
     download: (f) ->
         me = @
@@ -93,7 +102,9 @@ class BasicFileHandler
 
     move: (d, f) ->
         me = @
-        @onready (() -> me.action "move", d, f)
+        @onready (() -> me.action "move", d, (r) ->
+            _courrier.ostrigger "VFS", { m: "move", file: d.asFileHandler() } if r.result
+            f r)
 
     execute: (f) ->
         me = @
@@ -123,21 +134,21 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
         me = @
         switch n
             when "read"
-                return _API.handler.scandir @path, f if @meta.type is "dir"
+                return _API.handler.scandir @path, f if @info.type is "dir"
                 #read the file
                 _API.handler.readfile @path, f
             when "mk"
-                return f { error: "#{@path} is not a directory" } if @meta.type is "file"
+                return f { error: "#{@path} is not a directory" } if @info.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f
             when "write"
                 _API.handler.write @path, p, f
             when "upload"
-                return if @meta.type is "file"
+                return if @info.type is "file"
                 _API.handler.upload @path, f
             when "remove"
                 _API.handler.delete @path, f
             when "download"
-                return if @meta.type is "dir"
+                return if @info.type is "dir"
                 _API.handler.fileblob @path, (d) ->
                     blob = new Blob [d], { type: "octet/stream" }
                     _API.saveblob me.basename, blob
@@ -152,6 +163,41 @@ self.OS.API.VFS.RemoteFileHandler = RemoteFileHandler
 class ApplicationHandler extends self.OS.API.VFS.BasicFileHandler
     constructor: (path) ->
         super path
+        @info = _OS.setting.system.packages[@basename] if @basename
+        @ready = true
+    
+    meta: (f) ->
+        f()
+    
+    action: (n, p, f) ->
+        me = @
+        switch n
+            when "read"
+                return f { result: @info } if @info
+                return unless @isRoot()
+                f { result: ( v for k, v of _OS.setting.system.packages ) }
+
+            when "mk"
+                return
+
+            when "write"
+                return
+
+            when "upload"
+                # install
+                return
+
+            when "remove"
+                #uninstall
+                return
+
+            when "download"
+                return
+
+            when "move"
+                return
+            else
+                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 self.OS.API.VFS.ApplicationHandler = ApplicationHandler
 

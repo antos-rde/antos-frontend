@@ -32,6 +32,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @subscribe "fail", (o) -> me.pushout 'FAIL', o
         @subscribe "error", (o) -> me.pushout 'ERROR', o
         @subscribe "info", (o) -> me.pushout 'INFO', o
+        @subscribe "VFS", (o) -> me.pushout 'INFO', o
 
         @subscribe "loading", (o) ->
             me.pending.push o.id

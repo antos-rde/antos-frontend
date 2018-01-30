@@ -61,7 +61,7 @@ self.OS.GUI =
                 _courrier.osfail "Cannot read service script: #{srv} ", e, s
 
     appsByMime: (mime) ->
-        metas = ( a.meta for k, a of _OS.APP when a and a.type is 1)
+        metas = ( v for k, v of _OS.setting.system.packages when v.app )
         mimes = ( m.mimes for m in metas when m)
         apps = []
         # search app by mimes
@@ -80,9 +80,9 @@ self.OS.GUI =
        
     openWith: (it) ->
         return unless it
-        console.log "open #{it.path}"
+        return _GUI.launch it.app if it.type is "app" and it.app
         apps = _GUI.appsByMime ( if it.type is "dir" then "dir" else it.mime )
-        return OS.info "No application available to open #{it.filename}" if apps.length is 0
+        return _courrier.osinfo "No application available to open #{it.filename}" if apps.length is 0
         return _GUI.launch apps[0].app, [it.path] if apps.length is 1
         list = ( { text: e.app, icon: e.icon, iconclass: e.iconclass } for e in apps )
         _GUI.openDialog "SelectionDialog", ( d ) ->
@@ -186,8 +186,8 @@ self.OS.GUI =
             
             # desktop default file manager
             desktop = $ "#desktop"
+            fp = _OS.setting.desktop.path.asFileHandler()
             desktop[0].fetch = () ->
-                fp = _OS.setting.desktop.path.asFileHandler()
                 fn = () ->
                     fp.read (d) ->
                         return _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error if d.error
@@ -239,7 +239,9 @@ self.OS.GUI =
                     console.log "context menu handler for desktop"
                 
                 desktop[0].fetch()
-                _courrier.trigger "desktoploaded"
+                _courrier.observable.on "VFS", (d) ->
+                    desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
+                    _courrier.ostrigger "desktoploaded"
             # mount it
             riot.mount desktop
         , (e, s) ->
@@ -256,7 +258,7 @@ self.OS.GUI =
             child: [
                 {
                     text: "Application",
-                    child: [],
+                    child: ( v for k, v of _OS.setting.system.packages when v.app ),
                     dataid: "sys-apps"
                     iconclass: "fa fa-adn",
                     onmenuselect: (d) ->
@@ -273,13 +275,7 @@ self.OS.GUI =
             return _API.handler.logout() if d.item.data.dataid is "sys-logout"
             _GUI.launch d.item.data.app unless d.item.data.dataid
         
-        #now get app list
-        _API.packages.fetch (r) ->
-            if r.result
-                r.result = ( it for it in r.result when it.app )
-                v.text = v.name for k, v of r.result
-            menu.child[0].child = r.result if r.result
-            ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
+        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
         #console.log menu
         
         
@@ -329,14 +325,23 @@ self.OS.GUI =
         _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
             # TODO load packages list then build system menu
-            # push startup services
-            # TODO: get services list from user setting
-            _GUI.buildSystemMenu()
-            _GUI.pushServices [
-                "CoreServices/PushNotification",
-                "CoreServices/Spotlight",
-                "CoreServices/Calendar"
-            ]
+             _API.packages.fetch (r) ->
+                if r.result
+                    for k, v of r.result
+                        v.text = v.name
+                        v.filename = k
+                        v.type = "app"
+                        v.mime = "antos/app"
+                        v.iconclass = "fa  fa-adn" unless v.iconclass or v.icon
+                _OS.setting.system.packages = if r.result then r.result else
+                _GUI.buildSystemMenu()
+                # push startup services
+                # TODO: get services list from user setting
+                _GUI.pushServices [
+                    "CoreServices/PushNotification",
+                    "CoreServices/Spotlight",
+                    "CoreServices/Calendar"
+                ]
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
