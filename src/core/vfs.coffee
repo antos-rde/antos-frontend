@@ -68,9 +68,9 @@ class BasicFileHandler
             me.ready = true
             f()
 
-    read: (f) ->
+    read: (f, t) ->
         me = @
-        @onready (() -> me.action "read", null, f)
+        @onready (() -> me.action "read", t, f)
 
     write: (d, f) ->
         me = @
@@ -136,7 +136,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
             when "read"
                 return _API.handler.scandir @path, f if @info.type is "dir"
                 #read the file
-                _API.handler.readfile @path, f
+                _API.handler.readfile @path, f, if p then p else "text"
             when "mk"
                 return f { error: "#{@path} is not a directory" } if @info.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f

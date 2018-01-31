@@ -1,0 +1,7 @@
+.dummyapp-icon {
+    background-image: url("icon.png");
+    background-color: blueviolet;
+    display: block;
+    width: 32px;
+    height: 32px;
+}

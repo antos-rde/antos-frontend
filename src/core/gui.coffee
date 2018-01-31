@@ -102,32 +102,27 @@ self.OS.GUI =
         _GUI.launch app, args
 
     loadApp: (app, ok, err) ->
-        path = "packages/#{app}/"
-        _API.script path + "main.js",
-            (d) ->
+        path = "os:///packages/#{app}"
+        path = _OS.setting.system.packages[app].path if _OS.setting.system.packages[app].path
+        js = path + "/main.js"
+        js.asFileHandler().read (d) ->
                 #load css file
-                _API.get "#{path}main.css",
-                    () ->
-                        $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{path}main.css" }
-                            .appendTo 'head'
-                    , () ->
+                css =  "#{path}/main.css"
+                css.asFileHandler().onready (d) ->
+                    $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                        .appendTo 'head'
+                , () ->
                 #launch
                 if _OS.APP[app]
                     # load app meta data
-                    _API.get "#{path}package.json",
-                        (data) ->
-                            _OS.APP[app].meta = data
-                            ok app
-                        , (e, s) ->
-                            _courrier.osfail "Cannot read application metadata: #{app}", e, s
-                            err e, s
+                    "#{path}/package.json".asFileHandler().read (data) ->
+                        data.path = path
+                        _OS.APP[app].meta = data
+                        ok app
+                    , "json"
                 else
                     ok app
-            , (e, s) ->
-                #BUG report here
-                _courrier.osfail "Cannot load application script: #{app}", e, s
-                console.log "bug report", e, s, path
-                err e,s
+            , "script"
     launch: (app, args) ->
         if not _OS.APP[app]
             # first load it
@@ -147,7 +142,8 @@ self.OS.GUI =
             iconclass: meta.iconclass || ""
             app: app
             onbtclick: () -> app.toggle()
-        data.icon = "packages/#{meta.app}/#{meta.icon}" if meta.icon
+        # TODO: this path is not good, need to create a blob of it
+        data.icon = "#{_API.handler.get}/#{meta.path}/#{meta.icon}" if meta.icon
         # TODO: add default app icon class in system setting
         # so that it can be themed
         data.iconclass = "fa fa-cogs" if (not meta.icon) and (not meta.iconclass)
@@ -369,9 +365,9 @@ self.OS.GUI =
                     "CoreServices/Spotlight",
                     "CoreServices/Calendar"
                 ]
+                #_GUI.launch "DummyApp"
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
-            console.log "startup app"
-            _GUI.launch "DummyApp"
+            #_GUI.launch "DummyApp"
             #_GUI.launch "NotePad"

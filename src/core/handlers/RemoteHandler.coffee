@@ -1,4 +1,6 @@
 self.OS.API.handler =
+    get: "lua-api/fs/get"
+    
     scandir: (p, c ) ->
         path = "lua-api/fs/scandir"
         _API.post path, { path: p }, c, (e, s) ->
@@ -13,11 +15,11 @@ self.OS.API.handler =
         _API.post path, { path: p }, c, (e, s) ->
             _courrier.osfail "Fail to get file metadata: #{p}", e, s
 
-    readfile: (p, c) ->
+    readfile: (p, c, t) ->
         path = "lua-api/fs/get/"
         _API.get path + p, c, (e, s) ->
             _courrier.osfail "Fail to read file: #{p}", e, s
-        , "text"
+        , t
 
     move: (s, d, c) ->
         path = "lua-api/fs/move"

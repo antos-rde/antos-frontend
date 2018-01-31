@@ -4,7 +4,7 @@ jsfiles =
 
 cssfiles = main.css
 
-copyfiles = scheme.html package.json
+copyfiles = scheme.html package.json icon.png
 
 
 PKG_NAME=DummyApp
