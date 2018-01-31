@@ -266,7 +266,7 @@ self.OS.GUI =
                 desktop[0].fetch()
                 _courrier.observable.on "VFS", (d) ->
                     desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
-                    _courrier.ostrigger "desktoploaded"
+                _courrier.ostrigger "desktoploaded"
             # mount it
             riot.mount desktop
         , (e, s) ->
@@ -367,10 +367,11 @@ self.OS.GUI =
                 _GUI.pushServices [
                     "CoreServices/PushNotification",
                     "CoreServices/Spotlight",
-                    #"CoreServices/Calendar"
+                    "CoreServices/Calendar"
                 ]
 
         # startup application here
         _courrier.observable.one "desktoploaded", () ->
-            #_GUI.launch "DummyApp"
+            console.log "startup app"
+            _GUI.launch "DummyApp"
             #_GUI.launch "NotePad"

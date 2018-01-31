@@ -6,7 +6,11 @@ afx-app-window[data-id="notepad"] afx-list-view {
 afx-app-window[data-id="notepad"] afx-list-view div.list-container{
     z-index: 10;
 }
-
+afx-app-window[data-id="notepad"] afx-resizer{
+    z-index: 11;
+    background-color: transparent;
+    border-right: 1px solid #a6a6a6;
+}
 afx-app-window[data-id="notepad"] span[data-id="editorstat"]{
     padding:5px;
     display: inline-block;
@@ -29,7 +33,7 @@ afx-tab-container[data-id="tabarea"] afx-list-view li {
 afx-tab-container[data-id="tabarea"] afx-list-view{
     padding:0;
     margin: 0;
-    border-left: 1px solid #a6a6a6;
+    border-left: 0;
     border-bottom: 1px solid #a6a6a6;
 }
 /*afx-tab-container[data-id="tabarea"] afx-list-view i.closable:before{

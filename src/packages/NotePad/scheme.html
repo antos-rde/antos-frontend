@@ -1,9 +1,10 @@
 <afx-app-window apptitle="" width="600" height="400" data-id="notepad">
     <afx-hbox>
-        <afx-vbox data-width = "175" data-id = "sidebar">
+        <afx-vbox data-width = "172" data-id = "sidebar" min-width="172">
             <afx-list-view data-id = "location" dropdown = "true" data-height= "30" width = "150"></afx-list-view>
             <afx-file-view data-id = "fileview" view='tree' status = false></afx-file-view>
         </afx-vbox>
+        <afx-resizer data-width = "3" ></afx-resizer>
         <afx-vbox>
             <afx-tab-container data-id="tabarea" data-height="26" closable = true></afx-tab-container>
             <div data-id="datarea"></div>

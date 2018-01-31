@@ -17,6 +17,10 @@
                     self.root.observable.on("resize", function(w,h){
                         calibrate_size()
                     })
+                    self.root.observable.on("calibrate", function(){
+                        console.log("calibrate")
+                        calibrate_size()
+                    })
                 }
         })
         var calibrate_size = function()

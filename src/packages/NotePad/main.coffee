@@ -20,6 +20,12 @@ class NotePad extends this.OS.GUI.BaseApplication
         @.editor.completers.push { getCompletions: ( editor, session, pos, prefix, callback ) -> }
         @.editor.getSession().setUseWrapMode true
 
+        @fileview.contextmenuHandler = (e, m) ->
+            m.set "items", me.contextMenu()
+            m.set "onmenuselect", (evt) ->
+                me.contextAction evt
+            m.show e
+
         @mlist = @find "modelist"
         @modes = ace.require "ace/ext/modelist"
         ldata = []
@@ -78,6 +84,9 @@ class NotePad extends this.OS.GUI.BaseApplication
         @fileview.set "onfileopen", (e) ->
             return if e.type is "dir"
             me.open e.path.asFileHandler()
+        @subscribe "VFS", (d) ->
+            p = (me.fileview.get "path").asFileHandler()
+            me.chdir p.path if  d.data.file.hash()  is p.hash() or d.data.file.parent().hash() is p.hash()
         @location.set "onlistselect", (e) ->
             me.chdir e.data.path
         @location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
@@ -106,6 +115,48 @@ class NotePad extends this.OS.GUI.BaseApplication
         file.read (d) ->
             file.cache = d or ""
             me.newtab file
+
+    contextMenu: () ->
+        [
+            { text: "New file", dataid: "#{@name}-mkf" },
+            { text: "New folder", dataid: "#{@name}-mkd" },
+            { text: "Delete", dataid: "#{@name}-rm" }
+            { text: "Refresh", dataid: "#{@name}-refresh" }
+        ]
+
+    contextAction: (e) ->
+        me = @
+        file = @fileview.get "selectedFile"
+        dir = if file then file.path.asFileHandler() else (@fileview.get "path").asFileHandler()
+        dir = dir.parent().asFileHandler() if file and file.type isnt "dir"
+        switch e.item.data.dataid
+
+            when "#{@name}-mkd"
+                @openDialog "PromptDialog",
+                    (d) ->
+                        dir.mk d, (r) ->
+                             me.error "Fail to create #{d}: #{r.error}" if r.error
+                    , "New folder"
+            
+            when "#{@name}-mkf"
+                @openDialog "PromptDialog",
+                    (d) ->
+                        fp = "#{dir.path}/#{d}".asFileHandler()
+                        fp.write "", (r) ->
+                            me.error "Fail to create #{d}: #{r.error}" if r.error
+                    , "New file"
+            when "#{@name}-rm"
+                return unless file
+                @openDialog "YesNoDialog",
+                    (d) ->
+                        return unless d
+                        file.path.asFileHandler()
+                            .remove (r) ->
+                                me.error "Fail to delete #{file.filename}: #{r.error}" if r.error
+                , "Delete" ,
+                { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{file.filename} ?" }
+            when "#{@name}-refresh"
+                @.chdir ( @fileview.get "path" )
 
     save: (file) ->
         me = @

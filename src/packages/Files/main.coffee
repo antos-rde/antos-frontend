@@ -18,7 +18,7 @@ class Files extends this.OS.GUI.BaseApplication
             m.set "items", [ me.mnFile(), me.mnEdit() ]
             m.set "onmenuselect", (evt) ->
                 me._gui.launch evt.item.data.app, evt.item.data.args if evt.item.data.app
-            m.show(e)
+            m.show e
         #@on "fileselect", (d) -> console.log d
         @view.set "onfileopen", (e) ->
             return unless e
