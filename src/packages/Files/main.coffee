@@ -12,8 +12,12 @@ class Files extends this.OS.GUI.BaseApplication
         @favo = @find "favouri"
         @clipboard = undefined
 
+        @apps = []
+
         @view.contextmenuHandler = (e, m) ->
             m.set "items", [ me.mnFile(), me.mnEdit() ]
+            m.set "onmenuselect", (evt) ->
+                me._gui.launch evt.item.data.app, evt.item.data.args if evt.item.data.app
             m.show(e)
         #@on "fileselect", (d) -> console.log d
         @view.set "onfileopen", (e) ->
@@ -21,7 +25,7 @@ class Files extends this.OS.GUI.BaseApplication
             return if e.type is "dir"
             me._gui.openWith e
 
-        @favo.set "onlistselect", (e) -> 
+        @favo.set "onlistselect", (e) ->
             me.chdir e.data.path
         
         ($ @find "btback").click () ->
@@ -41,6 +45,14 @@ class Files extends this.OS.GUI.BaseApplication
                 return me.error "Resource not found #{e.child.path}" if d.error
                 f d.result
         
+        @view.set "onfileselect", (e) ->
+            file = me.view.get "selectedFile"
+            return  unless file
+            file.mime = "dir" if file.type is "dir"
+            me.apps.length = 0
+            for v in me._gui.appsByMime file.mime
+                v.args = [ file.path ]
+                me.apps.push v
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
@@ -83,23 +95,18 @@ class Files extends this.OS.GUI.BaseApplication
     mnFile:() ->
         #console.log file
         me = @
-        f = () ->
-            console.log "called"
-            file = me.view.get "selectedFile"
-            return undefined unless file
-            return me._gui.appsByMime file.mime
-        
-        {
+        arr = {
             text: "File",
             child: [
                 { text: "New file", dataid: "#{@name}-mkf" },
                 { text: "New folder", dataid: "#{@name}-mkdir" },
-                { text: "Open with", dataid: "#{@name}-open", child: f },
+                { text: "Open with", dataid: "#{@name}-open", child:@apps },
                 { text: "Upload", dataid: "#{@name}-upload" },
                 { text: "Download", dataid: "#{@name}-download" },
                 { text: "Properties", dataid: "#{@name}-info" }
             ], onmenuselect: (e) -> me.actionFile e
         }
+        return arr
     mnEdit: () ->
         me = @
         {
@@ -247,9 +254,6 @@ class Files extends this.OS.GUI.BaseApplication
             when "#{@name}-download"
                 return unless file
                 file.path.asFileHandler().download ()->
-            when "#{@name}-open"
-                return unless file
-                @_gui.openWith file
             else
                 console.log e
 

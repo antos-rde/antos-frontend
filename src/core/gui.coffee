@@ -247,7 +247,7 @@ self.OS.GUI =
                         { text: "Open", dataid: "desktop-open" },
                         { text: "Refresh", dataid: "desktop-refresh" }
                     ]
-                    menu = menu.concat _OS.setting.desktop.menu
+                    menu = menu.concat ( v for k, v of _OS.setting.desktop.menu)
                     m.set "items", menu
                     m.set "onmenuselect", (evt) ->
                         switch evt.item.data.dataid
@@ -260,7 +260,7 @@ self.OS.GUI =
                             when "desktop-refresh"
                                 desktop[0].fetch()
                             else
-                                _GUI.launch evt.item.data.app if evt.item.data.app
+                                _GUI.launch evt.item.data.app, evt.item.data.args if evt.item.data.app
                     m.show(e)
                 
                 desktop[0].fetch()
@@ -290,7 +290,7 @@ self.OS.GUI =
                         _GUI.launch d.item.data.app
                 }
             ]
-        menu.child = menu.child.concat _OS.setting.system.menu
+        menu.child = menu.child.concat (v for k, v of _OS.setting.system.menu)
         menu.child.push
             text: "Log out",
             dataid: "sys-logout",
@@ -329,7 +329,7 @@ self.OS.GUI =
         _OS.setting.user = conf.user
         _OS.setting.VFS = conf.VFS if conf.VFS
         _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
-        _OS.setting.desktop.menu = [] unless _OS.setting.desktop.menu
+        _OS.setting.desktop.menu = {} unless _OS.setting.desktop.menu
         _OS.setting.VFS.mountpoints = [
             #TODO: multi app try to write to this object, it neet to be cloned
             { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
@@ -343,7 +343,7 @@ self.OS.GUI =
             "home:///.packages",
             "os:///packages"
         ] unless _OS.setting.system.pkgpaths
-        _OS.setting.system.menu = [] unless _OS.setting.system.menu
+        _OS.setting.system.menu = {} unless _OS.setting.system.menu
        
         _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
@@ -367,7 +367,7 @@ self.OS.GUI =
                 _GUI.pushServices [
                     "CoreServices/PushNotification",
                     "CoreServices/Spotlight",
-                    "CoreServices/Calendar"
+                    #"CoreServices/Calendar"
                 ]
 
         # startup application here

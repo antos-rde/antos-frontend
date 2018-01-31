@@ -96,7 +96,7 @@
                     self.update()
                 })
         }
-
+        
         select(event)
         {
             if(istoggle)

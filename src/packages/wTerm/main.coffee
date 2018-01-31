@@ -32,7 +32,7 @@ class wTerm extends this.OS.GUI.BaseApplication
                 me.term.write pastedText.substring i * 1000, end
         #self.socket.send("i"+ substr.replace(/\n/g,"\r\n"))
         # make desktop menu if not exist
-        @systemsetting.desktop.menu.push { text: "Open terminal", app: "wTerm" }
+        @systemsetting.desktop.menu[@name] = { text: "Open terminal", app: "wTerm" } unless @systemsetting.desktop.menu[@name]
         @openSession()
         @on "vboxchange", (e) -> me.resizeContent e.w, e.h
 

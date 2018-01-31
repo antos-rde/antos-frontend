@@ -1,13 +1,13 @@
 <afx-menu >
     <ul class={context: opts.context == "true"}>
         <li class="afx-corner-fix"></li>
-        <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null, fix_padding:data.icon} no-reorder>
+        <li ref = "container" each={ data,i in items } class = {afx_submenu:data.child != null && data.child.length > 0, fix_padding:data.icon} no-reorder>
             <a href="#" onclick = {parent.onselect}>
                 <afx-switch if = {data.switch || data.radio} class = {checked:parent.checkItem(data)} enable = false swon = {data.checked} ></afx-switch>
                 <afx-label color = {data.color} iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
             </a>
             
-            <afx-menu  if={data.child != null} child={data.child.constructor === Array?data.child:data.child()} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
+            <afx-menu  if={data.child != null && data.child.length > 0} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
         </li>
          <li class="afx-corner-fix"></li>
     </ul>
@@ -78,7 +78,7 @@
         self.root.show = function(e)
         {
             //only for menucontext
-            if(opts.context != "true") return;
+            if(opts.context != "true") return
             $(self.root)
                 .css("top", e.clientY - 15 + "px")
                 .css("left",e.clientX  -5 +  "px")
