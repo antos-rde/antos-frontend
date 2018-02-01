@@ -120,6 +120,10 @@ self.OS.API =
             _API.handler.packages {
                 command: "list", args: { paths: _OS.setting.system.pkgpaths }
             }, f
+        cache: (f) ->
+            _API.handler.packages {
+                command: "cache", args: { paths: _OS.setting.system.pkgpaths }
+            }, f
 
     throwe: (n) ->
         err = undefined

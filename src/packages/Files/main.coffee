@@ -181,7 +181,7 @@ class Files extends this.OS.GUI.BaseApplication
                         file.path.asFileHandler()
                             .move "#{me.currdir.path}/#{d}", (r) ->
                                 me.error "Fail to rename to #{d}: #{r.error}" if r.error
-                    , "Rename", file.filename
+                    , "Rename", { label: "File name:", value: file.filename }
             
             when "#{@name}-rm"
                 return unless file
@@ -232,7 +232,7 @@ class Files extends this.OS.GUI.BaseApplication
                     (d) ->
                         me.currdir.mk d, (r) ->
                              me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New folder"
+                    , "New folder", { label: "Folder name:" }
             
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
@@ -240,7 +240,7 @@ class Files extends this.OS.GUI.BaseApplication
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
                         fp.write "", (r) ->
                             me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New file"
+                    , "New file",  { label: "File name:" }
             
             when "#{@name}-info"
                 return unless file

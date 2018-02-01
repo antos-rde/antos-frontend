@@ -4,6 +4,7 @@
     </div>
     <script>
         var self = this
+        this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         this.on('mount', function(){
             $(self.refs.container)
                 .css("display","flex")
@@ -18,7 +19,6 @@
                         calibrate_size()
                     })
                     self.root.observable.on("calibrate", function(){
-                        console.log("calibrate")
                         calibrate_size()
                     })
                 }
@@ -41,6 +41,7 @@
                     var dw = $(this).attr("data-width")
                     if(dw)
                     {
+                        if(dw == "grow") return
                         $(this).css("width",dw + "px")
                         ocwidth += Number(dw)
                     }
@@ -54,8 +55,8 @@
             {
                 $(v).css("width", csize + "px")
             })
-            self.root.observable.trigger("vboxchange",
-                {id:$(self.root).attr("data-id"), w:csize, h:avaiheight})
+            self.root.observable.trigger("hboxchange",
+                {id:self.rid, w:csize, h:avaiheight})
         }
     </script>
 </afx-hbox>

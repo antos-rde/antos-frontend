@@ -1,15 +1,14 @@
-class BaseDialog extends this.OS.GUI.BaseModel
+class SubWindow extends this.OS.GUI.BaseModel
     constructor: (name) ->
         super name, null
         @parent = undefined
         @modal = false
-        @handler = undefined
+        
     quit: () ->
         evt = new _GUI.BaseEvent("exit")
         @onexit(evt)
         if not evt.prevent
             delete @.observable
-            @parent.dialog = undefined if @parent
             ($ @scheme).remove() if @scheme
             @dialog.quit() if @dialog
     init: () ->
@@ -22,7 +21,17 @@ class BaseDialog extends this.OS.GUI.BaseModel
     hide: () ->
         @trigger 'hide'
 
-BaseDialog.type = 3
+SubWindow.type = 3
+this.OS.GUI.SubWindow = SubWindow
+
+class BaseDialog extends SubWindow
+    constructor: (name) ->
+        super name
+        @handler = undefined
+
+    onexit: (e) ->
+        @parent.dialog = undefined if @parent
+
 this.OS.GUI.BaseDialog = BaseDialog
 ###
     this dialog rende a tag as main content
@@ -47,8 +56,8 @@ class BasicDialog extends BaseDialog
         @title = @name if not @title
         html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@title}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-vbox>"
-        html += "<#{@conf.tag} #{@conf.att} data-id = 'content'></#{@conf.tag}>"
-        html += "<div data-height = '40' style=' text-align:right;padding-top:3px;'>"
+        html += "<#{v.tag} #{v.att} data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
+        html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div></afx-vbox></afx-app-window>"
         #render the html
@@ -69,16 +78,18 @@ this.OS.GUI.BasicDialog = BasicDialog
 class PromptDialog extends BasicDialog
     constructor: () ->
         super "PromptDialog", {
-            tag: "input",
+            tags: [
+                { tag: "afx-label", att: "data-height = '20'" },
+                { tag: "input", att: "type = 'text'" }
+            ],
             width: 200,
-            height: 90,
-            att: "type = 'text'"
+            height: 100,
             resizable: false,
             buttons: [
                 {
                     label: "0k",
                     onclick: (d) ->
-                        txt = (d.find "content").value
+                        txt = (d.find "content1").value
                         return d.quit() if txt is ""
                         d.handler txt if d.handler
                         d.quit()
@@ -90,9 +101,10 @@ class PromptDialog extends BasicDialog
             ],
             filldata: (d) ->
                 return unless d.data
-                (d.find "content").value = d.data
+                (d.find "content0").set "text", d.data.label
+                (d.find "content1").value = d.data.value if d.data.value
             xtra: (d) ->
-                $( d.find "content" ).keyup (e) ->
+                $( d.find "content0" ).keyup (e) ->
                     (d.find "bt0").trigger() if e.which is 13
         }
 
@@ -101,7 +113,7 @@ this.OS.register "PromptDialog", PromptDialog
 class CalendarDialog extends BasicDialog
     constructor: () ->
         super "CalendarDialog", {
-            tag: 'afx-calendar-view',
+            tags: [{ tag: 'afx-calendar-view' }],
             width: 300,
             height: 220,
             resizable: false,
@@ -109,7 +121,7 @@ class CalendarDialog extends BasicDialog
                 {
                     label: 'Ok',
                     onclick: (d) ->
-                        date = (d.find "content").get "selectedDate"
+                        date = (d.find "content0").get "selectedDate"
                         if date
                             d.handler date if d.handler
                             d.quit()
@@ -127,7 +139,7 @@ this.OS.register "CalendarDialog", CalendarDialog
 class ColorPickerDialog extends BasicDialog
     constructor: () ->
         super "ColorPickerDialog", {
-            tag: 'afx-color-picker',
+            tags: [{ tag: 'afx-color-picker' }],
             width: 313,
             height: 220,
             resizable: false,
@@ -135,7 +147,7 @@ class ColorPickerDialog extends BasicDialog
                 {
                     label: 'Ok',
                     onclick: (d) ->
-                        c = (d.find "content").get "selectedColor"
+                        c = (d.find "content0").get "selectedColor"
                         if c
                             d.handler c if d.handler
                             d.quit()
@@ -153,7 +165,7 @@ this.OS.register "ColorPickerDialog", ColorPickerDialog
 class InfoDialog extends BasicDialog
     constructor: () ->
         super "InfoDialog", {
-            tag: 'afx-grid-view',
+            tags: [{ tag: 'afx-grid-view' }],
             width: 250,
             height: 300,
             resizable: true,
@@ -161,8 +173,8 @@ class InfoDialog extends BasicDialog
             filldata: (d) ->
                 return unless d.data
                 rows = []
-                rows.push [ { value: k }, { value: v } ] for v, k in d.data
-                (d.find "content").set "rows", rows
+                rows.push [ { value: k }, { value: v } ] for k, v of d.data
+                (d.find "content0").set "rows", rows
         }
 this.OS.register "InfoDialog", InfoDialog
 
@@ -170,10 +182,9 @@ this.OS.register "InfoDialog", InfoDialog
 class YesNoDialog extends BasicDialog
     constructor: () ->
         super "YesNoDialog", {
-            tag: "afx-label",
+            tags: [{ tag: "afx-label", att: "style = 'padding:10px;'" }],
             width: 300,
             height: 100,
-            att:"style = 'padding:10px;'"
             resizable: true,
             buttons: [
                 {
@@ -189,7 +200,7 @@ class YesNoDialog extends BasicDialog
             ],
             filldata: (d) ->
                 return unless d.data
-                l = d.find "content"
+                l = d.find "content0"
                 for k, v of d.data
                     l.set k, v
         }
@@ -198,15 +209,14 @@ this.OS.register "YesNoDialog", YesNoDialog
 class SelectionDialog extends BasicDialog
     constructor: () ->
         super "SelectionDialog", {
-            tag: "afx-list-view",
-            att: "",
+            tags: [{ tag: "afx-list-view" }],
             width: 250,
             height: 300,
             resizable: false,
             buttons: [
                 {
                     label: "Ok", onclick: (d) ->
-                        el = d.find "content"
+                        el = d.find "content0"
                         it = el.get "selected"
                         return unless it
                         d.handler it if d.handler
@@ -216,9 +226,9 @@ class SelectionDialog extends BasicDialog
             ],
             filldata: (d) ->
                 return unless d.data
-                (d.find "content").set "items", d.data
+                (d.find "content0").set "items", d.data
             xtra: (d) ->
-                ( d.find "content" ).set "onlistdbclick", (e) ->
+                ( d.find "content0" ).set "onlistdbclick", (e) ->
                     (d.find "bt0").trigger()
             
         }
@@ -229,7 +239,7 @@ class AboutDialog extends BaseDialog
         super "AboutDialog"
 
     init: () ->
-        @render "resources/schemes/about.html"
+        @render "os:///resources/schemes/about.html"
 
     main: () ->
         mt = @meta()
@@ -249,7 +259,7 @@ class FileDiaLog extends BaseDialog
         super "FileDiaLog"
     
     init: () ->
-        @render "resources/schemes/filedialog.html"
+        @render "os:///resources/schemes/filedialog.html"
     
     main: () ->
         fileview = @find "fileview"

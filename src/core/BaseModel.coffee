@@ -37,10 +37,10 @@ class BaseModel
         if @dialog
             @dialog.show()
             return
-        if not _GUI.dialogs[d]
+        if not _GUI.subwindows[d]
             @error "Dialog #{d} not found"
             return
-        @dialog = new _GUI.dialogs[d]()
+        @dialog = new _GUI.subwindows[d]()
         @dialog.parent = @
         @dialog.handler = f
         @dialog.pid = @pid

@@ -26,7 +26,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
                 when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
         #now load the scheme
-        path = "packages/#{@name}/scheme.html"
+        path = "#{@meta().path}/scheme.html"
         @.render path
 
     applySetting: (k) ->

@@ -1,5 +1,5 @@
 self.OS.GUI =
-    dialogs: new Object()
+    subwindows: new Object()
     dialog: undefined
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
@@ -9,12 +9,11 @@ self.OS.GUI =
         app.main()
         app.show()
     loadScheme: (path, app, parent) ->
-        _API.get path,
-        (x) ->
+        path.asFileHandler().read (x) ->
             return null unless x
             _GUI.htmlToScheme x, app, parent
-        , (e, s) ->
-            _courrier.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})", e, s
+        #, (e, s) ->
+        #    _courrier.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})", e, s
 
     clearTheme: () ->
          $ "head link#ostheme"
@@ -37,10 +36,10 @@ self.OS.GUI =
         if _GUI.dialog
             _GUI.dialog.show()
             return
-        if not _GUI.dialogs[d]
+        if not _GUI.subwindows[d]
             ex = _API.throwe "Dialog"
             return _courrier.oserror "Dialog #{d} not found", ex, null
-        _GUI.dialog = new _GUI.dialogs[d]()
+        _GUI.dialog = new _GUI.subwindows[d]()
         _GUI.dialog.parent = _GUI
         _GUI.dialog.handler = f
         _GUI.dialog.pid = -1
@@ -105,6 +104,7 @@ self.OS.GUI =
         path = "os:///packages/#{app}"
         path = _OS.setting.system.packages[app].path if _OS.setting.system.packages[app].path
         js = path + "/main.js"
+        
         js.asFileHandler().read (d) ->
                 #load css file
                 css =  "#{path}/main.css"
@@ -113,15 +113,14 @@ self.OS.GUI =
                         .appendTo 'head'
                 , () ->
                 #launch
-                if _OS.APP[app]
-                    # load app meta data
-                    "#{path}/package.json".asFileHandler().read (data) ->
-                        data.path = path
-                        _OS.APP[app].meta = data
-                        ok app
-                    , "json"
-                else
+                # load app meta data
+                "#{path}/package.json".asFileHandler().read (data) ->
+                    data.path = path
+                    _OS.APP[app].meta = data if _OS.APP[app]
+                    _OS.APP[v].meta = data for v in data.services if data.services
                     ok app
+                , "json"
+                #ok app
             , "script"
     launch: (app, args) ->
         if not _OS.APP[app]
@@ -340,7 +339,7 @@ self.OS.GUI =
             "os:///packages"
         ] unless _OS.setting.system.pkgpaths
         _OS.setting.system.menu = {} unless _OS.setting.system.menu
-       
+        _OS.setting.system.repositories = [] unless _OS.setting.system.repositories
         _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme
@@ -348,23 +347,25 @@ self.OS.GUI =
         _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
             # TODO load packages list then build system menu
-             _API.packages.fetch (r) ->
-                if r.result
-                    for k, v of r.result
-                        v.text = v.name
-                        v.filename = k
-                        v.type = "app"
-                        v.mime = "antos/app"
-                        v.iconclass = "fa  fa-adn" unless v.iconclass or v.icon
-                _OS.setting.system.packages = if r.result then r.result else
-                _GUI.buildSystemMenu()
-                # push startup services
-                # TODO: get services list from user setting
-                _GUI.pushServices [
-                    "CoreServices/PushNotification",
-                    "CoreServices/Spotlight",
-                    "CoreServices/Calendar"
-                ]
+            _API.packages.cache (ret) ->
+                if ret.result
+                    _API.packages.fetch (r) ->
+                        if r.result
+                            for k, v of r.result
+                                v.text = v.name
+                                v.filename = k
+                                v.type = "app"
+                                v.mime = "antos/app"
+                                v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
+                        _OS.setting.system.packages = if r.result then r.result else
+                        _GUI.buildSystemMenu()
+                        # push startup services
+                        # TODO: get services list from user setting
+                        _GUI.pushServices [
+                            "CoreServices/PushNotification",
+                            "CoreServices/Spotlight",
+                            "CoreServices/Calendar"
+                        ]
                 #_GUI.launch "DummyApp"
 
         # startup application here

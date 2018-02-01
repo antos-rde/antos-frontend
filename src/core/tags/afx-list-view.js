@@ -98,6 +98,11 @@
                     .css("display","none")
                     .css("top","100%")
                     .css("left","0")
+                
+                self.root.observable.on("vboxchange", function(e){
+                   if(e.id == self.parent.rid)
+                        $(self.refs.container).css("width", $(self.root).parent().innerWidth() + "px" )
+                })
             }
         })
         show_list(event)

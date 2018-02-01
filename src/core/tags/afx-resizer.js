@@ -64,7 +64,7 @@
         w = Math.round(e.clientX - offset.left)
         if(w < self.minsize) w = self.minsize
         $(self.resizable).attr("data-width", w.toString())
-        self.parent.root.observable.trigger("calibrate")
+        self.parent.root.observable.trigger("calibrate", self.resizable)
     }
 
     var verticalResize = function(e)
@@ -77,7 +77,7 @@
         h = Math.round(e.clientY - offset.top)
         if(h < self.minsize) h = minsize
         $(self.resizable).attr("data-height", h.toString())
-        self.parent.root.observable.trigger("calibrate")
+        self.parent.root.observable.trigger("calibrate", self.resizable)
     }
     </script>
 </afx-resizer>

@@ -38,7 +38,7 @@ self.OS or=
             _courrier.quota += 1
             _courrier.quota
     register: (name, x) ->
-        if x.type is 3 then self.OS.GUI.dialogs[name] = x else _OS.APP[name] = x
+        if x.type is 3 then self.OS.GUI.subwindows[name] = x else _OS.APP[name] = x
     
     PM:
         pidalloc: 0

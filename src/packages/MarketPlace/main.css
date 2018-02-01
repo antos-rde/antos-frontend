@@ -1,0 +1,59 @@
+afx-app-window[data-id ='marketplace-win'] afx-resizer{
+    background-color: transparent;
+    border-left: 1px solid #cbcbcb;
+}
+afx-app-window[data-id ='marketplace-win'] afx-list-view[data-id='applist']{
+    background-color: #f6F6F6;
+    padding:0;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id='repo'] div.list-container{
+    z-index: 10;
+}
+
+afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] {
+    color: #414339;
+    overflow-y: auto;
+}
+afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] afx-hbox {
+    padding-left: 10px;
+}
+afx-app-window[data-id="marketplace-win"] div[data-id='appname'] {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+    color: #414339;
+}
+
+afx-app-window[data-id="marketplace-win"] div[data-id='appname']:before {
+    content: "\f085"; 
+    font-family: "FontAwesome";
+    font-size: 25px;
+    font-style: normal;
+    margin-right: 10px;
+    color: #414339;
+}
+afx-app-window[data-id="marketplace-win"] p[data-id='app-desc'] {
+    text-align: justify;
+    padding:10px;
+    padding-top: 0;
+}
+afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
+    padding:0;
+    padding-left:10px;
+    display: table;
+    margin: 0;
+}
+afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] li{
+    padding:0;
+    margin: 0;
+    display: table-row;
+}
+afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] span{
+    display: table-cell;
+    padding: 5px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+afx-app-window[data-id="marketplace-win"] span.info-header{
+    font-weight: bold;
+}

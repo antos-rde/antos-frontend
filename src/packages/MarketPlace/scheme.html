@@ -1,0 +1,23 @@
+<afx-app-window data-id = "marketplace-win" apptitle="MarketPlace" width="500" height="400">
+        <afx-hbox >
+            <afx-vbox data-width = "172" data-id = "sidebar" min-width="172">
+                <afx-list-view data-id = "repo" dropdown = "true" data-height= "30" width = "150"></afx-list-view>
+                <afx-list-view data-id = "applist" dropdown = "false" width = "150"></afx-list-view>
+            </afx-vbox>
+            <afx-resizer data-width = "3" ></afx-resizer>
+            <afx-vbox data-id = "container">
+                    <div data-id = "appname" data-height = "25"></div>
+                    <afx-hbox data-height = "25">
+                        <afx-button data-id = "bt-remove" text = "Uninstall"  data-width = "65"></afx-button>
+                        <afx-button data-id = "bt-exec" text = "Launch"  data-width = "50"></afx-button>
+                        <afx-button data-id = "bt-install" text = "Install" data-width = "50"></afx-button>
+                        <div></div>
+                    </afx-hbox>
+                    <div>
+                        <p data-id = "app-desc"></p>
+                        <ul data-id = "app-detail"></ul>
+                    </div>
+            </afx-vbox>
+            
+        </afx-hbox>
+    </afx-app-window>

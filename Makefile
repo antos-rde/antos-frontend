@@ -20,7 +20,7 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files MarkOn
+packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files MarkOn MarketPlace
 
 main:  build_coffees build_tags build_themes schemes libs  build_packages
 	- cp src/index.html $(BUILDDIR)/
