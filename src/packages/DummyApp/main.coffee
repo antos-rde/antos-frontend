@@ -76,7 +76,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
             {text:"some thing"},
             {text:"some thing"}
         ]
-        #list.set "items",ldata
+        list.set "items",ldata
         list.set "onlistselect", (e)->
             console.log e
 

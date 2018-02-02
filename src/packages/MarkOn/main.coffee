@@ -43,7 +43,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
             if me.currfile.dirty is false
                 me.currfile.dirty = true
                 me.scheme.set "apptitle", "#{me.currfile.basename}*"
-        @on "vboxchange", (e) -> me.resizeContent()
+        @on "hboxchange", (e) -> me.resizeContent()
         @resizeContent()
         @open @currfile
 
