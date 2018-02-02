@@ -34,7 +34,7 @@ class wTerm extends this.OS.GUI.BaseApplication
         # make desktop menu if not exist
         @systemsetting.desktop.menu[@name] = { text: "Open terminal", app: "wTerm" } unless @systemsetting.desktop.menu[@name]
         @openSession()
-        @on "vboxchange", (e) -> me.resizeContent e.w, e.h
+        @on "hboxchange", (e) -> me.resizeContent e.w, e.h
 
     resizeContent: (w, h) ->
         ex = @term.rowContainer.firstElementChild
