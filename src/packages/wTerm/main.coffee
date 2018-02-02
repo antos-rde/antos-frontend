@@ -57,7 +57,7 @@ class wTerm extends this.OS.GUI.BaseApplication
         me = @
         @term.clear()
         @term.focus()
-        @socket = new WebSocket "ws://" + window.location.host + "/wterm"
+        @socket = new WebSocket "ws://" + @_api.HOST + "/wterm"
         @socket.onopen = () ->
             #el.style.display = "none"
             me.resizeContent (($ me.mterm).width()) ,  (($ me.mterm).height())

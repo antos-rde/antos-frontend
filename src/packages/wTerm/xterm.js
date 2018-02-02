@@ -5129,4 +5129,3 @@ module.exports = Terminal;
 
 },{"./BufferSet":2,"./CompositionHelper":4,"./EscapeSequences":5,"./EventEmitter":6,"./InputHandler":7,"./Linkifier":8,"./Parser":9,"./Renderer":10,"./SelectionManager":11,"./Viewport":13,"./handlers/Clipboard":14,"./utils/Browser":15,"./utils/BufferLine":16,"./utils/CharMeasure":17,"./utils/Mouse":21}]},{},[22])(22)
 });
-//# sourceMappingURL=xterm.js.map
