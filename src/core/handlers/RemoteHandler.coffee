@@ -1,4 +1,4 @@
-self.OS.API.HOST = "os.localhost:9195"
+self.OS.API.HOST = self.location.hostname+ (if self.location.port then":#{self.location.port}" else "")
 self.OS.API.REST = "http://#{self.OS.API.HOST}/lua-api"
 
 _REST = self.OS.API.REST
