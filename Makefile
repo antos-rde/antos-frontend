@@ -8,6 +8,7 @@ coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
         	src/core/handlers/RemoteHandler.coffee\
         	src/core/vfs.coffee\
+			src/core/db.coffee\
 			src/core/gui.coffee\
 			src/core/BaseModel.coffee\
 			src/core/BaseApplication.coffee\
@@ -20,7 +21,7 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files MarkOn MarketPlace
+packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files MarkOn MarketPlace Blogger
 
 main:  build_coffees build_tags build_themes schemes libs  build_packages
 	- cp src/index.html $(BUILDDIR)/

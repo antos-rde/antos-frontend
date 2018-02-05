@@ -1,0 +1,49 @@
+<afx-app-window data-id = "blogger-win" apptitle="MarketPlace" width="500" height="400">
+    <afx-hbox >
+        <afx-list-view data-id="tabbar" data-width="30"></afx-list-view>
+        <afx-vbox>
+            <afx-hbox data-id="user-container" data-height="grow">
+                <afx-vbox>
+                    <afx-hbox data-height = "30">
+                        <afx-label data-width= "70" text = "Full name:"></afx-label>
+                        <input type = "text" name="fullname" imput-class = "user-input"/>
+                    </afx-hbox>
+                    <afx-hbox data-height = "30">
+                        <afx-label text = "Address:" data-width= "70"></afx-label>
+                        <input type = "text" name="address" imput-class = "user-input"/>
+                    </afx-hbox>
+                    <afx-hbox data-height = "30">
+                        <afx-label text = "Phone:" data-width= "70"></afx-label>
+                        <input type = "text" name="Phone" imput-class = "user-input"/>
+                    </afx-hbox>
+                    <afx-hbox data-height = "30">
+                        <afx-label text = "Email:" data-width= "70"></afx-label>
+                        <input type = "text" name="email" imput-class = "user-input"/>
+                    </afx-hbox>
+                    <afx-hbox data-height = "30">
+                        <afx-label text = "Url:" data-width= "70"></afx-label>
+                        <input type = "text" name="url" imput-class = "user-input"/>
+                    </afx-hbox>
+                    <afx-label data-height = "30" text = "Short biblio:"/>
+                    <textarea rows="10" name="shortbiblio" imput-class = "user-input"/>
+                    <afx-hbox data-height = "30">
+                        <div></div>
+                        <afx-button iconclass = "fa fa-save" data-id = "bt-user-save" data-width="55" text = "Save"/>
+                    </afx-hbox>
+                </afx-vbox>
+            </afx-hbox>
+            <afx-hbox data-id="cv-container" data-height="grow">
+                <afx-list-view data-id = "cv-list" data-width="100" ></afx-list-view>
+                <afx-vbox>
+                    info here
+                </afx-vbox>
+            </afx-hbox>
+            <afx-hbox data-id = "blog-container" data-height="grow">
+                <afx-list-view data-id = "blog-list" data-width="100"></afx-list-view>
+                <afx-vbox>
+                    blog here
+                </afx-vbox>
+            </afx-hbox>
+        </afx-vbox>
+    </afx-hbox>
+</afx-app-window>

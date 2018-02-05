@@ -1,5 +1,5 @@
 <afx-hbox style = "display:block;">
-    <div ref = "container" class="afx-vbox-container">
+    <div ref = "container" class="afx-hbox-container">
          <yield/>
     </div>
     <script>
@@ -35,8 +35,6 @@
                 .each(function(e)
                 {
                     this.observable = self.root.observable
-                    $(this)
-                        .css("flex-grow","1")
                         //.css("height",avaiheight + "px")
                     var dw = $(this).attr("data-width")
                     if(dw)
@@ -47,6 +45,8 @@
                     }
                     else
                     {
+                        $(this)
+                        .css("flex-grow","1")
                         auto_width.push(this)
                     }
                 })

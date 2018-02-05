@@ -69,4 +69,5 @@ class BaseModel
     
     find: (id) -> ($ "[data-id='#{id}']", @scheme)[0] if @scheme
     
+    select: (sel) -> $ sel, @scheme if @scheme
 this.OS.GUI.BaseModel = BaseModel

@@ -1,0 +1,25 @@
+afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"]  {
+    padding: 0;
+    margin: 0;
+    background-color: #333333;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] li {
+    background-color: #333333;
+    font-size: 20px;
+    color: #929292;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] li.selected{
+    color:white;
+}
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] {
+    padding: 10px;
+}
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-hbox{
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-label{
+    font-weight: bold;
+}
