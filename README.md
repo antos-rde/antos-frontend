@@ -4,7 +4,7 @@ Simple web os (client side) based on jQuery and Riot, it is designed to be used 
 Note that, the development of the project is in early alpha state, so bugs are very welcome :)
 
 ## Demo
-A demo of the webOS is available at my page  [http://os.lxsang.me](http://os.lxsang.me) using username: demo and password: demo
+A demo of the webOS is available at my page  [https://os.lxsang.me](https://os.lxsang.me) using username: demo and password: demo
 
 ![Screenshot](screenshot.png "Screenshot")
  
