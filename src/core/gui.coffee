@@ -291,7 +291,6 @@ self.OS.GUI =
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
         menu.onmenuselect = (d) ->
-            console.log d
             return _API.handler.logout() if d.item.data.dataid is "sys-logout"
             _GUI.launch d.item.data.app unless d.item.data.dataid
         
