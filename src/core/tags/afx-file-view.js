@@ -191,7 +191,8 @@
                 self.selectedFile = e.data
                 if(self.onfileselect)
                     self.onfileselect(e.data)
-                $(self.refs.stbar).html("Selected: " + e.data.filename + " (" + e.data.size + " bytes)")
+                $(self.refs.stbar).empty()
+                $(self.refs.stbar).append($("<span>").append("Selected: " + e.data.filename + " (" + e.data.size + " bytes)"))//.html()
             })
             self.root.observable.on("filedbclick", function(e){
                 if(e.id != self.rid ) return

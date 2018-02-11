@@ -10,6 +10,7 @@ afx-file-view div.status{
     height: 15px;
     background-color: #f6F6F6;
     border-top: 1px solid #cbcbcb;
+    color:#414339;
 }
 afx-file-view afx-list-view li{
     float:left;

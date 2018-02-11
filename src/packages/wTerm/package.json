@@ -1,6 +1,6 @@
 {
     "app":"wTerm",
-    "name":"Unix terminal like",
+    "name":"Terminal",
     "description":"Access Unix terminal from web",
     "info":{
         "author": "Xuan Sang LE",
