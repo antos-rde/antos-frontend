@@ -11,16 +11,23 @@ String.prototype.asBase64 = () ->
     )
 
 String.prototype.asFileHandler = () ->
-    list = this.split ":///"
-    switch list[0]
-        when "app"
-            return new ApplicationHandler(this)
-        else
-            return new RemoteFileHandler(this)
+    list = @split ":///"
+    handlers = _API.VFS.findHandlers list[0]
+    if not handlers or handlers.length is 0
+        _courrier.osfail "VFS unknown handler: #{@}", (_API.throwe "OS.VFS"), @
+        return null
+    return new handlers[0](@)
 
-this.OS.API.VFS = {}
+this.OS.API.VFS =
+    handlers: { }
+    register: ( protos, cls ) ->
+        return self.OS.API.VFS.handlers[protos] = cls # if typeof protos is "string"
+        #_API.VFS.handlers[v] = cls for v in protos
+    findHandlers: (proto) ->
+        l = (v for k, v of _API.VFS.handlers when proto.match (new RegExp k , "g"))
+        return l
 
-class BasicFileHandler
+class BaseFileHandler
     constructor: (path) ->
         @dirty = false
         @cache = undefined
@@ -120,10 +127,10 @@ class BasicFileHandler
         return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 # now export the class
-self.OS.API.VFS.BasicFileHandler = BasicFileHandler
+self.OS.API.VFS.BaseFileHandler = BaseFileHandler
 
 # Remote file handle
-class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
+class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
         super path
 
@@ -157,10 +164,10 @@ class RemoteFileHandler extends self.OS.API.VFS.BasicFileHandler
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.RemoteFileHandler = RemoteFileHandler
+self.OS.API.VFS.register "^(home|shared|desktop|os)$", RemoteFileHandler
 
 # Application Handler
-class ApplicationHandler extends self.OS.API.VFS.BasicFileHandler
+class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
         super path
         @info = _OS.setting.system.packages[@basename] if @basename
@@ -199,12 +206,4 @@ class ApplicationHandler extends self.OS.API.VFS.BasicFileHandler
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.ApplicationHandler = ApplicationHandler
-
-
-# GoogleDrive File Handler
-class GoogleDriveHandler extends self.OS.API.VFS.BasicFileHandler
-    constructor: (path) ->
-        super path
-
-self.OS.API.VFS.GoogleDriveHandler = GoogleDriveHandler
+self.OS.API.VFS.register "^app$", ApplicationHandler

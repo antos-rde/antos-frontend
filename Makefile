@@ -8,6 +8,7 @@ coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
         	src/core/handlers/RemoteHandler.coffee\
         	src/core/vfs.coffee\
+			src/core/vfs/GoogleDriveHandler.coffee\
 			src/core/db.coffee\
 			src/core/gui.coffee\
 			src/core/BaseModel.coffee\
