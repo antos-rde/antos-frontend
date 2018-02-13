@@ -24,7 +24,7 @@ this.OS.API.VFS =
         return self.OS.API.VFS.handlers[protos] = cls # if typeof protos is "string"
         #_API.VFS.handlers[v] = cls for v in protos
     findHandlers: (proto) ->
-        l = (v for k, v of _API.VFS.handlers when proto.match (new RegExp k , "g"))
+        l = (v for k, v of _API.VFS.handlers when proto.trim().match (new RegExp k , "g"))
         return l
 
 class BaseFileHandler
