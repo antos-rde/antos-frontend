@@ -12,7 +12,7 @@ afx-file-view div.status{
     border-top: 1px solid #cbcbcb;
     color:#414339;
 }
-afx-file-view afx-list-view li{
+afx-file-view afx-list-view > div.list-container > ul > li{
     float:left;
     display: block;
     width:70px;
@@ -23,7 +23,7 @@ afx-file-view afx-list-view li{
     margin-right: 5px;
     margin-bottom: 5px;
 }
-afx-file-view afx-list-view li:nth-child(odd){
+afx-file-view afx-list-view > div.list-container > ul > li:nth-child(odd){
     background-color: transparent;
 }
 afx-file-view afx-list-view i.dir:before{
@@ -51,7 +51,7 @@ afx-file-view afx-list-view i.file:before{
     font-weight: normal;
 }
 
-afx-file-view afx-list-view  li.selected, afx-file-view afx-list-view  li.selected  i:before {
+afx-file-view afx-list-view > div.list-container > ul > li.selected, afx-file-view afx-list-view div.list-container > ul  li.selected  i:before {
     background-color: #116cd6;
     color:white;
     border-radius: 6px;

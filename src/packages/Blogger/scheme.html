@@ -1,8 +1,8 @@
-<afx-app-window data-id = "blogger-win" apptitle="MarketPlace" width="500" height="400">
+<afx-app-window data-id = "blogger-win" apptitle="Blogger" width="500" height="500">
     <afx-hbox >
         <afx-list-view data-id="tabbar" data-width="30"></afx-list-view>
         <afx-vbox>
-            <afx-hbox data-id="user-container" data-height="grow">
+            <afx-hbox data-id="user-container" data-height="100%">
                 <afx-vbox>
                     <afx-hbox data-height = "30">
                         <afx-label data-width= "70" text = "Full name:"></afx-label>
@@ -25,20 +25,29 @@
                         <input type = "text" name="url" imput-class = "user-input"/>
                     </afx-hbox>
                     <afx-label data-height = "30" text = "Short biblio:"/>
-                    <textarea rows="10" name="shortbiblio" imput-class = "user-input"/>
-                    <afx-hbox data-height = "30">
+                    <textarea name="shortbiblio" imput-class = "user-input"/>
+                    <afx-hbox data-height = "35">
                         <div></div>
                         <afx-button iconclass = "fa fa-save" data-id = "bt-user-save" data-width="55" text = "Save"/>
                     </afx-hbox>
                 </afx-vbox>
             </afx-hbox>
-            <afx-hbox data-id="cv-container" data-height="grow">
-                <afx-list-view data-id = "cv-list" data-width="100" ></afx-list-view>
+            <afx-hbox data-id="cv-container" data-height="100%">
+                <afx-vbox data-width="150" min-width="100">
+                        <afx-label class = "cat-header" data-height = "23" text = "Categories" iconclass = "fa fa-bars"></afx-label>
+                        <afx-tree-view data-id = "cv-list" ></afx-tree-view>
+                        <afx-hbox data-height="30" class = "cv-side-bar-btn">
+                            <afx-button data-id = "cv-cat-add" data-width = "25" text = "" iconclass = "fa fa-plus-circle"></afx-button>
+                            <afx-button data-id = "cv-cat-del" data-width = "25" text = "" iconclass = "fa fa-minus-circle"></afx-button>
+                            <afx-button data-id = "cv-cat-edit" data-width = "25" text = "" iconclass = "fa fa-pencil-square-o"></afx-button>
+                        </afx-hbox>
+                </afx-vbox>
+                <afx-resizer data-width = "3"/>
                 <afx-vbox>
                     info here
                 </afx-vbox>
             </afx-hbox>
-            <afx-hbox data-id = "blog-container" data-height="grow">
+            <afx-hbox data-id = "blog-container" data-height="100%">
                 <afx-list-view data-id = "blog-list" data-width="100"></afx-list-view>
                 <afx-vbox>
                     blog here

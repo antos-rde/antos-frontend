@@ -11,12 +11,12 @@ afx-list-view div.list-container{
     position: relative;
     background-color: red;
 }*/
-afx-list-view  ul{
+afx-list-view > div.list-container >  ul{
     margin:0;
     padding: 0;
 }
 
-afx-list-view  li{
+afx-list-view  > div.list-container > ul > li{
     margin:0;
     padding:0;
     list-style: none;
@@ -29,7 +29,7 @@ afx-list-view  li{
     -webkit-user-select:none;
     cursor:default;
 }
-afx-list-view li:nth-child(odd){
+afx-list-view > div.list-container > ul >li:nth-child(odd){
     background-color: #f5F5F5;
 }
 afx-list-view  i.closable{
@@ -49,11 +49,11 @@ afx-list-view  i.closable:before{
     top:5px;
 }
 
-afx-list-view   li > i {
+afx-list-view  > div.list-container > ul > li > i {
     margin-right: 3px;
     
 }
-afx-list-view   li.selected {
+afx-list-view  > div.list-container > ul > li.selected {
     background-color: #116cd6;
     color:white;
 }
@@ -76,20 +76,20 @@ afx-list-view.dropdown {
     padding:0;
     margin: 0;
 }
-afx-list-view.dropdown div.list-container ul{
+afx-list-view.dropdown > div.list-container > ul{
     max-height: 150px;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: white;
 }
-afx-list-view.dropdown div.list-container ul{
+afx-list-view.dropdown > div.list-container > ul{
     border:1px solid #a6a6a6;
     box-shadow: 1px 1px 1px #9f9F9F;
     border-radius: 3px;
     padding:2px;
     border-top-left-radius: 0px;
 }
-afx-list-view.dropdown div.list-container ul li{
+afx-list-view.dropdown > div.list-container > ul > li{
     display: inline-block;
     width:100%;
 }
@@ -112,8 +112,18 @@ afx-list-view.dropdown div.list-container div:before {
     top:25%;
     right: 5px;
  }
-afx-list-view.dropdown div.list-container ul li:hover{
+afx-list-view.dropdown > div.list-container > ul > li:hover{
     background-color: #dcdcdc;
     color: #414339;
 }
-
+afx-list-view ul.complex-content{
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+afx-list-view ul.complex-content li{
+    padding:0;
+    background-color: transparent;
+    color:#5e5f59;
+    list-style: none;
+}

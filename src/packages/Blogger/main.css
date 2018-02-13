@@ -4,13 +4,13 @@ afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"]  {
     background-color: #333333;
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] li {
+afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] > div > ul > li {
     background-color: #333333;
     font-size: 20px;
     color: #929292;
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] li.selected{
+afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] > div > ul > li.selected{
     color:white;
 }
 afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] {
@@ -23,3 +23,20 @@ afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-hbo
 afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-label{
     font-weight: bold;
 }
+afx-app-window[data-id="blogger-win"] afx-hbox.cv-side-bar-btn{
+    padding-left:3px;
+    padding-top:3px;
+    background-color: #f6F6F6;
+    border-top: 1px solid #cbcbcb;
+    color:#414339;
+}
+afx-app-window[data-id="blogger-win"] afx-resizer{
+    border-left: 1px solid #cbcbcb;
+    background-color: transparent;
+}
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"]  afx-label.cat-header{
+    background-color: #f6F6F6;
+    border-bottom: 1px solid #cbcbcb;
+    text-align: center;
+}
+

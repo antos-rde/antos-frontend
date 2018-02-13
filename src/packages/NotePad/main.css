@@ -22,7 +22,7 @@ afx-app-window[data-id="notepad"] .afx-window-content {
     background-color: #f6F6F6;
 }
 
-afx-tab-container[data-id="tabarea"] afx-list-view li {
+afx-tab-container[data-id="tabarea"] afx-list-view >  div.list-container > ul > li {
     background-color: #dfdfdf;
     color:#272822;
     border: 0;
@@ -39,7 +39,7 @@ afx-tab-container[data-id="tabarea"] afx-list-view{
 /*afx-tab-container[data-id="tabarea"] afx-list-view i.closable:before{
     color: white;
 }*/
-afx-tab-container[data-id="tabarea"] afx-list-view li.selected {
+afx-tab-container[data-id="tabarea"] afx-list-view  > div.list-container > ul > li.selected {
     background-color: #f6F6F6;
     border-radius: 0;
 }

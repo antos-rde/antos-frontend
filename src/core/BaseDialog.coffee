@@ -56,7 +56,7 @@ class BasicDialog extends BaseDialog
         @title = @name if not @title
         html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@title}' width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-vbox>"
-        html += "<#{v.tag} #{v.att} data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
+        html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
         html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div></afx-vbox></afx-app-window>"
@@ -104,7 +104,7 @@ class PromptDialog extends BasicDialog
                 (d.find "content0").set "text", d.data.label
                 (d.find "content1").value = d.data.value if d.data.value
             xtra: (d) ->
-                $( d.find "content0" ).keyup (e) ->
+                $( d.find "content1" ).keyup (e) ->
                     (d.find "bt0").trigger() if e.which is 13
         }
 

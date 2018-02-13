@@ -23,7 +23,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
         tdata = {
             name: 'My Tree',
             nodes: [
-                { name: 'hello', icon:'fa fa-car'},
+                { name: 'hello', iconclass:'fa fa-car'},
                 { name: 'wat' },
                 {
                     name: 'child folder',
@@ -48,7 +48,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
                 }
             ]
         }
-        tree.set "*",tdata
+        tree.set "data",tdata
 
         list = @find "mylist"
         ldata = [
@@ -58,7 +58,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
             {text:"some thing"},
             {text:"some thing"},
             {text:"some thing"},
-            {text:"some thing"},
+            {text:"some thing", complex:true, content:[{text:"Inner content", class:""}]},
             {text:"some thing"},
             {text:"some thing"},
             {text:"some thing"},

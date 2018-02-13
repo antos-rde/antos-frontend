@@ -20,7 +20,6 @@ coffees= 	src/core/core.coffee\
 
 
 
-
 packages = CoreServices NotePad wTerm ActivityMonitor DummyApp Files MarkOn MarketPlace Blogger
 
 main:  build_coffees build_tags build_themes schemes libs  build_packages
@@ -78,5 +77,15 @@ build_packages:
 	for d in $(packages); do (cd src/packages/$$d; make);done
 	for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d || mkdir -p $(BUILDDIR)/packages/$$d && cp -rf src/packages/$$d/build/* $(BUILDDIR)/packages/$$d/);done
 	for d in $(packages); do ( test -d src/packages/$$d/build && rm -r src/packages/$$d/build ); done
+
+package:
+	read -r -p "Enter package name: " PKG;\
+	test -d $(BUILDDIR)/packages/$$PKG && rm -rf $(BUILDDIR)/packages/$$PKG/*;\
+	cd src/packages/$$PKG && make;\
+	cd ../../../;\
+	test -d $(BUILDDIR)/packages/$$PKG || mkdir -p $(BUILDDIR)/packages/$$PKG;\
+	cp -rf src/packages/$$PKG/build/* $(BUILDDIR)/packages/$$PKG/;\
+	test -d src/packages/$$PKG/build && rm -r src/packages/$$PKG/build;
+
 clean:
 	rm -rf $(BUILDDIR)/*

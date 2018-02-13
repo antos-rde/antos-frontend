@@ -97,6 +97,7 @@ self.OS.GUI =
     forceLaunch: (app, args) ->
         console.log "This method is used for developing only, please use the launch method instead"
         _PM.killAll app
+        ($ _OS.APP[app].style).remove() if _OS.APP[app] and _OS.APP[app].style
         _OS.APP[app] = undefined
         _GUI.launch app, args
 
@@ -109,8 +110,9 @@ self.OS.GUI =
                 #load css file
                 css =  "#{path}/main.css"
                 css.asFileHandler().onready (d) ->
-                    $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                    el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
                         .appendTo 'head'
+                    _OS.APP[app].style = el[0] if _OS.APP[app]
                 , () ->
                 #launch
                 # load app meta data

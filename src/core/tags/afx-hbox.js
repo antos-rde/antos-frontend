@@ -40,6 +40,8 @@
                     if(dw)
                     {
                         if(dw == "grow") return
+                        if(dw[dw.length-1] === "%")
+	                        dw = Number(dw.slice(0,-1))*avaiWidth/100;
                         $(this).css("width",dw + "px")
                         ocwidth += Number(dw)
                     }
@@ -51,10 +53,11 @@
                     }
                 })
             csize = (avaiWidth - ocwidth)/ (auto_width.length)
-            $.each(auto_width, function(i,v)
-            {
-                $(v).css("width", csize + "px")
-            })
+            if(csize > 0)
+                $.each(auto_width, function(i,v)
+                {
+                    $(v).css("width", csize + "px")
+                })
             self.root.observable.trigger("hboxchange",
                 {id:self.rid, w:csize, h:avaiheight})
         }

@@ -82,7 +82,7 @@
             var tdata = {}
             tdata.name = self.path
             tdata.nodes = getTreeData(self.data)
-            self.refs.treeview.root.set("*", tdata)
+            self.refs.treeview.root.set("data", tdata)
         }
         var getTreeData = function(data)
         {
@@ -170,20 +170,21 @@
             self.refs.treeview.ontreeselect = function(d)
             {
                 if(!d) return;
-                if(!d.data)// select the root
+                var data;
+                var el = d;
+                if(d.treepath == 0)// select the root
                 {
-                    var r = self.path.asFileHandler()
-                    r.size = 0
-                    r.filename = r.path
-                    d.data = { child: r , i:0  }
+                    el = self.path.asFileHandler()
+                    el.size = 0
+                    el.filename = el.path
                 }
-                var data = {id:self.rid, data:d.data.child, idx:d.data.i}
+                var data = {id:self.rid, data:el}
                 self.root.observable.trigger("fileselect",data)
             }
             self.refs.treeview.ontreedbclick = function(d)
             {
-                if(!d.data) return;
-                var data = {id:self.rid, data:d.data.child, idx:d.data.i}
+                if(!d || d.treepath == 0) return;
+                var data = {id:self.rid, data:d}
                 self.root.observable.trigger("filedbclick",data)
             }
             self.root.observable.on("fileselect", function(e){

@@ -3,8 +3,15 @@ class DB
 
     save: (d, f) ->
         _API.handler.dbquery "save", { table: @table, data: d }, f
-    delete: (id, f) ->
-        _API.handler.dbquery "delete", { table: @table, id: id }, f
+    delete: (c, f) ->
+        rq = { table: @table }
+        return  _courrier.oserror "Unknown condition for delete command",
+            (_API.throwe "OS.DB"), c unless c and c inst ""
+        if isNaN c
+            rq.cond = c
+        else
+            rq.id = c
+        _API.handler.dbquery "delete", rq, f
     get: (id, f) ->
         _API.handler.dbquery "get", { table: @table, id: id }, f
     find: (cond, f) ->

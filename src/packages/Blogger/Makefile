@@ -1,4 +1,4 @@
-coffee_files = main.coffee
+coffee_files = dialogs.coffee main.coffee
 
 jsfiles =
 

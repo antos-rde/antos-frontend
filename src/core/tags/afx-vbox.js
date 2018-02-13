@@ -43,6 +43,8 @@
                     if(dw)
                     {
                         if(dw == "grow") return
+                        if(dw[dw.length-1] === "%")
+	                        dw = Number(dw.slice(0,-1))*avaiheight/100;
                         $(this).css("height",dw + "px")
                         ocheight += Number(dw)
                     }
@@ -54,10 +56,11 @@
                     }
                 })
             csize = (avaiheight - ocheight)/ (auto_height.length)
-            $.each(auto_height, function(i,v)
-            {
-                $(v).css("height", csize + "px")
-            })
+            if(csize > 0)
+                $.each(auto_height, function(i,v)
+                {
+                    $(v).css("height", csize + "px")
+                })
             self.root.observable.trigger("vboxchange",
                 {id:self.rid, w:avaiwidth, h:csize})
         }
