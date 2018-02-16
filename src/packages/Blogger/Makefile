@@ -4,7 +4,7 @@ jsfiles =
 
 cssfiles = main.css
 
-copyfiles = scheme.html package.json
+copyfiles = scheme.html cvsection.html package.json
 
 
 PKG_NAME=Blogger

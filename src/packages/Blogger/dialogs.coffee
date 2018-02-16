@@ -45,3 +45,29 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
 
         
 this.OS.register "BloggerCategoryDialog", BloggerCategoryDialog
+
+# This dialog is use for cv section editing
+
+class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
+    constructor: () ->
+        super "BloggerCVSectionDiaglog"
+
+    init: () ->
+        @render "#{@path()}/cvsection.html"
+
+    main: () ->
+        me = @
+        @scheme.set "apptitle", @title
+        inputs = me.select "[input-class='user-input']"
+        (($ v).val me.data[v.name] for v in inputs ) if me.data
+        (@find "bt-cv-sec-save").set "onbtclick", (e) ->
+            data = {}
+            console.log inputs
+            data[v.name] = ($ v).val() for v in inputs
+            return me.notify "Title must not be blank" if data.title is ""
+            return me.notify "Content must not be blank" if data.content is ""
+            data.id = me.data.id if me.data and me.data.id
+            me.handler data if me.handler
+            me.quit()
+
+this.OS.register "BloggerCVSectionDiaglog", BloggerCVSectionDiaglog

@@ -44,21 +44,27 @@ self.OS or=
         pidalloc: 0
         processes: {}
         createProcess: (app, cls, args) ->
-            #if it is single ton
-            # and a process is existing
-            # just return it
-            if cls.singleton and _PM.processes[app] and _PM.processes[app].length == 1
-                _PM.processes[app][0].show()
+            f = () ->
+                #if it is single ton
+                # and a process is existing
+                # just return it
+                if cls.singleton and _PM.processes[app] and _PM.processes[app].length == 1
+                    _PM.processes[app][0].show()
+                else
+                    _PM.processes[app] = [] if not _PM.processes[app]
+                    obj = new cls(args)
+                    obj.birth = (new Date).getTime()
+                    _PM.pidalloc++
+                    obj.pid = _PM.pidalloc
+                    _PM.processes[app].push obj
+                    if cls.type is 1 then _GUI.dock obj, cls.meta else _GUI.attachservice obj
+                if cls.type is 2
+                    _courrier.trigger "srvroutineready", app
+            if cls.dependencies
+                libs = (v for v in cls.dependencies)
+                _API.requires libs, f
             else
-                _PM.processes[app] = [] if not _PM.processes[app]
-                obj = new cls(args)
-                obj.birth = (new Date).getTime()
-                _PM.pidalloc++
-                obj.pid = _PM.pidalloc
-                _PM.processes[app].push obj
-                if cls.type is 1 then _GUI.dock obj, cls.meta else _GUI.attachservice obj
-            if cls.type is 2
-                _courrier.trigger "srvroutineready", app
+                f()
         appByPid: (pid) ->
             app = undefined
             find = (l) ->

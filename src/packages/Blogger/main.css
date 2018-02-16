@@ -40,3 +40,35 @@ afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"]  afx-labe
     text-align: center;
 }
 
+afx-app-window[data-id="blogger-cv-sec-win"] afx-hbox{
+    padding:5px;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li{
+    padding-bottom: 10px;
+    padding-top:10px;
+    /*border-bottom: 1px solid  #cbcbcb;*/
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul  afx-label{
+    font-weight: bold;
+    
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li.selected  {
+    border: 2px solid  #cbcbcb;
+    color: #414339;
+    background-color: transparent;
+    border-radius: 5px;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-content{
+    text-align: justify;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-period, .cv-loc{
+    text-align: right;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-subtitle{
+    font-style: italic;
+    float:left;
+} 
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] i.closable::before{
+    content: "\f014";
+    font-size: 15px; 
+}

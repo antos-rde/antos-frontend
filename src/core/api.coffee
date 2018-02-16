@@ -3,6 +3,7 @@ self.OS.API =
     # fetch user data, used by the API to make requests
     # handlers are defined in /src/handlers
     handler: { }
+    shared: {} # shared libraries
     #request a user data
     post: (p, d, c, f) ->
         q = _courrier.getMID()
@@ -115,6 +116,33 @@ self.OS.API =
         path = "resources/#{r}"
         _API.get path, c, f
     
+    require: (l,f) ->
+        path = "os:///scripts/"
+        if not _API.shared[l]
+            js = "#{path}#{l}.js"
+            js.asFileHandler().onready (d) ->
+                _API.shared[l] = true
+                el = $ '<script>', { src: "#{_API.handler.get}/#{js}" }
+                        .appendTo 'head'
+                #load css file
+                css =  "#{path}#{l}.css"
+                css.asFileHandler().onready (d) ->
+                    el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                        .appendTo 'head'
+                , () ->
+                console.log "loaded", l
+                _courrier.trigger "sharedlibraryloaded", l
+                f() if f
+        else
+            console.log l, "Library exist, no need to load" 
+            _courrier.trigger "sharedlibraryloaded", l
+
+    requires:(libs, f) ->
+        return f() unless libs.length > 0
+        _courrier.observable.one "sharedlibraryloaded", (l) ->
+            libs.splice 0, 1
+            _API.requires libs, f
+        _API.require libs[0], null
     packages:
         fetch: (f) ->
             _API.handler.packages {

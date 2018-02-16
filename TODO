@@ -1,2 +1,1 @@
-VFS mountpoints object (selected) is changed between apps, which is not a good ideal
-Some error in event handle using observable
+add require function that allows load shared library between application

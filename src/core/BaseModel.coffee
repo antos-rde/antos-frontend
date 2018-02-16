@@ -20,6 +20,11 @@ class BaseModel
             @dialog.quit() if @dialog
             _PM.kill @
 
+    path: () ->
+        mt = @meta()
+        return mt.path if mt and mt.path
+        return null
+        
     init: ->
         #implement by sub class
     onexit: (e) ->

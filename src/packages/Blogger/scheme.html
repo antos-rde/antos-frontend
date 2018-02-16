@@ -6,26 +6,26 @@
                 <afx-vbox>
                     <afx-hbox data-height = "30">
                         <afx-label data-width= "70" text = "Full name:"></afx-label>
-                        <input type = "text" name="fullname" imput-class = "user-input"/>
+                        <input type = "text" name="fullname" input-class = "user-input"/>
                     </afx-hbox>
                     <afx-hbox data-height = "30">
                         <afx-label text = "Address:" data-width= "70"></afx-label>
-                        <input type = "text" name="address" imput-class = "user-input"/>
+                        <input type = "text" name="address" input-class = "user-input"/>
                     </afx-hbox>
                     <afx-hbox data-height = "30">
                         <afx-label text = "Phone:" data-width= "70"></afx-label>
-                        <input type = "text" name="Phone" imput-class = "user-input"/>
+                        <input type = "text" name="Phone" input-class = "user-input"/>
                     </afx-hbox>
                     <afx-hbox data-height = "30">
                         <afx-label text = "Email:" data-width= "70"></afx-label>
-                        <input type = "text" name="email" imput-class = "user-input"/>
+                        <input type = "text" name="email" input-class = "user-input"/>
                     </afx-hbox>
                     <afx-hbox data-height = "30">
                         <afx-label text = "Url:" data-width= "70"></afx-label>
-                        <input type = "text" name="url" imput-class = "user-input"/>
+                        <input type = "text" name="url" input-class = "user-input"/>
                     </afx-hbox>
                     <afx-label data-height = "30" text = "Short biblio:"/>
-                    <textarea name="shortbiblio" imput-class = "user-input"/>
+                    <textarea name="shortbiblio" input-class = "user-input"/>
                     <afx-hbox data-height = "35">
                         <div></div>
                         <afx-button iconclass = "fa fa-save" data-id = "bt-user-save" data-width="55" text = "Save"/>
@@ -44,7 +44,12 @@
                 </afx-vbox>
                 <afx-resizer data-width = "3"/>
                 <afx-vbox>
-                    info here
+                    <afx-list-view data-id = "cv-sec-list" ></afx-list-view>
+                    <afx-hbox data-height="30" class = "cv-side-bar-btn">
+                        <div data-id = "cv-sec-status"></div>
+                        <afx-button data-id = "cv-sec-add" data-width = "25" text = "" iconclass = "fa fa-plus-circle"></afx-button>
+                        <afx-button data-id = "cv-sec-edit" data-width = "25" text = "" iconclass = "fa fa-pencil-square-o"></afx-button>
+                    </afx-hbox>
                 </afx-vbox>
             </afx-hbox>
             <afx-hbox data-id = "blog-container" data-height="100%">

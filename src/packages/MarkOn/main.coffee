@@ -118,4 +118,6 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 me.quit()
         , "Quit", { text: "Quit without saving ?" }
 
+MarkOn.dependencies = [ "mde/simplemde.min" ]
+
 this.OS.register "MarkOn", MarkOn

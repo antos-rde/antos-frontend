@@ -7,7 +7,7 @@
             <afx-label color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
             <i if = {item.closable} class = "closable" click = {parent._remove}></i>
             <ul if = {item.complex} class = "complex-content">
-                <li each = {ctn,j in item.content} class = {ctn.class}>{ctn.text}</li>
+                <li each = {ctn,j in item.detail} class = {ctn.class}>{ctn.text}</li>
             </ul>
         </li>
     </ul>

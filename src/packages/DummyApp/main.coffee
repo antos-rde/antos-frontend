@@ -58,7 +58,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
             {text:"some thing"},
             {text:"some thing"},
             {text:"some thing"},
-            {text:"some thing", complex:true, content:[{text:"Inner content", class:""}]},
+            {text:"some thing", complex:true, detail:[{text:"Inner content", class:""}]},
             {text:"some thing"},
             {text:"some thing"},
             {text:"some thing"},

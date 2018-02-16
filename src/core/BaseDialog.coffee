@@ -17,7 +17,7 @@ class SubWindow extends this.OS.GUI.BaseModel
         @parent.meta()
     show: () ->
         @trigger 'focus'
-        ($ @scheme).css "z-index", window._zindex+2
+        ($ @scheme).css "z-index", window._zindex + 2
     hide: () ->
         @trigger 'hide'
 
@@ -182,7 +182,7 @@ this.OS.register "InfoDialog", InfoDialog
 class YesNoDialog extends BasicDialog
     constructor: () ->
         super "YesNoDialog", {
-            tags: [{ tag: "afx-label", att: "style = 'padding:10px;'" }],
+            tags: [{ tag: "afx-label", att: "style = 'padding-left:10px;'" }],
             width: 300,
             height: 100,
             resizable: true,

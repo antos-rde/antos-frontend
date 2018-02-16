@@ -70,7 +70,7 @@ class BaseFileHandler
         me = @
         me.meta (d) ->
             if d.error
-                return if err then err d else _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error
+                return if err then err d else _courrier.osfail "#{me.path}: #{d.error}", (_API.throwe "OS.VFS"), d.error
             me.info = d.result
             me.ready = true
             f()
@@ -164,7 +164,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.register "^(home|shared|desktop|os)$", RemoteFileHandler
+self.OS.API.VFS.register "^(home|shared|desktop|os|Untitled)$", RemoteFileHandler
 
 # Application Handler
 class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
@@ -207,3 +207,52 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 self.OS.API.VFS.register "^app$", ApplicationHandler
+
+class BlobFileHandler extends self.OS.API.VFS.BaseFileHandler
+    constructor: (path, mime, data) ->
+        super path
+        @cache = data if data
+        @info =
+            mime: mime
+            path: path
+            size: if data then data.length else 0
+            name: @basename
+            type: "file"
+    meta: (f) ->
+        f()
+    
+    onchange: (f) ->
+        @onchange = f
+
+    action: (n, p, f) ->
+        me = @
+        switch n
+            when "read"
+                return f { result: @cache }
+
+            when "mk"
+                return
+
+            when "write"
+                @cache = p
+                @onchange @ if @onchange
+                f { result: true }
+
+            when "upload"
+                # install
+                return
+
+            when "remove"
+                #uninstall
+                return
+
+            when "download"
+                blob = new Blob [@cache], { type: "octet/stream" }
+                _API.saveblob me.basename, blob
+
+            when "move"
+                return
+            else
+                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+    
+self.OS.API.VFS.register "^blob$", BlobFileHandler

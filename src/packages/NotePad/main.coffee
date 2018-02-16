@@ -279,4 +279,10 @@ class NotePad extends this.OS.GUI.BaseApplication
         , "Quit", { text: "Ignore all #{dirties.length} unsaved files ?" }
 
 NotePad.singleton = false
+NotePad.dependencies = [
+    "ace/ace",
+    "ace/ext-language_tools",
+    "ace/ext-modelist",
+    "ace/ext-themelist"
+]
 this.OS.register "NotePad", NotePad

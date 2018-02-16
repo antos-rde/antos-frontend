@@ -26,12 +26,12 @@ self.OS.GUI =
             .attr "href", path
 
     pushServices: (srvs) ->
-        f = (v) ->
-            _courrier.observable.one "srvroutineready", () -> _GUI.pushService v
+        return unless srvs.length > 0
+        _courrier.observable.one "srvroutineready", () ->
+            srvs.splice 0, 1
+            _GUI.pushServices srvs
         _GUI.pushService srvs[0]
-        srvs.splice 0, 1
-        f i for i in srvs
-
+    
     openDialog: (d, f, title, data) ->
         if _GUI.dialog
             _GUI.dialog.show()

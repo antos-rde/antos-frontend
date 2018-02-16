@@ -1,8 +1,8 @@
 coffee_files = main.coffee
 
-jsfiles = simplemde.min.js
+jsfiles = 
 
-cssfiles =  simplemde.min.css main.css
+cssfiles =  main.css
 
 copyfiles = scheme.html package.json
 
