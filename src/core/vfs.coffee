@@ -1,15 +1,3 @@
-String.prototype.hash = () ->
-    hash = 5381
-    i = this.length
-    hash = (hash * 33) ^ this.charCodeAt(--i) while i
-    hash >>> 0
-
-String.prototype.asBase64 = () ->
-    tmp = encodeURIComponent this
-    return btoa ( tmp.replace /%([0-9A-F]{2})/g, (match, p1) ->
-        return String.fromCharCode (parseInt p1, 16)
-    )
-
 String.prototype.asFileHandler = () ->
     list = @split ":///"
     handlers = _API.VFS.findHandlers list[0]

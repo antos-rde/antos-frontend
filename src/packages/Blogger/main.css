@@ -52,8 +52,11 @@ afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > 
     font-weight: bold;
     
 }
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul >li:nth-child(odd){
+    background-color: white;
+}
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li.selected  {
-    border: 2px solid  #cbcbcb;
+    border: 2px solid  #116cd6;
     color: #414339;
     background-color: transparent;
     border-radius: 5px;
@@ -71,4 +74,16 @@ afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .c
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] i.closable::before{
     content: "\f014";
     font-size: 15px; 
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  afx-label{
+    font-weight: bold;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  .blog-dates{
+    font-size: 10px;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul > li.selected  .blog-dates{
+    color: white;
 }

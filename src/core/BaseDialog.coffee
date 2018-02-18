@@ -285,7 +285,15 @@ class FileDiaLog extends BaseDialog
            ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
-            return unless f
+            return me.notify "Please select a file" unless f
+            if me.data and me.data.mimes
+                #verify the mime
+                m = false
+                for v in me.data.mimes
+                    if f.mime.match (new RegExp v, "g")
+                        m = true
+                        break
+                return me.notify "Only #{me.data.mimes.join(",")} could be selected" unless m
             d = f.path
             d = f.path.asFileHandler().parent() if f.type is "file"
             me.handler d, ($ filename).val() if me.handler

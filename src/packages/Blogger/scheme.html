@@ -53,9 +53,15 @@
                 </afx-vbox>
             </afx-hbox>
             <afx-hbox data-id = "blog-container" data-height="100%">
-                <afx-list-view data-id = "blog-list" data-width="100"></afx-list-view>
+                <afx-list-view data-id = "blog-list" min-width="100" data-width="150"></afx-list-view>
+                <afx-resizer data-width = "3"/>
                 <afx-vbox>
-                    blog here
+                    <div data-id = "editor-container">
+                        <textarea data-id="markarea" ></textarea>
+                    </div>
+                    <afx-label text = "Tags:" style="font-weight:bold;" data-height="25" ></afx-label>
+                    <input type = "text" data-id = "input-tags" data-height="25"/>
+                    <div data-height="5"></div>
                 </afx-vbox>
             </afx-hbox>
         </afx-vbox>

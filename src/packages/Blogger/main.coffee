@@ -14,10 +14,12 @@ class Blogger extends this.OS.GUI.BaseApplication
         @cvlist = @find "cv-list"
         @cvlist.set "ontreeselect", (d) ->
             me.CVSectionByCID Number(d.id)
+        @inputtags = @.find "input-tags"
         @bloglist = @find "blog-list"
         @userdb = new @_api.DB("user")
         @cvcatdb = new @_api.DB("cv_cat")
         @cvsecdb = new @_api.DB("cv_sections")
+        @blogdb = new @_api.DB("blogs")
         @tabbar.set "onlistselect", (e) ->
             ($ el).hide() for el in me.containers
             me.fetchData e.idx
@@ -78,6 +80,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 d.cid = Number cat.id
                 d.start = Number d.start
                 d.end = Number d.end
+                d.publish = 1
                 me.cvsecdb.save d, (r) ->
                     return me.error "Cannot save section: #{r.error}" if r.error
                     me.CVSectionByCID Number(cat.id)
@@ -92,12 +95,63 @@ class Blogger extends this.OS.GUI.BaseApplication
                 d.cid = Number sec.cid
                 d.start = Number d.start
                 d.end = Number d.end
+                d.publish = Number sec.publish
                 me.cvsecdb.save d, (r) ->
                     return me.error "Cannot save section: #{r.error}" if r.error
                     console.log d.cid
                     me.CVSectionByCID Number(sec.cid)
 
             , "Modify section entry", sec
+
+        @editor = new SimpleMDE
+            element: me.find "markarea"
+            autofocus: true
+            tabSize: 4
+            indentWithTabs: true
+            toolbar: [
+                {
+                    name: "new",
+                    className: "fa fa-file",
+                    action: (e) ->
+                        me.bloglist.set "selected", -1
+                        me.editor.value ""
+                        me.inputtags.value = ""
+                },
+                {
+                    name: "save",
+                    className: "fa fa-save",
+                    action: (e) ->
+                        me.saveBlog()
+                }
+                , "|", "bold", "italic", "heading", "|", "quote", "code",
+                "unordered-list", "ordered-list", "|", "link",
+                "image", "table", "horizontal-rule",
+                {
+                    name: "image",
+                    className: "fa fa-file-image-o",
+                    action: (e) ->
+                        me.openDialog "FileDiaLog", (d, n) ->
+                            doc = me.editor.codemirror.getDoc()
+                            doc.replaceSelection "![](#{me._api.handler.get}/#{d}/#{n})"
+                        , "Select image file", { mimes: ["image/.*"] }
+                },
+                "|",
+                {
+                    name: "preview",
+                    className: "fa fa-eye no-disable",
+                    action: (e) ->
+                        me.previewOn = !me.previewOn
+                        SimpleMDE.togglePreview e
+                }
+            ]
+        @bloglist.set "onlistselect", (e) ->
+            sel = me.bloglist.get "selected"
+            return unless sel
+            me.editor.value sel.content
+            me.inputtags.value = sel.tags
+
+        @on "vboxchange", () ->
+            me.resizeContent()
     # USER TAB
     fetchData: (idx) ->
         me = @
@@ -112,7 +166,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             when 1 # category
                 @refreshCVCat()
             else 
-                console.log "Not implemented yet"
+                @loadBlogs()
     
     saveUser:() ->
         me = @
@@ -152,7 +206,13 @@ class Blogger extends this.OS.GUI.BaseApplication
 
     CVSectionByCID: (cid) ->
         me = @
-        @cvsecdb.find "cid=#{cid} ORDER BY start DESC", (d) ->
+        cond =
+            exp:
+                "=":
+                    cid: cid
+            order:
+                start: "DESC"
+        @cvsecdb.find cond, (d) ->
             return me.notify "Section list is empty, please add one" if d.error
             v.text = v.title for v in d.result
             items = []
@@ -172,7 +232,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 items.push v
             el = me.find "cv-sec-list"
             el.set "onitemclose", (e) ->
-                d = me.openDialog "YesNoDialog", (b) ->
+                me.openDialog "YesNoDialog", (b) ->
                     return unless b
                     me.cvsecdb.delete e.item.item.id, (r) ->
                         return me.error "Cannot delete the section: #{r.error}" if r.error
@@ -182,6 +242,66 @@ class Blogger extends this.OS.GUI.BaseApplication
                 return false
             el.set "items", items
 
+    # blog
+    saveBlog: () ->
+        me = @
+        sel = @bloglist.get "selected"
+        tags = @inputtags.value
+        content = @editor.value()
+        title = (new RegExp "^#+(.*)\n", "g").exec content
+        return @notify "Please insert a title in the text: beginning with heading" unless title and title.length is 2
+        return @notify "Please enter tags" if tags is ""
+        d = new Date()
+        data =
+            content: content
+            title: title[1].trim()
+            tags: tags
+            ctime: if sel then sel.ctime else d.timestamp()
+            ctimestr: if sel then sel.ctimestr else d.toString()
+            utime: d.timestamp()
+            utimestr: d.toString()
+        
+        data.id = sel.id if sel
+        
+        #save the data
+        @blogdb.save data, (r) ->
+            return me.error "Cannot save blog: #{r.error}" if r.error
+            me.loadBlogs()
+
+    # load blog
+    loadBlogs: () ->
+        me = @
+        @blogdb.get null, (r) ->
+            for v in r.result
+                v.text = v.title
+                v.complex = true
+                v.closable = true
+                v.content = v.content.unescape()
+                v.detail = [
+                    { text: "Created: #{v.ctimestr}", class: "blog-dates" },
+                    { text: "Updated: #{v.utimestr}", class: "blog-dates" }]
+            me.bloglist.set "onitemclose", (e) ->
+                me.openDialog "YesNoDialog", (b) ->
+                    return unless b
+                    me.blogdb.delete e.item.item.id, (r) ->
+                        return me.error "Cannot delete: #{r.error}" if r.error
+                        me.bloglist.remove e.item.item, true
+                        me.bloglist.set "selected", -1
+                        me.editor.value ""
+                        me.inputtags.value = ""
+                ,  "Delete a post" ,
+                { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
+                return false
+            me.bloglist.set "items", r.result
+
+    resizeContent: () ->
+        container = @find "editor-container"
+        children = ($ container).children()
+        titlebar = (($ @scheme).find ".afx-window-top")[0]
+        toolbar = children[1]
+        statusbar = children[4]
+        cheight = ($ @scheme).height() - ($ titlebar).height() - ($ toolbar).height() - ($ statusbar).height() - 90
+        ($ children[2]).css("height", cheight + "px")
 Blogger.singleton = true
 Blogger.dependencies = [ "mde/simplemde.min" ]
 this.OS.register "Blogger", Blogger

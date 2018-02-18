@@ -1,3 +1,43 @@
+String.prototype.hash = () ->
+    hash = 5381
+    i = this.length
+    hash = (hash * 33) ^ this.charCodeAt(--i) while i
+    hash >>> 0
+
+String.prototype.asBase64 = () ->
+    tmp = encodeURIComponent this
+    return btoa ( tmp.replace /%([0-9A-F]{2})/g, (match, p1) ->
+        return String.fromCharCode (parseInt p1, 16)
+    )
+String.prototype.unescape = () ->
+    d = @
+    d = d.replace /\\\\/g, "\\"
+    d = d.replace /\\"/g, '"'
+    d = d.replace /\\n/g, "\n"
+    d = d.replace /\\t/g, "\t"
+    d = d.replace /\\b/g, "\b"
+    d = d.replace /\\f/g, "\f"
+    d = d.replace /\\r/g, "\r"
+    d
+
+Date.prototype.toString = () ->
+    dd = @getDate()
+    mm = @getMonth() + 1
+    yyyy = @getFullYear()
+    hh = @getHours()
+    mi = @getMinutes()
+    se = @getSeconds()
+
+    dd = "0#{dd}" if dd < 10
+    mm = "0#{mm}" if mm < 10
+    hh = "0#{hh}" if hh < 10
+    mi = "0#{mi}" if mi < 10
+    se = "0#{se}" if se < 10
+    return "#{dd}/#{mm}/#{yyyy} #{hh}:#{mi}:#{se}"
+
+Date.prototype.timestamp = () ->
+    return @getTime() / 1000 | 0
+
 self.OS.API =
     # the handler object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
