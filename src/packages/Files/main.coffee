@@ -47,7 +47,7 @@ class Files extends this.OS.GUI.BaseApplication
         
         @view.set "onfileselect", (e) ->
             file = me.view.get "selectedFile"
-            return  unless file
+            return  unless file and file.mime
             file.mime = "dir" if file.type is "dir"
             me.apps.length = 0
             for v in me._gui.appsByMime file.mime
