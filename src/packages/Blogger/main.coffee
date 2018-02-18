@@ -272,6 +272,7 @@ class Blogger extends this.OS.GUI.BaseApplication
     loadBlogs: () ->
         me = @
         @blogdb.get null, (r) ->
+            return me.notify "No post found: #{r.error}" if r.error
             for v in r.result
                 v.text = v.title
                 v.complex = true
