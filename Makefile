@@ -69,7 +69,7 @@ antos_themes_build:
 	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
 	-mkdir -p $(BUILDDIR)/resources/themes/antos/fonts
 	cp -rf src/themes/antos/fonts/* $(BUILDDIR)/resources/themes/antos/fonts
-	cp src/themes/antos/wp.png $(BUILDDIR)/resources/themes/antos/
+	cp src/themes/antos/wp* $(BUILDDIR)/resources/themes/antos/
 
 
 build_packages:

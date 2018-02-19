@@ -5,8 +5,8 @@ html,body{
     font-size: 13px;
     width: 100%;
     height: 100%;
-    background-image: url(wp.png);
-    /*background-size: cover;*/
+    background-image: url(wp2.jpg);
+    background-size: cover;
     background-repeat: repeat;
     overflow: hidden;
 }

@@ -164,7 +164,9 @@
             if(self.selidx != -1 && self.selidx < self.items.length)
                 self.items[self.selidx].selected =false
             event.item.item.selected = true
-            //self.update()
+            //console.log(self.items)
+            self.update()
+            //event.preventUpdate = true
         }
 
         _dbclick(event)
