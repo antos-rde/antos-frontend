@@ -312,6 +312,8 @@ self.OS.GUI =
                     password: ($ "#txtpass").val()
                 _API.handler.login data, (d) ->
                     if d.error then ($ "#login_error").html d.error else _GUI.startAntOS d.result
+            ($ "#txtpass").keyup (e) ->
+                ($ "#btlogin").click() if e.which is 13
         , (e, s) ->
             alert "System fall: Cannot init login screen"
     
