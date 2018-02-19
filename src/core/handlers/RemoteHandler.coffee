@@ -15,10 +15,11 @@ self.OS.API.handler =
         path = "#{_REST}/fs/mkdir"
         _API.post path, { path: p }, c, (e, s) ->
             _courrier.osfail "Fail to create directory: #{p}", e, s
-    sharefile: (p, c) ->
+    sharefile: (p, pub , c) ->
         path = "#{_REST}/fs/publish"
-        _API.post path, { path: p }, c, (e, s) ->
+        _API.post path, { path: p , publish: pub }, c, (e, s) ->
             _courrier.osfail "Fail to publish file: #{p}", e, s
+
     fileinfo: (p, c) ->
         path = "#{_REST}/fs/fileinfo"
         _API.post path, { path: p }, c, (e, s) ->
