@@ -21,6 +21,9 @@ afx-list-view[data-id = "notifylist"] li{
     border:1px solid #a6a6a6;
     border-radius: 6px;
     margin-bottom: 2px;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
 }
 
 afx-overlay[data-id = "feedzone"]{
@@ -42,4 +45,7 @@ afx-list-view[data-id = "notifeed"] li{
     border-radius: 6px;
     margin-bottom: 2px;
     z-index: 99999;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
 }

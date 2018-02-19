@@ -80,7 +80,7 @@ class Files extends this.OS.GUI.BaseApplication
         dir.read (d) ->
                 if(d.error)
                     return me.error "Resource not found #{p}"
-                    console.log "error"
+                
                 me.currdir = dir
                 if not dir.isRoot()
                     p = dir.parent().asFileHandler()
@@ -103,6 +103,7 @@ class Files extends this.OS.GUI.BaseApplication
                 { text: "Open with", dataid: "#{@name}-open", child:@apps },
                 { text: "Upload", dataid: "#{@name}-upload" },
                 { text: "Download", dataid: "#{@name}-download" },
+                { text: "Share file", dataid: "#{@name}-share" },
                 { text: "Properties", dataid: "#{@name}-info" }
             ], onmenuselect: (e) -> me.actionFile e
         }
@@ -250,6 +251,13 @@ class Files extends this.OS.GUI.BaseApplication
                 me = @
                 @currdir.upload (r) ->
                     me.error "Faile to upload to: #{d}: #{r.error}" if r.error
+
+            when "#{@name}-share"
+                me = @
+                return unless file and file.type is "file"
+                file.path.asFileHandler().publish (r) ->
+                    return me.error "Cannot share file: #{r.error}" if r.error
+                    return me.notify "Shared url: #{r.result}"
 
             when "#{@name}-download"
                 return unless file

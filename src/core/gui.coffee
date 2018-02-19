@@ -332,6 +332,7 @@ self.OS.GUI =
             { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
             { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
             { text: "Desktop", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
+            { text: "Shared", path: 'shared:///' , iconclass: "fa fa-share-square", type: "fs" }
         ] if not _OS.setting.VFS.mountpoints
 
         _OS.setting.system = conf.system if conf.system

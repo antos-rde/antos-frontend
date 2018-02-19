@@ -3,7 +3,10 @@ self.OS.API.REST = "#{self.location.protocol}//#{self.OS.API.HOST}/lua-api"
 
 _REST = self.OS.API.REST
 self.OS.API.handler =
-    get: "#{_REST}/fs/get/"
+    # get file, require authentification
+    get: "#{_REST}/fs/get"
+    # get shared file with publish
+    shared: "#{_REST}/fs/shared"
     scandir: (p, c ) ->
         path = "#{_REST}/fs/scandir"
         _API.post path, { path: p }, c, (e, s) ->
@@ -12,7 +15,10 @@ self.OS.API.handler =
         path = "#{_REST}/fs/mkdir"
         _API.post path, { path: p }, c, (e, s) ->
             _courrier.osfail "Fail to create directory: #{p}", e, s
-
+    sharefile: (p, c) ->
+        path = "#{_REST}/fs/publish"
+        _API.post path, { path: p }, c, (e, s) ->
+            _courrier.osfail "Fail to publish file: #{p}", e, s
     fileinfo: (p, c) ->
         path = "#{_REST}/fs/fileinfo"
         _API.post path, { path: p }, c, (e, s) ->

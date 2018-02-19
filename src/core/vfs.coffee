@@ -90,7 +90,11 @@ class BaseFileHandler
         @onready (() -> me.action "upload", null, (r) ->
             _courrier.ostrigger "VFS", { m: "upload", file: me } if r.result
             f r)
-
+    publish: (f) ->
+        me = @
+        @onready (() -> me.action "publish", null, (r) ->
+            _courrier.ostrigger "VFS", { m: "publish", file: me } if r.result
+            f r)
     download: (f) ->
         me = @
         @onready (() -> me.action "download", null, f)
@@ -142,6 +146,8 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
                 _API.handler.upload @path, f
             when "remove"
                 _API.handler.delete @path, f
+            when "publish"
+                _API.handler.sharefile @path, f
             when "download"
                 return if @info.type is "dir"
                 _API.handler.fileblob @path, (d) ->
@@ -152,7 +158,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.register "^(home|shared|desktop|os|Untitled)$", RemoteFileHandler
+self.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandler
 
 # Application Handler
 class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
@@ -185,7 +191,8 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
             when "remove"
                 #uninstall
                 return
-
+            when "publish"
+                return
             when "download"
                 return
 
@@ -233,7 +240,8 @@ class BlobFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "remove"
                 #uninstall
                 return
-
+             when "publish"
+                return
             when "download"
                 blob = new Blob [@cache], { type: "octet/stream" }
                 _API.saveblob me.basename, blob
@@ -244,3 +252,44 @@ class BlobFileHandler extends self.OS.API.VFS.BaseFileHandler
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
     
 self.OS.API.VFS.register "^blob$", BlobFileHandler
+
+class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
+    constructor: (path) ->
+        super path
+        @ready = true if @isRoot()
+    meta: (f) ->
+        _API.handler.fileinfo @path, f
+    
+    action: (n, p, f) ->
+        me = @
+        switch n
+            when "read"
+                return _API.get "#{_API.handler.shared}/all", f, ((e, s)->) if @isRoot()
+                #read the file
+                _API.handler.readfile @path, f, if p then p else "text"
+            when "mk"
+                return
+
+            when "write"
+               _API.handler.write @path, p, f
+
+            when "remove"
+                _API.handler.delete @path, f
+                
+            when "upload"
+                return
+
+            when "publish"
+                return f { result: @basename }
+
+            when "download"
+                return if @info.type is "dir"
+                _API.handler.fileblob @path, (d) ->
+                    blob = new Blob [d], { type: "octet/stream" }
+                    _API.saveblob me.basename, blob
+            when "move"
+                return
+            else
+                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+    
+self.OS.API.VFS.register "^shared$", SharedFileHandler
