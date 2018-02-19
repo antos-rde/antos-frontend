@@ -130,8 +130,8 @@ class Blogger extends this.OS.GUI.BaseApplication
                     name: "image",
                     className: "fa fa-file-image-o",
                     action: (e) ->
-                        me.openDialog "FileDiaLog", (d, n) ->
-                            "#{d}/#{n}".asFileHandler().publish (r) ->
+                        me.openDialog "FileDiaLog", (d, n, p) ->
+                            p.asFileHandler().publish (r) ->
                                 return me.error "Cannot export file for embeding to text" if r.error
                                 doc = me.editor.codemirror.getDoc()
                                 doc.replaceSelection "![](#{me._api.handler.shared}/#{r.result})"

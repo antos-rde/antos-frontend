@@ -282,7 +282,8 @@ class FileDiaLog extends BaseDialog
         location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
         location.set "selected", 0 unless location.get "selected"
         fileview.set "onfileselect", (f) ->
-           ($ filename).val f.filename  if f.type is "file"
+        
+            ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
             return me.notify "Please select a file" unless f
@@ -296,7 +297,7 @@ class FileDiaLog extends BaseDialog
                 return me.notify "Only #{me.data.mimes.join(",")} could be selected" unless m
             d = f.path
             d = f.path.asFileHandler().parent() if f.type is "file"
-            me.handler d, ($ filename).val() if me.handler
+            me.handler d, ($ filename).val(), f.path if me.handler
             #sel = if  me.data and me.data.selection then me.data.selection else "file"
             #me.handler f, ($ filename).val() if me.handler and ((f.type is sel) or (sel is "*"))
             me.quit()
