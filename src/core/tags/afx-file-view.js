@@ -142,7 +142,7 @@
         }
         self.on("updated", function(){
             refreshData()
-            calibre_size()
+            //calibre_size()
         })
         self.on("mount", function(){
             switchView()
