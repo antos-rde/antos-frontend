@@ -41,7 +41,8 @@ afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"]  afx-labe
 }
 
 afx-app-window[data-id="blogger-cv-sec-win"] afx-hbox{
-    padding:5px;
+    padding-left:5px;
+    padding-right:5px;
 }
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li{
     padding-bottom: 10px;

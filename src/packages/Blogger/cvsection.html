@@ -1,5 +1,6 @@
 <afx-app-window data-id = "blogger-cv-sec-win" apptitle="Porforlio section" width="450" height="400">
         <afx-vbox >
+                <div data-height="5"></div>
                 <afx-hbox data-height = "30" >
                     <afx-label data-width= "70" text = "Title*:"></afx-label>
                     <input type = "text" name="title" input-class = "user-input"/>
@@ -19,8 +20,10 @@
                     <input type = "text"  name="end" input-class = "user-input"/>
                 </afx-hbox>
                 <afx-label data-height = "30" text = "Content*:" style = "margin-left:5px;"/>
-                <textarea name="content" input-class = "user-input" style = "margin-left:5px; margin-right:5px;" />
-                <afx-hbox data-height = "30">
+                <div data-id="editor-container">
+                <textarea name="content" data-id = "contentarea" />
+                </div>
+                <afx-hbox data-height = "35">
                     <div></div>
                     <afx-button iconclass = "fa fa-save" data-id = "bt-cv-sec-save" data-width="60" text = "Save"/>
                 </afx-hbox>
