@@ -107,20 +107,21 @@ self.OS.GUI =
         js = path + "/main.js"
         
         js.asFileHandler().read (d) ->
-                #load css file
-                css =  "#{path}/main.css"
-                css.asFileHandler().onready (d) ->
-                    el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
-                        .appendTo 'head'
-                    _OS.APP[app].style = el[0] if _OS.APP[app]
-                , () ->
-                #launch
                 # load app meta data
                 "#{path}/package.json".asFileHandler().read (data) ->
                     data.path = path
                     _OS.APP[app].meta = data if _OS.APP[app]
                     _OS.APP[v].meta = data for v in data.services if data.services
-                    ok app
+                    #load css file
+                    css =  "#{path}/main.css"
+                    css.asFileHandler().onready (d) ->
+                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                            .appendTo 'head'
+                        _OS.APP[app].style = el[0] if _OS.APP[app]
+                        ok app
+                    , () ->
+                        #launch
+                        ok app
                 , "json"
                 #ok app
             , "script"

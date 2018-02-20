@@ -147,7 +147,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "remove"
                 _API.handler.delete @path, f
             when "publish"
-                _API.handler.sharefile @path, f
+                _API.handler.sharefile @path, true , f
             when "download"
                 return if @info.type is "dir"
                 _API.handler.fileblob @path, (d) ->
@@ -274,7 +274,7 @@ class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
                _API.handler.write @path, p, f
 
             when "remove"
-                _API.handler.delete @path, f
+                _API.handler.sharefile @basename, false, f
                 
             when "upload"
                 return
