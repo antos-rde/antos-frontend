@@ -67,6 +67,7 @@ afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .c
 }
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-period, .cv-loc{
     text-align: right;
+    clear: both;
 }
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-subtitle{
     font-style: italic;

@@ -70,7 +70,6 @@ class Blogger extends this.OS.GUI.BaseApplication
                 (d) ->
                     return unless d
                     me.deleteCVCat cat
-                    me.refreshCVCat()
             , "Delete cagegory" ,
             { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{cat.name} ?" }
     
@@ -88,6 +87,21 @@ class Blogger extends this.OS.GUI.BaseApplication
 
             , "New section entry for #{cat.name}", null
 
+        (@find "cv-sec-move").set "onbtclick", (e) ->
+            sec = (me.find "cv-sec-list").get "selected"
+            return me.notify "Please select a section to move" unless sec
+            
+            me.openDialog "BloggerCategoryDialog", (d) ->
+                c =
+                    id: sec.id,
+                    cid: d.p.id
+                
+                me.cvsecdb.save c, (r) ->
+                    return me.error "Cannot move section" if r.error
+                    me.CVSectionByCID(sec.cid)
+                    (me.find "cv-sec-list").set "selected", -1
+            , "Move to", { tree: (me.cvlist.get "data"), selonly: true }
+
         (@find "cv-sec-edit").set "onbtclick", (e) ->
             sec = (me.find "cv-sec-list").get "selected"
             return me.notify "Please select a section to edit" unless sec
@@ -99,7 +113,6 @@ class Blogger extends this.OS.GUI.BaseApplication
                 d.publish = Number sec.publish
                 me.cvsecdb.save d, (r) ->
                     return me.error "Cannot save section: #{r.error}" if r.error
-                    console.log d.cid
                     me.CVSectionByCID Number(sec.cid)
 
             , "Modify section entry", sec
@@ -189,7 +202,10 @@ class Blogger extends this.OS.GUI.BaseApplication
             name: "Porfolio",
             id:0,
             nodes: []
-        @cvcatdb.get null, (d) ->
+        cnd =
+            order:
+                name: "ASC"
+        @cvcatdb.find cnd, (d) ->
             if d.error
                 me.cvlist.set "data", data
                 return me.notify "Cannot fetch CV categories"
@@ -214,15 +230,15 @@ class Blogger extends this.OS.GUI.BaseApplication
             ids.push c.id
             func(v) for v in c.nodes if c.nodes
         func(cat)
-        console.log dis
-        return
-        #delete all child
-        @deleteCVCat v for v in cat.nodes if cat.nodes
+        
+        cond = ({ "=": { cid: v } } for v in ids)
         # delete all content
-        @cvsecdb.delete { "=": { cid: cat.id } }, (r) ->
+        @cvsecdb.delete { "or": cond }, (r) ->
             return me.error "Cannot delete all content of: #{cat.name} [#{r.error}]" if r.error
-            me.cvcatdb.delete cat.id, (re) ->
+            cond = ({ "=": { id: v } } for v in ids)
+            me.cvcatdb.delete { "or": cond }, (re) ->
                 return me.error "Cannot delete the category: #{cat.name} [#{re.error}]" if re.error
+                me.refreshCVCat()
 
     CVSectionByCID: (cid) ->
         me = @
@@ -244,7 +260,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                 v.end = Number(v.end)
                 v.detail = []
                 v.detail.push { text: v.subtitle, class: "cv-subtitle" } if v.subtitle isnt ""
-                v.detail.push { text: "#{v.start} - #{v.end}", class: "cv-period" } if v.start isnt 0 and v.end isnt 0
+                if v.start isnt 0 and v.end isnt 0
+                    v.detail.push { text: "#{v.start} - #{v.end}", class: "cv-period" } 
+                else
+                    v.detail.push { text: "", class: "cv-period" }
                 v.detail.push { text: v.location, class: "cv-loc" } if v.location isnt ""
                 #v.detail.push { text: v.end } if v.end isnt 0
                 v.closable = true

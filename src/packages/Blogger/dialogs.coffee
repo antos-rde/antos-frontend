@@ -17,7 +17,7 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
                         sel = (d.find "content1").get "selectedItem"
                         return d.notify "Please select a parent category" unless sel
                         val = (d.find "content3").value
-                        return d.notify "Please enter category name" if val is ""
+                        return d.notify "Please enter category name" if val is "" and not d.data.selonly
                         return d.notify "Parent can not be the category itself" if d.data.cat and d.data.cat.id is sel.id
                         d.handler { p: sel, value: val } if d.handler
                         d.quit()
@@ -75,7 +75,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
             console.log inputs
             data[v.name] = ($ v).val() for v in inputs
             data.content = me.editor.value()
-            return me.notify "Title must not be blank" if data.title is ""
+            return me.notify "Title or content must not be blank" if data.title is "" and data.content is ""
             #return me.notify "Content must not be blank" if data.content is ""
             data.id = me.data.id if me.data and me.data.id
             me.handler data if me.handler
