@@ -69,7 +69,8 @@ class Blogger extends this.OS.GUI.BaseApplication
             me.openDialog "YesNoDialog",
                 (d) ->
                     return unless d
-                    console.log "delete all child + theirs content"
+                    me.deleteCVCat cat
+                    me.refreshCVCat()
             , "Delete cagegory" ,
             { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{cat.name} ?" }
     
@@ -205,6 +206,23 @@ class Blogger extends this.OS.GUI.BaseApplication
             @fetchCVCat table, v, v.id
             #v.nodes = null if v.nodes.length is 0
             data.nodes.push v
+
+    deleteCVCat: (cat) ->
+        me = @
+        ids = []
+        func = (c) ->
+            ids.push c.id
+            func(v) for v in c.nodes if c.nodes
+        func(cat)
+        console.log dis
+        return
+        #delete all child
+        @deleteCVCat v for v in cat.nodes if cat.nodes
+        # delete all content
+        @cvsecdb.delete { "=": { cid: cat.id } }, (r) ->
+            return me.error "Cannot delete all content of: #{cat.name} [#{r.error}]" if r.error
+            me.cvcatdb.delete cat.id, (re) ->
+                return me.error "Cannot delete the category: #{cat.name} [#{re.error}]" if re.error
 
     CVSectionByCID: (cid) ->
         me = @

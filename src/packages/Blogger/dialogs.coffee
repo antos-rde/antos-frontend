@@ -65,7 +65,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
             console.log inputs
             data[v.name] = ($ v).val() for v in inputs
             return me.notify "Title must not be blank" if data.title is ""
-            return me.notify "Content must not be blank" if data.content is ""
+            #return me.notify "Content must not be blank" if data.content is ""
             data.id = me.data.id if me.data and me.data.id
             me.handler data if me.handler
             me.quit()
