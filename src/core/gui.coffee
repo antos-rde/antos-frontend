@@ -156,6 +156,13 @@ self.OS.GUI =
             app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
         app.init()
 
+    enterFullscreen: () ->
+        el = ($ "body")[0]
+        return el.requestFullscreen() if el.requestFullscreen
+        return el.mozRequestFullScreen() if el.mozRequestFullScreen
+        return el.webkitRequestFullscreen() if el.webkitRequestFullscreen
+        return el.msRequestFullscreen() if el.msRequestFullscreen
+
     undock: (app) ->
         ($ "#sysdock").get(0).removeapp app
 
@@ -290,11 +297,16 @@ self.OS.GUI =
             ]
         menu.child = menu.child.concat (v for k, v of _OS.setting.system.menu)
         menu.child.push
+            text: "Full screen",
+            dataid: "os-fullsize",
+            iconclass: "fa fa-tv"
+        menu.child.push
             text: "Log out",
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
         menu.onmenuselect = (d) ->
             return _API.handler.logout() if d.item.data.dataid is "sys-logout"
+            return _GUI.enterFullscreen() if d.item.data.dataid is "os-fullsize"
             _GUI.launch d.item.data.app unless d.item.data.dataid
         
         ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
