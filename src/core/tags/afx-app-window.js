@@ -15,8 +15,14 @@
 
     <script>
         this.apptitle = opts.apptitle || ""
-        this.minimizable = eval(opts.minimizable) || true
-        this.resizable = eval(opts.resizable) || true
+        if(opts.minimizable == undefined)
+            this.minimizable = true
+        else
+            this.minimizable = eval(opts.minimizable)
+        if(opts.resizable == undefined)
+            this.resizable = true
+        else
+            this.resizable = eval(opts.resizable)
         var self = this
         var offset = {top:0,left:0}
         var desktop_pos = $("#desktop").offset()
