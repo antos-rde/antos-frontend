@@ -163,7 +163,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         @bloglist.set "onlistselect", (e) ->
             sel = me.bloglist.get "selected"
             return unless sel
-            me.editor.value sel.content
+            me.editor.value atob(sel.content)
             me.inputtags.value = sel.tags
 
         @on "vboxchange", () ->
@@ -292,14 +292,14 @@ class Blogger extends this.OS.GUI.BaseApplication
         return @notify "Please enter tags" if tags is ""
         d = new Date()
         data =
-            content: content
+            content: content.asBase64()
             title: title[1].trim()
             tags: tags
             ctime: if sel then sel.ctime else d.timestamp()
             ctimestr: if sel then sel.ctimestr else d.toString()
             utime: d.timestamp()
             utimestr: d.toString()
-        
+            rendered: me.editor.options.previewRender(content).asBase64()
         data.id = sel.id if sel
         
         #save the data
@@ -310,7 +310,10 @@ class Blogger extends this.OS.GUI.BaseApplication
     # load blog
     loadBlogs: () ->
         me = @
-        @blogdb.get null, (r) ->
+        cond =
+            order:
+                ctime: "DESC"
+        @blogdb.find cond, (r) ->
             return me.notify "No post found: #{r.error}" if r.error
             for v in r.result
                 v.text = v.title
