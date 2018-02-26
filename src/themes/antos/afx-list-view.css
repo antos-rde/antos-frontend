@@ -23,6 +23,7 @@ afx-list-view  > div.list-container > ul > li{
     padding: 5px;
     padding-top:3px;
     padding-bottom: 3px;
+    padding-right: 10px;
     color: #414339;
     background-color: white;
     position: relative;
@@ -36,17 +37,18 @@ afx-list-view  i.closable{
     width: 16px;
     height: 16px;
     display: inline-block;
+    position:absolute;
+    top:0px;
+    right:2px;
     cursor: pointer;
 }
 afx-list-view  i.closable:before{
     content: "\f00d"; 
     font-family: "FontAwesome";
     font-size: 10px;
-    right:5px;
+    margin-left: 10px;
     color: #414339;
-    position:absolute;
     font-style: normal;
-    top:5px;
 }
 
 afx-list-view  > div.list-container > ul > li > i {

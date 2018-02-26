@@ -14,9 +14,8 @@
         }
 
         self.root.update = function(){
-            self.update()
+            self.update(true)
         }
-
         self.on("mount", function(){
             self.refs.list.root.observable = self.root.observable
             /*self.root.observable.on("listselect", function(){

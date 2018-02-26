@@ -1,10 +1,16 @@
 <afx-switch>
     <span class = {swon: swon} onclick = {toggle}></span>
     <script>
-        this.swon = opts.swon || false
+        if(opts.swon != undefined)
+            this.swon = opts.swon
+        else
+            this.swon = false
         var self = this
         this.root.observable = opts.observable
-        this.enable = opts.enable || true
+        if(opts.enable != undefined)
+            this.enable = opts.enable
+        else
+            this.enable = true
         this.onchange = opts.onchange
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.root.set = function(k,v)

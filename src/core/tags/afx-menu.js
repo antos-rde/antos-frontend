@@ -5,6 +5,7 @@
             <a href="#" onclick = {parent.onselect}>
                 <afx-switch if = {data.switch || data.radio} class = {checked:parent.checkItem(data)} enable = false swon = {data.checked} ></afx-switch>
                 <afx-label color = {data.color} iconclass = {data.iconclass} icon = {data.icon} text = {data.text} ></afx-label>
+                <span if={data.shortcut} class = "shortcut">{data.shortcut}</span>
             </a>
             
             <afx-menu  if={data.child != null && data.child.length > 0} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>

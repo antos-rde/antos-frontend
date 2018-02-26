@@ -61,7 +61,13 @@
                         <textarea data-id="markarea" ></textarea>
                     </div>
                     <afx-label text = "Tags:" style="font-weight:bold;" data-height="25" ></afx-label>
-                    <input type = "text" data-id = "input-tags" data-height="25"/>
+                    <afx-hbox data-height="25">
+                        <input type = "text" data-id = "input-tags" />
+                        <div data-width="5"></div>
+                        <afx-switch data data-id = "blog-publish" data-width="30"></afx-switch>
+                        <div data-width="5"></div>
+                    </afx-hbox>
+                    
                     <div data-height="5"></div>
                 </afx-vbox>
             </afx-hbox>

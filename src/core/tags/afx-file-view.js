@@ -16,6 +16,7 @@
         this.status = opts.status == undefined?true:opts.status
         this.selectedFile = undefined
         this.showhidden = opts.showhidden
+        this.preventUpdate = false
         this.fetch = opts.fetch
         this.chdir = opts.chdir
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
@@ -32,7 +33,8 @@
                 switchView()
             if(k == "data")
                 self.selectedFile = undefined
-            self.update()
+            if(k != "preventUpdate")
+                self.update()
         }
         self.root.get = function(k)
         {
@@ -141,7 +143,12 @@
             calibre_size()
         }
         self.on("updated", function(){
-            refreshData()
+            if(self.preventUpdate)
+            {
+                self.preventUpdate = false
+            }
+            else
+                refreshData()
             //calibre_size()
         })
         self.on("mount", function(){

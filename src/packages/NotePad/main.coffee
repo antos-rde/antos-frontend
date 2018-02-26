@@ -104,6 +104,9 @@ class NotePad extends this.OS.GUI.BaseApplication
             , "Close tab", { text: "Close without saving ?" }
             return false
         #@tabarea.set "closable", true
+        @bindKey "META-O", () -> me.actionFile "#{me.name}-Open"
+        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
+        @bindKey "META-S", () -> me.actionFile "#{me.name}-Saveas"
         @open @currfile
     
     open: (file) ->
@@ -188,6 +191,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         @currfile.selected = false
         file.selected = true
         #console.log cnt
+        @fileview.set "preventUpdate", true
         @tabarea.push file, true
         #@currfile = @file
         #TODO: fix problem : @tabarea.set "selected", cnt
@@ -239,11 +243,11 @@ class NotePad extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
-                    { text: "Open", dataid: "#{@name}-Open" },
-                    { text: "Save", dataid: "#{@name}-Save" },
-                    { text: "Save as", dataid: "#{@name}-Saveas" }
+                    { text: "Open", dataid: "#{@name}-Open", shortcut: "META-O"  },
+                    { text: "Save", dataid: "#{@name}-Save", shortcut: "CTRL-S" },
+                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "META-S" }
                 ],
-                onmenuselect: (e) -> me.actionFile e
+                onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
         menu
     
@@ -254,7 +258,7 @@ class NotePad extends this.OS.GUI.BaseApplication
                 me.currfile.setPath "#{d}/#{n}"
                 me.save me.currfile
             , "Save as", { file: me.currfile }
-        switch e.item.data.dataid
+        switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()

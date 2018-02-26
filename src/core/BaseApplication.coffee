@@ -3,6 +3,11 @@ class BaseApplication extends this.OS.GUI.BaseModel
         super name, args
         _OS.setting.applications[@name] = {} if not _OS.setting.applications[@name]
         @setting = _OS.setting.applications[@name]
+        @keycomb =
+            ALT: {}
+            CTRL: {}
+            SHIFT: {}
+            META: {}
     init: ->
         me = @
         # first register some base event to the app
@@ -29,6 +34,20 @@ class BaseApplication extends this.OS.GUI.BaseModel
         path = "#{@meta().path}/scheme.html"
         @.render path
 
+    bindKey: (k, f) ->
+        arr = k.split "-"
+        return unless arr.length is 2
+        fnk = arr[0].toUpperCase()
+        c = arr[1].toUpperCase()
+        return unless @keycomb[fnk]
+        @keycomb[fnk][c] = f
+
+    shortcut: (fnk, c) ->
+        return true unless @keycomb[fnk]
+        return true unless @keycomb[fnk][c]
+        @keycomb[fnk][c]()
+        return false
+    
     applySetting: (k) ->
     registry: (k, v) ->
         @setting[k] = v

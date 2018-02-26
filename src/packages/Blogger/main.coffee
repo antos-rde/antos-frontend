@@ -165,6 +165,19 @@ class Blogger extends this.OS.GUI.BaseApplication
             return unless sel
             me.editor.value atob(sel.content)
             me.inputtags.value = sel.tags
+            (me.find "blog-publish").set "swon", (if sel.publish then true else false)
+
+        @.bloglist.set "onitemclose", (e) ->
+            me.openDialog "YesNoDialog", (b) ->
+                return unless b
+                me.blogdb.delete e.item.item.id, (r) ->
+                    return me.error "Cannot delete: #{r.error}" if r.error
+                    me.bloglist.remove e.item.item, true
+                    me.bloglist.set "selected", -1
+                    me.clearEditor()
+            ,  "Delete a post" ,
+            { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
+            return false
 
         @on "vboxchange", () ->
             me.resizeContent()
@@ -300,16 +313,21 @@ class Blogger extends this.OS.GUI.BaseApplication
             utime: d.timestamp()
             utimestr: d.toString()
             rendered: me.editor.options.previewRender(content).asBase64()
+            publish: if ((@find "blog-publish").get "swon") then 1 else 0
         data.id = sel.id if sel
         
         #save the data
         @blogdb.save data, (r) ->
             return me.error "Cannot save blog: #{r.error}" if r.error
             me.loadBlogs()
-
+    clearEditor:() ->
+        @.editor.value ""
+        @.inputtags.value = ""
+        (@.find "blog-publish").set "swon", false
     # load blog
     loadBlogs: () ->
         me = @
+        selidx = @bloglist.get "selidx"
         cond =
             order:
                 ctime: "DESC"
@@ -323,20 +341,12 @@ class Blogger extends this.OS.GUI.BaseApplication
                 v.detail = [
                     { text: "Created: #{v.ctimestr}", class: "blog-dates" },
                     { text: "Updated: #{v.utimestr}", class: "blog-dates" }]
-            me.bloglist.set "onitemclose", (e) ->
-                me.openDialog "YesNoDialog", (b) ->
-                    return unless b
-                    me.blogdb.delete e.item.item.id, (r) ->
-                        return me.error "Cannot delete: #{r.error}" if r.error
-                        me.bloglist.remove e.item.item, true
-                        me.bloglist.set "selected", -1
-                        me.editor.value ""
-                        me.inputtags.value = ""
-                ,  "Delete a post" ,
-                { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
-                return false
             me.bloglist.set "items", r.result
-
+            if selidx isnt -1
+                me.bloglist.set "selected", selidx
+            else
+                me.clearEditor()
+                me.bloglist.set "selected", -1
     resizeContent: () ->
         container = @find "editor-container"
         children = ($ container).children()

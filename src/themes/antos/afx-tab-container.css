@@ -7,11 +7,12 @@ afx-tab-container afx-list-view {
     padding:0;
     margin:0;
 }
-afx-tab-container afx-list-view li{
+afx-tab-container afx-list-view  > div.list-container > ul > li{
     float:left;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     padding-bottom: 2px;
+    padding-right:15px;
     padding-top:2px;
     border:1px solid #c3c3c3;
 }

@@ -183,6 +183,24 @@ self.OS.GUI =
 
     initDM: ->
         # check login first
+        ($ window).bind 'keydown', (event) ->
+            app = ($ "#sysdock")[0].get "selectedApp"
+            return true unless app
+            c = String.fromCharCode(event.which).toUpperCase()
+            fnk = undefined
+            if event.ctrlKey
+                fnk = "CTRL"
+            else if event.metaKey
+                fnk = "META"
+            else if event.shiftKey
+                fnk = "SHIFT"
+            else if event.altKey
+                fnk = "ALT"
+            
+            return unless fnk
+            r = app.shortcut fnk, c
+            event.preventDefault() if not r
+
         _API.resource "schemes/dm.html", (x) ->
             return null unless x
             scheme =  $.parseHTML x
