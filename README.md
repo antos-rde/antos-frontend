@@ -16,7 +16,7 @@ Note that this is only the client API, to make it work for your application, you
 I'm a big fan of the Make system, so i use it as a build system for all of my projects. So, to build AntOS:
 1. You need to have *make* installed. Then since most of the API is written in Coffee script, you will need it to be installed too.
 2. Edit the BUILDDIR variable in the Makefile file to point to where you want to put the built API
-3. Tpye `make` then you are good to go.
+3. Type `make` then you are good to go.
 
 It you have any problem, please contact me or open an issue, i'll try to response ASAP.
 
