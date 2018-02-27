@@ -128,8 +128,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                     className: "fa fa-file",
                     action: (e) ->
                         me.bloglist.set "selected", -1
-                        me.editor.value ""
-                        me.inputtags.value = ""
+                        me.clearEditor()
                 },
                 {
                     name: "save",
