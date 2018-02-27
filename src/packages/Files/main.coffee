@@ -102,6 +102,7 @@ class Files extends this.OS.GUI.BaseApplication
                     d.result.unshift p
                 ($ me.navinput).val dir.path
                 me.view.set "path", dir.path
+                console.log d.result
                 me.view.set "data", d.result
 
     mnFile:() ->

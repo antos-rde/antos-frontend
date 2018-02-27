@@ -12,6 +12,7 @@
         { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
         { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
         { text: "Desktop", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
+        { text: "Google Drive", path: 'gdv:///', iconclass: "fa fa-google-drive", type: "fs" },
         { text: "Shared", path: 'shared:///' , iconclass: "fa fa-share-square", type: "fs" }
     ] if not _OS.setting.VFS.mountpoints
 
@@ -29,5 +30,5 @@
         API_KEY: "AIzaSyBZhM5KbARvT10acWC8JQKlRn2WbSsmfLc"
         apilink: "https://apis.google.com/js/api.js"
         DISCOVERY_DOCS: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
-        SCOPES: 'https://www.googleapis.com/auth/drive.metadata.readonly'
+        SCOPES: 'https://www.googleapis.com/auth/drive'
     } unless _OS.setting.VFS.gdrive

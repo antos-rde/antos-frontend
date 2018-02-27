@@ -71,22 +71,31 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         switch n
             when "read"
                 return unless @info.id
-                console.log @info.webContentLink
-                accessToken = gapi.auth.getToken().access_token
-                xhr = new XMLHttpRequest()
-                xhr.open 'GET', @info.webContentLink
-                xhr.setRequestHeader 'Authorization', 'Bearer ' + accessToken
-                xhr.setRequestHeader 'Access-Control-Allow-Origin', '*'
-                xhr.onload = () ->
-                    f xhr.responseText
-
-                xhr.onerror = () ->
-                    console.log "eror download"
-            
-                xhr.send()
-
+                if @info.mimeType is "application/vnd.google-apps.folder"
+                    gapi.client.drive.files.list {
+                        q: "'#{me.info.id}' in parents and trashed = false",
+                        fields: "files(#{me.fields()})"
+                    }
+                    .then (r) ->
+                        return unless r.result.files and r.result.files.length > 0
+                        for file in r.result.files
+                            file.path = me.path + "/" + file.name
+                            file.mime = file.mimeType
+                            file.filename = file.name
+                            file.type = "file"
+                            file.gid = file.id
+                            if file.mimeType is  "application/vnd.google-apps.folder"
+                                file.mime = "dir"
+                                file.type = "dir"
+                        f { result: r.result.files }
+                else
+                    gapi.client.drive.files.get {
+                        fileId: me.info.id,
+                        alt: 'media'
+                    }
+                    .then (r) ->
+                        f r.body
                 
-                return
             when "mk"
                 return
             when "write"
