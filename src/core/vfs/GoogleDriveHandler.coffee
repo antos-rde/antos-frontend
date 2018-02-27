@@ -1,5 +1,7 @@
 
 # GoogleDrive File Handler
+G_CACHE = {"gdv:///":"root"}
+
 class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
         super path
@@ -33,19 +35,57 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         fn(gapi.auth2.getAuthInstance().isSignedIn.get())
 
     meta: (f) ->
+        me = @
         @oninit () ->
-            gapi.client.drive.files.list {
-                q: 'parents = "root" and trashed = false ',
-                fields: "nextPageToken, files(id, name)"
-            }
-            .then (r) ->
-                console.log(r)
-                f()
+            me.gid = G_CACHE[me.path] if G_CACHE[me.path]
+            if me.gid
+                #console.log "Gid exists ", me.gid
+                gapi.client.drive.files.get {
+                    fileId: me.gid,
+                    fields: me.fields()
+                }
+                .then (r) ->
+                    return unless r.result
+                    f(r)
+            else 
+                #console.log "Find file in ", me.parent()
+                fp = me.parent().asFileHandler()
+                fp.meta (d) ->
+                    file = d.result
+                    G_CACHE[fp.path] = file.id
+                    gapi.client.drive.files.list {
+                        q: "name = '#{me.basename}' and '#{file.id}' in parents and trashed = false",
+                        fields: "files(#{me.fields()})"
+                    }
+                    .then (r) ->
+                        #console.log r
+                        return unless r.result.files and r.result.files.length > 0
+                        G_CACHE[me.path] = r.result.files[0].id
+                        f { result: r.result.files[0] }
     
+    fields: () ->
+        return "webContentLink, id, name,mimeType,description, kind, parents, properties, iconLink, createdTime, modifiedTime, owners, permissions, fullFileExtension, fileExtension, size"
+
     action: (n, p, f) ->
         me = @
         switch n
             when "read"
+                return unless @info.id
+                console.log @info.webContentLink
+                accessToken = gapi.auth.getToken().access_token
+                xhr = new XMLHttpRequest()
+                xhr.open 'GET', @info.webContentLink
+                xhr.setRequestHeader 'Authorization', 'Bearer ' + accessToken
+                xhr.setRequestHeader 'Access-Control-Allow-Origin', '*'
+                xhr.onload = () ->
+                    f xhr.responseText
+
+                xhr.onerror = () ->
+                    console.log "eror download"
+            
+                xhr.send()
+
+                
                 return
             when "mk"
                 return
