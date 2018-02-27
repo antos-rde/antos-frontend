@@ -13,7 +13,7 @@ A demo of the webOS is available at my page  [https://os.lxsang.me](https://os.l
 
 Note that this is only the client API, to make it work for your application, you need to implement all the system calls in core/handlers/RemoteHandler.coffee using a server side scripting language (e.g. PHP). I'm planning to release an API documentation which describes what need to be sent and what will be returned for each system call in near future (i'm kind of very busy right now :) ).
 
-I'm a big fan of Make system, so i use it as a build system for all of my projects. So, to build AntOS:
+I'm a big fan of the Make system, so i use it as a build system for all of my projects. So, to build AntOS:
 1. You need to have *make* installed. Then since most of the API is written in Coffee script, you will need it to be installed too.
 2. Edit the BUILDDIR variable in the Makefile file to point to where you want to put the built API
 3. Tpye `make` then you are good to go.
