@@ -106,7 +106,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         #@tabarea.set "closable", true
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
-        @bindKey "META-S", () -> me.actionFile "#{me.name}-Saveas"
+        @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
         @open @currfile
     
     open: (file) ->
@@ -245,7 +245,7 @@ class NotePad extends this.OS.GUI.BaseApplication
                 child: [
                     { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O"  },
                     { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
-                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "M-S" }
+                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]

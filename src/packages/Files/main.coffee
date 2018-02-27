@@ -65,6 +65,18 @@ class Files extends this.OS.GUI.BaseApplication
         @applySetting()
         @subscribe "VFS", (d) ->
             me.chdir null if d.data.file.hash() is me.currdir.hash() or d.data.file.parent().hash() is me.currdir.hash()
+        @bindKey "CTRL-F", () -> me.actionFile "#{me.name}-mkf"
+        @bindKey "CTRL-D", () -> me.actionFile "#{me.name}-mkdir"
+        @bindKey "CTRL-U", () -> me.actionFile "#{me.name}-upload"
+        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-share"
+        @bindKey "CTRL-I", () -> me.actionFile "#{me.name}-info"
+
+        @bindKey "CTRL-R", () -> me.actionEdit "#{me.name}-mv"
+        @bindKey "CTRL-M", () -> me.actionEdit "#{me.name}-rm"
+        @bindKey "CTRL-X", () -> me.actionEdit "#{me.name}-cut"
+        @bindKey "CTRL-C", () -> me.actionEdit "#{me.name}-copy"
+        @bindKey "CTRL-P", () -> me.actionEdit "#{me.name}-paste"
+
         @chdir null
 
     applySetting: (k) ->
@@ -98,14 +110,14 @@ class Files extends this.OS.GUI.BaseApplication
         arr = {
             text: "File",
             child: [
-                { text: "New file", dataid: "#{@name}-mkf" },
-                { text: "New folder", dataid: "#{@name}-mkdir" },
+                { text: "New file", dataid: "#{@name}-mkf", shortcut: 'C-F' },
+                { text: "New folder", dataid: "#{@name}-mkdir", shortcut: 'C-D' },
                 { text: "Open with", dataid: "#{@name}-open", child:@apps },
-                { text: "Upload", dataid: "#{@name}-upload" },
+                { text: "Upload", dataid: "#{@name}-upload", shortcut: 'C-U' },
                 { text: "Download", dataid: "#{@name}-download" },
-                { text: "Share file", dataid: "#{@name}-share" },
-                { text: "Properties", dataid: "#{@name}-info" }
-            ], onmenuselect: (e) -> me.actionFile e
+                { text: "Share file", dataid: "#{@name}-share", shortcut: 'C-S' },
+                { text: "Properties", dataid: "#{@name}-info", shortcut: 'C-I' }
+            ], onmenuselect: (e) -> me.actionFile e.item.data.dataid
         }
         return arr
     mnEdit: () ->
@@ -113,12 +125,12 @@ class Files extends this.OS.GUI.BaseApplication
         {
             text: "Edit",
             child: [
-                { text: "Rename", dataid: "#{@name}-mv" },
-                { text: "Delete", dataid: "#{@name}-rm" },
-                { text: "Cut", dataid: "#{@name}-cut" },
-                { text: "Copy", dataid: "#{@name}-copy" },
-                { text: "Paste", dataid: "#{@name}-paste" }
-            ], onmenuselect: (e) -> me.actionEdit e
+                { text: "Rename", dataid: "#{@name}-mv", shortcut: 'C-R' },
+                { text: "Delete", dataid: "#{@name}-rm", shortcut: 'C-M' },
+                { text: "Cut", dataid: "#{@name}-cut", shortcut: 'C-X' },
+                { text: "Copy", dataid: "#{@name}-copy", shortcut: 'C-C' },
+                { text: "Paste", dataid: "#{@name}-paste", shortcut: 'C-P' }
+            ], onmenuselect: (e) -> me.actionEdit e.item.data.dataid
         }
     menu: () ->
         me = @
@@ -173,7 +185,7 @@ class Files extends this.OS.GUI.BaseApplication
     actionEdit: (e) ->
         me = @
         file = @view.get "selectedFile"
-        switch e.item.data.dataid
+        switch e
             when "#{@name}-mv"
                 return unless file
                 @openDialog "PromptDialog",
@@ -226,7 +238,7 @@ class Files extends this.OS.GUI.BaseApplication
     actionFile: (e) ->
         me = @
         file = @view.get "selectedFile"
-        switch e.item.data.dataid
+        switch e
 
             when "#{@name}-mkdir"
                 @openDialog "PromptDialog",

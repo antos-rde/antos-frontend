@@ -44,6 +44,9 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 me.currfile.dirty = true
                 me.scheme.set "apptitle", "#{me.currfile.basename}*"
         @on "hboxchange", (e) -> me.resizeContent()
+        @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
+        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
+        @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
         @resizeContent()
         @open @currfile
 
@@ -80,11 +83,11 @@ class MarkOn extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
-                    { text: "Open", dataid: "#{@name}-Open" },
-                    { text: "Save", dataid: "#{@name}-Save" },
-                    { text: "Save as", dataid: "#{@name}-Saveas" }
+                    { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
-                onmenuselect: (e) -> me.actionFile e
+                onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
         menu
     
@@ -95,7 +98,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 me.currfile.setPath "#{d}/#{n}"
                 me.save me.currfile
             , "Save as", { file: me.currfile }
-        switch e.item.data.dataid
+        switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()

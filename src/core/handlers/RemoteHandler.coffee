@@ -84,7 +84,7 @@ self.OS.API.handler =
         , (e, s) ->
             _courrier.osfail "Fail to make request: #{p}", e, s
     
-    dbquery: (cmd,d, c) ->
+    dbquery: (cmd, d, c) ->
         path = "#{_REST}/db/#{cmd}"
         _API.post path, d, c, (e, s) ->
             _courrier.osfail "Fail to query data from database: #{path}", e, s

@@ -156,23 +156,34 @@ self.OS.API =
         path = "resources/#{r}"
         _API.get path, c, f
     
+    libready: (l) ->
+        return _API.shared[l] || false
+
     require: (l,f) ->
-        path = "os:///scripts/"
         if not _API.shared[l]
-            js = "#{path}#{l}.js"
-            js.asFileHandler().onready (d) ->
-                _API.shared[l] = true
-                el = $ '<script>', { src: "#{_API.handler.get}/#{js}" }
-                        .appendTo 'head'
-                #load css file
-                css =  "#{path}#{l}.css"
-                css.asFileHandler().onready (d) ->
-                    el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
-                        .appendTo 'head'
-                , () ->
-                console.log "loaded", l
-                _courrier.trigger "sharedlibraryloaded", l
-                f() if f
+            if l.match /^(https?:\/\/[^\s]+)/g
+                _API.script l, () ->
+                    _API.shared[l] = true
+                    _courrier.trigger "sharedlibraryloaded", l
+                    f() if f
+                , (e, s) ->
+                    _courrier.oserror "Cannot load 3rd library at: #{l}", e, r
+            else
+                path = "os:///scripts/"
+                js = "#{path}#{l}.js"
+                js.asFileHandler().onready (d) ->
+                    _API.shared[l] = true
+                    el = $ '<script>', { src: "#{_API.handler.get}/#{js}" }
+                            .appendTo 'head'
+                    #load css file
+                    css =  "#{path}#{l}.css"
+                    css.asFileHandler().onready (d) ->
+                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                            .appendTo 'head'
+                    , () ->
+                    console.log "loaded", l
+                    _courrier.trigger "sharedlibraryloaded", l
+                    f() if f
         else
             console.log l, "Library exist, no need to load" 
             _courrier.trigger "sharedlibraryloaded", l
