@@ -27,7 +27,7 @@ afx-menu afx-switch span{
     /*margin-top:5px;*/
 }
 afx-menu span.shortcut{
-   width:45px;
+   width:40px;
    text-align: right;
 }
 afx-menu li:hover > a afx-switch span:before{

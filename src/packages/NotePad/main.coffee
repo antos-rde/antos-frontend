@@ -243,9 +243,9 @@ class NotePad extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
-                    { text: "Open", dataid: "#{@name}-Open", shortcut: "META-O"  },
-                    { text: "Save", dataid: "#{@name}-Save", shortcut: "CTRL-S" },
-                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "META-S" }
+                    { text: "Open", dataid: "#{@name}-Open", shortcut: "M-O"  },
+                    { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "M-S" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
