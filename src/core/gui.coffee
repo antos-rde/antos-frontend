@@ -126,7 +126,6 @@ self.OS.GUI =
                 #ok app
             , "script"
     launch: (app, args) ->
-        console.log "launching " + app
         if not _OS.APP[app]
             # first load it
             _GUI.loadApp app,
@@ -184,24 +183,6 @@ self.OS.GUI =
 
     initDM: ->
         # check login first
-        ($ window).bind 'keydown', (event) ->
-            app = ($ "#sysdock")[0].get "selectedApp"
-            return true unless app
-            c = String.fromCharCode(event.which).toUpperCase()
-            fnk = undefined
-            if event.ctrlKey
-                fnk = "CTRL"
-            else if event.metaKey
-                fnk = "META"
-            else if event.shiftKey
-                fnk = "SHIFT"
-            else if event.altKey
-                fnk = "ALT"
-            
-            return unless fnk
-            r = app.shortcut fnk, c
-            event.preventDefault() if not r
-
         _API.resource "schemes/dm.html", (x) ->
             return null unless x
             scheme =  $.parseHTML x
@@ -215,6 +196,23 @@ self.OS.GUI =
             riot.mount ($ "#contextmenu")
             ($ "#workspace").contextmenu (e) -> _GUI.bindContextMenu e
             
+            ($ window).bind 'keydown', (event) ->
+                app = ($ "#sysdock")[0].get "selectedApp"
+                return true unless app
+                c = String.fromCharCode(event.which).toUpperCase()
+                fnk = undefined
+                if event.ctrlKey
+                    fnk = "CTRL"
+                else if event.metaKey
+                    fnk = "META"
+                else if event.shiftKey
+                    fnk = "SHIFT"
+                else if event.altKey
+                    fnk = "ALT"
+                
+                return unless fnk
+                r = app.shortcut fnk, c
+                event.preventDefault() if not r
             # desktop default file manager
             desktop = $ "#desktop"
             fp = _OS.setting.desktop.path.asFileHandler()
@@ -262,7 +260,7 @@ self.OS.GUI =
                     return unless e.target is desktop[0]
                     desktop[0].set "selected", -1
                     ($ "#sysdock").get(0).set "selectedApp", null
-                    console.log "desktop clicked"
+                    #console.log "desktop clicked"
             
                 desktop[0].contextmenuHandler = (e, m) ->
                     desktop[0].set "selected", -1 if e.target is desktop[0]
