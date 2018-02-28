@@ -72,17 +72,20 @@ self.OS.API.handler =
         _API.post p, d, c, () ->
             alert "Resource not found: #{p}"
     logout: () ->
-        p = "#{_REST}/system/logout"
-        _API.post p, {}, (d) ->
+        _API.handler.setting () ->
+            p = "#{_REST}/system/logout"
+            _API.post p, {}, (d) ->
                 _OS.boot()
             , () ->
                 alert "Resource not found #{p}"
-    setting: () ->
+    setting: (f) ->
         p = "#{_REST}/system/settings"
         _API.post p, _OS.setting, (d) ->
             _courrier.oserror "Cannot save system setting", d.error if d.error
+            f() if f
         , (e, s) ->
             _courrier.osfail "Fail to make request: #{p}", e, s
+            f() if f
     
     dbquery: (cmd, d, c) ->
         path = "#{_REST}/db/#{cmd}"
