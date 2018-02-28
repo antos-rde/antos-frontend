@@ -188,6 +188,26 @@ self.OS.GUI =
             scheme =  $.parseHTML x
             ($ "#wrapper").append scheme
             
+            _courrier.observable.one "sysdockloaded", () ->
+                ($ window).bind 'keydown', (event) ->
+                    dock = ($ "#sysdock")[0]
+                    return unless dock
+                    app = dock.get "selectedApp"
+                    return true unless app
+                    c = String.fromCharCode(event.which).toUpperCase()
+                    fnk = undefined
+                    if event.ctrlKey
+                        fnk = "CTRL"
+                    else if event.metaKey
+                        fnk = "META"
+                    else if event.shiftKey
+                        fnk = "SHIFT"
+                    else if event.altKey
+                        fnk = "ALT"
+                    
+                    return unless fnk
+                    r = app.shortcut fnk, c
+                    event.preventDefault() if not r
             # system menu and dock
             riot.mount ($ "#syspanel", $ "#wrapper")
             riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }
@@ -196,23 +216,6 @@ self.OS.GUI =
             riot.mount ($ "#contextmenu")
             ($ "#workspace").contextmenu (e) -> _GUI.bindContextMenu e
             
-            ($ window).bind 'keydown', (event) ->
-                app = ($ "#sysdock")[0].get "selectedApp"
-                return true unless app
-                c = String.fromCharCode(event.which).toUpperCase()
-                fnk = undefined
-                if event.ctrlKey
-                    fnk = "CTRL"
-                else if event.metaKey
-                    fnk = "META"
-                else if event.shiftKey
-                    fnk = "SHIFT"
-                else if event.altKey
-                    fnk = "ALT"
-                
-                return unless fnk
-                r = app.shortcut fnk, c
-                event.preventDefault() if not r
             # desktop default file manager
             desktop = $ "#desktop"
             fp = _OS.setting.desktop.path.asFileHandler()
@@ -376,8 +379,3 @@ self.OS.GUI =
                         _GUI.pushServices (v for v in _OS.setting.system.startup.services)
                         (_GUI.launch a) for a in _OS.setting.system.startup.apps
                 #_GUI.launch "DummyApp"
-
-        # startup application here
-        _courrier.observable.one "desktoploaded", () ->
-            #_GUI.launch "DummyApp"
-            #_GUI.launch "NotePad"

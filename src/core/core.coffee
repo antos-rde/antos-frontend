@@ -91,6 +91,7 @@ self.OS or=
             a.quit() for a in tmp
 
     cleanup: ->
+        console.log "Clean up system"
         ($ "#wrapper").empty()
         _GUI.clearTheme()
         _courrier.observable = riot.observable()
@@ -108,6 +109,7 @@ self.OS or=
         
     boot: ->
         #first login
+        console.log "Booting sytem"
         _API.handler.auth (d) ->
             # in case someone call it more than once :)
             if d.error
