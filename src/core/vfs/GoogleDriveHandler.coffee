@@ -14,8 +14,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
     oninit: (f) ->
         me = @
         return unless @setting
+        fn = (r) ->
+            return f() if r
+            # perform the login
+            G_CACHE = {"gdv:///":"root"}
+            gapi.auth2.getAuthInstance().signIn()
+
         if _API.libready @setting.apilink
-            f()
+            fn(gapi.auth2.getAuthInstance().isSignedIn.get())
         else
             _API.require @setting.apilink, () ->
                 gapi.load "client:auth2", () ->
@@ -26,15 +32,11 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         scope: me.setting.SCOPES
                     }
                     .then () ->
-                        fn = (r) ->
-                            return f() if r
-                            # perform the login
-                            G_CACHE = {"gdv:///":"root"}
-                            gapi.auth2.getAuthInstance().signIn()
-
                         gapi.auth2.getAuthInstance().isSignedIn.listen (r) ->
                             fn(r)
                         fn(gapi.auth2.getAuthInstance().isSignedIn.get())
+                    , (err) ->
+                        _courrier.oserror "VFS cannot init GAPI", (_API.throwe "OS.VFS"), err
 
     meta: (f) ->
         me = @
