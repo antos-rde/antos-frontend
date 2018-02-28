@@ -1,4 +1,4 @@
-coffee_files = Calendar.coffee PushNotification.coffee Spotlight.coffee
+coffee_files = Calendar.coffee PushNotification.coffee Spotlight.coffee UserService.coffee
 
 jsfiles =
 

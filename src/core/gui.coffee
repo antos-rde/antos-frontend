@@ -376,6 +376,7 @@ self.OS.GUI =
                         # TODO: get services list from user setting
                         _GUI.pushServices [
                             "CoreServices/PushNotification",
+                            "CoreServices/UserService",
                             "CoreServices/Spotlight",
                             "CoreServices/Calendar"
                         ]

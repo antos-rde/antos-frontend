@@ -1,6 +1,6 @@
 {
     "app":null,
-    "services": [ "Calendar", "PushNotification", "Spotlight" ],
+    "services": [ "Calendar", "PushNotification", "Spotlight", "UserService" ],
     "name":"CoreServices",
     "description":"This is the core services",
     "info":{
