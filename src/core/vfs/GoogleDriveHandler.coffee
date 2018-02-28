@@ -21,6 +21,8 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
             gapi.auth2.getAuthInstance().signIn()
 
         if _API.libready @setting.apilink
+            gapi.auth2.getAuthInstance().isSignedIn.listen (r) ->
+                fn(r)
             fn(gapi.auth2.getAuthInstance().isSignedIn.get())
         else
             _API.require @setting.apilink, () ->
