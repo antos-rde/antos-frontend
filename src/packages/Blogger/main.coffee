@@ -164,7 +164,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             return unless sel
             me.editor.value atob(sel.content)
             me.inputtags.value = sel.tags
-            (me.find "blog-publish").set "swon", (if sel.publish then true else false)
+            (me.find "blog-publish").set "swon", (if Number(sel.publish) then true else false)
 
         @.bloglist.set "onitemclose", (e) ->
             me.openDialog "YesNoDialog", (b) ->
