@@ -9,5 +9,10 @@
     "version":"0.1a",
     "category":"System",
     "iconclass":"fa fa-pencil-square-o",
-    "mimes":["text/.*"]
+    "mimes":[
+        "text/.*",
+        "[^/]*/json.*",
+        "[^/]*/.*ml",
+        "[^/]*/javascript"
+    ]
 }

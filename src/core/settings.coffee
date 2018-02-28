@@ -26,8 +26,8 @@
     _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
 
     _OS.setting.VFS.gdrive = {
-        CLIENT_ID: "1006507170703-l322pfkrhf9cgta4l4jh2p8ughtc14id.apps.googleusercontent.com"
-        API_KEY: "AIzaSyBZhM5KbARvT10acWC8JQKlRn2WbSsmfLc"
+        CLIENT_ID: ""
+        API_KEY: ""
         apilink: "https://apis.google.com/js/api.js"
         DISCOVERY_DOCS: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
         SCOPES: 'https://www.googleapis.com/auth/drive'
