@@ -304,6 +304,8 @@ class FileDiaLog extends BaseDialog
 
         (@find "bt-cancel").set "onbtclick", (e) ->
             me.quit()
-        ($ filename).css("display", "block").val @data.file.basename or "Untitled" if @data and @data.file
+        if @data and @data.file
+            ($ filename).css("display", "block").val @data.file.basename or "Untitled"
+            @trigger "resize"
 
 this.OS.register "FileDiaLog", FileDiaLog

@@ -103,9 +103,11 @@ self.OS.API =
             .done (data) ->
                 _API.loaded q, p, "OK"
                 c(data)
+                o.remove()
             .fail (e, s) ->
                 _API.loaded q, p, "FAIL"
                 f(e, s)
+                o.remove()
                 
         o.click()
 

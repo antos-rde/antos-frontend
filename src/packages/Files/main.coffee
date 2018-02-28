@@ -88,6 +88,7 @@ class Files extends this.OS.GUI.BaseApplication
 
     chdir: (p) ->
         me = @
+        console.log "ch"
         dir = if p then p.asFileHandler() else me.currdir
         dir.read (d) ->
                 if(d.error)
@@ -102,7 +103,7 @@ class Files extends this.OS.GUI.BaseApplication
                     d.result.unshift p
                 ($ me.navinput).val dir.path
                 me.view.set "path", dir.path
-                console.log d.result
+                #console.log d.result
                 me.view.set "data", d.result
 
     mnFile:() ->
@@ -252,7 +253,7 @@ class Files extends this.OS.GUI.BaseApplication
                 @openDialog "PromptDialog",
                     (d) ->
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
-                        fp.write "", (r) ->
+                        fp.write "text/plain", (r) ->
                             me.error "Fail to create #{d}: #{r.error}" if r.error
                     , "New file",  { label: "File name:" }
             

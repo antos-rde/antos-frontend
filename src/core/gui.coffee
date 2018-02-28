@@ -353,7 +353,7 @@ self.OS.GUI =
         _OS.cleanup()
         # get setting from conf
         _OS.systemSetting(conf)
-        console.log _OS.setting
+        #console.log _OS.setting
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme
         # initDM

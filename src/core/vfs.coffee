@@ -36,6 +36,12 @@ class BaseFileHandler
 
     isRoot: () -> (not @genealogy) or (@genealogy.size is 0)
     
+    child: (name) ->
+        if @isRoot()
+            return @path + name
+        else
+            return @path + "/" + name
+
     isHidden: () ->
         return false if not @basename
         @basename[0] is "."
@@ -44,10 +50,20 @@ class BaseFileHandler
         return -1 unless @path
         return @path.hash()
 
-    getb64: (m) ->
-        return "" unless @cache
-        b64 = @cache.asBase64()
-        return "data:#{m};base64,#{b64}"
+    sendB64: (m, f) ->
+        me = @
+        return unless @cache
+        if typeof @cache is "string"
+            b64 = @cache.asBase64()
+            b64 = "data:#{m};base64,#{b64}"
+            f(b64)
+        else
+            reader = new FileReader()
+            reader.readAsDataURL(@cache)
+            reader.onload =  () ->
+                f reader.result
+            reader.onerror = (e) ->
+                return _courrier.osfail "Cannot ecode file: #{me.path}", (_API.throwe "OS.VFS"), e
     parent: () ->
         return @ if @isRoot()
         return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
@@ -140,7 +156,8 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
                 return f { error: "#{@path} is not a directory" } if @info.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f
             when "write"
-                _API.handler.write @path, p, f
+                @sendB64 p, (data) ->
+                    _API.handler.write me.path, data, f
             when "upload"
                 return if @info.type is "file"
                 _API.handler.upload @path, f

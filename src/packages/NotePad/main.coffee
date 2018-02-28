@@ -112,6 +112,7 @@ class NotePad extends this.OS.GUI.BaseApplication
     open: (file) ->
         #find table
         i = @findTabByFile file
+        @fileview.set "preventUpdate", true
         return @tabarea.set "selected", i if i isnt -1
         return @newtab file if file.path.toString() is "Untitled"
         me = @
@@ -163,7 +164,7 @@ class NotePad extends this.OS.GUI.BaseApplication
 
     save: (file) ->
         me = @
-        file.write (file.getb64 "text/plain"), (d) ->
+        file.write "text/plain", (d) ->
             return me.error "Error saving file #{file.basename}" if d.error
             file.dirty = false
             file.text = file.basename
@@ -191,7 +192,6 @@ class NotePad extends this.OS.GUI.BaseApplication
         @currfile.selected = false
         file.selected = true
         #console.log cnt
-        @fileview.set "preventUpdate", true
         @tabarea.push file, true
         #@currfile = @file
         #TODO: fix problem : @tabarea.set "selected", cnt
@@ -255,7 +255,15 @@ class NotePad extends this.OS.GUI.BaseApplication
         me = @
         saveas = () ->
             me.openDialog "FileDiaLog", (d, n) ->
-                me.currfile.setPath "#{d}/#{n}"
+                file = "#{d}/#{n}".asFileHandler()
+                file.cache = me.currfile.cache
+                file.dirty = me.currfile.dirty
+                file.um = me.currfile.um
+                file.cursor = me.currfile.cursor
+                file.selected = me.currfile.selected
+                file.text = me.currfile.text
+                me.tabarea.replaceItem me.currfile, file, false
+                me.currfile = file
                 me.save me.currfile
             , "Save as", { file: me.currfile }
         switch e

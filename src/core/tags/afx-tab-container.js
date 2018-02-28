@@ -56,6 +56,11 @@
             e.closable = self.closable
             self.refs.list.root.push(e,u)
         }
+        self.root.replaceItem = function(o,n,u)
+        {
+            n.closable = self.closable
+            self.refs.list.root.replaceItem(o,n,u)
+        }
         self.root.unshift = function(e,u)
         {
             self.refs.list.root.unshift(e,u)

@@ -60,6 +60,16 @@
             self.items.unshift(e)
             if(u) self.update()
         }
+        self.root.replaceItem = function(o, n, u)
+        {
+            var ix = self.items.indexOf(o)
+            if(ix >= 0)
+            {
+                self.items[ix] = n
+                if(u) self.update()
+            }
+            
+        }
         self.root.remove = function(e,u)
         {
             var i = self.items.indexOf(e)
