@@ -89,5 +89,29 @@ package:
 	cp -rf src/packages/$$PKG/build/* $(BUILDDIR)/packages/$$PKG/;\
 	test -d src/packages/$$PKG/build && rm -r src/packages/$$PKG/build;
 
+
+uglify:
+	# uglify antos.js
+	# npm install uglify-js -g
+	uglifyjs $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
+	# uglify tags
+	# npm install riot -g
+	riot --ext js $(BUILDDIR)/resources/antos_tags.js $(BUILDDIR)/resources/antos_tags.js
+	uglifyjs $(BUILDDIR)/resources/antos_tags.js --compress --mangle --output $(BUILDDIR)/resources/antos_tags.js
+	sed -i 's/resources\/antos_tags.js/scripts\/riot.min.js/g' $(BUILDDIR)/index.html
+	sed -i 's/scripts\/riot.compiler.min.js/resources\/antos_tags.js/g' $(BUILDDIR)/index.html
+	sed -i 's/type=\"riot\/tag\"//g' $(BUILDDIR)/index.html
+	# npm install minify -g
+	# uglify the css
+	minify  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
+	#uglify each packages
+
+	for d in $(packages); do\
+		test -f $(BUILDDIR)/packages/$$d/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
+		test -f $(BUILDDIR)/packages/$$d/main.css  &&  minify --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
+	done
+
+release: main uglify
+
 clean:
 	rm -rf $(BUILDDIR)/*
