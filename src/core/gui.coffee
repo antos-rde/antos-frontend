@@ -126,6 +126,7 @@ self.OS.GUI =
                 #ok app
             , "script"
     launch: (app, args) ->
+        console.log "launching " + app
         if not _OS.APP[app]
             # first load it
             _GUI.loadApp app,
@@ -374,12 +375,8 @@ self.OS.GUI =
                         _GUI.buildSystemMenu()
                         # push startup services
                         # TODO: get services list from user setting
-                        _GUI.pushServices [
-                            "CoreServices/PushNotification",
-                            "CoreServices/UserService",
-                            "CoreServices/Spotlight",
-                            "CoreServices/Calendar"
-                        ]
+                        _GUI.pushServices _OS.setting.system.startup.services
+                        (_GUI.launch a) for a in _OS.setting.system.startup.apps
                 #_GUI.launch "DummyApp"
 
         # startup application here

@@ -17,6 +17,16 @@
     ] if not _OS.setting.VFS.mountpoints
 
     _OS.setting.system = conf.system if conf.system
+    _OS.setting.system.startup = {
+        services: [
+            "CoreServices/PushNotification",
+            "CoreServices/UserService",
+            "CoreServices/Calendar",
+            "CoreServices/Spotlight"
+        ],
+        apps: []
+    } if not _OS.setting.system.startup
+
     _OS.setting.system.pkgpaths = [
         "home:///.packages",
         "os:///packages"
