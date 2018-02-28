@@ -44,6 +44,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 me.currfile.dirty = true
                 me.scheme.set "apptitle", "#{me.currfile.basename}*"
         @on "hboxchange", (e) -> me.resizeContent()
+        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
@@ -83,6 +84,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
+                    { text: "Open", dataid: "#{@name}-New", shortcut: "A-N" },
                     { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O" },
                     { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
@@ -110,6 +112,10 @@ class MarkOn extends this.OS.GUI.BaseApplication
             when "#{@name}-Saveas"
                 @currfile.cache = @editor.value()
                 saveas()
+             when "#{@name}-New"
+                @currfile = "Untitled".asFileHandler()
+                @currfile.cache = ""
+                @editor.value("")
     
     cleanup: (evt) ->
         return unless @currfile.dirty

@@ -104,6 +104,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             , "Close tab", { text: "Close without saving ?" }
             return false
         #@tabarea.set "closable", true
+        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
@@ -243,6 +244,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
+                    { text: "New", dataid: "#{@name}-New", shortcut: "A-N"  },
                     { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O"  },
                     { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
@@ -278,6 +280,8 @@ class NotePad extends this.OS.GUI.BaseApplication
             when "#{@name}-Saveas"
                 @currfile.cache = @editor.getValue()
                 saveas()
+            when "#{@name}-New"
+                @open "Untitled".asFileHandler()
     
     cleanup: (evt) ->
         dirties = ( v for v in  @tabarea.get "items" when v.dirty )

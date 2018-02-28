@@ -10,9 +10,9 @@
         #TODO: multi app try to write to this object, it neet to be cloned
         { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
         { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
-        { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
         { text: "Desktop", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
-        { text: "Google Drive", path: 'gdv:///', iconclass: "fa fa-google-drive", type: "fs" },
+        { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
+        { text: "Google Drive", path: 'gdv:///', iconclass: "fa fa-inbox", type: "fs" },
         { text: "Shared", path: 'shared:///' , iconclass: "fa fa-share-square", type: "fs" }
     ] if not _OS.setting.VFS.mountpoints
 
