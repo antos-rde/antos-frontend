@@ -67,7 +67,7 @@ class Preview extends this.OS.GUI.BaseApplication
             .catch (err) ->
                 me.error "Cannot render the PDF file"
                 me._api.loaded q, "FAIL"
-        , "blob"
+        , "binary"
 
     renderImage: (file) ->
         me = @
@@ -88,7 +88,7 @@ class Preview extends this.OS.GUI.BaseApplication
                 console.log canvas.width, canvas.height
                 context.drawImage img, 0, 0
                 me.setStatus "#{file.info.name} (#{file.info.size} Kb) - #{img.width}x#{img.height}"
-        , "blob"
+        , "binary"
 
     menu: () ->
         me = @

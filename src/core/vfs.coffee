@@ -151,7 +151,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "read"
                 return _API.handler.scandir @path, f if @info.type is "dir"
                 #read the file
-                return _API.handler.fileblob @path, f if p is "blob"
+                return _API.handler.fileblob @path, f if p is "binary"
                 _API.handler.readfile @path, f, if p then p else "text"
             when "mk"
                 return f { error: "#{@path} is not a directory" } if @info.type is "file"
@@ -221,7 +221,7 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
 
 self.OS.API.VFS.register "^app$", ApplicationHandler
 
-class BlobFileHandler extends self.OS.API.VFS.BaseFileHandler
+class BufferFileHandler extends self.OS.API.VFS.BaseFileHandler
     constructor: (path, mime, data) ->
         super path
         @cache = data if data
@@ -269,7 +269,7 @@ class BlobFileHandler extends self.OS.API.VFS.BaseFileHandler
             else
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
     
-self.OS.API.VFS.register "^blob$", BlobFileHandler
+self.OS.API.VFS.register "^mem$", BufferFileHandler
 
 class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
@@ -284,6 +284,7 @@ class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "read"
                 return _API.get "#{_API.handler.shared}/all", f, ((e, s)->) if @isRoot()
                 #read the file
+                return _API.handler.fileblob @path, f if p is "binary"
                 _API.handler.readfile @path, f, if p then p else "text"
             when "mk"
                 return
