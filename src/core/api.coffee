@@ -45,6 +45,8 @@ self.OS.API =
     handler: { }
     shared: {} # shared libraries
     #request a user data
+    mid: () ->
+        return _courrier.getMID()
     post: (p, d, c, f) ->
         q = _courrier.getMID()
         _API.loading q, p

@@ -63,6 +63,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 .then (r) ->
                     _API.loaded q, "OK"
                     return unless r.result
+                    r.result.mime = r.result.mimeType
                     f(r)
                 .catch (err) ->
                     _API.loaded q, "FAIL"
@@ -84,6 +85,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         _API.loaded q1, "OK"
                         return unless r.result.files and r.result.files.length > 0
                         G_CACHE[me.path] = r.result.files[0].id
+                        r.result.files[0].mime = r.result.files[0].mimeType
                         f { result: r.result.files[0] }
                     .catch (err) ->
                         _API.loaded q1, "FAIL"

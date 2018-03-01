@@ -151,6 +151,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "read"
                 return _API.handler.scandir @path, f if @info.type is "dir"
                 #read the file
+                return _API.handler.fileblob @path, f if p is "blob"
                 _API.handler.readfile @path, f, if p then p else "text"
             when "mk"
                 return f { error: "#{@path} is not a directory" } if @info.type is "file"

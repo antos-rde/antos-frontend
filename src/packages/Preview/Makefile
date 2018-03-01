@@ -4,7 +4,7 @@ jsfiles = pdf.js
 
 cssfiles =  main.css
 
-copyfiles = pdf.worker.js scheme.html package.json
+copyfiles = pdf.worker.js scheme.html package.json bg.jpg
 
 
 PKG_NAME=Preview

@@ -1,10 +1,30 @@
-afx-app-window[data-id = "preview-win"] afx-hbox[data-id="container"] {
+
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"]
+{
     display: block;
     overflow:auto;
+    background-image: url("bg.jpg");
+    background-repeat: repeat;
 }
 
-afx-app-window[data-id = "preview-win"] afx-hbox[data-id="container"] canvas{
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "status"]
+{
+    background-color: #f6F6F6;
+    border-top: 1px solid #cbcbcb;
+    color:#414339;
+    padding-left: 10px;
+    padding-top: 3px;
+}
+
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] canvas{
     margin-left: auto;
     margin-right: auto;
     display: block;
+}
+
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"].image
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
