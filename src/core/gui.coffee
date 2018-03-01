@@ -163,7 +163,7 @@ self.OS.GUI =
             return document.exitFullscreen() if document.exitFullscreen
             return document.mozCancelFullScreen() if document.mozCancelFullScreen
             return document.webkitExitFullscreen() if document.webkitExitFullscreen
-            return document.exitFullscreen() if document.exitFullscreen
+            return document.cancelFullScreen() if document.cancelFullScreen
         else
             return el.requestFullscreen() if el.requestFullscreen
             return el.mozRequestFullScreen() if el.mozRequestFullScreen
