@@ -1,0 +1,10 @@
+afx-app-window[data-id = "preview-win"] afx-hbox[data-id="container"] {
+    display: block;
+    overflow:auto;
+}
+
+afx-app-window[data-id = "preview-win"] afx-hbox[data-id="container"] canvas{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
