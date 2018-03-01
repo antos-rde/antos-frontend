@@ -161,7 +161,12 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     }
                     .then (r) ->
                         _API.loaded q, "OK"
-                        f r.body
+                        return f r.body unless p is "blob"
+                        bytes = []
+                        for i in [0..(r.body.length - 1)]
+                            bytes.push r.body.charCodeAt i
+                        bytes = new Uint8Array(bytes)
+                        f bytes
                     .catch (err) ->
                         _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot get read #{me.path}", (_API.throwe "OS.VFS"), err
@@ -260,7 +265,11 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 .then (r) ->
                     _API.loaded q, "OK"
                     return _courrier.oserror "VFS cannot get file : #{me.path}", (_API.throwe "OS.VFS"), r unless r.body
-                    blob = new Blob [r.body], { type: "octet/stream" }
+                    bytes = []
+                    for i in [0..(r.body.length - 1)]
+                        bytes.push r.body.charCodeAt i
+                    bytes = new Uint8Array(bytes)
+                    blob = new Blob [bytes], { type: "octet/stream" }
                     _API.saveblob me.basename, blob
                 .catch (err) ->
                     _API.loaded q, "FAIL"
