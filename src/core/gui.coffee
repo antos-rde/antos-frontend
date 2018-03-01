@@ -1,6 +1,7 @@
 self.OS.GUI =
     subwindows: new Object()
     dialog: undefined
+    fullscreen: false
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
         ($ parent).append scheme
@@ -156,12 +157,18 @@ self.OS.GUI =
             app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
         app.init()
 
-    enterFullscreen: () ->
+    toggleFullscreen: () ->
         el = ($ "body")[0]
-        return el.requestFullscreen() if el.requestFullscreen
-        return el.mozRequestFullScreen() if el.mozRequestFullScreen
-        return el.webkitRequestFullscreen() if el.webkitRequestFullscreen
-        return el.msRequestFullscreen() if el.msRequestFullscreen
+        if _GUI.fullscreen
+            return document.exitFullscreen() if document.exitFullscreen
+            return document.mozCancelFullScreen() if document.mozCancelFullScreen
+            return document.webkitExitFullscreen() if document.webkitExitFullscreen
+            return document.exitFullscreen() if document.exitFullscreen
+        else
+            return el.requestFullscreen() if el.requestFullscreen
+            return el.mozRequestFullScreen() if el.mozRequestFullScreen
+            return el.webkitRequestFullscreen() if el.webkitRequestFullscreen
+            return el.msRequestFullscreen() if el.msRequestFullscreen
 
     undock: (app) ->
         ($ "#sysdock").get(0).removeapp app
@@ -182,6 +189,8 @@ self.OS.GUI =
         event.preventDefault()
 
     initDM: ->
+        ($ "body").on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
+            _GUI.fullscreen = not _GUI.fullscreen
         # check login first
         _API.resource "schemes/dm.html", (x) ->
             return null unless x
@@ -317,7 +326,7 @@ self.OS.GUI =
             ]
         menu.child = menu.child.concat (v for k, v of _OS.setting.system.menu)
         menu.child.push
-            text: "Full screen",
+            text: "Toggle Full screen",
             dataid: "os-fullsize",
             iconclass: "fa fa-tv"
         menu.child.push
@@ -326,7 +335,7 @@ self.OS.GUI =
             iconclass: "fa fa-user-times"
         menu.onmenuselect = (d) ->
             return _API.handler.logout() if d.item.data.dataid is "sys-logout"
-            return _GUI.enterFullscreen() if d.item.data.dataid is "os-fullsize"
+            return _GUI.toggleFullscreen() if d.item.data.dataid is "os-fullsize"
             _GUI.launch d.item.data.app unless d.item.data.dataid
         
         ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
