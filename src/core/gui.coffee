@@ -189,7 +189,7 @@ self.OS.GUI =
         event.preventDefault()
 
     initDM: ->
-        ($ "body").on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
+        ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
             _GUI.fullscreen = not _GUI.fullscreen
         # check login first
         _API.resource "schemes/dm.html", (x) ->
