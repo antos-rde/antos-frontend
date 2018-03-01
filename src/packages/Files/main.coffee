@@ -88,7 +88,7 @@ class Files extends this.OS.GUI.BaseApplication
 
     chdir: (p) ->
         me = @
-        console.log "ch"
+        #console.log "ch"
         dir = if p then p.asFileHandler() else me.currdir
         dir.read (d) ->
                 if(d.error)

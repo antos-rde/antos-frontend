@@ -27,7 +27,9 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         else
             _API.require @setting.apilink, () ->
                 # avoid popup block
+                q = _courrier.getMID()
                 gapi.load "client:auth2", () ->
+                    _API.loading q, "GAPI"
                     gapi.client.init {
                         apiKey: me.setting.API_KEY,
                         clientId: me.setting.CLIENT_ID,
@@ -35,6 +37,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         scope: me.setting.SCOPES
                     }
                     .then () ->
+                        _API.loaded q, "OK"
                         gapi.auth2.getAuthInstance().isSignedIn.listen (r) ->
                             fn(r)
                         _GUI.openDialog "YesNoDialog", (d) ->
@@ -42,28 +45,35 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                             fn(gapi.auth2.getAuthInstance().isSignedIn.get())
                         , "Authentification", { text: "Do you want to login to Google Drive ?" }
                     .catch (err) ->
+                        _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot init GAPI: #{err.error}", (_API.throwe "OS.VFS"), err
 
     meta: (f) ->
         me = @
         @oninit () ->
+            q = _courrier.getMID()
             me.gid = G_CACHE[me.path] if G_CACHE[me.path]
             if me.gid
                 #console.log "Gid exists ", me.gid
+                _API.loading q, "GAPI"
                 gapi.client.drive.files.get {
                     fileId: me.gid,
                     fields: me.fields()
                 }
                 .then (r) ->
+                    _API.loaded q, "OK"
                     return unless r.result
                     f(r)
                 .catch (err) ->
+                    _API.loaded q, "FAIL"
                     _courrier.oserror "VFS cannot get meta #{me.gid}", (_API.throwe "OS.VFS"), err
             else 
                 #console.log "Find file in ", me.parent()
                 fp = me.parent().asFileHandler()
                 fp.meta (d) ->
                     file = d.result
+                    q1 = _courrier.getMID()
+                    _API.loading q1, "GAPI"
                     G_CACHE[fp.path] = file.id
                     gapi.client.drive.files.list {
                         q: "name = '#{me.basename}' and '#{file.id}' in parents and trashed = false",
@@ -71,10 +81,12 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     }
                     .then (r) ->
                         #console.log r
+                        _API.loaded q1, "OK"
                         return unless r.result.files and r.result.files.length > 0
                         G_CACHE[me.path] = r.result.files[0].id
                         f { result: r.result.files[0] }
                     .catch (err) ->
+                        _API.loaded q1, "FAIL"
                         _courrier.oserror "VFS cannot get meta #{me.path}", (_API.throwe "OS.VFS"), err
     
     fields: () ->
@@ -86,7 +98,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         me = @
         user = gapi.auth2.getAuthInstance().currentUser.get()
         oauthToken = user.getAuthResponse().access_token
-
+        q = _courrier.getMID()
         xhr = new XMLHttpRequest()
         url = 'https://www.googleapis.com/upload/drive/v3/files/' + id + '?uploadType=media'
         xhr.open('PATCH', url)
@@ -94,11 +106,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         xhr.setRequestHeader 'Content-Type', m
         xhr.setRequestHeader 'Content-Encoding', 'base64'
         xhr.setRequestHeader 'Content-Transfer-Encoding', 'base64'
+        _API.loading q, "GAPI"
         error = (e, s) ->
+            _API.loaded q, "FAIL"
             _courrier.oserror "VFS cannot save : #{me.path}", e, s
         xhr.onreadystatechange = () ->
             if ( xhr.readyState == 4 )
                 if ( xhr.status == 200 )
+                    _API.loaded q, "OK"
                     f { result: JSON.parse(xhr.responseText) }
                 else
                     error xhr, xhr.status
@@ -110,6 +125,8 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
 
     action: (n, p, f) ->
         me = @
+        q = _courrier.getMID()
+        _API.loading q, "GAPI"
         switch n
             when "read"
                 return unless @info.id
@@ -119,6 +136,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         fields: "files(#{me.fields()})"
                     }
                     .then (r) ->
+                        _API.loaded q, "OK"
                         return unless r.result.files
                         for file in r.result.files
                             file.path = me.child file.name
@@ -132,6 +150,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                                 file.size = 0
                         f { result: r.result.files }
                     .catch (err) ->
+                        _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot read #{me.path}", (_API.throwe "OS.VFS"), err
                 else
                     gapi.client.drive.files.get {
@@ -139,8 +158,10 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         alt: 'media'
                     }
                     .then (r) ->
+                        _API.loaded q, "OK"
                         f r.body
-                    .catch(err) ->
+                    .catch (err) ->
+                        _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot get read #{me.path}", (_API.throwe "OS.VFS"), err
                 
             when "mk"
@@ -155,11 +176,13 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     fields: 'id'
                 }
                 .then (r) ->
+                    _API.loaded q, "OK"
                     #console.log r
                     return _courrier.oserror "VFS cannot create : #{p}", (_API.throwe "OS.VFS"), r unless r and r.result
                     G_CACHE[me.child p] = r.result.id
                     f r
                 .catch (err) ->
+                    _API.loaded q, "FAIL"
                     _courrier.oserror "VFS cannot create #{p}", (_API.throwe "OS.VFS"), err
                     
                 return
@@ -167,6 +190,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
             when "write"
                 gid = G_CACHE[me.path]
                 if gid
+                    _API.loaded q, "OK"
                     @save gid, p, f
                 else
                     dir = @parent().asFileHandler()
@@ -181,17 +205,19 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                             fields: 'id'
                         }
                         .then (r) ->
+                            _API.loaded q, "OK"
                             return _courrier.oserror "VFS cannot write : #{me.path}", (_API.throwe "OS.VFS"), r unless r and r.result
                             G_CACHE[me.path] = r.result.id
                             me.save r.result.id, p, f
                         .catch (err) ->
+                            _API.loaded q, "FAIL"
                             _courrier.oserror "VFS cannot write #{me.path}", (_API.throwe "OS.VFS"), err
                             
             when "upload"
                 return unless @isFolder()
-                q = _courrier.getMID()
                 #insert a temporal file selector
                 o = ($ '<input>').attr('type', 'file').css("display", "none")
+                _API.loaded q, "OK"
                 o.change () ->
                     #_API.loading q, p
                     fo = o[0].files[0]
@@ -212,13 +238,16 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 }
                 .then (r) ->
                     #console.log r
+                    _API.loaded q, "OK"
                     return _courrier.oserror "VFS cannot delete : #{me.path}", (_API.throwe "OS.VFS"), r unless r
                     G_CACHE[me.path] = null
                     f { result: true }
-                .catch(err) ->
+                .catch (err) ->
+                    _API.loaded q, "FAIL"
                     _courrier.oserror "VFS cannot delete #{me.path}", (_API.throwe "OS.VFS"), err
             
             when "publish"
+                _API.loaded q, "OK"
                 return
             
             when "download"
@@ -227,10 +256,12 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     alt: 'media'
                 }
                 .then (r) ->
+                    _API.loaded q, "OK"
                     return _courrier.oserror "VFS cannot get file : #{me.path}", (_API.throwe "OS.VFS"), r unless r.body
                     blob = new Blob [r.body], { type: "octet/stream" }
                     _API.saveblob me.basename, blob
-                .catch(err) ->
+                .catch (err) ->
+                    _API.loaded q, "FAIL"
                     _courrier.oserror "VFS cannot fetch #{me.path}", (_API.throwe "OS.VFS"), err
             
             when "move"
@@ -244,11 +275,16 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         fields: "id"
                     }
                     .then (r) ->
+                        _API.loaded q, "OK"
                         return _courrier.oserror "VFS cannot move : #{me.path}", (_API.throwe "OS.VFS"), r unless r
                         f r
                     .catch (err) ->
+                        _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot move #{me.gid}", (_API.throwe "OS.VFS"), err
+                , (err) ->
+                    _API.loaded q, "FAIL"
             else
+                _API.loaded q, "FAIL"
                 return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
 
 

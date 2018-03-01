@@ -52,7 +52,7 @@ class BaseFileHandler
 
     sendB64: (m, f) ->
         me = @
-        return unless @cache
+        return f "" unless @cache
         if typeof @cache is "string"
             b64 = @cache.asBase64()
             b64 = "data:#{m};base64,#{b64}"
