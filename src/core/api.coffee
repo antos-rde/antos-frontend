@@ -42,8 +42,9 @@ self.OS.API =
     # the handler object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
     # handlers are defined in /src/handlers
-    handler: { }
+    handler: {}
     shared: {} # shared libraries
+    searchHandler:{}
     #request a user data
     mid: () ->
         return _courrier.getMID()
@@ -208,6 +209,19 @@ self.OS.API =
                 command: "cache", args: { paths: _OS.setting.system.pkgpaths }
             }, f
 
+    search: (text) ->
+        r = []
+        
+        for k, v of _API.searchHandler
+            ret =  _API.searchHandler[k](text)
+            if ret.length > 0
+                ret.unshift { text: k, class: "search-header", dataid: "header" }
+                r = r.concat ret
+        return r
+
+    onsearch: (name, fn) ->
+        _API.searchHandler[name] = fn unless _API.searchHandler[name]
+
     throwe: (n) ->
         err = undefined
         try
@@ -216,4 +230,3 @@ self.OS.API =
             err = e
         return "" if not err
         return err
-        

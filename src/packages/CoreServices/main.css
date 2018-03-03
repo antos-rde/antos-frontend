@@ -85,7 +85,9 @@ afx-app-window[data-id = "spotlight-win"] .afx-window-content{
 afx-app-window[data-id = "spotlight-win"]  afx-list-view[data-id="container"]{
     border-top:1px solid #cacaca;
 }
-
+afx-app-window[data-id = "spotlight-win"]  afx-list-view[data-id="container"] afx-label.search-header{
+    font-weight: bold;
+}
 afx-app-window[data-id = "spotlight-win"] afx-resizer{
     background-color: transparent;
     border-left: 1px solid #cacaca;

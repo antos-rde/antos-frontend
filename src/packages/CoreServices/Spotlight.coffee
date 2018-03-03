@@ -8,6 +8,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
     main: () ->
         me = @
         @height = ($ @scheme).css("height")
+        @container = @find "container"
         ($ @scheme).css("height", "45px")
         #fn = (e) ->
          #   if e.keyCode is 27
@@ -25,9 +26,41 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         ($ @searchbox).focus()
         ($ @searchbox).keyup (e) ->
             me.search e
+        @container.set "onlistdbclick", (e)->
+            return if e.data.dataid and e.data.dataid is "header"
+            me._gui.openWith e.data
+            me.handler(e) if me.handler
     
+
+
     search: (e) ->
-        ($ @scheme).css("height", @height)
+        switch e.which
+            when 37
+                e.preventDefault()
+            when 38
+                @container.selectPrev()
+                e.preventDefault()
+            when 39
+                e.preventDefault()
+            when 40
+                @container.selectNext()
+                e.preventDefault()
+            when 13
+                e.preventDefault()
+                sel = @container.get "selected"
+                return unless sel
+                return if sel.dataid and sel.dataid is "header"
+                @._gui.openWith sel
+                @.handler(e) if @.handler
+            else
+                text = @searchbox.value
+                ($ @scheme).css("height", "45px")
+                return unless text.length > 3
+                result = @_api.search text
+                return if result.length is 0
+                @container.set "items", result
+                ($ @scheme).css("height", @height)
+
             
 this.OS.register "SpotlightDialog", SpotlightDialog
 

@@ -9,8 +9,7 @@ class Calendar extends this.OS.GUI.BaseService
         me = @
         @watch 1000, () ->
             now = new Date
-            me.text = "#{now.getDate()}/#{(now.getMonth()+1)}/#{now.getFullYear()} " +
-                    "#{now.getHours()}:#{now.getMinutes()}:#{now.getSeconds()}"
+            me.text = now.toString()
             me.update()
 
     awake: (e) ->

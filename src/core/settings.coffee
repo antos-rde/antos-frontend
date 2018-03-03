@@ -42,3 +42,17 @@
         DISCOVERY_DOCS: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
         SCOPES: 'https://www.googleapis.com/auth/drive'
     } unless _OS.setting.VFS.gdrive
+
+        #search for app
+    _API.onsearch "Applications", (t) ->
+        ar = []
+        term = new RegExp t, "i"
+        for k, v of _OS.setting.system.packages when v.app
+            if (v.name.match term) or (v.description and v.description.match term)
+                ar.push v
+            else if v.mimes
+                for m in v.mimes
+                    if t.match (new RegExp m, "g")
+                        ar.push v
+                        break
+        return ar
