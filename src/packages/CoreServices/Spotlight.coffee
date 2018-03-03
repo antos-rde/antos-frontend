@@ -9,17 +9,19 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         me = @
         @height = ($ @scheme).css("height")
         @container = @find "container"
-        console.log "new dia"
         ($ @scheme).css("height", "45px")
-        #fn = (e) ->
-         #   if e.keyCode is 27
-        #        ($ document).unbind "keyup", fn
-        #        me.handler(e) if me.handler
-        #($ document).keyup fn
+        @fn = (e) ->
+            if e.which is 27
+                ($ document).unbind "click", me.fn1
+                ($ document).unbind "keyup", me.fn
+                me.handler(e) if me.handler
+                me.quit()
+        ($ document).keyup @fn
 
         @fn1 = (e) ->
             if not $(e.target).closest(me.scheme).length
                 ($ document).unbind "click", me.fn1
+                ($ document).unbind "keyup", me.fn
                 me.handler(e) if me.handler
                 me.quit()
         
@@ -33,6 +35,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
             me.handler(e) if me.handler
             me._gui.openWith e.data
             ($ document).unbind "click", me.fn1
+            ($ document).unbind "keyup", me.fn
             me.quit()
     
 
@@ -57,6 +60,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
                 @.handler(e) if @.handler
                 @._gui.openWith sel
                 ($ document).unbind "click", @fn1
+                ($ document).unbind "keyup", @fn
                 @.quit()
             else
                 text = @searchbox.value
