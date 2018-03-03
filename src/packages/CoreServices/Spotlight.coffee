@@ -28,8 +28,8 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
             me.search e
         @container.set "onlistdbclick", (e)->
             return if e.data.dataid and e.data.dataid is "header"
-            me._gui.openWith e.data
             me.handler(e) if me.handler
+            me._gui.openWith e.data
     
 
 
@@ -50,8 +50,8 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
                 sel = @container.get "selected"
                 return unless sel
                 return if sel.dataid and sel.dataid is "header"
-                @._gui.openWith sel
                 @.handler(e) if @.handler
+                @._gui.openWith sel
             else
                 text = @searchbox.value
                 ($ @scheme).css("height", "45px")
@@ -86,6 +86,7 @@ class Spotlight extends this.OS.GUI.BaseService
             @openDialog "SpotlightDialog", (d) ->
                 me.show = false
                 me.dialog.quit() if me.dialog
+                me.dialog = undefined
         else
             @dialog.quit() if @dialog
 
