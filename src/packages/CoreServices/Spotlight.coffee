@@ -9,19 +9,15 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         me = @
         @height = ($ @scheme).css("height")
         @container = @find "container"
+        @container.set "selected", -1
+        console.log "new dia"
         ($ @scheme).css("height", "45px")
         #fn = (e) ->
          #   if e.keyCode is 27
         #        ($ document).unbind "keyup", fn
         #        me.handler(e) if me.handler
         #($ document).keyup fn
-
-        fn1 = (e) ->
-            if not $(e.target).closest(me.scheme).length
-                ($ document).unbind "click", fn1
-                me.handler(e) if me.handler
-        
-        ($ document).click fn1
+        ($ document).click @clickHandler
         @searchbox = @find "searchbox"
         ($ @searchbox).focus()
         ($ @searchbox).keyup (e) ->
@@ -30,8 +26,15 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
             return if e.data.dataid and e.data.dataid is "header"
             me.handler(e) if me.handler
             me._gui.openWith e.data
+            ($ document).unbind "click", me.clickHandler
+            me.quit()
     
-
+    clickHandler: (e) ->
+        me = @
+        if not $(e.target).closest(me.scheme).length
+            ($ document).unbind "click", me.clickHandler
+            me.handler(e) if me.handler
+            me.quit()
 
     search: (e) ->
         switch e.which
@@ -52,6 +55,8 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
                 return if sel.dataid and sel.dataid is "header"
                 @.handler(e) if @.handler
                 @._gui.openWith sel
+                ($ document).unbind "click", @clickHandler
+                @.quit()
             else
                 text = @searchbox.value
                 ($ @scheme).css("height", "45px")
@@ -81,13 +86,13 @@ class Spotlight extends this.OS.GUI.BaseService
 
     awake: (e) ->
         me = @
-        @show = not @show
-        if @show
+        if not @show
+            me.show = true
             @openDialog "SpotlightDialog", (d) ->
                 me.show = false
-                me.dialog.quit() if me.dialog
                 me.dialog = undefined
         else
+            me.show = false
             @dialog.quit() if @dialog
 
     cleanup: (evt) ->

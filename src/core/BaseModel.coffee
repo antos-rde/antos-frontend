@@ -35,7 +35,7 @@ class BaseModel
 
     trigger: (e, d) -> @observable.trigger e, d
 
-    subscribe: (e, f) -> 
+    subscribe: (e, f) ->
         _courrier.on e, f, @
 
     openDialog: (d, f, title, data) ->
@@ -46,6 +46,7 @@ class BaseModel
             @error "Dialog #{d} not found"
             return
         @dialog = new _GUI.subwindows[d]()
+        #@dialog.observable = riot.observable() unless @dialog
         @dialog.parent = @
         @dialog.handler = f
         @dialog.pid = @pid
