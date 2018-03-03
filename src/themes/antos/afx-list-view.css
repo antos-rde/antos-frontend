@@ -129,3 +129,6 @@ afx-list-view ul.complex-content li{
     color:#5e5f59;
     list-style: none;
 }
+afx-list-view  > div.list-container > ul > li.selected ul.complex-content li{
+    color:white;
+}

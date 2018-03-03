@@ -311,5 +311,9 @@ self.OS.API.onsearch "Google Drive", (t) ->
             file = k.asFileHandler()
             file.text = file.basename
             file.mime = v.mime
+            file.iconclass = "fa fa-file"
+            file.iconclass = "fa fa-folder" if file.mime is "dir"
+            file.complex = true
+            file.detail = [{ text: file.path }]
             arr.push file
     return arr

@@ -92,3 +92,9 @@ afx-app-window[data-id = "spotlight-win"] afx-resizer{
     background-color: transparent;
     border-left: 1px solid #cacaca;
 }
+afx-app-window[data-id = "spotlight-win"]  afx-list-view[data-id="container"] ul.complex-content li{
+    /*padding-left: 20px;*/
+    font-style: italic;
+    color: #b1b1b1;
+    font-size: 11px;
+}

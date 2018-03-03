@@ -51,12 +51,16 @@
             if (v.name.match term) or (v.description and v.description.match term)
                 v1 = {}
                 v1[k1] = e for k1, e of v when k1 isnt "selected"
+                v1.detail = [{ text: v1.path }]
+                v1.complex = true
                 ar.push v1
             else if v.mimes
                 for m in v.mimes
                     if t.match (new RegExp m, "g")
                         v1 = {}
                         v1[k1] = v[k1] for k1, e of v when k1 isnt "selected"
+                        v1.detail = [{ text: v1.path }]
+                        v1.complex = true
                         ar.push v1
                         break
         return ar
