@@ -65,7 +65,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
             else
                 text = @searchbox.value
                 ($ @scheme).css("height", "45px")
-                return unless text.length > 3
+                return unless text.length >= 3
                 result = @_api.search text
                 return if result.length is 0
                 @container.set "items", result

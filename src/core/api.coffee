@@ -220,7 +220,7 @@ self.OS.API =
         return r
 
     onsearch: (name, fn) ->
-        _API.searchHandler[name] = fn unless _API.searchHandler[name]
+        self.OS.API.searchHandler[name] = fn unless self.OS.API.searchHandler[name]
 
     throwe: (n) ->
         err = undefined

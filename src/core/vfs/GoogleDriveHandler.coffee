@@ -1,6 +1,6 @@
 
 # GoogleDrive File Handler
-G_CACHE = {"gdv:///":"root"}
+G_CACHE = {"gdv:///":{ id: "root", mime: 'dir' } }
 
 class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
@@ -17,7 +17,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         fn = (r) ->
             return f() if r
             # perform the login
-            G_CACHE = {"gdv:///":"root"}
+            G_CACHE = {"gdv:///":{ id: "root", mime: 'dir' } }
             gapi.auth2.getAuthInstance().signIn()
 
         if _API.libready @setting.apilink
@@ -52,7 +52,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         me = @
         @oninit () ->
             q = _courrier.getMID()
-            me.gid = G_CACHE[me.path] if G_CACHE[me.path]
+            me.gid = G_CACHE[me.path].id if G_CACHE[me.path]
             if me.gid
                 #console.log "Gid exists ", me.gid
                 _API.loading q, "GAPI"
@@ -75,7 +75,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     file = d.result
                     q1 = _courrier.getMID()
                     _API.loading q1, "GAPI"
-                    G_CACHE[fp.path] = file.id
+                    G_CACHE[fp.path] = { id: file.id, mime: file.mimeType }
                     gapi.client.drive.files.list {
                         q: "name = '#{me.basename}' and '#{file.id}' in parents and trashed = false",
                         fields: "files(#{me.fields()})"
@@ -84,7 +84,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         #console.log r
                         _API.loaded q1, "OK"
                         return unless r.result.files and r.result.files.length > 0
-                        G_CACHE[me.path] = r.result.files[0].id
+                        G_CACHE[me.path] = { id: r.result.files[0].id, mime: r.result.files[0].mimeType }
                         r.result.files[0].mime = r.result.files[0].mimeType
                         f { result: r.result.files[0] }
                     .catch (err) ->
@@ -150,6 +150,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                                 file.mime = "dir"
                                 file.type = "dir"
                                 file.size = 0
+                            G_CACHE[file.path] = { id: file.gid, mime: file.mime }
                         f { result: r.result.files }
                     .catch (err) ->
                         _API.loaded q, "FAIL"
@@ -186,7 +187,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     _API.loaded q, "OK"
                     #console.log r
                     return _courrier.oserror "VFS cannot create : #{p}", (_API.throwe "OS.VFS"), r unless r and r.result
-                    G_CACHE[me.child p] = r.result.id
+                    G_CACHE[me.child p] = { id: r.result.id, mime: "dir" }
                     f r
                 .catch (err) ->
                     _API.loaded q, "FAIL"
@@ -195,7 +196,8 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 return
             
             when "write"
-                gid = G_CACHE[me.path]
+                gid = undefined
+                gid = G_CACHE[me.path].id if G_CACHE[me.path]
                 if gid
                     _API.loaded q, "OK"
                     @save gid, p, f
@@ -214,7 +216,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         .then (r) ->
                             _API.loaded q, "OK"
                             return _courrier.oserror "VFS cannot write : #{me.path}", (_API.throwe "OS.VFS"), r unless r and r.result
-                            G_CACHE[me.path] = r.result.id
+                            G_CACHE[me.path] = { id: r.result.id, mime: p }
                             me.save r.result.id, p, f
                         .catch (err) ->
                             _API.loaded q, "FAIL"
@@ -300,3 +302,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
 
 
 self.OS.API.VFS.register "^gdv$", GoogleDriveHandler
+# search the cache for file
+self.OS.API.onsearch "Google Drive", (t) ->
+    arr = []
+    term = new RegExp t, "i"
+    for k, v of G_CACHE
+        if k.match term or (v and v.mime.match term)
+            file = k.asFileHandler()
+            file.text = file.basename
+            file.mime = v.mime
+            arr.push file
+    return arr
