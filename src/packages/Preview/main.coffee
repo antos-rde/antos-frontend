@@ -8,8 +8,8 @@ class Preview extends this.OS.GUI.BaseApplication
         @view = @find "view"
         @status = @find "status"
         PDFJS.workerSrc = @_api.handler.get + "/#{@path()}/pdf.worker.js"
-        @bindKey "ALT-O", () -> me.actionFile "#{@name}-Open"
-        @bindKey "CTRL-O", () -> me.actionFile "#{@name}-Close"
+        @bindKey "ALT-O", () -> me.actionFile "#{me.mame}-Open"
+        @bindKey "CTRL-O", () -> me.actionFile "#{me.name}-Close"
         @open @currfile
 
     
