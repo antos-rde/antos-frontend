@@ -307,7 +307,7 @@ self.OS.API.onsearch "Google Drive", (t) ->
     arr = []
     term = new RegExp t, "i"
     for k, v of G_CACHE
-        if k.match term or (v and v.mime.match term)
+        if (k.match term) or (v and v.mime.match term)
             file = k.asFileHandler()
             file.text = file.basename
             file.mime = v.mime
