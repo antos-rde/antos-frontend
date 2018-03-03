@@ -49,10 +49,14 @@
         term = new RegExp t, "i"
         for k, v of _OS.setting.system.packages when v.app
             if (v.name.match term) or (v.description and v.description.match term)
-                ar.push v
+                v1 = {}
+                v1[k1] = e for k1, e of v when k1 isnt "selected"
+                ar.push v1
             else if v.mimes
                 for m in v.mimes
                     if t.match (new RegExp m, "g")
-                        ar.push v
+                        v1 = {}
+                        v1[k1] = v[k1] for k1, e of v when k1 isnt "selected"
+                        ar.push v1
                         break
         return ar
