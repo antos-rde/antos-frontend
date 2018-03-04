@@ -19,6 +19,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         ($ document).keyup @fn
 
         @fn1 = (e) ->
+            return if $(e.target).closest(me.parent.holder.root).length
             if not $(e.target).closest(me.scheme).length
                 ($ document).unbind "click", me.fn1
                 ($ document).unbind "keyup", me.fn
