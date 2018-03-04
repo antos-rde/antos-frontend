@@ -334,7 +334,7 @@ self.OS.GUI =
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
         menu.onmenuselect = (d) ->
-            return _API.handler.logout() if d.item.data.dataid is "sys-logout"
+            return _OS.exit() if d.item.data.dataid is "sys-logout"
             return _GUI.toggleFullscreen() if d.item.data.dataid is "os-fullsize"
             _GUI.launch d.item.data.app unless d.item.data.dataid
         

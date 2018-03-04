@@ -118,3 +118,12 @@ self.OS or=
             else
                 # startX :)
                 _GUI.startAntOS d.result
+    
+    cleanupHandlers: {}
+    exit: ->
+        #do clean up first
+        f() for n, f of _OS.cleanupHandlers
+        _API.handler.setting () ->
+            _API.handler.logout()
+    onexit: (n, f) ->
+        self.OS.cleanupHandlers[n] = f unless self.OS.cleanupHandlers[n]

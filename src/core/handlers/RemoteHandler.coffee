@@ -72,12 +72,11 @@ self.OS.API.handler =
         _API.post p, d, c, () ->
             alert "Resource not found: #{p}"
     logout: () ->
-        _API.handler.setting () ->
-            p = "#{_REST}/system/logout"
-            _API.post p, {}, (d) ->
-                _OS.boot()
-            , () ->
-                alert "Resource not found #{p}"
+        p = "#{_REST}/system/logout"
+        _API.post p, {}, (d) ->
+            _OS.boot()
+        , () ->
+            alert "Resource not found #{p}"
     setting: (f) ->
         p = "#{_REST}/system/settings"
         _API.post p, _OS.setting, (d) ->

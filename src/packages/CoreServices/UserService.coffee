@@ -16,7 +16,7 @@ class UserService extends this.OS.GUI.BaseService
             }
         ]
         @onmenuselect = (d) ->
-            return me._api.handler.logout() if d.item.data.dataid is "sys-logout"
+            return window.OS.exit() if d.item.data.dataid is "sys-logout"
             me.notify "This feature is not implemented yet"
     awake: (e) ->
         

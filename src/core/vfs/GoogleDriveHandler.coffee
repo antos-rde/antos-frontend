@@ -43,7 +43,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         _GUI.openDialog "YesNoDialog", (d) ->
                             return _courrier.osinfo "User abort the authentification" unless d
                             fn(gapi.auth2.getAuthInstance().isSignedIn.get())
-                        , "Authentification", { text: "Do you want to login to Google Drive ?" }
+                        , "Authentification", { text: "Would you like to login to Google Drive ?" }
                     .catch (err) ->
                         _API.loaded q, "FAIL"
                         _courrier.oserror "VFS cannot init GAPI: #{err.error}", (_API.throwe "OS.VFS"), err
@@ -317,3 +317,20 @@ self.OS.API.onsearch "Google Drive", (t) ->
             file.detail = [{ text: file.path }]
             arr.push file
     return arr
+
+self.OS.onexit "cleanUpGoogleDrive", () ->
+    G_CACHE = { "gdv:///": { id: "root", mime: 'dir' } }
+    return unless _OS.setting.VFS.gdrive and _API.libready _OS.setting.VFS.gdrive.apilink
+    auth2 = gapi.auth2.getAuthInstance()
+    return unless auth2
+    if auth2.isSignedIn.get()
+        el = $ '<iframe/>', {
+            src: 'https://www.google.com/accounts/Logout',
+            frameborder: 0,
+            onload: () ->
+                #console.log("disconnect")
+                auth2.disconnect()
+                #$(this).remove()
+        }
+        #($ "body").append(el)
+            
