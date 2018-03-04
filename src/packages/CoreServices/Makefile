@@ -4,7 +4,7 @@ jsfiles =
 
 cssfiles = main.css
 
-copyfiles = package.json notifications.html spotlight.html
+copyfiles = package.json
 
 
 PKG_NAME=CoreServices

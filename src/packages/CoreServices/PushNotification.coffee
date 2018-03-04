@@ -7,8 +7,9 @@ class PushNotification extends this.OS.GUI.BaseService
         @pending = []
     init: ->
         @view = false
-        path = path = "#{@meta().path}/notifications.html"
-        @render path
+        @_gui.htmlToScheme PushNotification.scheme, @, @host
+        #path = path = "#{@meta().path}/notifications.html"
+        #@render path
 
     spin: (b) ->
         if b and @iconclass is "fa fa-bars"
@@ -93,5 +94,16 @@ class PushNotification extends this.OS.GUI.BaseService
         
     cleanup: (evt) ->
         # do nothing
-
+PushNotification.scheme = """
+<afx-dummy>
+    <afx-overlay data-id = "notifyzone" width = "250">
+        <afx-button text = "Clear all" data-id = "btclear"></afx-button>
+        <afx-list-view data-id="notifylist"></afx-list-view>
+    </afx-overlay>
+    <afx-overlay data-id = "feedzone" width = "250">
+        <afx-list-view data-id = "notifeed">
+        </afx-list-view>
+    </afx-overlay>
+</afx-dummy>
+"""
 this.OS.register "PushNotification",PushNotification

@@ -3,8 +3,8 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         super "SpotlightDialog"
 
     init: () ->
-        @render "#{@path()}/spotlight.html"
-
+        #@render "#{@path()}/spotlight.html"
+        @_gui.htmlToScheme SpotlightDialog.scheme, @, @host
     main: () ->
         me = @
         @height = ($ @scheme).css("height")
@@ -37,7 +37,6 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
             ($ document).unbind "click", me.fn1
             ($ document).unbind "keyup", me.fn
             me.quit()
-    
 
 
     search: (e) ->
@@ -71,7 +70,17 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
                 @container.set "items", result
                 ($ @scheme).css("height", @height)
 
-            
+SpotlightDialog.scheme = """
+<afx-app-window data-id = "spotlight-win" apptitle="" minimizable="false" resizable = "false" width="500" height="300">
+    <afx-vbox>
+        <afx-hbox data-height="45">
+            <div data-id = "searchicon" data-width="45"></div>
+            <input type = "text" data-id="searchbox"/>
+        </afx-hbox>
+        <afx-list-view data-id="container"></afx-list-view>
+    </afx-vbox>
+</afx-app-window>
+"""  
 this.OS.register "SpotlightDialog", SpotlightDialog
 
 class Spotlight extends this.OS.GUI.BaseService
@@ -80,6 +89,9 @@ class Spotlight extends this.OS.GUI.BaseService
         @iconclass = "fa fa-search"
         @show = false
     init: ->
+        me = @
+        @_gui.bindKey "CTRL- ", (e) ->
+            me.awake(e)
         #@child = [
         #    {
         #        text: "#{@.name} (#{@.pid}): dummy notif",
@@ -88,7 +100,7 @@ class Spotlight extends this.OS.GUI.BaseService
         #]
         # do nothing
     main: ->
-
+        
     awake: (e) ->
         me = @
         if not @show

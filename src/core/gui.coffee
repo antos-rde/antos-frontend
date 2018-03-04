@@ -2,6 +2,11 @@ self.OS.GUI =
     subwindows: new Object()
     dialog: undefined
     fullscreen: false
+    shortcut:
+        ALT: {}
+        CTRL: {}
+        SHIFT: {}
+        META: {}
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
         ($ parent).append scheme
@@ -188,6 +193,14 @@ self.OS.GUI =
         handler event.target
         event.preventDefault()
 
+    bindKey: (k, f) ->
+        arr = k.split "-"
+        return unless arr.length is 2
+        fnk = arr[0].toUpperCase()
+        c = arr[1].toUpperCase()
+        return unless _GUI.shortcut[fnk]
+        _GUI.shortcut[fnk][c] = f
+        
     initDM: ->
         ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
             _GUI.fullscreen = not _GUI.fullscreen
@@ -202,7 +215,7 @@ self.OS.GUI =
                     dock = ($ "#sysdock")[0]
                     return unless dock
                     app = dock.get "selectedApp"
-                    return true unless app
+                    #return true unless app
                     c = String.fromCharCode(event.which).toUpperCase()
                     fnk = undefined
                     if event.ctrlKey
@@ -214,9 +227,13 @@ self.OS.GUI =
                     else if event.altKey
                         fnk = "ALT"
                     
-                    return unless fnk
-                    r = app.shortcut fnk, c
-                    event.preventDefault() if not r
+                    return  unless fnk
+                    r = if app then  app.shortcut fnk, c, event else true
+                    return  event.preventDefault() if not r
+                    return  unless _GUI.shortcut[fnk]
+                    return  unless _GUI.shortcut[fnk][c]
+                    _GUI.shortcut[fnk][c](event)
+                    event.preventDefault()
             # system menu and dock
             riot.mount ($ "#syspanel", $ "#wrapper")
             riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }

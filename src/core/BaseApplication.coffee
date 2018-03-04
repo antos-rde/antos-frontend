@@ -42,10 +42,10 @@ class BaseApplication extends this.OS.GUI.BaseModel
         return unless @keycomb[fnk]
         @keycomb[fnk][c] = f
 
-    shortcut: (fnk, c) ->
+    shortcut: (fnk, c, e) ->
         return true unless @keycomb[fnk]
         return true unless @keycomb[fnk][c]
-        @keycomb[fnk][c]()
+        @keycomb[fnk][c](e)
         return false
     
     applySetting: (k) ->
