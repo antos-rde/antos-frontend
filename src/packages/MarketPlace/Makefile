@@ -4,7 +4,7 @@ jsfiles =
 
 cssfiles = main.css
 
-copyfiles = repositorydia.html scheme.html package.json
+copyfiles = scheme.html package.json
 
 
 PKG_NAME=MarketPlace

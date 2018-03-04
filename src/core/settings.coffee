@@ -27,10 +27,10 @@
         apps: []
     } if not _OS.setting.system.startup
 
-    _OS.setting.system.pkgpaths = [
-        "home:///.packages",
-        "os:///packages"
-    ] unless _OS.setting.system.pkgpaths
+    _OS.setting.system.pkgpaths = {
+        user: "home:///.packages",
+        system: "os:///packages"
+     } unless _OS.setting.system.pkgpaths
     _OS.setting.system.menu = {} unless _OS.setting.system.menu
     _OS.setting.system.repositories = [] unless _OS.setting.system.repositories
     _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme

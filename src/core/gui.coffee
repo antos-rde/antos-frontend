@@ -7,6 +7,16 @@ self.OS.GUI =
         CTRL: {}
         SHIFT: {}
         META: {}
+    SYS_MENU: [
+        {
+            text: "Applications",
+            child: [],
+            dataid: "sys-apps"
+            iconclass: "fa fa-adn",
+            onmenuselect: (d) ->
+                _GUI.launch d.item.data.app
+        }
+    ]
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
         ($ parent).append scheme
@@ -324,38 +334,32 @@ self.OS.GUI =
             alert "System fall: Cannot init desktop manager"
             console.log s, e
 
-
+    refreshSystemMenu: () ->
+        _GUI.SYS_MENU.length = 1
+        _GUI.SYS_MENU[0].child.length = 0
+        _GUI.SYS_MENU[0].child.push v for k, v of _OS.setting.system.packages when (v and v.app)
+        _GUI.SYS_MENU.push v for k, v of _OS.setting.system.menu
+        _GUI.SYS_MENU.push
+            text: "Toggle Full screen",
+            dataid: "os-fullsize",
+            iconclass: "fa fa-tv"
+        _GUI.SYS_MENU.push
+            text: "Log out",
+            dataid: "sys-logout",
+            iconclass: "fa fa-user-times"
     buildSystemMenu: () ->
-        
         menu =
             text: ""
             iconclass: "fa fa-eercast"
             dataid: "sys-menu-root"
-            child: [
-                {
-                    text: "Application",
-                    child: ( v for k, v of _OS.setting.system.packages when v.app ),
-                    dataid: "sys-apps"
-                    iconclass: "fa fa-adn",
-                    onmenuselect: (d) ->
-                        _GUI.launch d.item.data.app
-                }
-            ]
-        menu.child = menu.child.concat (v for k, v of _OS.setting.system.menu)
-        menu.child.push
-            text: "Toggle Full screen",
-            dataid: "os-fullsize",
-            iconclass: "fa fa-tv"
-        menu.child.push
-            text: "Log out",
-            dataid: "sys-logout",
-            iconclass: "fa fa-user-times"
+            child: _GUI.SYS_MENU
         menu.onmenuselect = (d) ->
             return _OS.exit() if d.item.data.dataid is "sys-logout"
             return _GUI.toggleFullscreen() if d.item.data.dataid is "os-fullsize"
             _GUI.launch d.item.data.app unless d.item.data.dataid
-        
-        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", [menu]
+        menu = [menu]
+        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", menu
+
         #console.log menu
         
         
@@ -399,6 +403,7 @@ self.OS.GUI =
                                 v.mime = "antos/app"
                                 v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
                         _OS.setting.system.packages = if r.result then r.result else
+                        _GUI.refreshSystemMenu()
                         _GUI.buildSystemMenu()
                         # push startup services
                         # TODO: get services list from user setting

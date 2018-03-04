@@ -19,6 +19,12 @@ String.prototype.unescape = () ->
     d = d.replace /\\f/g, "\f"
     d = d.replace /\\r/g, "\r"
     d
+String.prototype.asUnit8Array = () ->
+    bytes = []
+    for i in [0..(@length - 1)]
+        bytes.push @charCodeAt i
+    bytes = new Uint8Array(bytes)
+    return bytes
 
 Date.prototype.toString = () ->
     dd = @getDate()
@@ -202,11 +208,11 @@ self.OS.API =
     packages:
         fetch: (f) ->
             _API.handler.packages {
-                command: "list", args: { paths: _OS.setting.system.pkgpaths }
+                command: "list", args: { paths: (v for k, v of _OS.setting.system.pkgpaths) }
             }, f
         cache: (f) ->
             _API.handler.packages {
-                command: "cache", args: { paths: _OS.setting.system.pkgpaths }
+                command: "cache", args: { paths: (v for k, v of _OS.setting.system.pkgpaths) }
             }, f
 
     search: (text) ->
