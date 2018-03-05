@@ -150,6 +150,13 @@ class Blogger extends this.OS.GUI.BaseApplication
                                 doc.replaceSelection "![](#{me._api.handler.shared}/#{r.result})"
                         , "Select image file", { mimes: ["image/.*"] }
                 },
+                {
+                    name:"Youtube",
+                    className: "fa fa-youtube",
+                    action: (e) ->
+                        doc = me.editor.codemirror.getDoc()
+                        doc.replaceSelection "[[youtube:]]"
+                }
                 "|",
                 {
                     name: "preview",
