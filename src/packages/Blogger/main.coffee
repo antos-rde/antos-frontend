@@ -311,14 +311,40 @@ class Blogger extends this.OS.GUI.BaseApplication
             ctimestr: if sel then sel.ctimestr else d.toString()
             utime: d.timestamp()
             utimestr: d.toString()
-            rendered: me.editor.options.previewRender(content).asBase64()
+            rendered: me.process(me.editor.options.previewRender(content))
             publish: if ((@find "blog-publish").get "swon") then 1 else 0
         data.id = sel.id if sel
-        
         #save the data
         @blogdb.save data, (r) ->
             return me.error "Cannot save blog: #{r.error}" if r.error
             me.loadBlogs()
+    
+    process: (text) ->
+        # find video tag and rendered it
+        embed = (id) ->
+            return """
+                <iframe
+                    class = "embeded-video"
+                    width="560" height="315" 
+                    src="https://www.youtube.com/embed/#{id}"
+                    frameborder="0" allow="encrypted-media" allowfullscreen
+                ></iframe>
+            """
+        re  = /\[\[([^:]*):([^\]]*)\]\]/g
+        replace = []
+        while (found = re.exec text) isnt null
+            replace.push found
+        return text.asBase64() unless replace.length > 0
+        ret = ""
+        begin = 0
+        for it in replace
+            ret += text.substring begin, it.index
+            ret += embed(it[2])
+            begin = it.index + it[0].length
+        ret += text.substring begin, text.length
+        #console.log ret
+        return ret.asBase64()
+        
     clearEditor:() ->
         @.editor.value ""
         @.inputtags.value = ""
