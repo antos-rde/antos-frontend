@@ -7,12 +7,6 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         me = @
         @installdir = @systemsetting.system.pkgpaths.user
         # test repository
-        @systemsetting.system.repositories.push {
-            text: "Antos repository"
-            url: "https://os.localhost:9195/repo/packages.json"
-            name: "Antos repository"
-            selected:true
-        } if @systemsetting.system.repositories.length is 0
         @repo = @find "repo"
         @repo.set "onlistselect", (e) ->
             return unless e.data
