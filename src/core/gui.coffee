@@ -76,7 +76,7 @@ self.OS.GUI =
                 _courrier.osfail "Cannot read service script: #{srv} ", e, s
 
     appsByMime: (mime) ->
-        metas = ( v for k, v of _OS.setting.system.packages when v.app )
+        metas = ( v for k, v of _OS.setting.system.packages when v and v.app )
         mimes = ( m.mimes for m in metas when m)
         apps = []
         # search app by mimes
@@ -95,7 +95,7 @@ self.OS.GUI =
     
     appsWithServices: () ->
         o = {}
-        o[k] = v for k, v of _OS.setting.system.packages when v.services and v.services.length > 0
+        o[k] = v for k, v of _OS.setting.system.packages when v and v.services and v.services.length > 0
         o
 
     openWith: (it) ->
