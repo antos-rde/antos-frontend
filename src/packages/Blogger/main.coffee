@@ -184,7 +184,10 @@ class Blogger extends this.OS.GUI.BaseApplication
             ,  "Delete a post" ,
             { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
             return false
-
+        @bindKey "CTRL-S", () ->
+            sel = me.tabbar.get "selidx"
+            return unless sel is 2
+            me.saveBlog()
         @on "vboxchange", () ->
             me.resizeContent()
     # USER TAB
