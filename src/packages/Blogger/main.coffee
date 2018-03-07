@@ -162,9 +162,11 @@ class Blogger extends this.OS.GUI.BaseApplication
         @bloglist.set "onlistselect", (e) ->
             sel = me.bloglist.get "selected"
             return unless sel
-            me.editor.value atob(sel.content)
-            me.inputtags.value = sel.tags
-            (me.find "blog-publish").set "swon", (if Number(sel.publish) then true else false)
+            me.blogdb.get Number(sel.id), (r) ->
+                me.error "Cannot fetch the entry content" if r.error
+                me.editor.value atob(r.result.content)
+                me.inputtags.value = r.result.tags
+                (me.find "blog-publish").set "swon", (if Number(r.result.publish) then true else false)
 
         @.bloglist.set "onitemclose", (e) ->
             me.openDialog "YesNoDialog", (b) ->
@@ -356,13 +358,19 @@ class Blogger extends this.OS.GUI.BaseApplication
         cond =
             order:
                 ctime: "DESC"
+            fields: [
+                "id",
+                "title",
+                "ctimestr",
+                "utimestr"
+            ]
         @blogdb.find cond, (r) ->
             return me.notify "No post found: #{r.error}" if r.error
+            console.log r.result
             for v in r.result
                 v.text = v.title
                 v.complex = true
                 v.closable = true
-                v.content = v.content.unescape()
                 v.detail = [
                     { text: "Created: #{v.ctimestr}", class: "blog-dates" },
                     { text: "Updated: #{v.utimestr}", class: "blog-dates" }]
