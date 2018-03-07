@@ -372,6 +372,8 @@ class Blogger extends this.OS.GUI.BaseApplication
                 "id",
                 "title",
                 "ctimestr",
+                "ctime",
+                "utime",
                 "utimestr"
             ]
         @blogdb.find cond, (r) ->
