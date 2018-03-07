@@ -7,12 +7,6 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         me = @
         @installdir = @systemsetting.system.pkgpaths.user
         # test repository
-        @systemsetting.system.repositories.push {
-            text: "Antos repository"
-            url: "https://os.localhost:9195/repo/packages.json"
-            name: "Antos repository"
-            selected:true
-        } if @systemsetting.system.repositories.length is 0
         @repo = @find "repo"
         @repo.set "onlistselect", (e) ->
             return unless e.data
@@ -128,7 +122,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             (d) ->
                 return unless d
                 app.path.asFileHandler().remove (r) ->
-                    me.error "Cannot uninstall package: #{r.error}" if r.error
+                    return me.error "Cannot uninstall package: #{r.error}" if r.error
                     me.notify "Package uninstalled"
                     me.systemsetting.system.packages[name] = undefined
                     me._gui.refreshSystemMenu()

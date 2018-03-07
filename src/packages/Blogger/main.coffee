@@ -150,6 +150,13 @@ class Blogger extends this.OS.GUI.BaseApplication
                                 doc.replaceSelection "![](#{me._api.handler.shared}/#{r.result})"
                         , "Select image file", { mimes: ["image/.*"] }
                 },
+                {
+                    name:"Youtube",
+                    className: "fa fa-youtube",
+                    action: (e) ->
+                        doc = me.editor.codemirror.getDoc()
+                        doc.replaceSelection "[[youtube:]]"
+                }
                 "|",
                 {
                     name: "preview",
@@ -179,7 +186,10 @@ class Blogger extends this.OS.GUI.BaseApplication
             ,  "Delete a post" ,
             { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
             return false
-
+        @bindKey "CTRL-S", () ->
+            sel = me.tabbar.get "selidx"
+            return unless sel is 2
+            me.saveBlog()
         @on "vboxchange", () ->
             me.resizeContent()
     # USER TAB

@@ -8,12 +8,16 @@
                 <span if={data.shortcut} class = "shortcut">{data.shortcut}</span>
             </a>
             
-            <afx-menu  if={data.child != null && data.child.length > 0} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
+            <afx-menu ref = "submenus" index = {i} if={data.child != null && data.child.length > 0} child={data.child} onmenuselect = {data.onmenuselect}  observable = {parent.root.observable} rootid = {parent.rid}></afx-menu>
         </li>
          <li class="afx-corner-fix"></li>
     </ul>
     <script>
         this.items = opts.child || []
+        if(opts.index != undefined)
+            this.index = opts.index
+        else
+            this.index = -1
         var isRoot
         var lastChecked = undefined
         if(opts.rootid)
@@ -48,6 +52,7 @@
                 self[k] = v
             self.update()
         }
+        
         self.root.push = function(e,u)
         {
             self.items.push(e)

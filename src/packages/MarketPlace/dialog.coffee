@@ -9,18 +9,54 @@ class RepositoryDialog extends this.OS.GUI.BaseDialog
     main: () ->
         me = @
         @list = @find "repo-list"
-        ls = ({ text: v.name, iconclass: "fa fa-link", url: v.url
-        } for v in @systemsetting.system.repositories)
-        @url = @find "repo-url"
-        @list.set "onlistselect", (e) ->
-            ($ me.url).html e.data.url
-        @list.set "items", ls
+        @list.set "onlistdbclick", (e) ->
+            selidx = me.list.get "selidx"
+            return unless  selidx >= 0
+            sel = me.systemsetting.system.repositories[selidx]
+            me.openDialog "PromptDialog", (e) ->
+                m = e.match /\[([^\]]*)\]\s*(.*)/
+                return me.error "Wrong format: it should be [name] url" if not m or m.length isnt 3
+                sel.name = m[1]
+                sel.text = sel.name
+                sel.url = m[2]
+                me.refreshList()
+            , "Edit repository", { label: "Format : [name]url", value: "[#{e.data.text}] #{e.data.url}" }
         
+        (@find "btadd").set "onbtclick", (e) ->
+            me.openDialog "PromptDialog", (e) ->
+                m = e.match /\[([^\]]*)\]\s*(.*)/
+                return me.error "Wrong format: it should be [name] url" if not m or m.length isnt 3
+                me.systemsetting.system.repositories.push {
+                    name: m[1],
+                    url: m[2],
+                    text: m[1],
+                    i: me.systemsetting.system.repositories.length
+                }
+                me.refreshList()
+            , "Add repository", { label: "Format : [name]url" }
+        (@find "btdel").set "onbtclick", (e) ->
+            selidx = me.list.get "selidx"
+            return unless  selidx >= 0
+            me.systemsetting.system.repositories.splice selidx, selidx
+            me.refreshList()
+        (@find "btquit").set "onbtclick", (e) -> me.quit()
+        @refreshList()
+    refreshList: () ->
+        ls = ({
+            text: v.name,
+            iconclass: "fa fa-link",
+            url: v.url,
+            complex: true,
+            detail: [{ text: v.url }]
+        } for v in @systemsetting.system.repositories)
+        @list.set "items", ls
+    onexit: (e) ->
+        @parent.repo.set "items", @systemsetting.system.repositories
+        @parent.dialog = undefined if @parent
 RepositoryDialog.scheme = """
 <afx-app-window data-id = "repository-dialog-win" apptitle="Repositories" width="250" height="250">
         <afx-vbox >
             <afx-list-view data-id="repo-list"></afx-list-view>
-            <div data-id="repo-url" data-height="grow"></div>
             <afx-hbox data-height = "30">
                 <afx-button data-id = "btadd" text = "[+]" data-width="30"></afx-button>
                 <afx-button data-id = "btdel" text = "[-]" data-width="30"></afx-button>
