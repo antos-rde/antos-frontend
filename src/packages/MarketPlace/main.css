@@ -37,6 +37,10 @@ afx-app-window[data-id="marketplace-win"] p[data-id='app-desc'] {
     padding:10px;
     padding-top: 0;
 }
+afx-app-window[data-id="marketplace-win"] p[data-id='app-desc'] img{
+    display: block;
+    margin-bottom: 10px;
+}
 afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
     padding:0;
     padding-left:10px;

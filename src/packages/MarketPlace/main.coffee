@@ -49,6 +49,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         ($ @container).css "visibility", "visible"
         ( $ @appname ).html d.name
         ($ @appdesc).html d.description if d.description
+        ($ @appdesc).prepend ($ "<img/>").attr("src", d.screenshot) if d.screenshot
         
         if @systemsetting.system.packages[d.className]
             ($ @btinstall).hide()
