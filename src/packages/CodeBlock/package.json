@@ -1,0 +1,13 @@
+{
+    "app":"CodeBlock",
+    "name":"CodeBlock",
+    "description":"Programming using interlocking blocks",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.1a",
+    "category":"Programming",
+    "iconclass":"fa fa-puzzle-piece",
+    "mimes":["none"]
+}
