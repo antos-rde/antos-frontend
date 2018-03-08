@@ -156,4 +156,5 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                 me.error "Cannot install #{path}"
 
 MarketPlace.dependencies = [ "jszip.min" ]
+MarketPlace.singleton = true
 this.OS.register "MarketPlace", MarketPlace
