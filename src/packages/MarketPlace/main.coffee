@@ -116,7 +116,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         sel = @applist.get "selected"
         name = sel.className
         return unless sel
-        app = @systemsetting.system.packages[app.className]
+        app = @systemsetting.system.packages[sel.className]
         return unless app
         @openDialog "YesNoDialog",
             (d) ->
