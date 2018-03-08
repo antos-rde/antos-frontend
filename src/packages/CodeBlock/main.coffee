@@ -45,14 +45,33 @@ class CodeBlock extends this.OS.GUI.BaseApplication
         #});
 
         @blen = 1024
-        @btnact.set "onbtclick", (e) ->
+        #@btnact.set "onbtclick", (e) ->
             #me.openSession()
-            code = Blockly.JavaScript.workspaceToCode me.workspace
-            console.log code
+        #    code = Blockly.JavaScript.workspaceToCode me.workspace
+        #    console.log code
         @on "resize", () ->
             Blockly.svgResize me.workspace
+        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
+        @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
+        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
+        @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
 
-
+    menu: () ->
+        me = @
+        menu = [{
+                text: "File",
+                child: [
+                    { text: "New", dataid: "#{@name}-New", shortcut: "A-N" },
+                    { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
+                ],
+                onmenuselect: (e) -> me.actionFile e.item.data.dataid
+            }]
+        menu
+    
+    actionFile: (n) ->
+        console.log n
     openSession: () ->
         me = @
         proto = if window.location.protocol is "https:" then "wss://" else "ws://"
