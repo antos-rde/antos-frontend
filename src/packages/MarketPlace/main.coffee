@@ -96,7 +96,6 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     me.installFile app.className, zip, files, () ->
                         zip.file("package.json").async("string").then (d) ->
                             v = JSON.parse d
-                            console.log v
                             v.text = v.name
                             v.filename = app.className
                             v.type = "app"
@@ -114,9 +113,9 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             return me.error "Cannot down load the app #{err}" if err
     uninstall: (e) ->
         me = @
-        app = @applist.get "selected"
-        name = app.className
-        return unless app
+        sel = @applist.get "selected"
+        name = sel.className
+        return unless sel
         app = @systemsetting.system.packages[app.className]
         return unless app
         @openDialog "YesNoDialog",
@@ -127,7 +126,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     me.notify "Package uninstalled"
                     me.systemsetting.system.packages[name] = undefined
                     me._gui.refreshSystemMenu()
-                    me.appDetail app
+                    me.appDetail sel
         , "Uninstall" ,
         { text: "Uninstall : #{app.name} ?" }
     mkdirs: (n, list, f) ->
