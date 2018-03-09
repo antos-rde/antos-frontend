@@ -3,17 +3,18 @@
     _OS.setting.applications = conf.applications if conf.applications
     _OS.setting.appearance = conf.appearance if conf.appearance
     _OS.setting.user = conf.user
+    _OS.setting.user.language = "en_GB" unless conf.user.language
     _OS.setting.VFS = conf.VFS if conf.VFS
     _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
     _OS.setting.desktop.menu = {} unless _OS.setting.desktop.menu
     _OS.setting.VFS.mountpoints = [
         #TODO: multi app try to write to this object, it neet to be cloned
-        { text: "Applications", path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
-        { text: "Home", path: 'home:///', iconclass: "fa fa-home", type: "fs" },
-        { text: "Desktop", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
-        { text: "OS", path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
-        { text: "Google Drive", path: 'gdv:///', iconclass: "fa fa-inbox", type: "fs" },
-        { text: "Shared", path: 'shared:///' , iconclass: "fa fa-share-square", type: "fs" }
+        { text: __("Applications"), path: 'app:///', iconclass: "fa  fa-adn", type: "app" },
+        { text: __("Home"), path: 'home:///', iconclass: "fa fa-home", type: "fs" },
+        { text: __("Desktop"), path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
+        { text: __("OS"), path: 'os:///', iconclass: "fa fa-inbox", type: "fs" },
+        { text: __("Google Drive"), path: 'gdv:///', iconclass: "fa fa-inbox", type: "fs" },
+        { text: __("Shared"), path: 'shared:///' , iconclass: "fa fa-share-square", type: "fs" }
     ] if not _OS.setting.VFS.mountpoints
 
     _OS.setting.system = conf.system if conf.system
@@ -44,7 +45,7 @@
     } unless _OS.setting.VFS.gdrive
 
         #search for app
-    _API.onsearch "Applications", (t) ->
+    _API.onsearch __("Applications"), (t) ->
         ar = []
         term = new RegExp t, "i"
         for k, v of _OS.setting.system.packages when v.app

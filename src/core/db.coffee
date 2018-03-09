@@ -5,7 +5,7 @@ class DB
         _API.handler.dbquery "save", { table: @table, data: d }, f
     delete: (c, f) ->
         rq = { table: @table }
-        return  ( _courrier.oserror "Unknown condition for delete command",
+        return  ( _courrier.oserror __("VDB Unknown condition for delete command"),
         (_API.throwe "OS.DB"), c ) unless c and c isnt ""
         if isNaN c
             rq.cond = c

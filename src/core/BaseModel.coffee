@@ -43,7 +43,7 @@ class BaseModel
             @dialog.show()
             return
         if not _GUI.subwindows[d]
-            @error "Dialog #{d} not found"
+            @error __("Dialog {0} not found", d)
             return
         @dialog = new _GUI.subwindows[d]()
         #@dialog.observable = riot.observable() unless @dialog

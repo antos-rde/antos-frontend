@@ -124,7 +124,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                 app.path.asFileHandler().remove (r) ->
                     return me.error "Cannot uninstall package: #{r.error}" if r.error
                     me.notify "Package uninstalled"
-                    me.systemsetting.system.packages[name] = undefined
+                    delete me.systemsetting.system.packages[name]
                     me._gui.refreshSystemMenu()
                     me.appDetail sel
         , "Uninstall" ,

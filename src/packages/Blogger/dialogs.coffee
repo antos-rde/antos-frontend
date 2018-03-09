@@ -2,9 +2,9 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
         super "BloggerCategoryDialog", {
             tags: [
-                { tag: "afx-label", att: "data-height = '20', text = 'Pick a parent:'" },
+                { tag: "afx-label", att: "data-height = '20', text = 'Pick a parent'" },
                 { tag: "afx-tree-view" },
-                { tag: "afx-label", att: "data-height = '20', text = 'Category name:'" },
+                { tag: "afx-label", att: "data-height = '20', text = 'Category name'" },
                 { tag: "input", att: "type = 'text' data-height = '20'" }
             ],
             width: 200,
@@ -15,10 +15,10 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
                     label: "0k",
                     onclick: (d) ->
                         sel = (d.find "content1").get "selectedItem"
-                        return d.notify "Please select a parent category" unless sel
+                        return d.notify __("Please select a parent category") unless sel
                         val = (d.find "content3").value
-                        return d.notify "Please enter category name" if val is "" and not d.data.selonly
-                        return d.notify "Parent can not be the category itself" if d.data.cat and d.data.cat.id is sel.id
+                        return d.notify __("Please enter category name") if val is "" and not d.data.selonly
+                        return d.notify __("Parent can not be the category itself") if d.data.cat and d.data.cat.id is sel.id
                         d.handler { p: sel, value: val } if d.handler
                         d.quit()
                 },
@@ -66,7 +66,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
         ($ (@select '[class="CodeMirror cm-s-paper CodeMirror-wrap"]')[0]).css "min-height", "50px"
         @on "vboxchange", () ->
             me.resizeContent()
-            console.log "resize content"
+            
         inputs = me.select "[input-class='user-input']"
         (($ v).val me.data[v.name] for v in inputs ) if me.data
         @editor.value me.data.content if me.data and me.data.content
@@ -75,7 +75,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
             console.log inputs
             data[v.name] = ($ v).val() for v in inputs
             data.content = me.editor.value()
-            return me.notify "Title or content must not be blank" if data.title is "" and data.content is ""
+            return me.notify __("Title or content must not be blank") if data.title is "" and data.content is ""
             #return me.notify "Content must not be blank" if data.content is ""
             data.id = me.data.id if me.data and me.data.id
             me.handler data if me.handler

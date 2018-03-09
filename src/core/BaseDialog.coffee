@@ -87,7 +87,7 @@ class PromptDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: "0k",
+                    label: __("0k"),
                     onclick: (d) ->
                         txt = (d.find "content1").value
                         return d.quit() if txt is ""
@@ -95,7 +95,7 @@ class PromptDialog extends BasicDialog
                         d.quit()
                 },
                 {
-                    label: "Cancel",
+                    label: __("Cancel"),
                     onclick: (d) -> d.quit()
                 }
             ],
@@ -119,17 +119,17 @@ class CalendarDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: 'Ok',
+                    label: __('Ok'),
                     onclick: (d) ->
                         date = (d.find "content0").get "selectedDate"
                         if date
                             d.handler date if d.handler
                             d.quit()
                         else
-                            d.notify "Please select a date"
+                            d.notify __("Please select a date")
                 },
                 {
-                    label: 'Cancel',
+                    label: __('Cancel'),
                     onclick: (d) -> d.quit()
                 }
             ]
@@ -145,7 +145,7 @@ class ColorPickerDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: 'Ok',
+                    label: __('Ok'),
                     onclick: (d) ->
                         c = (d.find "content0").get "selectedColor"
                         if c
@@ -155,7 +155,7 @@ class ColorPickerDialog extends BasicDialog
                             d.notify "Please select a color"
                 },
                 {
-                    label: 'Cancel',
+                    label: __('Cancel'),
                     onclick: (d) -> d.quit()
                 }
             ]
@@ -169,7 +169,7 @@ class InfoDialog extends BasicDialog
             width: 250,
             height: 300,
             resizable: true,
-            buttons: [ { label: 'Cancel', onclick: (d) -> d.quit() } ],
+            buttons: [ { label: __('Cancel'), onclick: (d) -> d.quit() } ],
             filldata: (d) ->
                 return unless d.data
                 rows = []
@@ -188,12 +188,12 @@ class YesNoDialog extends BasicDialog
             resizable: true,
             buttons: [
                 {
-                    label: "Yes", onclick: (d) ->
+                    label: __("Yes"), onclick: (d) ->
                         d.handler true if d.handler
                         d.quit()
                 },
                 {
-                    label: "No", onclick: (d) ->
+                    label: __("No"), onclick: (d) ->
                         d.handler false if d.handler
                         d.quit()
                 }
@@ -215,14 +215,14 @@ class SelectionDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: "Ok", onclick: (d) ->
+                    label: __("Ok"), onclick: (d) ->
                         el = d.find "content0"
                         it = el.get "selected"
                         return unless it
                         d.handler it if d.handler
                         d.quit()
                 },
-                { label: "Cancel", onclick: (d) -> d.quit() }
+                { label: __("Cancel"), onclick: (d) -> d.quit() }
             ],
             filldata: (d) ->
                 return unless d.data
@@ -243,7 +243,7 @@ class AboutDialog extends BaseDialog
 
     main: () ->
         mt = @meta()
-        @scheme.set "apptitle", "About: #{mt.name}"
+        @scheme.set "apptitle", __("About: {0}",mt.name)
         (@find "mylabel").set "*", {icon:mt.icon, iconclass:mt.iconclass, text:"#{mt.name}(v#{mt.version})"}
         ($ @find "mydesc").html mt.description
         # grid data for author info
@@ -270,13 +270,13 @@ class FileDiaLog extends BaseDialog
         fileview.set "fetch", (e, f) ->
             return unless e.child
             e.child.path.asFileHandler().read (d) ->
-                return me.error "Resource not found #{e.child.path}" if d.error
+                return me.error __("Resource not found: {0}", e.child.path) if d.error
                 f d.result
         location.set "onlistselect", (e) ->
             return unless e and e.data.path
             e.data.path.asFileHandler().read (d) ->
                 if(d.error)
-                    return me.error "Resource not found #{e.data.path}"
+                    return me.error __("Resource not found: {0}", e.data.path)
                 fileview.set "path", e.data.path
                 fileview.set "data", d.result
         location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
@@ -286,7 +286,7 @@ class FileDiaLog extends BaseDialog
             ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
-            return me.notify "Please select a file" unless f
+            return me.notify __("Please select a file") unless f
             if me.data and me.data.mimes
                 #verify the mime
                 m = false
@@ -294,7 +294,7 @@ class FileDiaLog extends BaseDialog
                     if f.mime.match (new RegExp v, "g")
                         m = true
                         break
-                return me.notify "Only #{me.data.mimes.join(",")} could be selected" unless m
+                return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
             d = f.path
             d = f.path.asFileHandler().parent() if f.type is "file"
             me.handler d, ($ filename).val(), f.path if me.handler

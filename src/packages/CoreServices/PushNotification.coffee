@@ -97,7 +97,7 @@ class PushNotification extends this.OS.GUI.BaseService
 PushNotification.scheme = """
 <afx-dummy>
     <afx-overlay data-id = "notifyzone" width = "250">
-        <afx-button text = "Clear all" data-id = "btclear"></afx-button>
+        <afx-button text = "__(Clear all)" data-id = "btclear"></afx-button>
         <afx-list-view data-id="notifylist"></afx-list-view>
     </afx-overlay>
     <afx-overlay data-id = "feedzone" width = "250">

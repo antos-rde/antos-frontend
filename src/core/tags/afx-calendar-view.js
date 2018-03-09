@@ -3,7 +3,7 @@
     <afx-grid-view data-id ={"grid_" + rid}  style = "height:100%;" ref = "grid"  header = {header}> </afx-grid-view>
 
     <script >
-    this.header = [{value:"Sun"},{value:"Mon"},{value:"Tue"},{value:"Wed"},{value:"Thu"},{value:"Fri"},{value:"Sat"}]
+    this.header = [{value:__("Sun")},{value:__("Mon")},{value:__("Tue")},{value:__("Wed")},{value:__("Thu")},{value:__("Fri")},{value:__("Sat")}]
     this.root.observable = opts.observable
     var self = this
     this.day = 0
@@ -62,7 +62,7 @@
         self.year = date.getFullYear()
 
         var now ={ d:(new Date()).getDate(), m:(new Date()).getMonth(), y:(new Date()).getFullYear()}
-        months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        months = [__('January'), __('February'), __('March'), __('April'), __('May'), __('June'), __('July'), __('August'), __('September'), __('October'), __('November'), __('December')]
 
         this_month = new Date(self.year, self.month, 1)
         next_month = new Date(self.year, self.month + 1, 1)

@@ -2,7 +2,7 @@ String.prototype.asFileHandler = () ->
     list = @split ":///"
     handlers = _API.VFS.findHandlers list[0]
     if not handlers or handlers.length is 0
-        _courrier.osfail "VFS unknown handler: #{@}", (_API.throwe "OS.VFS"), @
+        _courrier.osfail __("VFS unknown handler: {0}", @), (_API.throwe "OS.VFS"), @
         return null
     return new handlers[0](@)
 
@@ -63,7 +63,7 @@ class BaseFileHandler
             reader.onload =  () ->
                 f reader.result
             reader.onerror = (e) ->
-                return _courrier.osfail "Cannot ecode file: #{me.path}", (_API.throwe "OS.VFS"), e
+                return _courrier.osfail __("VFS Cannot encode file: {0}", me.path), (_API.throwe "OS.VFS"), e
     parent: () ->
         return @ if @isRoot()
         return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
@@ -132,7 +132,7 @@ class BaseFileHandler
     # for main action read, write, remove, execute
     # must be implemented by subclasses
     action: (n, p, f) ->
-        return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+        return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
 
 # now export the class
 self.OS.API.VFS.BaseFileHandler = BaseFileHandler
@@ -154,7 +154,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
                 return _API.handler.fileblob @path, f if p is "binary"
                 _API.handler.readfile @path, f, if p then p else "text"
             when "mk"
-                return f { error: "#{@path} is not a directory" } if @info.type is "file"
+                return f { error: __("{0} is not a directory", @path) } if @info.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f
             when "write"
                 @sendB64 p, (data) ->
@@ -174,7 +174,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "move"
                 _API.handler.move @path, p, f
             else
-                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
 
 self.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandler
 
@@ -217,7 +217,7 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
             when "move"
                 return
             else
-                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
 
 self.OS.API.VFS.register "^app$", ApplicationHandler
 
@@ -267,7 +267,7 @@ class BufferFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "move"
                 return
             else
-                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
     
 self.OS.API.VFS.register "^mem$", BufferFileHandler
 
@@ -309,6 +309,6 @@ class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
             when "move"
                 return
             else
-                return _courrier.osfail "VFS unknown action: #{n}", (_API.throwe "OS.VFS"), n
+                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
     
 self.OS.API.VFS.register "^shared$", SharedFileHandler

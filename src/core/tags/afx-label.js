@@ -2,7 +2,7 @@
     <span style = {color?"color:" + color:""} >
         <i if={iconclass} class = {iconclass} ></i>
         <i if={icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-        { text }
+        { parse(text) }
     </span>
     <script>
         this.iconclass = opts.iconclass
@@ -28,6 +28,17 @@
         self.root.get = function(k)
         {
             return self[k]
+        }
+        parse(text)
+        {
+            if(!text) return ""
+            match = text.match(/^__\(([^\)]*)\)$/)
+            if(match)
+            {
+                return window.__(match[1])
+            }
+            else
+                return text
         }
     </script>
 </afx-label>

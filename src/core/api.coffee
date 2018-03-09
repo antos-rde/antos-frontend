@@ -26,6 +26,22 @@ String.prototype.asUnit8Array = () ->
     bytes = new Uint8Array(bytes)
     return bytes
 
+if not String.prototype.format
+    String.prototype.format = () ->
+        args = arguments
+        return @replace /{(\d+)}/g, (match, number) ->
+            return if typeof args[number] != 'undefined' then args[number] else match
+# language directive
+this.__ = () ->
+    _API = window.OS.API
+    args = arguments
+    return "Undefined" unless args.length > 0
+    d = args[0]
+    h = if typeof d is "string" then d.hash() else d
+    _API.lang[h] = d unless _API.lang[h]
+    return _API.lang[h] unless args.length > 1
+    return String.prototype.format.apply _API.lang[h], (args[i] for i in [1 .. args.length - 1])
+
 Date.prototype.toString = () ->
     dd = @getDate()
     mm = @getMonth() + 1
@@ -51,6 +67,7 @@ self.OS.API =
     handler: {}
     shared: {} # shared libraries
     searchHandler:{}
+    lang:{}
     #request a user data
     mid: () ->
         return _courrier.getMID()
@@ -178,7 +195,7 @@ self.OS.API =
                     _courrier.trigger "sharedlibraryloaded", l
                     f() if f
                 , (e, s) ->
-                    _courrier.oserror "Cannot load 3rd library at: #{l}", e, r
+                    _courrier.oserror __("Cannot load 3rd library at: {0}", l), e, r
             else
                 path = "os:///scripts/"
                 js = "#{path}#{l}.js"
@@ -196,7 +213,7 @@ self.OS.API =
                     _courrier.trigger "sharedlibraryloaded", l
                     f() if f
         else
-            console.log l, "Library exist, no need to load" 
+            console.log l, "Library exist, no need to load"
             _courrier.trigger "sharedlibraryloaded", l
 
     requires:(libs, f) ->
@@ -227,6 +244,15 @@ self.OS.API =
 
     onsearch: (name, fn) ->
         self.OS.API.searchHandler[name] = fn unless self.OS.API.searchHandler[name]
+
+    setLanguage: (name) ->
+        path = "resources/languages/#{name}.json"
+        _API.get path, (d) ->
+            _OS.setting.user.language = name
+            _API.lang = d
+        , (e, s) ->
+            _courrier.oserror __("Language file {0} not found", path), e, s
+        , "json"
 
     throwe: (n) ->
         err = undefined

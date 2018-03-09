@@ -9,7 +9,7 @@ self.OS.GUI =
         META: {}
     SYS_MENU: [
         {
-            text: "Applications",
+            text: __("Applications"),
             child: [],
             dataid: "sys-apps"
             iconclass: "fa fa-adn",
@@ -54,7 +54,7 @@ self.OS.GUI =
             return
         if not _GUI.subwindows[d]
             ex = _API.throwe "Dialog"
-            return _courrier.oserror "Dialog #{d} not found", ex, null
+            return _courrier.oserror __("Dialog {0} not found", d), ex, null
         _GUI.dialog = new _GUI.subwindows[d]()
         _GUI.dialog.parent = _GUI
         _GUI.dialog.handler = f
@@ -73,7 +73,7 @@ self.OS.GUI =
                 return _PM.createProcess srv, _OS.APP[srv] if _OS.APP[srv]
             (e, s) ->
                 _courrier.trigger "srvroutineready", srv
-                _courrier.osfail "Cannot read service script: #{srv} ", e, s
+                _courrier.osfail __("Cannot read service script: {0}", srv), e, s
 
     appsByMime: (mime) ->
         metas = ( v for k, v of _OS.setting.system.packages when v and v.app )
@@ -88,7 +88,7 @@ self.OS.GUI =
                         return false
                     return false
             catch e
-                _courrier.osfail "Find app by mimes #{mime}", e, mime
+                _courrier.osfail __("Error find app by mimes {0}", mime), e, mime
 
         ( f m, i if m ) for m, i in mimes
         return apps
@@ -101,14 +101,14 @@ self.OS.GUI =
     openWith: (it) ->
         return unless it
         return _GUI.launch it.app if it.type is "app" and it.app
-        return _courrier.osinfo "Application#{it.text} is not executable" if it.type is "app"
+        return _courrier.osinfo __("Application {0} is not executable", it.text) if it.type is "app"
         apps = _GUI.appsByMime ( if it.type is "dir" then "dir" else it.mime )
-        return _courrier.osinfo "No application available to open #{it.filename}" if apps.length is 0
+        return _courrier.osinfo __("No application available to open {0}", it.filename) if apps.length is 0
         return _GUI.launch apps[0].app, [it.path] if apps.length is 1
         list = ( { text: e.app, icon: e.icon, iconclass: e.iconclass } for e in apps )
         _GUI.openDialog "SelectionDialog", ( d ) ->
             _GUI.launch d.text, [it.path]
-        , "Open width", list
+        , __("Open with"), list
 
     forceLaunch: (app, args) ->
         console.log "This method is used for developing only, please use the launch method instead"
@@ -305,8 +305,8 @@ self.OS.GUI =
                     desktop[0].set "selected", -1 if e.target is desktop[0]
                     ($ "#sysdock").get(0).set "selectedApp", null
                     menu = [
-                        { text: "Open", dataid: "desktop-open" },
-                        { text: "Refresh", dataid: "desktop-refresh" }
+                        { text: __("Open"), dataid: "desktop-open" },
+                        { text: __("Refresh"), dataid: "desktop-refresh" }
                     ]
                     menu = menu.concat ( v for k, v of _OS.setting.desktop.menu)
                     m.set "items", menu
@@ -331,7 +331,7 @@ self.OS.GUI =
             # mount it
             riot.mount desktop
         , (e, s) ->
-            alert "System fall: Cannot init desktop manager"
+            alert __("System fail: Cannot init desktop manager")
             console.log s, e
 
     refreshSystemMenu: () ->
@@ -340,11 +340,11 @@ self.OS.GUI =
         _GUI.SYS_MENU[0].child.push v for k, v of _OS.setting.system.packages when (v and v.app)
         _GUI.SYS_MENU.push v for k, v of _OS.setting.system.menu
         _GUI.SYS_MENU.push
-            text: "Toggle Full screen",
+            text: __("Toggle Full screen"),
             dataid: "os-fullsize",
             iconclass: "fa fa-tv"
         _GUI.SYS_MENU.push
-            text: "Log out",
+            text: __("Log out"),
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
     buildSystemMenu: () ->
@@ -378,7 +378,7 @@ self.OS.GUI =
             ($ "#txtpass").keyup (e) ->
                 ($ "#btlogin").click() if e.which is 13
         , (e, s) ->
-            alert "System fall: Cannot init login screen"
+            alert __("System fail: Cannot init login screen")
     
     startAntOS: (conf) ->
         # clean up things

@@ -42,11 +42,11 @@ class Blogger extends this.OS.GUI.BaseApplication
                     pid: d.p.id,
                     publish: 1
                 me.cvcatdb.save c, (r) ->
-                    me.error "Cannot add new category" if r.error
+                    me.error __("Cannot add new category") if r.error
                     me.refreshCVCat()
                     #update the list
 
-            , "Add category", { tree: me.cvlist.get "data" }
+            , __("Add category"), { tree: me.cvlist.get "data" }
         
         (@find "cv-cat-edit").set "onbtclick", (e) ->
             cat = me.cvlist.get "selectedItem"
@@ -59,9 +59,9 @@ class Blogger extends this.OS.GUI.BaseApplication
                     name: d.value
                 
                 me.cvcatdb.save c, (r) ->
-                    return me.error "Cannot Edit category" if r.error
+                    return me.error __("Cannot Edit category") if r.error
                     me.refreshCVCat()  
-            , "Edit category", { tree: (me.cvlist.get "data"), cat: cat }
+            , __("Edit category"), { tree: (me.cvlist.get "data"), cat: cat }
 
         (@find "cv-cat-del").set "onbtclick", (e) ->
             cat = me.cvlist.get "selectedItem"
@@ -70,26 +70,26 @@ class Blogger extends this.OS.GUI.BaseApplication
                 (d) ->
                     return unless d
                     me.deleteCVCat cat
-            , "Delete cagegory" ,
-            { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{cat.name} ?" }
+            , __("Delete category") ,
+            { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", cat.name) }
     
         (@find "cv-sec-add").set "onbtclick", (e) ->
             cat = me.cvlist.get "selectedItem"
-            return me.notify "Please select a category" unless cat and cat.id isnt 0
+            return me.notify __("Please select a category") unless cat and cat.id isnt 0
             me.openDialog "BloggerCVSectionDiaglog", (d) ->
                 d.cid = Number cat.id
                 d.start = Number d.start
                 d.end = Number d.end
                 d.publish = 1
                 me.cvsecdb.save d, (r) ->
-                    return me.error "Cannot save section: #{r.error}" if r.error
+                    return me.error __("Cannot save section: {0}", r.error) if r.error
                     me.CVSectionByCID Number(cat.id)
 
-            , "New section entry for #{cat.name}", null
+            , __("New section entry for {0}", cat.name), null
 
         (@find "cv-sec-move").set "onbtclick", (e) ->
             sec = (me.find "cv-sec-list").get "selected"
-            return me.notify "Please select a section to move" unless sec
+            return me.notify __("Please select a section to move") unless sec
             
             me.openDialog "BloggerCategoryDialog", (d) ->
                 c =
@@ -97,14 +97,14 @@ class Blogger extends this.OS.GUI.BaseApplication
                     cid: d.p.id
                 
                 me.cvsecdb.save c, (r) ->
-                    return me.error "Cannot move section" if r.error
+                    return me.error __("Cannot move section") if r.error
                     me.CVSectionByCID(sec.cid)
                     (me.find "cv-sec-list").set "selected", -1
-            , "Move to", { tree: (me.cvlist.get "data"), selonly: true }
+            , __("Move to"), { tree: (me.cvlist.get "data"), selonly: true }
 
         (@find "cv-sec-edit").set "onbtclick", (e) ->
             sec = (me.find "cv-sec-list").get "selected"
-            return me.notify "Please select a section to edit" unless sec
+            return me.notify __("Please select a section to edit") unless sec
             
             me.openDialog "BloggerCVSectionDiaglog", (d) ->
                 d.cid = Number sec.cid
@@ -112,10 +112,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                 d.end = Number d.end
                 d.publish = Number sec.publish
                 me.cvsecdb.save d, (r) ->
-                    return me.error "Cannot save section: #{r.error}" if r.error
+                    return me.error __("Cannot save section: {0}", r.error) if r.error
                     me.CVSectionByCID Number(sec.cid)
 
-            , "Modify section entry", sec
+            , __("Modify section entry"), sec
 
         @editor = new SimpleMDE
             element: me.find "markarea"
@@ -124,14 +124,14 @@ class Blogger extends this.OS.GUI.BaseApplication
             indentWithTabs: true
             toolbar: [
                 {
-                    name: "new",
+                    name: __("New"),
                     className: "fa fa-file",
                     action: (e) ->
                         me.bloglist.set "selected", -1
                         me.clearEditor()
                 },
                 {
-                    name: "save",
+                    name: __("Save"),
                     className: "fa fa-save",
                     action: (e) ->
                         me.saveBlog()
@@ -145,10 +145,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                     action: (e) ->
                         me.openDialog "FileDiaLog", (d, n, p) ->
                             p.asFileHandler().publish (r) ->
-                                return me.error "Cannot export file for embeding to text" if r.error
+                                return me.error __("Cannot export file for embeding to text") if r.error
                                 doc = me.editor.codemirror.getDoc()
                                 doc.replaceSelection "![](#{me._api.handler.shared}/#{r.result})"
-                        , "Select image file", { mimes: ["image/.*"] }
+                        , __("Select image file"), { mimes: ["image/.*"] }
                 },
                 {
                     name:"Youtube",
@@ -159,7 +159,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 }
                 "|",
                 {
-                    name: "preview",
+                    name: __("Preview"),
                     className: "fa fa-eye no-disable",
                     action: (e) ->
                         me.previewOn = !me.previewOn
@@ -170,7 +170,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             sel = me.bloglist.get "selected"
             return unless sel
             me.blogdb.get Number(sel.id), (r) ->
-                me.error "Cannot fetch the entry content" if r.error
+                me.error __("Cannot fetch the entry content") if r.error
                 me.editor.value atob(r.result.content)
                 me.inputtags.value = r.result.tags
                 (me.find "blog-publish").set "swon", (if Number(r.result.publish) then true else false)
@@ -179,12 +179,12 @@ class Blogger extends this.OS.GUI.BaseApplication
             me.openDialog "YesNoDialog", (b) ->
                 return unless b
                 me.blogdb.delete e.item.item.id, (r) ->
-                    return me.error "Cannot delete: #{r.error}" if r.error
+                    return me.error __("Cannot delete: {0}", r.error) if r.error
                     me.bloglist.remove e.item.item, true
                     me.bloglist.set "selected", -1
                     me.clearEditor()
-            ,  "Delete a post" ,
-            { iconclass: "fa fa-question-circle", text: "Do you really want to delete this post ?" }
+            ,  __("Delete a post") ,
+            { iconclass: "fa fa-question-circle", text: __("Do you really want to delete this post ?") }
             return false
         @bindKey "CTRL-S", () ->
             sel = me.tabbar.get "selidx"
@@ -199,7 +199,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             when 0 #user info
                 
                 @userdb.get null, (d) ->
-                    return me.error "Cannot fetch user data" if d.error
+                    return me.error __("Cannot fetch user data") if d.error
                     me.user = d.result[0]
                     inputs = me.select "[input-class='user-input']"
                     ($ v).val me.user[v.name] for v in inputs
@@ -212,11 +212,11 @@ class Blogger extends this.OS.GUI.BaseApplication
         me = @
         inputs = @select "[input-class='user-input']"
         @user[v.name] = ($ v).val() for v in inputs
-        return @notify "Full name must be entered" if not @user.fullname or @user.fullname is ""
+        return @notify __("Full name must be entered") if not @user.fullname or @user.fullname is ""
         #console.log @user
         @userdb.save @user, (r) ->
-            return me.error "Cannot save user data" if r.error
-            return me.notify "User data updated"
+            return me.error __("Cannot save user data") if r.error
+            return me.notify __("User data updated")
 
 
     # PORFOLIO TAB
@@ -232,7 +232,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         @cvcatdb.find cnd, (d) ->
             if d.error
                 me.cvlist.set "data", data
-                return me.notify "Cannot fetch CV categories"
+                return me.notify __("Cannot fetch CV categories")
             me.fetchCVCat d.result, data, "0"
             me.cvlist.set "data", data
             #it = (me.cvlist.find "pid", "2")[0]
@@ -258,10 +258,10 @@ class Blogger extends this.OS.GUI.BaseApplication
         cond = ({ "=": { cid: v } } for v in ids)
         # delete all content
         @cvsecdb.delete { "or": cond }, (r) ->
-            return me.error "Cannot delete all content of: #{cat.name} [#{r.error}]" if r.error
+            return me.error __("Cannot delete all content of: {0} [{1}]", cat.name, r.error) if r.error
             cond = ({ "=": { id: v } } for v in ids)
             me.cvcatdb.delete { "or": cond }, (re) ->
-                return me.error "Cannot delete the category: #{cat.name} [#{re.error}]" if re.error
+                return me.error __("Cannot delete the category: {0} [{1}]", cat.name, re.error) if re.error
                 me.refreshCVCat()
 
     CVSectionByCID: (cid) ->
@@ -273,10 +273,10 @@ class Blogger extends this.OS.GUI.BaseApplication
             order:
                 start: "DESC"
         @cvsecdb.find cond, (d) ->
-            return me.notify "Section list is empty, please add one" if d.error
+            return me.notify __("Section list is empty, please add one") if d.error
             v.text = v.title for v in d.result
             items = []
-            $(me.find "cv-sec-status").html "Found #{d.result.length} sections"
+            $(me.find "cv-sec-status").html __("Found {0} sections", d.result.length)
             for  v in d.result
                 v.text = v.title
                 v.complex = true
@@ -298,10 +298,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                 me.openDialog "YesNoDialog", (b) ->
                     return unless b
                     me.cvsecdb.delete e.item.item.id, (r) ->
-                        return me.error "Cannot delete the section: #{r.error}" if r.error
+                        return me.error __("Cannot delete the section: {0}", r.error) if r.error
                         el.remove e.item.item, true
-                ,  "Delete section" ,
-                { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{e.item.item.text} ?" }
+                ,  __("Delete section") ,
+                { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?",e.item.item.text) }
                 return false
             el.set "items", items
 
@@ -312,8 +312,8 @@ class Blogger extends this.OS.GUI.BaseApplication
         tags = @inputtags.value
         content = @editor.value()
         title = (new RegExp "^#+(.*)\n", "g").exec content
-        return @notify "Please insert a title in the text: beginning with heading" unless title and title.length is 2
-        return @notify "Please enter tags" if tags is ""
+        return @notify __("Please insert a title in the text: beginning with heading") unless title and title.length is 2
+        return @notify __("Please enter tags") if tags is ""
         d = new Date()
         data =
             content: content.asBase64()
@@ -328,7 +328,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         data.id = sel.id if sel
         #save the data
         @blogdb.save data, (r) ->
-            return me.error "Cannot save blog: #{r.error}" if r.error
+            return me.error __("Cannot save blog: {0}", r.error) if r.error
             me.loadBlogs()
     
     process: (text) ->
@@ -377,15 +377,15 @@ class Blogger extends this.OS.GUI.BaseApplication
                 "utimestr"
             ]
         @blogdb.find cond, (r) ->
-            return me.notify "No post found: #{r.error}" if r.error
+            return me.notify __("No post found: {0}", r.error) if r.error
             console.log r.result
             for v in r.result
                 v.text = v.title
                 v.complex = true
                 v.closable = true
                 v.detail = [
-                    { text: "Created: #{v.ctimestr}", class: "blog-dates" },
-                    { text: "Updated: #{v.utimestr}", class: "blog-dates" }]
+                    { text: __("Created: {0}", v.ctimestr), class: "blog-dates" },
+                    { text: __("Updated: {0}", v.utimestr), class: "blog-dates" }]
             me.bloglist.set "items", r.result
             if selidx isnt -1
                 me.bloglist.set "selected", selidx

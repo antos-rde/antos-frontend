@@ -7,17 +7,17 @@ class UserService extends this.OS.GUI.BaseService
         me = @
         @child = [
             {
-                text: "About", dataid: "user-about",
+                text: __("About"), dataid: "user-about",
                 iconclass: "fa fa-user-circle-o"
             },
             {
-                text: "Logout", dataid: "sys-logout",
+                text: __("Logout"), dataid: "sys-logout",
                 iconclass: "fa fa-user-times"
             }
         ]
         @onmenuselect = (d) ->
             return window.OS.exit() if d.item.data.dataid is "sys-logout"
-            me.notify "This feature is not implemented yet"
+            me.notify __("This feature is not implemented yet")
     awake: (e) ->
         
     cleanup: (evt) ->

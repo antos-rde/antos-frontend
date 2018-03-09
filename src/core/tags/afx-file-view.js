@@ -20,7 +20,7 @@
         this.fetch = opts.fetch
         this.chdir = opts.chdir
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
-        this.header = [{value:"File name"},{value: "Type", width:150}, {value: "Size", width:70}]
+        this.header = [{value:__("File name")},{value: __("Type"), width:150}, {value: __("Size"), width:70}]
 
         self.root.set = function(k,v)
         {
@@ -200,7 +200,7 @@
                 if(self.onfileselect)
                     self.onfileselect(e.data)
                 $(self.refs.stbar).empty()
-                $(self.refs.stbar).append($("<span>").append("Selected: " + e.data.filename + " (" + e.data.size + " bytes)"))//.html()
+                $(self.refs.stbar).append($("<span>").append(__("Selected: {0} ({1} bytes)", e.data.filename,  e.data.size)))//.html()
             })
             self.root.observable.on("filedbclick", function(e){
                 if(e.id != self.rid ) return

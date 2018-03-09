@@ -6,6 +6,7 @@ NC=\033[0m
 
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
+			src/core/lang/generator.coffee\
 			src/core/settings.coffee\
         	src/core/handlers/RemoteHandler.coffee\
         	src/core/vfs.coffee\
@@ -56,7 +57,8 @@ testdata:
 	cp src/core/handlers/jsons/* $(BUILDDIR)/resources/jsons
 build_tags:
 	@echo "$(BLUE)Building tag files$(NC)"
-	-mkdir $(BUILDDIR)/resources 
+	-mkdir $(BUILDDIR)/resources
+	-mkdir $(BUILDDIR)/resources/languages
 	-rm $(BUILDDIR)/resources/antos_tags.js
 	for f in src/core/tags/*; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
