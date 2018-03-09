@@ -1,3 +1,4 @@
+'use strict'
 #define the OS object
 self = this
 self.OS or=
