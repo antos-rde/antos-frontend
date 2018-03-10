@@ -193,4 +193,27 @@
 	"Wrong format: it should be [name] url":"Wrong format: it should be [name] url",
 	"Yes":"Yes",
 	"{0} is not a directory":"{0} is not a directory"
+
+,
+	"April":"April",
+	"August":"August",
+	"December":"December",
+	"February":"February",
+	"Fri":"Fri",
+	"January":"January",
+	"July":"July",
+	"June":"June",
+	"March":"March",
+	"May":"May",
+	"Mon":"Mon",
+	"November":"November",
+	"October":"October",
+	"Sat":"Sat",
+	"Selected: {0} ({1} bytes)":"Selected: {0} ({1} bytes)",
+	"September":"September",
+	"Size":"Size",
+	"Sun":"Sun",
+	"Thu":"Thu",
+	"Tue":"Tue",
+	"Wed":"Wed"
 }
