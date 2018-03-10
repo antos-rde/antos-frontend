@@ -1,3 +1,32 @@
+class FormatedString
+    constructor: (@fs, args) ->
+        @values = []
+        return unless args
+        @values[i] = args[i] for i in [0..args.length - 1]
+    toString: ()->
+        @
+    __: () ->
+        me = @
+        return __(@fs).replace /{(\d+)}/g, (match, number) ->
+            return if typeof me.values[number] != 'undefined' then me.values[number] else match
+    
+    hash: () ->
+        @__().hash()
+
+    asBase64: () ->
+        @__().asBase64()
+    
+    unescape: () ->
+        @__().unescape()
+    
+    asUint8Array: () ->
+        @__().asUint8Array()
+    
+    format: () ->
+        args = arguments
+        @values[i] = args[i] for i in [0..args.length - 1]
+    
+
 String.prototype.hash = () ->
     hash = 5381
     i = this.length
@@ -19,7 +48,7 @@ String.prototype.unescape = () ->
     d = d.replace /\\f/g, "\f"
     d = d.replace /\\r/g, "\r"
     d
-String.prototype.asUnit8Array = () ->
+String.prototype.asUint8Array = () ->
     bytes = []
     for i in [0..(@length - 1)]
         bytes.push @charCodeAt i
@@ -29,14 +58,18 @@ String.prototype.asUnit8Array = () ->
 if not String.prototype.format
     String.prototype.format = () ->
         args = arguments
-        return @replace /{(\d+)}/g, (match, number) ->
-            return if typeof args[number] != 'undefined' then args[number] else match
+        return new FormatedString(@, args)
+
+String.prototype.f = () ->
+    args = arguments
+    return new FormatedString(@, args)
 
 String.prototype.__ = () ->
     match = @match(/^__\((.*)\)$/)
     return window.__(match[1]) if match
     return @
 # language directive
+
 this.__ = () ->
     _API = window.OS.API
     args = arguments
@@ -44,7 +77,7 @@ this.__ = () ->
     d = args[0]
     _API.lang[d] = d unless _API.lang[d]
     return _API.lang[d] unless args.length > 1
-    return String.prototype.format.apply _API.lang[d], (args[i] for i in [1 .. args.length - 1])
+    return String.prototype.format.apply d, (args[i] for i in [1 .. args.length - 1])
 
 Date.prototype.toString = () ->
     dd = @getDate()

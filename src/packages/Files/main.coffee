@@ -196,7 +196,7 @@ class Files extends this.OS.GUI.BaseApplication
                         file.path.asFileHandler()
                             .move "#{me.currdir.path}/#{d}", (r) ->
                                 me.error __("Fail to rename to {0}: {1}", d, r.error) if r.error
-                    , __("Rename"), { label: __("File name"), value: file.filename }
+                    , "__(Rename)", { label: "__(File name)", value: file.filename }
             
             when "#{@name}-rm"
                 return unless file
@@ -206,7 +206,7 @@ class Files extends this.OS.GUI.BaseApplication
                         file.path.asFileHandler()
                             .remove (r) ->
                                 me.error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
-                , __("Delete") ,
+                ,"__(Delete)" ,
                 { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", file.filename) }
             
             when "#{@name}-cut"
@@ -247,7 +247,7 @@ class Files extends this.OS.GUI.BaseApplication
                     (d) ->
                         me.currdir.mk d, (r) ->
                              me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , __("New folder"), { label: __("Folder name") }
+                    , "__(New folder)", { label: "__(Folder name)" }
             
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
@@ -255,7 +255,7 @@ class Files extends this.OS.GUI.BaseApplication
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
                         fp.write "text/plain", (r) ->
                             me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , __("New file"),  { label: __("File name") }
+                    , "__(New file)",  { label: "__(File name)" }
             
             when "#{@name}-info"
                 return unless file

@@ -4,7 +4,7 @@
     <div class = "treecontainer" ref="treecontainer">
         <afx-tree-view  ref = "treeview" observable = {root.observable}></afx-tree-view>
     </div>
-    <div if = {status == true} class = "status" ref = "stbar"></div>
+    <afx-label if = {status == true} class = "status"  ref = "stbar"></afx-label>
     <script>
         var self = this
         self.root.observable = opts.observable || riot.observable()
@@ -49,7 +49,7 @@
             var h = $(self.root).outerHeight()
             var w = $(self.root).width()
             if(self.refs.stbar)
-                h -= ($(self.refs.stbar).height() + 10)
+                h -= ($(self.refs.stbar.root).height() + 10)
             $(self.refs.listview.root).css("height", h + "px")
             $(self.refs.gridview.root).css("height", h + "px")
             $(self.refs.treecontainer).css("height", h + "px")
@@ -126,7 +126,8 @@
                     f(getTreeData(d))
                 })
             })
-            $(self.refs.stbar).html("")
+            if(self.refs.stbar)
+                self.refs.stbar.root.set("text", "")
             switch (self.view) {
                 case 'icon':
                     $(self.refs.listview.root).show()
@@ -200,8 +201,8 @@
                 self.selectedFile = e.data
                 if(self.onfileselect)
                     self.onfileselect(e.data)
-                $(self.refs.stbar).empty()
-                $(self.refs.stbar).append($("<span>").append(__("Selected: {0} ({1} bytes)", e.data.filename,  e.data.size?e.data.size:"0")))//.html()
+                if(self.refs.stbar)
+                    self.refs.stbar.root.set("text", __("Selected: {0} ({1} bytes)", e.data.filename,  e.data.size?e.data.size:"0"))//.html()
             })
             self.root.observable.on("filedbclick", function(e){
                 if(e.id != self.rid ) return

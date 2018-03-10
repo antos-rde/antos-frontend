@@ -33,7 +33,8 @@ class BaseFileHandler
         @genealogy = re.split("/")
         @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
         @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
-
+    asFileHandler: () ->
+        @
     isRoot: () -> (not @genealogy) or (@genealogy.size is 0)
     
     child: (name) ->

@@ -58,7 +58,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         stup = (e) ->
             c = me.editor.session.selection.getCursor()
             l = me.editor.session.getLength()
-            $(stat).html __("Row {0}, col {1}, lines: {2}", c.row, c.column, l)
+            stat.set "text", __("Row {0}, col {1}, lines: {2}", c.row, c.column, l)
         stup(0)
         @.editor.getSession().selection.on "changeCursor", (e) -> stup(e)
         @editormux = false
@@ -133,6 +133,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         me = @
         file = @fileview.get "selectedFile"
         dir = if file then file.path.asFileHandler() else (@fileview.get "path").asFileHandler()
+        console.log dir
         dir = dir.parent().asFileHandler() if file and file.type isnt "dir"
         switch e.item.data.dataid
 
@@ -141,7 +142,7 @@ class NotePad extends this.OS.GUI.BaseApplication
                     (d) ->
                         dir.mk d, (r) ->
                              me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , __("New folder")
+                    , "__(New folder)"
             
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
@@ -149,7 +150,7 @@ class NotePad extends this.OS.GUI.BaseApplication
                         fp = "#{dir.path}/#{d}".asFileHandler()
                         fp.write "", (r) ->
                             me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , __("New file")
+                    , "__(New file)"
             when "#{@name}-rm"
                 return unless file
                 @openDialog "YesNoDialog",
@@ -158,7 +159,7 @@ class NotePad extends this.OS.GUI.BaseApplication
                         file.path.asFileHandler()
                             .remove (r) ->
                                 me.error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
-                , __("Delete") ,
+                , "__(Delete)" ,
                 { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", file.filename) }
             when "#{@name}-refresh"
                 @.chdir ( @fileview.get "path" )
@@ -267,12 +268,12 @@ class NotePad extends this.OS.GUI.BaseApplication
                 me.tabarea.replaceItem me.currfile, file, false
                 me.currfile = file
                 me.save me.currfile
-            , __("Save as"), { file: me.currfile }
+            , "__(Save as)", { file: me.currfile }
         switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()
-                , __("Open file")
+                , "__(Open file)"
             when "#{@name}-Save"
                 @currfile.cache = @editor.getValue()
                 return @save @currfile if @currfile.basename
@@ -292,7 +293,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             if d
                 v.dirty = false for v in dirties
                 me.quit()
-        , __("Quit"), { text: __("Ignore all {0} unsaved files ?", dirties.length) }
+        , "__(Quit)", { text: __("Ignore all {0} unsaved files ?", dirties.length) }
 
 NotePad.singleton = false
 NotePad.dependencies = [

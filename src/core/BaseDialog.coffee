@@ -87,7 +87,7 @@ class PromptDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: __("Ok"),
+                    label: "__(Ok)",
                     onclick: (d) ->
                         txt = (d.find "content1").value
                         return d.quit() if txt is ""
@@ -95,7 +95,7 @@ class PromptDialog extends BasicDialog
                         d.quit()
                 },
                 {
-                    label: __("Cancel"),
+                    label: "__(Cancel)",
                     onclick: (d) -> d.quit()
                 }
             ],
@@ -119,7 +119,7 @@ class CalendarDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: __('Ok'),
+                    label: "__(Ok)",
                     onclick: (d) ->
                         date = (d.find "content0").get "selectedDate"
                         if date
@@ -129,7 +129,7 @@ class CalendarDialog extends BasicDialog
                             d.notify __("Please select a date")
                 },
                 {
-                    label: __('Cancel'),
+                    label: "__(Cancel)",
                     onclick: (d) -> d.quit()
                 }
             ]
@@ -145,7 +145,7 @@ class ColorPickerDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: __('Ok'),
+                    label: "__(Ok)",
                     onclick: (d) ->
                         c = (d.find "content0").get "selectedColor"
                         if c
@@ -155,7 +155,7 @@ class ColorPickerDialog extends BasicDialog
                             d.notify "Please select a color"
                 },
                 {
-                    label: __('Cancel'),
+                    label: "__(Cancel)",
                     onclick: (d) -> d.quit()
                 }
             ]
@@ -169,7 +169,7 @@ class InfoDialog extends BasicDialog
             width: 250,
             height: 300,
             resizable: true,
-            buttons: [ { label: __('Cancel'), onclick: (d) -> d.quit() } ],
+            buttons: [ { label: "__(Cancel)", onclick: (d) -> d.quit() } ],
             filldata: (d) ->
                 return unless d.data
                 rows = []
@@ -188,12 +188,12 @@ class YesNoDialog extends BasicDialog
             resizable: true,
             buttons: [
                 {
-                    label: __("Yes"), onclick: (d) ->
+                    label: "__(Yes)", onclick: (d) ->
                         d.handler true if d.handler
                         d.quit()
                 },
                 {
-                    label: __("No"), onclick: (d) ->
+                    label: "__(No)", onclick: (d) ->
                         d.handler false if d.handler
                         d.quit()
                 }
@@ -215,14 +215,14 @@ class SelectionDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: __("Ok"), onclick: (d) ->
+                    label: "__(Ok)", onclick: (d) ->
                         el = d.find "content0"
                         it = el.get "selected"
                         return unless it
                         d.handler it if d.handler
                         d.quit()
                 },
-                { label: __("Cancel"), onclick: (d) -> d.quit() }
+                { label: "__(Cancel)", onclick: (d) -> d.quit() }
             ],
             filldata: (d) ->
                 return unless d.data

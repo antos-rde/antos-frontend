@@ -1,7 +1,7 @@
 afx-file-view {
     position: relative;
 }
-afx-file-view div.status{
+afx-file-view afx-label.status{
     position: absolute;
     bottom: 1px;
     left:0px;

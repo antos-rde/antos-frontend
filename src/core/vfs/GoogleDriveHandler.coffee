@@ -164,7 +164,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     .then (r) ->
                         _API.loaded q, "OK"
                         return f r.body unless p is "binary"
-                        f r.body.asUnit8Array()
+                        f r.body.asUint8Array()
                     .catch (err) ->
                         _API.loaded q, "FAIL"
                         _courrier.oserror __("VFS cannot read : {0}", me.path), (_API.throwe "OS.VFS"), err

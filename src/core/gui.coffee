@@ -408,7 +408,7 @@ self.OS.GUI =
                         _GUI.buildSystemMenu()
                         # push startup services
                         # TODO: get services list from user setting
-                        _GUI.pushServices (v for v in _OS.setting.system.startup.services)
+                        #_GUI.pushServices (v for v in _OS.setting.system.startup.services)
                         (_GUI.launch a) for a in _OS.setting.system.startup.apps
                 #_GUI.launch "DummyApp"
         # initDM

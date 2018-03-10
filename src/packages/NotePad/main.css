@@ -11,7 +11,7 @@ afx-app-window[data-id="notepad"] afx-resizer{
     background-color: transparent;
     border-right: 1px solid #a6a6a6;
 }
-afx-app-window[data-id="notepad"] span[data-id="editorstat"]{
+afx-app-window[data-id="notepad"] afx-label[data-id="editorstat"]{
     padding:5px;
     display: inline-block;
 }
