@@ -54,7 +54,7 @@ class BasicDialog extends BaseDialog
     
     init: () ->
         @title = @name if not @title
-        html = "<afx-app-window  data-id = 'dia-window' apptitle='#{@title}' width='#{@conf.width}' height='#{@conf.height}'>
+        html = "<afx-app-window  data-id = 'dia-window'  width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-vbox>"
         html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
         html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
@@ -64,6 +64,7 @@ class BasicDialog extends BaseDialog
         _GUI.htmlToScheme html, @, @host
     
     main: () ->
+        @scheme.set "apptitle", @title
         @scheme.set "minimizable", false
         @scheme.set "resizable", @conf.resizable if @conf.resizable isnt undefined
         me = @
@@ -266,7 +267,7 @@ class FileDiaLog extends BaseDialog
         location = @find "location"
         filename = @find "filename"
         me = @
-        @scheme.set "apptitle", "#{@title}"
+        @scheme.set "apptitle", @title
         fileview.set "fetch", (e, f) ->
             return unless e.child
             e.child.path.asFileHandler().read (d) ->

@@ -18,8 +18,11 @@ afx-menu a afx-label{
 afx-menu ul{
     padding:0;
     margin: 0;
+    display:inline-block;
 }
-
+afx-menu ul li{
+    white-space:nowrap;
+}
 afx-menu afx-switch span{
     width: 20px;
     height: 16px;
