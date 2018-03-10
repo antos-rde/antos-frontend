@@ -65,7 +65,8 @@ self.OS.API.handler =
         path = "#{_REST}/system/application"
     auth: (c) ->
         p = "#{_REST}/system/auth"
-        _API.post p, {}, c, () ->
+        _API.post p, {}, c, (e, s) ->
+            console.log e, s
             alert __("Resource not found: {0}", p)
     login: (d, c) ->
         p = "#{_REST}/system/login"

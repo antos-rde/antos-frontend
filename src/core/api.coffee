@@ -3,13 +3,12 @@ class FormatedString
         @values = []
         return unless args
         @values[i] = args[i] for i in [0..args.length - 1]
-    toString: ()->
-        @
+    toString: () ->
+        @__()
     __: () ->
         me = @
-        return __(@fs).replace /{(\d+)}/g, (match, number) ->
+        return @fs.l().replace /{(\d+)}/g, (match, number) ->
             return if typeof me.values[number] != 'undefined' then me.values[number] else match
-    
     hash: () ->
         @__().hash()
 
@@ -25,7 +24,12 @@ class FormatedString
     format: () ->
         args = arguments
         @values[i] = args[i] for i in [0..args.length - 1]
-    
+
+Object.defineProperty Object.prototype, '__',
+    value: () ->
+        return @toString()
+    enumerable: false
+    writable: true
 
 String.prototype.hash = () ->
     hash = 5381
@@ -66,8 +70,12 @@ String.prototype.f = () ->
 
 String.prototype.__ = () ->
     match = @match(/^__\((.*)\)$/)
-    return window.__(match[1]) if match
+    return match[1].l() if match
     return @
+String.prototype.l = () ->
+    _API = window.OS.API
+    _API.lang[@] = @ unless _API.lang[@]
+    return _API.lang[@]
 # language directive
 
 this.__ = () ->
@@ -75,9 +83,8 @@ this.__ = () ->
     args = arguments
     return "Undefined" unless args.length > 0
     d = args[0]
-    _API.lang[d] = d unless _API.lang[d]
-    return _API.lang[d] unless args.length > 1
-    return String.prototype.format.apply d, (args[i] for i in [1 .. args.length - 1])
+    d.l()
+    return new FormatedString d, (args[i] for i in [1 .. args.length - 1])
 
 Date.prototype.toString = () ->
     dd = @getDate()

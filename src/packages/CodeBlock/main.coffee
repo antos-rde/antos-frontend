@@ -61,7 +61,7 @@ class CodeBlock extends this.OS.GUI.BaseApplication
         menu = [{
                 text: "File",
                 child: [
-                    { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N" },
+                    { text: __("New"), dataid: "#{@name}-New", shortcut: "A-N" },
                     { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }

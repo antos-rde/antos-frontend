@@ -2,7 +2,7 @@
     <span style = {color?"color:" + color:""} >
         <i if={iconclass} class = {iconclass} ></i>
         <i if={icon} class="icon-style" style = { "background: url("+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
-        { text?text.toString().__():"" }
+        { text?text.__():"" }
     </span>
     <script>
         this.iconclass = opts.iconclass
