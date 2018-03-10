@@ -60,7 +60,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 
                 me.cvcatdb.save c, (r) ->
                     return me.error __("Cannot Edit category") if r.error
-                    me.refreshCVCat()  
+                    me.refreshCVCat()
             , __("Edit category"), { tree: (me.cvlist.get "data"), cat: cat }
 
         (@find "cv-cat-del").set "onbtclick", (e) ->
@@ -378,7 +378,6 @@ class Blogger extends this.OS.GUI.BaseApplication
             ]
         @blogdb.find cond, (r) ->
             return me.notify __("No post found: {0}", r.error) if r.error
-            console.log r.result
             for v in r.result
                 v.text = v.title
                 v.complex = true

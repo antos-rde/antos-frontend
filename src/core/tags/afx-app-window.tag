@@ -4,7 +4,7 @@
             <li class = "afx-window-close" onclick = {close}></li>
              <li if = {minimizable == true} class = "afx-window-minimize" onclick = {minimize}></li>
              <li if = {resizable == true} class = "afx-window-maximize" onclick={maximize}></li>
-             <li  ref = "dragger" class = "afx-window-title">{ apptitle }</li>
+             <li  ref = "dragger" class = "afx-window-title">{ apptitle?apptitle.toString().__():apptitle  }</li>
         </ul>
         <div class = "afx-clear"></div>
         <div ref = "content" class = "afx-window-content">
@@ -48,6 +48,10 @@
         self.root.get = function(k)
         {
             return self[k]
+        }
+        self.root.update = function()
+        {
+            self.update()
         }
         minimize()
         {

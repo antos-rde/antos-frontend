@@ -67,8 +67,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
     menu: () ->
         me = @
         return [
-            { text: __("Options"), child: [
-                { text: __("Repositories"), shortcut: "C-R" }
+            { text: "__(Options)", child: [
+                { text: "__(Repositories)", shortcut: "C-R" }
             ] , onmenuselect: (e) ->
                 me.openDialog "RepositoryDialog"
             }

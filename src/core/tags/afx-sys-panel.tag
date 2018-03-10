@@ -39,6 +39,10 @@
         {
             return self[k]
         }
+        self.root.update = function()
+        {
+            self.update()
+        }
         this.on('mount', function() {
             //console.log(self.refs.aOsmenu.root)
             $(self.refs.aOsmenu.root).css("z-index",1000000)

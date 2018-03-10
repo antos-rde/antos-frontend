@@ -110,28 +110,28 @@ class Files extends this.OS.GUI.BaseApplication
         #console.log file
         me = @
         arr = {
-            text: __("File"),
+            text: "__(File)",
             child: [
-                { text: __("New file"), dataid: "#{@name}-mkf", shortcut: 'C-F' },
-                { text: __("New folder"), dataid: "#{@name}-mkdir", shortcut: 'C-D' },
-                { text: __("Open with"), dataid: "#{@name}-open", child: @apps },
-                { text: __("Upload"), dataid: "#{@name}-upload", shortcut: 'C-U' },
-                { text: __("Download"), dataid: "#{@name}-download" },
-                { text: __("Share file"), dataid: "#{@name}-share", shortcut: 'C-S' },
-                { text: __("Properties"), dataid: "#{@name}-info", shortcut: 'C-I' }
+                { text: "__(New file)", dataid: "#{@name}-mkf", shortcut: 'C-F' },
+                { text: "__(New folder)", dataid: "#{@name}-mkdir", shortcut: 'C-D' },
+                { text: "__(Open with)", dataid: "#{@name}-open", child: @apps },
+                { text: "__(Upload)", dataid: "#{@name}-upload", shortcut: 'C-U' },
+                { text: "__(Download)", dataid: "#{@name}-download" },
+                { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
+                { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
             ], onmenuselect: (e) -> me.actionFile e.item.data.dataid
         }
         return arr
     mnEdit: () ->
         me = @
         {
-            text: __("Edit"),
+            text: "__(Edit)",
             child: [
-                { text: __("Rename"), dataid: "#{@name}-mv", shortcut: 'C-R' },
-                { text: __("Delete"), dataid: "#{@name}-rm", shortcut: 'C-M' },
-                { text: __("Cut"), dataid: "#{@name}-cut", shortcut: 'C-X' },
-                { text: __("Copy"), dataid: "#{@name}-copy", shortcut: 'C-C' },
-                { text: __("Paste"), dataid: "#{@name}-paste", shortcut: 'C-P' }
+                { text: "__(Rename)", dataid: "#{@name}-mv", shortcut: 'C-R' },
+                { text: "__(Delete)", dataid: "#{@name}-rm", shortcut: 'C-M' },
+                { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
+                { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
+                { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
             ], onmenuselect: (e) -> me.actionEdit e.item.data.dataid
         }
     menu: () ->
@@ -140,16 +140,16 @@ class Files extends this.OS.GUI.BaseApplication
             @mnFile(),
             @mnEdit(),
             {
-                text: __("View"),
+                text: "__(View)",
                 child: [
-                    { text: __("Refresh"), dataid: "#{@name}-refresh" },
-                    { text: __("Sidebar"), switch: true, checked: @setting.sidebar, dataid: "#{@name}-side" },
-                    { text: __("Navigation bar"), switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
-                    { text: __("Hidden files"), switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
-                    { text: __("Type"), child: [
-                        { text: __("Icon view"), radio: true, checked: @setting.view is 'icon', dataid: "#{@name}-icon", type: 'icon' },
-                        { text: __("List view"), radio:true, checked: @setting.view is 'list' or not @setting.view, dataid: "#{@name}-list", type: 'list' },
-                        { text: __("Tree view"), radio:true, checked: @setting.view is 'tree', dataid: "#{@name}-tree", type: 'tree' }
+                    { text: "__(Refresh)", dataid: "#{@name}-refresh" },
+                    { text: "__(Sidebar)", switch: true, checked: @setting.sidebar, dataid: "#{@name}-side" },
+                    { text: "__(Navigation bar)", switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
+                    { text: "__(Hidden files)", switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
+                    { text: "__(Type)", child: [
+                        { text: "__(Icon view)", radio: true, checked: @setting.view is 'icon', dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "__(List view)", radio:true, checked: @setting.view is 'list' or not @setting.view, dataid: "#{@name}-list", type: 'list' },
+                        { text: "__(Tree view)", radio:true, checked: @setting.view is 'tree', dataid: "#{@name}-tree", type: 'tree' }
                      ], onmenuselect: (e) ->
                         me.view.set 'view', e.item.data.type
                         me.setting.view = e.item.data.type

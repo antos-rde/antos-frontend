@@ -9,7 +9,7 @@ self.OS.GUI =
         META: {}
     SYS_MENU: [
         {
-            text: __("Applications"),
+            text: "__(Applications)",
             child: [],
             dataid: "sys-apps"
             iconclass: "fa fa-adn",
@@ -340,11 +340,11 @@ self.OS.GUI =
         _GUI.SYS_MENU[0].child.push v for k, v of _OS.setting.system.packages when (v and v.app)
         _GUI.SYS_MENU.push v for k, v of _OS.setting.system.menu
         _GUI.SYS_MENU.push
-            text: __("Toggle Full screen"),
+            text: "__(Toggle Full screen)",
             dataid: "os-fullsize",
             iconclass: "fa fa-tv"
         _GUI.SYS_MENU.push
-            text: __("Log out"),
+            text: "__(Log out)",
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
     buildSystemMenu: () ->
@@ -384,14 +384,18 @@ self.OS.GUI =
         # clean up things
         _OS.cleanup()
         # get setting from conf
-        _OS.systemSetting(conf)
+        _OS.systemSetting conf
         #console.log _OS.setting
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme
         # initDM
-        _GUI.initDM()
+        _API.setLocale _OS.setting.system.locale, () ->
+            _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
             # TODO load packages list then build system menu
+            _courrier.observable.on "systemlocalechange", () ->
+                ($ "#syspanel")[0].update()
+                
             _API.packages.cache (ret) ->
                 if ret.result
                     _API.packages.fetch (r) ->

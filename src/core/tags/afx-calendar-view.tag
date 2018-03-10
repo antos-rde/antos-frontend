@@ -62,7 +62,7 @@
         self.year = date.getFullYear()
 
         var now ={ d:(new Date()).getDate(), m:(new Date()).getMonth(), y:(new Date()).getFullYear()}
-        months = [__('January'), __('February'), __('March'), __('April'), __('May'), __('June'), __('July'), __('August'), __('September'), __('October'), __('November'), __('December')]
+        months = [__("January"), __("February"), __("March"), __("April"), __("May"), __("June"), __("July"), __("August"), __("September"), __("October"), __("November"), __("December")]
 
         this_month = new Date(self.year, self.month, 1)
         next_month = new Date(self.year, self.month + 1, 1)

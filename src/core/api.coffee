@@ -31,6 +31,11 @@ if not String.prototype.format
         args = arguments
         return @replace /{(\d+)}/g, (match, number) ->
             return if typeof args[number] != 'undefined' then args[number] else match
+
+String.prototype.__ = () ->
+    match = @match(/^__\((.*)\)$/)
+    return window.__(match[1]) if match
+    return @
 # language directive
 this.__ = () ->
     _API = window.OS.API
@@ -244,14 +249,16 @@ self.OS.API =
     onsearch: (name, fn) ->
         self.OS.API.searchHandler[name] = fn unless self.OS.API.searchHandler[name]
 
-    setLocale: (name) ->
+    setLocale: (name, f) ->
         path = "resources/languages/#{name}.json"
         _API.get path, (d) ->
-            _OS.setting.user.language = name
+            _OS.setting.system.locale = name
             _API.lang = d
+            if f then f() else _courrier.trigger "systemlocalechange"
         , (e, s) ->
-            _OS.setting.user.language = "en_GB"
+            #_OS.setting.system.locale = "en_GB"
             _courrier.oserror __("Language file {0} not found", path), e, s
+            f() if f
         , "json"
 
     throwe: (n) ->

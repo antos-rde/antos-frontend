@@ -96,17 +96,16 @@ class Preview extends this.OS.GUI.BaseApplication
     menu: () ->
         me = @
         menu = [{
-                text: __("File"),
+                text: "__(File)",
                 child: [
-                    { text: __("Open"), dataid: "#{@name}-Open", shortcut: "A-O" },
-                    { text: __("Close"), dataid: "#{@name}-Close", shortcut: "C-X" },
+                    { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: "__(Close)", dataid: "#{@name}-Close", shortcut: "C-X" },
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
         menu
     
     actionFile: (e) ->
-        console.log e
         me = @
         switch e
             when "#{@name}-Open"

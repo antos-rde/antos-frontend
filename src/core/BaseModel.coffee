@@ -1,5 +1,6 @@
 class BaseModel
     constructor: (@name, @args) ->
+        me = @
         @observable = riot.observable()
         @_api = self.OS.API
         @_gui = self.OS.GUI
@@ -8,7 +9,8 @@ class BaseModel
         @on "exit", () -> me.quit()
         @host = "#desktop"
         @dialog = undefined
-
+        @subscribe "systemlocalechange", () ->
+            me.scheme.update() if me.scheme
     render: (p) ->
         _GUI.loadScheme p, @, @host
 

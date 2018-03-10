@@ -3,7 +3,6 @@
     _OS.setting.applications = conf.applications if conf.applications
     _OS.setting.appearance = conf.appearance if conf.appearance
     _OS.setting.user = conf.user
-    _OS.setting.user.language = "en_GB" unless conf.user.language
     _OS.setting.VFS = conf.VFS if conf.VFS
     _OS.setting.desktop.path = "home:///.desktop" unless _OS.setting.desktop.path
     _OS.setting.desktop.menu = {} unless _OS.setting.desktop.menu
@@ -32,6 +31,7 @@
         user: "home:///.packages",
         system: "os:///packages"
      } unless _OS.setting.system.pkgpaths
+    _OS.setting.system.locale = "en_GB" unless _OS.setting.system.locale
     _OS.setting.system.menu = {} unless _OS.setting.system.menu
     _OS.setting.system.repositories = [] unless _OS.setting.system.repositories
     _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
@@ -45,7 +45,7 @@
     } unless _OS.setting.VFS.gdrive
 
         #search for app
-    _API.onsearch __("Applications"), (t) ->
+    _API.onsearch "__(Applications)", (t) ->
         ar = []
         term = new RegExp t, "i"
         for k, v of _OS.setting.system.packages when v.app

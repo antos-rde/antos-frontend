@@ -7,11 +7,11 @@ class UserService extends this.OS.GUI.BaseService
         me = @
         @child = [
             {
-                text: __("About"), dataid: "user-about",
+                text: "__(About)", dataid: "user-about",
                 iconclass: "fa fa-user-circle-o"
             },
             {
-                text: __("Logout"), dataid: "sys-logout",
+                text: "__(Logout)", dataid: "sys-logout",
                 iconclass: "fa fa-user-times"
             }
         ]
