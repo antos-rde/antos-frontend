@@ -21,7 +21,7 @@ class Preview extends this.OS.GUI.BaseApplication
             file.info.size = (file.info.size / 1024).toFixed(2)
             me.renderFile file
         , (err) ->
-            me.error "File not found #{file.path}"
+            me.error __("File not found {0}", file.path)
     
     renderFile: (file) ->
         mime = file.info.mime
@@ -31,7 +31,7 @@ class Preview extends this.OS.GUI.BaseApplication
         else if mime.match /image\/.*/g
             @renderImage file
         else
-            @notify "Mime type #{file.info.mime} is not support"
+            @notify __("Mime type {0} is not supported", file.info.mime)
 
     setStatus: (t) ->
         ($ @status).html t
@@ -68,7 +68,7 @@ class Preview extends this.OS.GUI.BaseApplication
                         fn(p+1)
                 fn(1)
             .catch (err) ->
-                me.error "Cannot render the PDF file"
+                me.error __("Cannot render the PDF file")
                 me._api.loaded q, "FAIL"
         , "binary"
 
@@ -96,10 +96,10 @@ class Preview extends this.OS.GUI.BaseApplication
     menu: () ->
         me = @
         menu = [{
-                text: "File",
+                text: __("File"),
                 child: [
-                    { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O" },
-                    { text: "Close", dataid: "#{@name}-Close", shortcut: "C-X" },
+                    { text: __("Open"), dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: __("Close"), dataid: "#{@name}-Close", shortcut: "C-X" },
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
@@ -112,7 +112,7 @@ class Preview extends this.OS.GUI.BaseApplication
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()
-                , "Open file", { mimes: me.meta().mimes }
+                , __("Open file"), { mimes: me.meta().mimes }
              when "#{@name}-Close"
                 @quit()
 

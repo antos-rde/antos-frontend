@@ -42,7 +42,7 @@ class Files extends this.OS.GUI.BaseApplication
             return unless e.child
             return if e.child.filename is "[..]"
             e.child.path.asFileHandler().read (d) ->
-                return me.error "Resource not found #{e.child.path}" if d.error
+                return me.error __("Resource not found {0}", e.child.path) if d.error
                 f d.result
         
         @view.set "onfileselect", (e) ->
@@ -92,7 +92,7 @@ class Files extends this.OS.GUI.BaseApplication
         dir = if p then p.asFileHandler() else me.currdir
         dir.read (d) ->
                 if(d.error)
-                    return me.error "Resource not found #{p}"
+                    return me.error __("Resource not found {0}", p)
                 
                 me.currdir = dir
                 if not dir.isRoot()
@@ -110,28 +110,28 @@ class Files extends this.OS.GUI.BaseApplication
         #console.log file
         me = @
         arr = {
-            text: "File",
+            text: __("File"),
             child: [
-                { text: "New file", dataid: "#{@name}-mkf", shortcut: 'C-F' },
-                { text: "New folder", dataid: "#{@name}-mkdir", shortcut: 'C-D' },
-                { text: "Open with", dataid: "#{@name}-open", child:@apps },
-                { text: "Upload", dataid: "#{@name}-upload", shortcut: 'C-U' },
-                { text: "Download", dataid: "#{@name}-download" },
-                { text: "Share file", dataid: "#{@name}-share", shortcut: 'C-S' },
-                { text: "Properties", dataid: "#{@name}-info", shortcut: 'C-I' }
+                { text: __("New file"), dataid: "#{@name}-mkf", shortcut: 'C-F' },
+                { text: __("New folder"), dataid: "#{@name}-mkdir", shortcut: 'C-D' },
+                { text: __("Open with"), dataid: "#{@name}-open", child: @apps },
+                { text: __("Upload"), dataid: "#{@name}-upload", shortcut: 'C-U' },
+                { text: __("Download"), dataid: "#{@name}-download" },
+                { text: __("Share file"), dataid: "#{@name}-share", shortcut: 'C-S' },
+                { text: __("Properties"), dataid: "#{@name}-info", shortcut: 'C-I' }
             ], onmenuselect: (e) -> me.actionFile e.item.data.dataid
         }
         return arr
     mnEdit: () ->
         me = @
         {
-            text: "Edit",
+            text: __("Edit"),
             child: [
-                { text: "Rename", dataid: "#{@name}-mv", shortcut: 'C-R' },
-                { text: "Delete", dataid: "#{@name}-rm", shortcut: 'C-M' },
-                { text: "Cut", dataid: "#{@name}-cut", shortcut: 'C-X' },
-                { text: "Copy", dataid: "#{@name}-copy", shortcut: 'C-C' },
-                { text: "Paste", dataid: "#{@name}-paste", shortcut: 'C-P' }
+                { text: __("Rename"), dataid: "#{@name}-mv", shortcut: 'C-R' },
+                { text: __("Delete"), dataid: "#{@name}-rm", shortcut: 'C-M' },
+                { text: __("Cut"), dataid: "#{@name}-cut", shortcut: 'C-X' },
+                { text: __("Copy"), dataid: "#{@name}-copy", shortcut: 'C-C' },
+                { text: __("Paste"), dataid: "#{@name}-paste", shortcut: 'C-P' }
             ], onmenuselect: (e) -> me.actionEdit e.item.data.dataid
         }
     menu: () ->
@@ -140,16 +140,16 @@ class Files extends this.OS.GUI.BaseApplication
             @mnFile(),
             @mnEdit(),
             {
-                text: "View",
+                text: __("View"),
                 child: [
-                    { text: "Refresh", dataid: "#{@name}-refresh" },
-                    { text: "Sidebar", switch: true, checked: @setting.sidebar, dataid: "#{@name}-side" },
-                    { text: "Navigation bar", switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
-                    { text: "Hidden files", switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
-                    { text: "Type", child: [
-                        { text: "Icon view", radio: true, checked: @setting.view is 'icon', dataid: "#{@name}-icon", type: 'icon' },
-                        { text: "List view", radio:true, checked: @setting.view is 'list' or not @setting.view, dataid: "#{@name}-list", type: 'list' },
-                        { text: "Tree view", radio:true, checked: @setting.view is 'tree', dataid: "#{@name}-tree", type: 'tree' }
+                    { text: __("Refresh"), dataid: "#{@name}-refresh" },
+                    { text: __("Sidebar"), switch: true, checked: @setting.sidebar, dataid: "#{@name}-side" },
+                    { text: __("Navigation bar"), switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
+                    { text: __("Hidden files"), switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
+                    { text: __("Type"), child: [
+                        { text: __("Icon view"), radio: true, checked: @setting.view is 'icon', dataid: "#{@name}-icon", type: 'icon' },
+                        { text: __("List view"), radio:true, checked: @setting.view is 'list' or not @setting.view, dataid: "#{@name}-list", type: 'list' },
+                        { text: __("Tree view"), radio:true, checked: @setting.view is 'tree', dataid: "#{@name}-tree", type: 'tree' }
                      ], onmenuselect: (e) ->
                         me.view.set 'view', e.item.data.type
                         me.setting.view = e.item.data.type
@@ -171,12 +171,12 @@ class Files extends this.OS.GUI.BaseApplication
         switch e.item.data.dataid
             when "#{@name}-hidden"
                 #@.view.set "showhidden", e.item.data.checked
-                @registry "showhidden",e.item.data.checked
+                @registry "showhidden", e.item.data.checked
                 #@.setting.showhidden = e.item.data.checked
             when "#{@name}-refresh"
                 @.chdir null
             when "#{@name}-side"
-                @registry "sidebar",e.item.data.checked
+                @registry "sidebar", e.item.data.checked
                 #@setting.sidebar = e.item.data.checked
                 #@toggleSidebar e.item.data.checked
             when "#{@name}-nav"
@@ -195,8 +195,8 @@ class Files extends this.OS.GUI.BaseApplication
                         return if d is file.filename
                         file.path.asFileHandler()
                             .move "#{me.currdir.path}/#{d}", (r) ->
-                                me.error "Fail to rename to #{d}: #{r.error}" if r.error
-                    , "Rename", { label: "File name:", value: file.filename }
+                                me.error __("Fail to rename to {0}: {1}", d, r.error) if r.error
+                    , __("Rename"), { label: __("File name"), value: file.filename }
             
             when "#{@name}-rm"
                 return unless file
@@ -205,23 +205,23 @@ class Files extends this.OS.GUI.BaseApplication
                         return unless d
                         file.path.asFileHandler()
                             .remove (r) ->
-                                me.error "Fail to delete #{file.filename}: #{r.error}" if r.error
-                , "Delete" ,
-                { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{file.filename} ?" }
+                                me.error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
+                , __("Delete") ,
+                { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", file.filename) }
             
             when "#{@name}-cut"
                 return unless file
                 @clipboard =
                     cut: true
                     file: file.path.asFileHandler()
-                @notify "File #{file.filename} cut"
+                @notify __("File {0} cut", file.filename)
             
             when "#{@name}-copy"
                 return unless file
                 @clipboard =
                     cut: false
                     file: file.path.asFileHandler()
-                @notify "File #{file.filename} copied"
+                @notify __("File {0} copied", file.filename)
 
             when "#{@name}-paste"
                 me = @
@@ -230,9 +230,9 @@ class Files extends this.OS.GUI.BaseApplication
                     @clipboard.file # duplicate file check
                             .move "#{me.currdir.path}/#{@clipboard.file.basename}", (r) ->
                                 me.clipboard = undefined
-                                me.error "Fail to paste: #{r.error}" if r.error
+                                me.error __("Fail to paste: {0}", r.error) if r.error
                 else
-                    @notify "Copy not yet implemented"
+                    @notify __("Copy not yet implemented")
                     @clipboard = undefined
             else
                 @_api.handler.setting()
@@ -246,16 +246,16 @@ class Files extends this.OS.GUI.BaseApplication
                 @openDialog "PromptDialog",
                     (d) ->
                         me.currdir.mk d, (r) ->
-                             me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New folder", { label: "Folder name:" }
+                             me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    , __("New folder"), { label: __("Folder name") }
             
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
                     (d) ->
                         fp = "#{me.currdir.path}/#{d}".asFileHandler()
                         fp.write "text/plain", (r) ->
-                            me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New file",  { label: "File name:" }
+                            me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    , __("New file"),  { label: __("File name") }
             
             when "#{@name}-info"
                 return unless file
@@ -264,14 +264,14 @@ class Files extends this.OS.GUI.BaseApplication
             when "#{@name}-upload"
                 me = @
                 @currdir.upload (r) ->
-                    me.error "Faile to upload to: #{d}: #{r.error}" if r.error
+                    me.error __("Fail to upload to {0}: {1}", d, r.error) if r.error
 
             when "#{@name}-share"
                 me = @
                 return unless file and file.type is "file"
                 file.path.asFileHandler().publish (r) ->
-                    return me.error "Cannot share file: #{r.error}" if r.error
-                    return me.notify "Shared url: #{r.result}"
+                    return me.error __("Cannot share file: {0}", r.error) if r.error
+                    return me.notify __("Shared url: {0}", r.result)
 
             when "#{@name}-download"
                 return unless file

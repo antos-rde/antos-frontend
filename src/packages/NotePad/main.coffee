@@ -58,7 +58,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         stup = (e) ->
             c = me.editor.session.selection.getCursor()
             l = me.editor.session.getLength()
-            $(stat).html "Row #{c.row}, col #{c.column}, lines: #{l}"
+            $(stat).html __("Row {0}, col {1}, lines: {2}", c.row, c.column, l)
         stup(0)
         @.editor.getSession().selection.on "changeCursor", (e) -> stup(e)
         @editormux = false
@@ -79,7 +79,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             return unless e.child
             return if e.child.filename is "[..]"
             e.child.path.asFileHandler().read (d) ->
-                return me.error "Resource not found #{e.child.path}" if d.error
+                return me.error __("Resource not found {0}", e.child.path) if d.error
                 f d.result
         @fileview.set "onfileopen", (e) ->
             return if e.type is "dir"
@@ -101,7 +101,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             me.openDialog "YesNoDialog", (d) ->
                 return me.closeTab it if d
                 me.editor.focus()
-            , "Close tab", { text: "Close without saving ?" }
+            , __("Close tab"), { text: __("Close without saving ?") }
             return false
         #@tabarea.set "closable", true
         @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
@@ -123,10 +123,10 @@ class NotePad extends this.OS.GUI.BaseApplication
 
     contextMenu: () ->
         [
-            { text: "New file", dataid: "#{@name}-mkf" },
-            { text: "New folder", dataid: "#{@name}-mkd" },
-            { text: "Delete", dataid: "#{@name}-rm" }
-            { text: "Refresh", dataid: "#{@name}-refresh" }
+            { text: __("New file"), dataid: "#{@name}-mkf" },
+            { text: __("New folder"), dataid: "#{@name}-mkd" },
+            { text: __("Delete"), dataid: "#{@name}-rm" }
+            { text: __("Refresh"), dataid: "#{@name}-refresh" }
         ]
 
     contextAction: (e) ->
@@ -140,16 +140,16 @@ class NotePad extends this.OS.GUI.BaseApplication
                 @openDialog "PromptDialog",
                     (d) ->
                         dir.mk d, (r) ->
-                             me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New folder"
+                             me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    , __("New folder")
             
             when "#{@name}-mkf"
                 @openDialog "PromptDialog",
                     (d) ->
                         fp = "#{dir.path}/#{d}".asFileHandler()
                         fp.write "", (r) ->
-                            me.error "Fail to create #{d}: #{r.error}" if r.error
-                    , "New file"
+                            me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    , __("New file")
             when "#{@name}-rm"
                 return unless file
                 @openDialog "YesNoDialog",
@@ -157,16 +157,16 @@ class NotePad extends this.OS.GUI.BaseApplication
                         return unless d
                         file.path.asFileHandler()
                             .remove (r) ->
-                                me.error "Fail to delete #{file.filename}: #{r.error}" if r.error
-                , "Delete" ,
-                { iconclass: "fa fa-question-circle", text: "Do you really want to delete: #{file.filename} ?" }
+                                me.error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
+                , __("Delete") ,
+                { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", file.filename) }
             when "#{@name}-refresh"
                 @.chdir ( @fileview.get "path" )
 
     save: (file) ->
         me = @
         file.write "text/plain", (d) ->
-            return me.error "Error saving file #{file.basename}" if d.error
+            return me.error __("Error saving file {0}", file.basename) if d.error
             file.dirty = false
             file.text = file.basename
             me.tabarea.update()
@@ -228,7 +228,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         dir = pth.asFileHandler()
         dir.read (d) ->
             if(d.error)
-                return me.error "Resource not found #{p}"
+                return me.error __("Resource not found {0}", p)
             if not dir.isRoot()
                 p = dir.parent().asFileHandler()
                 p.filename = "[..]"
@@ -242,12 +242,12 @@ class NotePad extends this.OS.GUI.BaseApplication
     menu: () ->
         me = @
         menu = [{
-                text: "File",
+                text: __("File"),
                 child: [
-                    { text: "New", dataid: "#{@name}-New", shortcut: "A-N"  },
-                    { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O"  },
-                    { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
-                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
+                    { text: __("New"), dataid: "#{@name}-New", shortcut: "A-N"  },
+                    { text: __("Open"), dataid: "#{@name}-Open", shortcut: "A-O"  },
+                    { text: __("Save"), dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: __("Save as"), dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
@@ -267,12 +267,12 @@ class NotePad extends this.OS.GUI.BaseApplication
                 me.tabarea.replaceItem me.currfile, file, false
                 me.currfile = file
                 me.save me.currfile
-            , "Save as", { file: me.currfile }
+            , __("Save as"), { file: me.currfile }
         switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()
-                , "Open file"
+                , __("Open file")
             when "#{@name}-Save"
                 @currfile.cache = @editor.getValue()
                 return @save @currfile if @currfile.basename
@@ -292,7 +292,7 @@ class NotePad extends this.OS.GUI.BaseApplication
             if d
                 v.dirty = false for v in dirties
                 me.quit()
-        , "Quit", { text: "Ignore all #{dirties.length} unsaved files ?" }
+        , __("Quit"), { text: __("Ignore all {0} unsaved files ?", dirties.length) }
 
 NotePad.singleton = false
 NotePad.dependencies = [

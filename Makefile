@@ -6,7 +6,6 @@ NC=\033[0m
 
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
-			src/core/lang/generator.coffee\
 			src/core/settings.coffee\
         	src/core/handlers/RemoteHandler.coffee\
         	src/core/vfs.coffee\
@@ -25,7 +24,7 @@ coffees= 	src/core/core.coffee\
 
 packages = CoreServices NotePad wTerm ActivityMonitor Files MarkOn MarketPlace Blogger Preview
 
-main:  build_coffees build_tags build_themes schemes libs  build_packages
+main:  build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
 
 lite: build_coffee build_tag build_theme schemes   build_packages
@@ -58,10 +57,17 @@ testdata:
 build_tags:
 	@echo "$(BLUE)Building tag files$(NC)"
 	-mkdir $(BUILDDIR)/resources
-	-mkdir $(BUILDDIR)/resources/languages
 	-rm $(BUILDDIR)/resources/antos_tags.js
 	for f in src/core/tags/*; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
+languages:
+	-mkdir $(BUILDDIR)/resources
+	-mkdir $(BUILDDIR)/resources/languages
+	cp src/core/languages/*.json $(BUILDDIR)/resources/languages/
+
+genlang:
+	read -r -p "Enter locale: " LOCAL;\
+		./src/core/languages/gen.sh ./src ./src/core/languages/$$LOCAL.json
 build_themes: antos_themes_build
 
 

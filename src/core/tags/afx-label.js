@@ -32,7 +32,7 @@
         parse(text)
         {
             if(!text) return ""
-            match = text.match(/^__\(([^\)]*)\)$/)
+            match = text.toString().match(/^__\((.*)\)$/)
             if(match)
             {
                 return window.__(match[1])

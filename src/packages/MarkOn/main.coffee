@@ -74,7 +74,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
     save: (file) ->
         me = @
         file.write (file.getb64 "text/plain"), (d) ->
-            return me.error "Error saving file #{file.basename}" if d.error
+            return me.error __("Error saving file {0}", file.basename) if d.error
             file.dirty = false
             file.text = file.basename
             me.scheme.set "apptitle", "#{me.currfile.basename}"
@@ -82,12 +82,12 @@ class MarkOn extends this.OS.GUI.BaseApplication
     menu: () ->
         me = @
         menu = [{
-                text: "File",
+                text: __("File"),
                 child: [
-                    { text: "New", dataid: "#{@name}-New", shortcut: "A-N" },
-                    { text: "Open", dataid: "#{@name}-Open", shortcut: "A-O" },
-                    { text: "Save", dataid: "#{@name}-Save", shortcut: "C-S" },
-                    { text: "Save as", dataid: "#{@name}-Saveas", shortcut: "A-W" }
+                    { text: __("New"), dataid: "#{@name}-New", shortcut: "A-N" },
+                    { text: __("Open"), dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: __("Save"), dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: __("Save as"), dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
@@ -99,12 +99,12 @@ class MarkOn extends this.OS.GUI.BaseApplication
             me.openDialog "FileDiaLog", (d, n) ->
                 me.currfile.setPath "#{d}/#{n}"
                 me.save me.currfile
-            , "Save as", { file: me.currfile }
+            , __("Save as"), { file: me.currfile }
         switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()
-                , "Open file"
+                , __("Open file")
             when "#{@name}-Save"
                 @currfile.cache = @editor.value()
                 return @save @currfile if @currfile.basename
@@ -125,7 +125,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
             if d
                 me.currfile.dirty = false
                 me.quit()
-        , "Quit", { text: "Quit without saving ?" }
+        , __("Quit"), { text: __("Quit without saving ?") }
 
 MarkOn.dependencies = [ "mde/simplemde.min" ]
 

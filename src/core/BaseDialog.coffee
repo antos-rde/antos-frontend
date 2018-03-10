@@ -87,7 +87,7 @@ class PromptDialog extends BasicDialog
             resizable: false,
             buttons: [
                 {
-                    label: __("0k"),
+                    label: __("Ok"),
                     onclick: (d) ->
                         txt = (d.find "content1").value
                         return d.quit() if txt is ""
