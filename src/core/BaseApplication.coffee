@@ -77,8 +77,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
             [{
                 text: _OS.APP[@name].meta.name,
                 child: [
-                    { text: __("About"), dataid: "#{@name}-about" },
-                    { text: __("Exit"), dataid: "#{@name}-exit" }
+                    { text: "__(About)", dataid: "#{@name}-about" },
+                    { text: "__(Exit)", dataid: "#{@name}-exit" }
                 ]
             }]
         mn = mn.concat @menu() || []

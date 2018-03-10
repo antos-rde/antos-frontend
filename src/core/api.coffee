@@ -254,7 +254,7 @@ self.OS.API =
         _API.get path, (d) ->
             _OS.setting.system.locale = name
             _API.lang = d
-            if f then f() else _courrier.trigger "systemlocalechange"
+            if f then f() else _courrier.trigger "systemlocalechange", name
         , (e, s) ->
             #_OS.setting.system.locale = "en_GB"
             _courrier.oserror __("Language file {0} not found", path), e, s

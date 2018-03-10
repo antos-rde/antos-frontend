@@ -20,7 +20,7 @@
         this.fetch = opts.fetch
         this.chdir = opts.chdir
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
-        this.header = [{value:__("File name")},{value: __("Type"), width:150}, {value: __("Size"), width:70}]
+        this.header = [{value:"__(File name)"},{value: "__(Type)", width:150}, {value: "__(Size)", width:70}]
 
         self.root.set = function(k,v)
         {
@@ -149,6 +149,7 @@
             }
             else
                 refreshData()
+            //console.log("update")
             //calibre_size()
         })
         self.on("mount", function(){

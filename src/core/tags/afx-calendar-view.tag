@@ -1,9 +1,12 @@
 <afx-calendar-view>
-    <div><i class ="prevmonth" onclick={prevmonth}></i>{text}<i onclick={nextmonth} class="nextmonth"></i></div>
+    <div><i class ="prevmonth" onclick={prevmonth}></i>
+    <afx-label text = {mtext}></afx-label>
+    <afx-label text = {year}></afx-label>
+    <i onclick={nextmonth} class="nextmonth"></i></div>
     <afx-grid-view data-id ={"grid_" + rid}  style = "height:100%;" ref = "grid"  header = {header}> </afx-grid-view>
 
     <script >
-    this.header = [{value:__("Sun")},{value:__("Mon")},{value:__("Tue")},{value:__("Wed")},{value:__("Thu")},{value:__("Fri")},{value:__("Sat")}]
+    this.header = [{value:"__(Sun)"},{value:"__(Mon)"},{value:"__(Tue)"},{value:"__(Wed)"},{value:"__(Thu)"},{value:"__(Fri)"},{value:"__(Sat)"}]
     this.root.observable = opts.observable
     var self = this
     this.day = 0
@@ -62,7 +65,7 @@
         self.year = date.getFullYear()
 
         var now ={ d:(new Date()).getDate(), m:(new Date()).getMonth(), y:(new Date()).getFullYear()}
-        months = [__("January"), __("February"), __("March"), __("April"), __("May"), __("June"), __("July"), __("August"), __("September"), __("October"), __("November"), __("December")]
+        months = ["__(January)", "__(February)", "__(March)", "__(April)", "__(May)", "__(June)", "__(July)", "__(August)", "__(September)", "__(October)", "__(November)", "__(December)"]
 
         this_month = new Date(self.year, self.month, 1)
         next_month = new Date(self.year, self.month + 1, 1)
@@ -70,7 +73,7 @@
         // Find out when this month starts and ends.
         first_week_day = this_month.getDay()
         days_in_this_month = Math.round((next_month.getTime() - this_month.getTime()) / (1000 * 60 * 60 * 24))
-        self.text = months[self.month] + ' ' + self.year
+        self.mtext = months[self.month]
         var rows = []
         var row = []
         // Fill the first week of the month with the appropriate number of blanks.

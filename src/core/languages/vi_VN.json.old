@@ -193,27 +193,4 @@
 	"Wrong format: it should be [name] url":"Sai định dạng: định dạng hợp lệ [name] url",
 	"Yes":"Có",
 	"{0} is not a directory":"{0} không phải là thư mục"
-
-,
-	"April":"Tháng 4",
-	"August":"Tháng 8",
-	"December":"Tháng 12",
-	"February":"Tháng hai",
-	"Fri":"Sáu",
-	"January":"Tháng một",
-	"July":"Tháng 7",
-	"June":"Tháng 6",
-	"March":"Tháng 3",
-	"May":"Tháng 5",
-	"Mon":"Hai",
-	"November":"Tháng 11",
-	"October":"Tháng 10",
-	"Sat":"Bảy",
-	"Selected: {0} ({1} bytes)":"Đã chọn: {0} ({1} bytes)",
-	"September":"Tháng 9",
-	"Size":"Kích cỡ",
-	"Sun":"CN",
-	"Thu":"Năm",
-	"Tue":"Ba",
-	"Wed":"Tư"
 }

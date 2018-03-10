@@ -9,7 +9,7 @@ class BaseModel
         @on "exit", () -> me.quit()
         @host = "#desktop"
         @dialog = undefined
-        @subscribe "systemlocalechange", () ->
+        @subscribe "systemlocalechange", (name) ->
             me.scheme.update() if me.scheme
     render: (p) ->
         _GUI.loadScheme p, @, @host

@@ -388,14 +388,11 @@ self.OS.GUI =
         #console.log _OS.setting
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme
-        # initDM
-        _API.setLocale _OS.setting.system.locale, () ->
-            _GUI.initDM()
         _courrier.observable.one "syspanelloaded", () ->
             # TODO load packages list then build system menu
-            _courrier.observable.on "systemlocalechange", () ->
+            _courrier.observable.on "systemlocalechange", (name) ->
                 ($ "#syspanel")[0].update()
-                
+
             _API.packages.cache (ret) ->
                 if ret.result
                     _API.packages.fetch (r) ->
@@ -414,3 +411,6 @@ self.OS.GUI =
                         _GUI.pushServices (v for v in _OS.setting.system.startup.services)
                         (_GUI.launch a) for a in _OS.setting.system.startup.apps
                 #_GUI.launch "DummyApp"
+        # initDM
+        _API.setLocale _OS.setting.system.locale, () ->
+            _GUI.initDM()
