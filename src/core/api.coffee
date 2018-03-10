@@ -62,7 +62,8 @@ String.prototype.asUint8Array = () ->
 if not String.prototype.format
     String.prototype.format = () ->
         args = arguments
-        return new FormatedString(@, args)
+        return @replace /{(\d+)}/g, (match, number) ->
+            return if typeof args[number] != 'undefined' then args[number] else match
 
 String.prototype.f = () ->
     args = arguments

@@ -14,7 +14,7 @@
         }
         this.on("update", function(){
             if(self.updateContent)
-                self.updateContent()
+                self.root.innerHTML = self.updateContent()
         })
     </script>
 </afx-html>
