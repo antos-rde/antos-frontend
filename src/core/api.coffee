@@ -242,7 +242,7 @@ self.OS.API =
                 , (e, s) ->
                     _courrier.oserror __("Cannot load 3rd library at: {0}", l), e, r
             else
-                path = "os:///scripts/"
+                path = "os://scripts/"
                 js = "#{path}#{l}.js"
                 js.asFileHandler().onready (d) ->
                     _API.shared[l] = true

@@ -1,5 +1,5 @@
 String.prototype.asFileHandler = () ->
-    list = @split ":///"
+    list = @split "://"
     handlers = _API.VFS.findHandlers list[0]
     if not handlers or handlers.length is 0
         _courrier.osfail __("VFS unknown handler: {0}", @), (_API.throwe "OS.VFS"), @
@@ -25,7 +25,7 @@ class BaseFileHandler
         @ready = false
         return unless p
         @path = p.toString()
-        list = @path.split ":///"
+        list = @path.split "://"
         @protocol = list[0]
         return unless list.length > 1
         re = list[1].replace(/^\/+|\/+$/g, '')
@@ -67,7 +67,7 @@ class BaseFileHandler
                 return _courrier.osfail __("VFS Cannot encode file: {0}", me.path), (_API.throwe "OS.VFS"), e
     parent: () ->
         return @ if @isRoot()
-        return (@protocol + ":///" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
+        return (@protocol + "://" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
 
     onready: (f, err) ->
         # read meta data

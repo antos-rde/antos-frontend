@@ -6,6 +6,7 @@
         var self = this
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         this.on('mount', function(){
+            self.root.observable =   (self.parent && self.parent.root && self.parent.root.observable) || opts.observable || riot.observable()
             $(self.refs.container)
                 .css("display","flex")
                 .css("flex-direction","column")
@@ -32,6 +33,16 @@
             var csize, ocheight = 0, avaiheight;
             avaiheight = $(self.root).height()
             avaiwidth = $(self.root).width()
+            /*if(avaiheight == 0)
+            {
+                avaiheight = $(self.parent.root).height()
+                $(self.root).css("height", avaiheight+"px")
+            }
+            if(avaiwidth == 0)
+            {
+                avaiwidth = $(self.parent.root).width()
+                $(self.root).css("height", avaiwidth+"px")
+            }*/
             $(self.refs.container).css("height",avaiheight + "px")
             $(self.refs.container)
                 .children()

@@ -1,6 +1,6 @@
 
 # GoogleDrive File Handler
-G_CACHE = {"gdv:///":{ id: "root", mime: 'dir' } }
+G_CACHE = {"gdv://":{ id: "root", mime: 'dir' } }
 
 class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
@@ -17,7 +17,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         fn = (r) ->
             return f() if r
             # perform the login
-            G_CACHE = {"gdv:///":{ id: "root", mime: 'dir' } }
+            G_CACHE = {"gdv://":{ id: "root", mime: 'dir' } }
             gapi.auth2.getAuthInstance().signIn()
 
         if _API.libready @setting.apilink
@@ -316,7 +316,7 @@ self.OS.API.onsearch "Google Drive", (t) ->
     return arr
 
 self.OS.onexit "cleanUpGoogleDrive", () ->
-    G_CACHE = { "gdv:///": { id: "root", mime: 'dir' } }
+    G_CACHE = { "gdv://": { id: "root", mime: 'dir' } }
     return unless _OS.setting.VFS.gdrive and _API.libready _OS.setting.VFS.gdrive.apilink
     auth2 = gapi.auth2.getAuthInstance()
     return unless auth2

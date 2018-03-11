@@ -20,7 +20,7 @@
         return self[k]
     }
 
-    this.on("mount", function (e) { 
+    this.on("mount", function (e) {
         self.refs.grid.root.observable = self.root.observable
         calendar(null)
         self.root.observable.on("gridcellselect", function(d){

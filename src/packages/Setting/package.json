@@ -1,0 +1,13 @@
+{
+    "app":"Setting",
+    "name":"System setting",
+    "description":"System setting",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.1a",
+    "category":"System",
+    "iconclass":"fa fa-wrench",
+    "mimes":["none"]
+}

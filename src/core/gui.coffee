@@ -118,7 +118,7 @@ self.OS.GUI =
         _GUI.launch app, args
 
     loadApp: (app, ok, err) ->
-        path = "os:///packages/#{app}"
+        path = "os://packages/#{app}"
         path = _OS.setting.system.packages[app].path if _OS.setting.system.packages[app].path
         js = path + "/main.js"
         
@@ -210,7 +210,15 @@ self.OS.GUI =
         c = arr[1].toUpperCase()
         return unless _GUI.shortcut[fnk]
         _GUI.shortcut[fnk][c] = f
-        
+
+    wallpaper: (obj) ->
+        if obj
+            _OS.setting.appearance.wp = obj
+        wp = _OS.setting.appearance.wp
+        $("body").css("background-image", "url(#{_API.handler.get}/#{wp.url})" )
+            .css("background-size", wp.size)
+            .css("ackground-repeat", wp.repeat)
+
     initDM: ->
         ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
             _GUI.fullscreen = not _GUI.fullscreen
@@ -388,6 +396,7 @@ self.OS.GUI =
         #console.log _OS.setting
         # load theme
         _GUI.loadTheme _OS.setting.appearance.theme
+        _GUI.wallpaper()
         _courrier.observable.one "syspanelloaded", () ->
             # TODO load packages list then build system menu
             _courrier.observable.on "systemlocalechange", (name) ->

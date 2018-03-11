@@ -80,7 +80,7 @@ class CodeBlock extends this.OS.GUI.BaseApplication
         @socket.onopen = () ->
             console.log "socket open"
             enc = new TextEncoder "utf-8"
-            me.socket.send enc.encode me.blen + "os:///packages/packages.json"
+            me.socket.send enc.encode me.blen + "os://packages/packages.json"
 
         @socket.onmessage =  (e) ->
             console.log e.data

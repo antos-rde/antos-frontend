@@ -6,7 +6,7 @@
         else
             this.swon = false
         var self = this
-        this.root.observable = opts.observable
+        //this.root.observable = opts.observable
         if(opts.enable != undefined)
             this.enable = opts.enable
         else
@@ -31,6 +31,9 @@
             opts.swon = !self.swon
             self.update()
         }
+        /*this.on("mount", function(){
+            self.root.observable =   (self.parent && self.parent.root && self.parent.root.observable) || opts.observable || riot.observable()
+        })*/
         this.on("update", function(e){
             self.swon = opts.swon
             self.onchange = opts.onchange

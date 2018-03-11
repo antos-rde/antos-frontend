@@ -1,0 +1,11 @@
+afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-list-view > div > ul > li{
+    float:none;
+    border-radius: 0;
+    font-weight: bold;
+    padding-top:3px;
+    padding-bottom: 3px;
+    border:0;
+}
+afx-app-window[data-id = "setting-window"] afx-tab-container  div[data-ref="container"]{
+    border-left: 1px solid #cbcbcb;
+}

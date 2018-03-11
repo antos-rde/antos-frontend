@@ -3,7 +3,6 @@
     <script>
         var self = this
         this.closable = opts.closable || false
-        self.root.observable = opts.observable || riot.observable()
         self.ontabselect = opts.ontabselect
         get_observable(){
             return self.root.observable
@@ -17,6 +16,7 @@
             self.update(true)
         }
         self.on("mount", function(){
+            self.root.observable = opts.observable || (self.parent && self.parent.root && self.parent.root.observable) || riot.observable()
             self.refs.list.root.observable = self.root.observable
             /*self.root.observable.on("listselect", function(){
                 console.log("list select")

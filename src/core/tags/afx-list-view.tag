@@ -112,6 +112,7 @@
         }
         
         this.on("mount", function(){
+            self.root.observable = opts.observable || (self.parent && self.parent.root && self.parent.root.observable) || riot.observable()
             if(opts.dropdown == "true")
             {
                 $(document).click(function(event) { 

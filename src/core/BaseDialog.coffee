@@ -240,7 +240,7 @@ class AboutDialog extends BaseDialog
         super "AboutDialog"
 
     init: () ->
-        @render "os:///resources/schemes/about.html"
+        @render "os://resources/schemes/about.html"
 
     main: () ->
         mt = @meta()
@@ -260,7 +260,7 @@ class FileDiaLog extends BaseDialog
         super "FileDiaLog"
     
     init: () ->
-        @render "os:///resources/schemes/filedialog.html"
+        @render "os://resources/schemes/filedialog.html"
     
     main: () ->
         fileview = @find "fileview"

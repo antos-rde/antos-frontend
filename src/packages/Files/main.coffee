@@ -8,7 +8,7 @@ class Files extends this.OS.GUI.BaseApplication
         @view = @find "fileview"
         @navinput = @find "navinput"
         @navbar = @find "nav-bar"
-        @currdir = if @args and @args.length > 0 then @args[0].asFileHandler() else "home:///".asFileHandler()
+        @currdir = if @args and @args.length > 0 then @args[0].asFileHandler() else "home://".asFileHandler()
         @favo = @find "favouri"
         @clipboard = undefined
 
