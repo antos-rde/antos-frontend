@@ -90,6 +90,7 @@ afx-list-view.dropdown > div.list-container > ul{
     border-radius: 3px;
     padding:2px;
     border-top-left-radius: 0px;
+    z-index: 10;
 }
 afx-list-view.dropdown > div.list-container > ul > li{
     display: inline-block;

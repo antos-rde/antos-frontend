@@ -3,7 +3,7 @@
     _OS.setting.applications = conf.applications if conf.applications
     _OS.setting.appearance = conf.appearance if conf.appearance
     _OS.setting.appearance.wp = {
-        url: "os://resources/themes/system/wp/wp2.png",
+        url: "os://resources/themes/system/wp/wp2.jpg",
         size: "cover",
         repeat: "repeat"
     } unless _OS.setting.appearance.wp

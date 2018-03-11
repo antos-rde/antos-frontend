@@ -217,7 +217,7 @@ self.OS.GUI =
         wp = _OS.setting.appearance.wp
         $("body").css("background-image", "url(#{_API.handler.get}/#{wp.url})" )
             .css("background-size", wp.size)
-            .css("ackground-repeat", wp.repeat)
+            .css("background-repeat", wp.repeat)
 
     initDM: ->
         ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->

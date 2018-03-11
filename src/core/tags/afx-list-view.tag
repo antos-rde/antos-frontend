@@ -1,6 +1,6 @@
 <afx-list-view class = {dropdown: opts.dropdown == "true"}>
     <div class = "list-container" ref = "container">
-    <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":"min-width:150px;"}  onclick = {show_list}>
+    <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":""}  onclick = {show_list}>
     </div>
     <ul  ref = "mlist">
         <li each={item,i in items } class={selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onclick = {parent._select} oncontextmenu = {parent._select}>
@@ -113,8 +113,12 @@
         
         this.on("mount", function(){
             self.root.observable = opts.observable || (self.parent && self.parent.root && self.parent.root.observable) || riot.observable()
+            
             if(opts.dropdown == "true")
             {
+                self.root.observable.on("calibrate", function(){
+                    $(self.refs.container).css("width", $(self.root).width() + "px" )
+                })
                 $(document).click(function(event) { 
                     if(!$(event.target).closest(self.refs.container).length) {
                         $(self.refs.mlist).hide()

@@ -9,3 +9,23 @@ afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-lis
 afx-app-window[data-id = "setting-window"] afx-tab-container  div[data-ref="container"]{
     border-left: 1px solid #cbcbcb;
 }
+
+afx-app-window[data-id = "setting-window"] afx-label.header{
+    font-weight: bold;
+}
+
+/*APPEARANCE*/
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] div[data-id = "wp-preview"]{
+    display: block;
+    border:1px solid #cbcbcb;
+    border-radius: 10px;
+}
+
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-list-view[data-id="wplist"]
+{
+    border:1px solid #cbcbcb;
+}
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-resizer{
+    border:0;
+    background-color: transparent;
+}

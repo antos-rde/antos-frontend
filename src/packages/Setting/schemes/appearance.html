@@ -1,14 +1,31 @@
-<afx-vbox>
-    <afx-label text = "__(Wallpaper)" class = "header" data-height="30"></afx-label>
+<afx-vbox data-id="appearance">
+    <div data-height="5"></div>
     <afx-hbox>
-        <afx-list-view data-width="120"></afx-list-view>
-        <div>
-        </div>
+        <div data-width="10"></div>
+        <afx-vbox>
+            <afx-label text = "__(Wallpaper)" iconclass = "fa fa-image" class = "header" data-height="23"></afx-label>
+            <afx-hbox>
+                <afx-list-view data-width="120" data-id="wplist"></afx-list-view>
+                <afx-resizer data-width="5"></afx-resizer>
+                <div data-id = "wp-preview"></div>
+            </afx-hbox>
+            <div data-height="5"></div>
+            <afx-hbox data-height="30">
+                <afx-button data-width="130" text= "__(Add)"></afx-button>
+                <afx-list-view data-id = "wpsize"  dropdown="true"></afx-list-view>
+                <div data-width="5"></div>
+                <afx-list-view data-id = "wprepeat"  dropdown="true"></afx-list-view>
+            </afx-hbox>
+            <div data-height="5"></div>
+            <afx-label text = "__(Theme)" iconclass = "fa fa-window-restore" class = "header" data-height="23"></afx-label>
+            <afx-list-view data-height="30" data-id="theme-list" dropdown="true"></afx-list-view>
+            <div data-height="5"></div>
+        </afx-vbox>
+        <div data-width="10"></div>
     </afx-hbox>
-    <afx-label text = "__(Theme)" class = "header" data-height="30"></afx-label>
-    <afx-list-view data-height="50" dropdown="true"></afx-list-view>
     <afx-hbox data-height="30" >
-            <div></div>
-            <afx-button text="__(Save)" iconclass="fa fa-save" data-width="50"></afx-button>
+            <div style="text-align:right;"><afx-button text="__(Save)" iconclass="fa fa-save"></afx-button></div>
+            <div data-width="10"></div>
     </afx-hbox>
+    <div data-height="5"></div>
 </afx-vbox>

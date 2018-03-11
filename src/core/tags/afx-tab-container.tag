@@ -32,7 +32,7 @@
                     $(this).hide()
                 })
                 $(e.data.scheme).show()
-                e.data.f()
+                e.data.handler.render()
                 calibrate()
             })
             self.root.observable.on("resize", function(){
@@ -46,7 +46,9 @@
             el.scheme = sch
             riot.mount(sch, {observable: self.root.observable})
             $(sch).hide()
-            el.f()
+            el.handler = el.handler(sch[0])
+            //console.log(el.handler)
+            //el.handler.render()
             self.root.observable.trigger("tabrendered")
             //self.root.observable.trigger("calibrate")
         }
