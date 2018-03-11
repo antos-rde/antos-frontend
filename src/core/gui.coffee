@@ -161,7 +161,7 @@ self.OS.GUI =
             app: app
             onbtclick: () -> app.toggle()
         # TODO: this path is not good, need to create a blob of it
-        data.icon = "#{_API.handler.get}/#{meta.path}/#{meta.icon}" if meta.icon
+        data.icon = "#{meta.path}/#{meta.icon}" if meta.icon
         # TODO: add default app icon class in system setting
         # so that it can be themed
         data.iconclass = "fa fa-cogs" if (not meta.icon) and (not meta.iconclass)
@@ -402,6 +402,7 @@ self.OS.GUI =
                                 v.filename = k
                                 v.type = "app"
                                 v.mime = "antos/app"
+                                v.icon = "#{v.path}/#{v.icon}" if v.icon
                                 v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
                         _OS.setting.system.packages = if r.result then r.result else
                         _GUI.refreshSystemMenu()

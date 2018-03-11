@@ -10,6 +10,6 @@
     },
     "version":"0.1a",
     "category":"System",
-    "iconclass":"fa fa-user-circle-o",
+    "icon": "icon.png",
     "mimes":["none"]
 }

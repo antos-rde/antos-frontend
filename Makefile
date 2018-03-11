@@ -69,7 +69,7 @@ genlang:
 	read -r -p "Enter locale: " LOCAL;\
 		./src/core/languages/gen.sh ./src ./src/core/languages/$$LOCAL.json
 build_themes: antos_themes_build
-
+	cp -r src/themes/system $(BUILDDIR)/resources/themes/
 
 antos_themes_build:
 	@echo "$(BLUE)Building themes name: antos$(NC)"
@@ -112,6 +112,7 @@ uglify:
 	# npm install minify -g
 	# uglify the css
 	minify  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
+	minify  --output $(BUILDDIR)/resources/themes/system/font-awesome.css $(BUILDDIR)/resources/themes/system/font-awesome.css
 	#uglify each packages
 
 	for d in $(packages); do\

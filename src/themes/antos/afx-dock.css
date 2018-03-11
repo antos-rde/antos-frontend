@@ -22,9 +22,10 @@ afx-apps-dock afx-button button{
     background-color: transparent;
     border:0;
 }
-afx-apps-dock afx-button .icon-style{
+afx-apps-dock afx-button afx-label i.icon-style{
     width: 24px;
     height: 24px;
+    margin-left: 2px;
     margin-bottom: 0px;
     border:0;
 }

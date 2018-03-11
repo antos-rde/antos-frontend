@@ -1,4 +1,4 @@
-<afx-tab-container>
+<afx-tab-bar>
     <afx-list-view   ref = "list" />
     <script>
         var self = this
@@ -71,4 +71,4 @@
         }
 
     </script>
-</afx-tab-container>
+</afx-tab-bar>

@@ -59,7 +59,7 @@ class BasicDialog extends BaseDialog
         html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
         html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div></afx-vbox></afx-app-window>"
+        html += "</div><div data-height='5'></div></afx-vbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     

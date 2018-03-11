@@ -1,13 +1,13 @@
-afx-tab-container {
+afx-tab-bar {
     display: block;
     width: 100%;
     
 }
-afx-tab-container afx-list-view {
+afx-tab-bar afx-list-view {
     padding:0;
     margin:0;
 }
-afx-tab-container afx-list-view  > div.list-container > ul > li{
+afx-tab-bar afx-list-view  > div.list-container > ul > li{
     float:left;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
