@@ -180,7 +180,7 @@
             if(opts.dropdown  == "true")
             {
                 $(self.refs.mlist).hide()
-                $(self.refs.current).html(it.text)
+                $(self.refs.current).html(it.text.__())
             }
             
             if(self.onlistselect)
