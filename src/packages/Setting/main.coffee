@@ -16,22 +16,37 @@ class Setting extends this.OS.GUI.BaseApplication
         @container = @find "container"
         @container.setTabs [ 
             {
-                text: "Appearance",
+                text: "__(Appearance)",
                 iconclass: "fa fa-paint-brush",
                 url: "#{@path()}/schemes/appearance.html",
                 handler: (sch) ->
-                    me.appearance = new AppearanceHandler(sch, me)
-                    me.appearance
+                    new AppearanceHandler sch, me
             },
             {
-                text: "VFS",
+                text: "__(VFS)",
                 iconclass: "fa fa-inbox" ,
                 url: "#{@path()}/schemes/vfs.html" ,
                 handler: (sch) ->
-                    render: () ->
-                        console.log "finish init VFS"
-                    
+                    new VFSHandler sch, me
+            },
+            {
+                text: "__(Languages)",
+                iconclass: "fa fa-globe",
+                url: "#{@path()}/schemes/locale.html",
+                handler: (sch) ->
+                    new LocaleHandler sch, me
+            },
+            {
+                text: "__(Startup)",
+                iconclass: "fa fa-cog",
+                url: "#{@path()}/schemes/startup.html",
+                handler: (sch) ->
+                    new StartupHandler sch,me
             }
         ]
+        (@find "btnsave").set "onbtclick", (e) ->
+            me._api.setting  (d) ->
+                return me.error __("Cannot save system setting: {0}", d.error) if d.error
+                me.notify __("System setting saved")
 Setting.singleton = true
 this.OS.register "Setting", Setting

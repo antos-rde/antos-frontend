@@ -7,6 +7,7 @@
         size: "cover",
         repeat: "repeat"
     } unless _OS.setting.appearance.wp
+    _OS.setting.appearance.wps = [] unless _OS.setting.appearance.wps
     _OS.setting.user = conf.user
     _OS.setting.VFS = conf.VFS if conf.VFS
     _OS.setting.desktop.path = "home://.desktop" unless _OS.setting.desktop.path

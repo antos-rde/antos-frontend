@@ -276,7 +276,8 @@ self.OS.API =
             _API.handler.packages {
                 command: "cache", args: { paths: (v for k, v of _OS.setting.system.pkgpaths) }
             }, f
-
+    setting: (f) ->
+        _API.handler.setting f
     search: (text) ->
         r = []
         

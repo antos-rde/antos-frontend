@@ -13,7 +13,9 @@ afx-app-window[data-id = "setting-window"] afx-tab-container  div[data-ref="cont
 afx-app-window[data-id = "setting-window"] afx-label.header{
     font-weight: bold;
 }
-
+afx-app-window[data-id = "setting-window"] div.footer{
+    border-right: 1px solid #cbcbcb;
+}
 /*APPEARANCE*/
 afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] div[data-id = "wp-preview"]{
     display: block;
@@ -29,4 +31,25 @@ afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-li
 afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-resizer{
     border:0;
     background-color: transparent;
+}
+/*VFS*/
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="vfs"] afx-list-view[data-id="mplist"]
+{
+    border: 1px solid #cbcbcb;
+}
+
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="vfs"] afx-button.btnsel button{
+    border-radius: 0;
+    padding-top:2px;
+    padding-bottom: 2px;
+}
+/*LANGUAGES*/
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="locale"] afx-list-view[data-id="lglist"]
+{
+    border: 1px solid #cbcbcb;
+}
+/*STARTUP*/
+afx-app-window[data-id = "setting-window"] afx-vbox[data-id="startup"] afx-list-view
+{
+    border: 1px solid #cbcbcb;
 }

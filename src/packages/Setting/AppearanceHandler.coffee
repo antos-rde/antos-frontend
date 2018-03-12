@@ -7,7 +7,7 @@ class AppearanceHandler extends SettingHandler
         @wpsize = @find "wpsize"
         @wprepeat = @find "wprepeat"
         @themelist = @find "theme-list"
-
+        @syswp = undefined
         @wplist.set "onlistselect", (e) ->
             $(me.wpreview).css("background-image", "url(#{me.parent._api.handler.get}/#{e.data.path})" )
             .css("background-size", "cover")
@@ -15,7 +15,13 @@ class AppearanceHandler extends SettingHandler
             me.parent._gui.wallpaper()
 
         @wplist.set "buttons", [
-            { text: "+", onbtclick: (e) -> console.log "click +" }
+            { 
+                text: "+", onbtclick: (e) ->
+                    me.parent.openDialog "FileDiaLog", (d, n, p) ->
+                        me.parent.systemsetting.appearance.wps.push p
+                        me.render()
+                    , __("Select image file"), { mimes: ["image/.*"] }
+            }
         ]
         
         @wpsize.set "onlistselect", (e) ->
@@ -42,13 +48,31 @@ class AppearanceHandler extends SettingHandler
             me.parent._gui.wallpaper()
 
         @themelist.set "items" , [{ text: "antos", selected: true }]
+        
     render: () ->
         me = @
-        path = "os://resources/themes/system/wp"
-        path.asFileHandler().read (d) ->
-            me.parent.error __("Cannot read wallpaper list from {0}", path) if d.error
-            for v in d.result
-                v.text = v.filename
-                v.selected = true if v.path is me.parent.systemsetting.appearance.wp.url
-                v.iconclass = "fa fa-file-image-o"
-            me.wplist.set "items", d.result
+        if not @syswp
+            path = "os://resources/themes/system/wp"
+            path.asFileHandler().read (d) ->
+                me.parent.error __("Cannot read wallpaper list from {0}", path) if d.error
+                for v in d.result
+                    v.text = v.filename
+                    v.selected = true if v.path is me.parent.systemsetting.appearance.wp.url
+                    v.iconclass = "fa fa-file-image-o"
+                me.syswp = d.result
+                me.wplist.set "items", me.getwplist()
+        else
+            
+            me.wplist.set "items", me.getwplist()
+    
+    getwplist: () ->
+        list = []
+        for v in @parent.systemsetting.appearance.wps
+            file = v.asFileHandler()
+            list.push
+                text: file.basename,
+                path: file.path
+                selected: file.path is @parent.systemsetting.appearance.wp.url,
+                iconclass: "fa fa-file-image-o"
+        list = list.concat @syswp
+        return list

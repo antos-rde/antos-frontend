@@ -59,7 +59,7 @@ class BasicDialog extends BaseDialog
         html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
         html += "<div data-height = '30' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div><div data-height='2'></div></afx-vbox></afx-app-window>"
+        html += "</div><div data-height='5'></div></afx-vbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     
@@ -283,7 +283,6 @@ class FileDiaLog extends BaseDialog
         location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
         location.set "selected", 0 unless location.get "selected"
         fileview.set "onfileselect", (f) ->
-        
             ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
@@ -308,5 +307,6 @@ class FileDiaLog extends BaseDialog
         if @data and @data.file
             ($ filename).css("display", "block").val @data.file.basename or "Untitled"
             @trigger "resize"
+        fileview.set "showhidden", @data.hidden if @data and @data.hidden
 
 this.OS.register "FileDiaLog", FileDiaLog

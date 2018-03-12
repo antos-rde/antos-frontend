@@ -1,4 +1,4 @@
-coffee_files = main.coffee AppearanceHandler.coffee
+coffee_files = main.coffee AppearanceHandler.coffee VFSHandler.coffee LocaleHandler.coffee StartupHandler.coffee
 
 jsfiles = 
 

@@ -1,1 +1,26 @@
-<afx-label text = "example2" ></afx-label>
+<afx-vbox data-id="vfs">
+    <div data-height="5"></div>
+    <afx-hbox>
+        <div data-width="10"></div>
+        <afx-vbox>
+            <afx-label text = "__(Mount points)" iconclass = "fa fa-folder" class = "header" data-height="23"></afx-label>
+            <afx-list-view  data-id="mplist"></afx-list-view>
+            <div data-height="5"></div>
+            <afx-label text = "__(Desktop path)" iconclass = "fa fa-desktop" class = "header" data-height="23"></afx-label>
+            <afx-hbox data-height = "25" >
+                <div data-width="16"></div>
+                <afx-label data-id="dpath"></afx-label>
+                <afx-button text="" iconclass = "fa fa-arrow-up" data-id="btndpath" data-width="20" class="btnsel"></afx-button>
+            </afx-hbox>
+            <div data-height="5"></div>
+            <afx-label text = "__(Local packages path)" iconclass = "fa fa-cube" class = "header" data-height="23"></afx-label>
+            <afx-hbox data-height = "25" >
+                <div data-width="16"></div>
+                <afx-label data-id="ppath"></afx-label>
+                <afx-button text="" data-id="btnppath" iconclass = "fa fa-arrow-up" data-width="20" class="btnsel"></afx-button>
+                </afx-hbox>
+            <div data-height="10"></div>
+        </afx-vbox>
+        <div data-width="10"></div>
+    </afx-hbox>
+</afx-vbox>

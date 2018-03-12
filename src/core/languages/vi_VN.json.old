@@ -216,4 +216,36 @@
 	"Thu":"Năm",
 	"Tue":"Ba",
 	"Wed":"Tư"
+
+,
+	"Add":"Thêm",
+	"Cannot read wallpaper list from {0}":"Không thể truy vấn danh sách wallpaper {0}",
+	"Theme":"Chủ đề",
+	"Wallpaper":"Hình nền"
+
+,
+	"Appearance":"Giao diện",
+	"Cannot fetch system locales: {0}":"Không thể truy vấn danh sách ngôn ngữ: {0}",
+	"Cannot save system setting: {0}":"Không thể lưu cài đặt hệ thống: {0}",
+	"Desktop path":"Đường dẫn đến desktop",
+	"Languages":"Ngôn ngữ",
+	"Local packages path":"Đường dẫn đến ứng dụng riêng",
+	"Mount points":"Điểm truy cập nhanh",
+	"Path":"Đường dẫn",
+	"Please enter mount point name":"Vui lòng nhập điểm truy cập",
+	"Please select a directory":"Vui lòng chọn một thư mục",
+	"Remove: {0}?":"xoá: {0}?",
+	"Remove":"xoá",
+	"Select a directory":"Chọn một thư mục",
+	"System locale":"Ngôn ngữ",
+	"System setting saved":"Đã lưu cài đặt hệ thống",
+	"VFS":"VFS"
+
+,
+	"Add mount point":"Thêm điểm truy cập",
+	"Edit mount point":"Sửa điểm truy cập"
+
+,
+	"Services":"Services",
+	"Startup":"Startup"
 }

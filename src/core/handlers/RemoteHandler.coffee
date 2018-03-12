@@ -82,10 +82,11 @@ self.OS.API.handler =
         p = "#{_REST}/system/settings"
         _API.post p, _OS.setting, (d) ->
             _courrier.oserror __("Cannot save system setting"), d.error if d.error
-            f() if f
+            f(d) if f
         , (e, s) ->
-            _courrier.osfail __("Fail to make request: {0}", p), e, s
-            f() if f
+            m = __("Fail to make request: {0}", p)
+            _courrier.osfail m , e, s
+            f({ error: m }) if f
     
     dbquery: (cmd, d, c) ->
         path = "#{_REST}/db/#{cmd}"

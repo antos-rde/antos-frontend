@@ -12,7 +12,7 @@
         </ul>
     </div>
     <div if = {opts.dropdown != "true" && buttons} class = "button_container">
-        <afx-button each = {btn,i in buttons} text = {btn.text} icon = {btn.icon} iconclass = {btn.icon} onbtclick = {btn.onbtclick}></afx-button>
+        <afx-button each = {btn,i in buttons} text = {btn.text} icon = {btn.icon} iconclass = {btn.iconclass} onbtclick = {btn.onbtclick}></afx-button>
     </div>
     <script>
         this.items = opts.items || []
@@ -121,6 +121,7 @@
             {
                 self.root.observable.on("calibrate", function(){
                     $(self.refs.container).css("width", $(self.root).width() + "px" )
+                    $(self.refs.mlist).css("width", $(self.root).width() + "px" )
                 })
                 $(document).click(function(event) { 
                     if(!$(event.target).closest(self.refs.container).length) {

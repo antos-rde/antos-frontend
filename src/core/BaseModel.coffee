@@ -44,10 +44,13 @@ class BaseModel
         if @dialog
             @dialog.show()
             return
-        if not _GUI.subwindows[d]
-            @error __("Dialog {0} not found", d)
-            return
-        @dialog = new _GUI.subwindows[d]()
+        if typeof d is "string"
+            if not _GUI.subwindows[d]
+                @error __("Dialog {0} not found", d)
+                return
+            @dialog = new _GUI.subwindows[d]()
+        else
+            @dialog = d
         #@dialog.observable = riot.observable() unless @dialog
         @dialog.parent = @
         @dialog.handler = f

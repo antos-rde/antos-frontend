@@ -1,5 +1,4 @@
 <afx-tree-view>
-
   <div class={afx_tree_item_selected:treeroot.selectedItem && treeroot.selectedItem.treepath == data.treepath, afx_folder_item: isFolder(), afx_tree_item_odd: index%2 != 0  } onclick={select} ondblclick = {_dbclick} oncontextmenu = {select}>
     <ul style = "padding:0;margin:0;white-space: nowrap;">
         <li ref = "padding" ></li>
@@ -12,8 +11,6 @@
         </li>
     </ul>
   </div>
-
-
   <ul if={ isFolder() } show={ isFolder() && open }>
     <li each={ child, i in data.nodes }>
       <afx-tree-view ontreeselect = {parent.ontreeselect} index = {i} fetch = {parent.fetch} ontreedbclick = {parent.ontreedbclick} data={child} indent={indent+1} observable = {parent.root.observable} path = {parent.data.treepath + ">" + i} treeroot= {parent.treeroot}></afx-tree-view>

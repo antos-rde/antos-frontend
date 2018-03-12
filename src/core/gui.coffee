@@ -265,6 +265,7 @@ self.OS.GUI =
             fp = _OS.setting.desktop.path.asFileHandler()
             desktop[0].fetch = () ->
                 fn = () ->
+                    fp = _OS.setting.desktop.path.asFileHandler()
                     fp.read (d) ->
                         return _courrier.osfail d.error, (_API.throwe "OS.VFS"), d.error if d.error
                         items = []
@@ -341,7 +342,8 @@ self.OS.GUI =
         , (e, s) ->
             alert __("System fail: Cannot init desktop manager")
             console.log s, e
-
+    refreshDesktop: () ->
+        ($ "#desktop")[0].fetch()
     refreshSystemMenu: () ->
         _GUI.SYS_MENU.length = 1
         _GUI.SYS_MENU[0].child.length = 0
@@ -369,7 +371,9 @@ self.OS.GUI =
         ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", menu
 
         #console.log menu
-        
+    
+    mkdialog: (conf) ->
+        return new _GUI.BasicDialog conf.name, conf.layout
         
     login: () ->
         _OS.cleanup()
