@@ -57,7 +57,7 @@ class BasicDialog extends BaseDialog
         html = "<afx-app-window  data-id = 'dia-window'  width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-vbox>"
         html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
-        html += "<div data-height = '30' style=' text-align:right;padding-top:3px;'>"
+        html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div><div data-height='5'></div></afx-vbox></afx-app-window>"
         #render the html
@@ -116,7 +116,7 @@ class CalendarDialog extends BasicDialog
         super "CalendarDialog", {
             tags: [{ tag: 'afx-calendar-view' }],
             width: 300,
-            height: 220,
+            height: 230,
             resizable: false,
             buttons: [
                 {

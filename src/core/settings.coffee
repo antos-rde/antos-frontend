@@ -14,12 +14,12 @@
     _OS.setting.desktop.menu = {} unless _OS.setting.desktop.menu
     _OS.setting.VFS.mountpoints = [
         #TODO: multi app try to write to this object, it neet to be cloned
-        { text: __("Applications"), path: 'app://', iconclass: "fa  fa-adn", type: "app" },
-        { text: __("Home"), path: 'home://', iconclass: "fa fa-home", type: "fs" },
-        { text: __("Desktop"), path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
-        { text: __("OS"), path: 'os://', iconclass: "fa fa-inbox", type: "fs" },
-        { text: __("Google Drive"), path: 'gdv://', iconclass: "fa fa-inbox", type: "fs" },
-        { text: __("Shared"), path: 'shared://' , iconclass: "fa fa-share-square", type: "fs" }
+        { text: "__(Applications)", path: 'app://', iconclass: "fa  fa-adn", type: "app" },
+        { text: "__(Home)", path: 'home://', iconclass: "fa fa-home", type: "fs" },
+        { text: "__Desktop)", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
+        { text: "__(OS)", path: 'os://', iconclass: "fa fa-inbox", type: "fs" },
+        { text: "__(Google Drive)", path: 'gdv://', iconclass: "fa fa-inbox", type: "fs" },
+        { text: "__(Shared)", path: 'shared://' , iconclass: "fa fa-share-square", type: "fs" }
     ] if not _OS.setting.VFS.mountpoints
 
     _OS.setting.system = conf.system if conf.system
