@@ -77,6 +77,12 @@ class Files extends this.OS.GUI.BaseApplication
         @bindKey "CTRL-C", () -> me.actionEdit "#{me.name}-copy"
         @bindKey "CTRL-P", () -> me.actionEdit "#{me.name}-paste"
 
+        (@find "btgrid").set "onbtclick", (e) ->
+            me.view.set 'view', "icon"
+            me.setting.view = "icon"
+        (@find "btlist").set "onbtclick", (e) ->
+            me.view.set 'view', "list"
+            me.setting.view = "list"
         @chdir null
 
     applySetting: (k) ->
@@ -154,7 +160,7 @@ class Files extends this.OS.GUI.BaseApplication
                         me.view.set 'view', e.item.data.type
                         me.setting.view = e.item.data.type
                     },
-                ], onmenuselect: (e) -> me.actionView e
+                ], onmenuselect: (e) -> me.actionView e.item.data.dataid
             },
         ]
         menu
@@ -168,7 +174,7 @@ class Files extends this.OS.GUI.BaseApplication
         @trigger "resize"
 
     actionView: (e) ->
-        switch e.item.data.dataid
+        switch e
             when "#{@name}-hidden"
                 #@.view.set "showhidden", e.item.data.checked
                 @registry "showhidden", e.item.data.checked
