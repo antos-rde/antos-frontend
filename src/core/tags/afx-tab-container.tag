@@ -39,6 +39,11 @@
                 calibrate()
             })
         })
+        self.on("update", function(){
+            $(self.container).children().each(function(e){
+                if(this.update) this.update()
+            })
+        })
         var render = function(el)
         {
             var sch = $.parseHTML(el.scheme)

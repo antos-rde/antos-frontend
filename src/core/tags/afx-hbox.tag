@@ -24,6 +24,10 @@
                     })
                 }
         })
+        self.root.update = function()
+        {
+            self.update()
+        }
         var calibrate_size = function()
         {
             var auto_width = []

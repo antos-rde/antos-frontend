@@ -216,10 +216,4 @@
 	"Thu":"Năm",
 	"Tue":"Ba",
 	"Wed":"Tư"
-
-,
-	"Add":"Thêm",
-	"Cannot read wallpaper list from {0}":"Không thể truy vấn danh sách wallpaper {0}",
-	"Theme":"Theme",
-	"Wallpaper":"Wallpaper"
 }
