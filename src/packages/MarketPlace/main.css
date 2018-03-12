@@ -61,3 +61,7 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] span{
 afx-app-window[data-id="marketplace-win"] span.info-header{
     font-weight: bold;
 }
+afx-app-window[data-id = "repository-dialog-win"] afx-list-view[data-id="repo-list"] ul.complex-content > li{
+    font-size: 11px;
+    font-style: italic;
+}

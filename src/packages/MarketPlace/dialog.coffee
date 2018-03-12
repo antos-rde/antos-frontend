@@ -22,23 +22,33 @@ class RepositoryDialog extends this.OS.GUI.BaseDialog
                 me.refreshList()
             , __("Edit repository"), { label: __("Format : [name] url"), value: "[#{e.data.text}] #{e.data.url}" }
         
-        (@find "btadd").set "onbtclick", (e) ->
-            me.openDialog "PromptDialog", (e) ->
-                m = e.match /\[([^\]]*)\]\s*(.*)/
-                return me.error __("Wrong format: it should be [name] url") if not m or m.length isnt 3
-                me.systemsetting.system.repositories.push {
-                    name: m[1],
-                    url: m[2],
-                    text: m[1],
-                    i: me.systemsetting.system.repositories.length
-                }
-                me.refreshList()
-            , __("Add repository"), { label: __("Format : [name] url") }
-        (@find "btdel").set "onbtclick", (e) ->
-            selidx = me.list.get "selidx"
-            return unless  selidx >= 0
-            me.systemsetting.system.repositories.splice selidx, selidx
-            me.refreshList()
+        @list.set "buttons", [
+            {
+                text: "+",
+                onbtclick: () ->
+                    me.openDialog "PromptDialog", (e) ->
+                        m = e.match /\[([^\]]*)\]\s*(.*)/
+                        return me.error __("Wrong format: it should be [name] url") if not m or m.length isnt 3
+                        me.systemsetting.system.repositories.push {
+                            name: m[1],
+                            url: m[2],
+                            text: m[1],
+                            i: me.systemsetting.system.repositories.length
+                        }
+                        me.refreshList()
+                    , __("Add repository"), { label: __("Format : [name] url") }
+            },
+            {
+                text: "-",
+                onbtclick: () ->
+                    selidx = me.list.get "selidx"
+                    return unless  selidx >= 0
+                    me.systemsetting.system.repositories.splice selidx, selidx
+                    me.refreshList()
+            }
+
+        ]
+
         (@find "btquit").set "onbtclick", (e) -> me.quit()
         @refreshList()
     refreshList: () ->
@@ -57,12 +67,9 @@ RepositoryDialog.scheme = """
 <afx-app-window data-id = "repository-dialog-win" apptitle="__(Repositories)" width="250" height="250">
         <afx-vbox >
             <afx-list-view data-id="repo-list"></afx-list-view>
-            <afx-hbox data-height = "30">
-                <afx-button data-id = "btadd" text = "[+]" data-width="30"></afx-button>
-                <afx-button data-id = "btdel" text = "[-]" data-width="30"></afx-button>
-                <div></div>
-                <afx-button data-id = "btquit" text = "__(Cancel)" data-width="50"></afx-button>
-            </afx-hbox>
+            <div style = "text-align:right; padding:5px" data-height="30" >
+                <afx-button data-id = "btquit" text = "__(Cancel)"></afx-button>
+            </div>
         </afx-vbox>
     </afx-app-window>
 """

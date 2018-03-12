@@ -133,3 +133,20 @@ afx-list-view ul.complex-content li{
 afx-list-view  > div.list-container > ul > li.selected ul.complex-content li{
     color:white;
 }
+/*
+afx-list-view  div.button_container {
+    padding-top:2px;
+    border-top:1px solid #cbcbcb;
+}
+*/
+afx-list-view  div.button_container afx-button{
+    margin-right: 2px;
+}
+afx-list-view  div.button_container afx-button button{
+    border-radius: 0;
+    padding-left:5px;
+    padding-top:1px;
+    padding-bottom: 1px;
+    padding-right: 5px;
+
+}

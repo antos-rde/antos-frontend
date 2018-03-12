@@ -1,16 +1,18 @@
-<afx-list-view class = {dropdown: opts.dropdown == "true"}>
-    <div class = "list-container" ref = "container">
-    <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":""}  onclick = {show_list}>
+<afx-list-view class = {dropdown: opts.dropdown == "true"} style = "display:flex; flex-direction:column">
+    <div class = "list-container" ref = "container" style="flex:1;">
+        <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":""}  onclick = {show_list}></div>
+        <ul  ref = "mlist" >
+            <li each={item,i in items } class={selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onclick = {parent._select} oncontextmenu = {parent._select}>
+                <afx-label class = {item.class} color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
+                <i if = {item.closable} class = "closable" click = {parent._remove}></i>
+                <ul if = {item.complex} class = "complex-content">
+                    <li each = {ctn,j in item.detail} class = {ctn.class}>{ctn.text}</li>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <ul  ref = "mlist">
-        <li each={item,i in items } class={selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onclick = {parent._select} oncontextmenu = {parent._select}>
-            <afx-label class = {item.class} color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
-            <i if = {item.closable} class = "closable" click = {parent._remove}></i>
-            <ul if = {item.complex} class = "complex-content">
-                <li each = {ctn,j in item.detail} class = {ctn.class}>{ctn.text}</li>
-            </ul>
-        </li>
-    </ul>
+    <div if = {opts.dropdown != "true" && buttons} class = "button_container">
+        <afx-button each = {btn,i in buttons} text = {btn.text} icon = {btn.icon} iconclass = {btn.icon} onbtclick = {btn.onbtclick}></afx-button>
     </div>
     <script>
         this.items = opts.items || []
@@ -19,6 +21,7 @@
         self.onlistselect = opts.onlistselect
         self.onlistdbclick = opts.onlistdbclick
         self.onitemclose = opts.onitemclose
+        self.buttons = opts.buttons
         var onclose = false
         this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
         self.root.set = function(k,v)

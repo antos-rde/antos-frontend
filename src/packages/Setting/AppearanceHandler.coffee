@@ -7,7 +7,18 @@ class AppearanceHandler extends SettingHandler
         @wpsize = @find "wpsize"
         @wprepeat = @find "wprepeat"
         @themelist = @find "theme-list"
-        @wpsize.set "onlistselect", (e)->
+
+        @wplist.set "onlistselect", (e) ->
+            $(me.wpreview).css("background-image", "url(#{me.parent._api.handler.get}/#{e.data.path})" )
+            .css("background-size", "cover")
+            me.parent.systemsetting.appearance.wp.url = e.data.path
+            me.parent._gui.wallpaper()
+
+        @wplist.set "buttons", [
+            { text: "+", onbtclick: (e) -> console.log "click +" }
+        ]
+        
+        @wpsize.set "onlistselect", (e) ->
             me.parent.systemsetting.appearance.wp.size = e.data.text
             me.parent._gui.wallpaper()
 
@@ -17,11 +28,6 @@ class AppearanceHandler extends SettingHandler
             { text: "contain", selected: me.parent.systemsetting.appearance.wp.size is "contain" }
         ]
         @wpsize.set "items", sizes
-        @wplist.set "onlistselect", (e) ->
-            $(me.wpreview).css("background-image", "url(#{me.parent._api.handler.get}/#{e.data.path})" )
-            .css("background-size", "cover")
-            me.parent.systemsetting.appearance.wp.url = e.data.path
-            me.parent._gui.wallpaper()
         
 
         repeats = [

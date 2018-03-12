@@ -57,9 +57,9 @@ class BasicDialog extends BaseDialog
         html = "<afx-app-window  data-id = 'dia-window'  width='#{@conf.width}' height='#{@conf.height}'>
                 <afx-vbox>"
         html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
-        html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
+        html += "<div data-height = '30' style=' text-align:right;padding-top:3px;'>"
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div><div data-height='5'></div></afx-vbox></afx-app-window>"
+        html += "</div><div data-height='2'></div></afx-vbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     
@@ -80,11 +80,11 @@ class PromptDialog extends BasicDialog
     constructor: () ->
         super "PromptDialog", {
             tags: [
-                { tag: "afx-label", att: "data-height = '20'" },
-                { tag: "input", att: "type = 'text'" }
+                { tag: "afx-label" },
+                { tag: "input", att: "type = 'text' data-height='25'" }
             ],
             width: 200,
-            height: 100,
+            height: 120,
             resizable: false,
             buttons: [
                 {

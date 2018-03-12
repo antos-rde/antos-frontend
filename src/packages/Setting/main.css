@@ -24,6 +24,7 @@ afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] div[da
 afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-list-view[data-id="wplist"]
 {
     border:1px solid #cbcbcb;
+    padding:2px;
 }
 afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-resizer{
     border:0;

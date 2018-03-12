@@ -7,14 +7,15 @@
             <afx-hbox>
                 <afx-list-view data-width="120" data-id="wplist"></afx-list-view>
                 <afx-resizer data-width="5"></afx-resizer>
-                <div data-id = "wp-preview"></div>
-            </afx-hbox>
-            <div data-height="5"></div>
-            <afx-hbox data-height="30">
-                <afx-button data-width="130" text= "__(Add)"></afx-button>
-                <afx-list-view data-id = "wpsize"  dropdown="true"></afx-list-view>
-                <div data-width="5"></div>
-                <afx-list-view data-id = "wprepeat"  dropdown="true"></afx-list-view>
+                <afx-vbox>
+                    <div data-id = "wp-preview"></div>
+                    <div data-height="5"></div>
+                    <afx-hbox data-height="25">
+                        <afx-list-view data-id = "wpsize"  dropdown="true"></afx-list-view>
+                        <div data-width="5"></div>
+                        <afx-list-view data-id = "wprepeat"  dropdown="true"></afx-list-view>
+                    </afx-hbox>
+                </afx-vbox>
             </afx-hbox>
             <div data-height="5"></div>
             <afx-label text = "__(Theme)" iconclass = "fa fa-window-restore" class = "header" data-height="23"></afx-label>
