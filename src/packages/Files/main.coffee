@@ -160,7 +160,7 @@ class Files extends this.OS.GUI.BaseApplication
                         me.view.set 'view', e.item.data.type
                         me.setting.view = e.item.data.type
                     },
-                ], onmenuselect: (e) -> me.actionView e.item.data.dataid
+                ], onmenuselect: (e) -> me.actionView e
             },
         ]
         menu
@@ -174,7 +174,7 @@ class Files extends this.OS.GUI.BaseApplication
         @trigger "resize"
 
     actionView: (e) ->
-        switch e
+        switch e.item.data.dataid
             when "#{@name}-hidden"
                 #@.view.set "showhidden", e.item.data.checked
                 @registry "showhidden", e.item.data.checked
