@@ -32,11 +32,10 @@
             self.update()
         }
         /*this.on("mount", function(){
-            self.root.observable =   (self.parent && self.parent.root && self.parent.root.observable) || opts.observable || riot.observable()
+            
         })*/
         this.on("update", function(e){
-            self.swon = opts.swon
-            self.onchange = opts.onchange
+            self.swon = typeof opts.swon == "function"?opts.swon():opts.swon 
         })
         toggle(e)
         {

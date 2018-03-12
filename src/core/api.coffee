@@ -311,3 +311,32 @@ self.OS.API =
             err = e
         return "" if not err
         return err
+# utilities functioncs
+    switcher: () ->
+        o = {}
+        p = {}
+        p[arguments[i]] = false for i in [0..arguments.length - 1 ]
+        Object.defineProperty o, "__p", {
+            enumerable: false,
+            value: p
+        }
+        fn = (o, v) ->
+            Object.defineProperty o, v, {
+                enumerable: true,
+                set: (value) ->
+                    for k,l of @__p
+                        @__p[k] = false
+                    o.__p[v] = value
+                , get: () ->
+                    return o.__p[v]
+            }
+        for k, v of o.__p
+            fn o, k
+        Object.defineProperty o, "selected", {
+            configurable: true,
+            enumerable: false,
+            get: () ->
+                for k,v of o.__p
+                    return k if v
+        }
+        return o

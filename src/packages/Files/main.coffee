@@ -11,7 +11,8 @@ class Files extends this.OS.GUI.BaseApplication
         @currdir = if @args and @args.length > 0 then @args[0].asFileHandler() else "home://".asFileHandler()
         @favo = @find "favouri"
         @clipboard = undefined
-
+        @viewType = @_api.switcher "icon", "list", "tree"
+        @viewType.list = true
         @apps = []
 
         @view.contextmenuHandler = (e, m) ->
@@ -79,10 +80,10 @@ class Files extends this.OS.GUI.BaseApplication
 
         (@find "btgrid").set "onbtclick", (e) ->
             me.view.set 'view', "icon"
-            me.setting.view = "icon"
+            me.viewType.icon = true
         (@find "btlist").set "onbtclick", (e) ->
             me.view.set 'view', "list"
-            me.setting.view = "list"
+            me.viewType.list = true
         @chdir null
 
     applySetting: (k) ->
@@ -153,12 +154,12 @@ class Files extends this.OS.GUI.BaseApplication
                     { text: "__(Navigation bar)", switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
                     { text: "__(Hidden files)", switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
                     { text: "__(Type)", child: [
-                        { text: "__(Icon view)", radio: true, checked: @setting.view is 'icon', dataid: "#{@name}-icon", type: 'icon' },
-                        { text: "__(List view)", radio:true, checked: @setting.view is 'list' or not @setting.view, dataid: "#{@name}-list", type: 'list' },
-                        { text: "__(Tree view)", radio:true, checked: @setting.view is 'tree', dataid: "#{@name}-tree", type: 'tree' }
+                        { text: "__(Icon view)", radio: true, checked: (() -> me.viewType.icon), dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "__(List view)", radio:true, checked: (() -> me.viewType.list), dataid: "#{@name}-list", type: 'list' },
+                        { text: "__(Tree view)", radio:true, checked: (() -> me.viewType.tree), dataid: "#{@name}-tree", type: 'tree' }
                      ], onmenuselect: (e) ->
                         me.view.set 'view', e.item.data.type
-                        me.setting.view = e.item.data.type
+                        me.viewType[e.item.data.type] = true
                     },
                 ], onmenuselect: (e) -> me.actionView e
             },
