@@ -123,25 +123,29 @@ class DotEditor extends this.OS.GUI.BaseApplication
     
     export: (t) ->
         me = @
-        me.openDialog "FileDiaLog", (d, n) ->
-            fp = "#{d}/#{n}".asFileHandler()
-            try
-                switch t
-                    when "SVG"
-                        fp.cache = Viz me.editor.getValue(), { format: "svg", scale: 1 }
-                        fp.write "text/plain", (r) ->
-                            return me.error __("Cannot export to {0}: {1}", t, r.error) if r.error
-                            me.notify __("File exported")
-                    when "PNG"
-                        content = Viz me.editor.getValue(), { format: "png-image-element", scale: 1}
-                        content.onload = () ->
-                           fp.cache = @src
-                           fp.write "base64", (r) ->
+        me.openDialog "PromptDialog", (s) ->
+            me._gui.openDialog "FileDiaLog", (d, n) ->
+                fp = "#{d}/#{n}".asFileHandler()
+                scale = Number(s)
+                try
+                    switch t
+                        when "SVG"
+                            fp.cache = Viz me.editor.getValue(), { format: "svg", scale: scale}
+                            fp.write "text/plain", (r) ->
                                 return me.error __("Cannot export to {0}: {1}", t, r.error) if r.error
                                 me.notify __("File exported")
-            catch e
-                me.error __("Cannot export: {0}", e.message)
-        , __("Export as"), { file: me.currfile }
+                        when "PNG"
+                            content = Viz me.editor.getValue(), { format: "png-image-element", scale: scale}
+                            content.onload = () ->
+                                fp.cache = @src
+                                fp.write "base64", (r) ->
+                                    return me.error __("Cannot export to {0}: {1}", t, r.error) if r.error
+                                    me.notify __("File exported")
+                catch e
+                    me.error __("Cannot export: {0}", e.message)
+            , __("Export as"), { file: me.currfile }
+        , "__(Scale)", { label: "__(Diagram scale)" }
+        
        
     renderSVG: (silent) ->
         console.log  "render svg"
