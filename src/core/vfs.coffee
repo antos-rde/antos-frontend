@@ -158,6 +158,7 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
                 return f { error: __("{0} is not a directory", @path) } if @info.type is "file"
                 _API.handler.mkdir "#{@path}/#{p}", f
             when "write"
+                return _API.handler.write me.path, me.cache, f if p is "base64"
                 @sendB64 p, (data) ->
                     _API.handler.write me.path, data, f
             when "upload"

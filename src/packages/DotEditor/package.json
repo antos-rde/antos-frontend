@@ -1,0 +1,14 @@
+{
+    "app":"DotEditor",
+    "name":"Dot Graph Editor",
+    "description":"Create graph with dot language",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "licences": "MIT"
+    },
+    "version":"0.1a",
+    "category":"Office",
+    "iconclass": "fa fa-sitemap",
+    "mimes":["text/.*graphviz"]
+}

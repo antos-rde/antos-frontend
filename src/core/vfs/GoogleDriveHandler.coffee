@@ -122,7 +122,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     error xhr, xhr.status
         xhr.onerror = () ->
             error xhr, xhr.status
-
+        return xhr.send me.cache.replace /^data:[^;]+;base64,/g, "" if m is "base64"
         @sendB64 m, (data) ->
             xhr.send data.replace /^data:[^;]+;base64,/g, ""
 

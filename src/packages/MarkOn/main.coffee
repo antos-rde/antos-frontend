@@ -65,6 +65,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
         me = @
         file.dirty = false
         file.read (d) ->
+            me.currfile = file
             me.editormux = true
             me.editor.value d
             me.scheme.set "apptitle", "#{me.currfile.basename}"
@@ -73,7 +74,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
 
     save: (file) ->
         me = @
-        file.write (file.getb64 "text/plain"), (d) ->
+        file.write "text/plain", (d) ->
             return me.error __("Error saving file {0}", file.basename) if d.error
             file.dirty = false
             file.text = file.basename

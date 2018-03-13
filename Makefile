@@ -97,6 +97,13 @@ package:
 	cp -rf src/packages/$$PKG/build/* $(BUILDDIR)/packages/$$PKG/;\
 	test -d src/packages/$$PKG/build && rm -r src/packages/$$PKG/build;
 
+pkgar:
+	read -r -p "Enter package name: " PKG;\
+	echo $$PKG | make package &&\
+	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
+	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  minify --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
+	cd $(BUILDDIR)/packages/$$PKG && zip -r "$$PKG.zip" ./ ; \
+	cd ../../ && mv packages/$$PKG/"$$PKG.zip" repo/ && rm -r packages/$$PKG
 
 uglify:
 	# uglify antos.js
