@@ -125,6 +125,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     return me.error __("Cannot uninstall package: {0}", r.error) if r.error
                     me.notify __("Package uninstalled")
                     delete me.systemsetting.system.packages[name]
+                    window.OS.PM.killAll name
+                    delete window.OS.APP[name]
                     me._gui.refreshSystemMenu()
                     me.appDetail sel
         , __("Uninstall") ,
