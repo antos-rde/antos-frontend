@@ -84,6 +84,7 @@ self.OS.GUI =
             try
                 arr.filter (m, i) ->
                     if mime.match (new RegExp m, "g")
+                        return false if (apps.indexOf metas[idx]) > 0
                         apps.push metas[idx]
                         return false
                     return false
