@@ -5,7 +5,7 @@ Note that, the development of the project is in early alpha state, so bugs are v
 The WebOS is tested on recent Firefox, Chrome and Safari, however i did not test it on IE or Edge since i have no Windows device :)
 
 ## Demo
-A demo of the webOS is available at my page  [https://os.lxsang.me](https://os.lxsang.me) using username: demo and password: demo
+A demo of the web desktop is available at my page  [https://os.lxsang.me](https://os.lxsang.me) using username: demo and password: demo
 
 ![Screenshot](screenshot.png "Screenshot")
  
