@@ -4,6 +4,13 @@ BUILDDIR = build/htdocs/os
 BLUE=\033[1;34m
 NC=\033[0m
 
+GSED=sed
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	GSED=gsed
+endif
+
+
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
 			src/core/settings.coffee\
@@ -101,7 +108,7 @@ pkgar:
 	read -r -p "Enter package name: " PKG;\
 	echo $$PKG | make package &&\
 	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
-	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  minify --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
+	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
 	cd $(BUILDDIR)/packages/$$PKG && zip -r "$$PKG.zip" ./ ; \
 	cd ../../ && mv packages/$$PKG/"$$PKG.zip" repo/ && rm -r packages/$$PKG
 
@@ -113,18 +120,19 @@ uglify:
 	# npm install riot -g
 	riot --ext js $(BUILDDIR)/resources/antos_tags.js $(BUILDDIR)/resources/antos_tags.js
 	uglifyjs $(BUILDDIR)/resources/antos_tags.js --compress --mangle --output $(BUILDDIR)/resources/antos_tags.js
-	sed -i 's/resources\/antos_tags.js/scripts\/riot.min.js/g' $(BUILDDIR)/index.html
-	sed -i 's/scripts\/riot.compiler.min.js/resources\/antos_tags.js/g' $(BUILDDIR)/index.html
-	sed -i 's/type=\"riot\/tag\"//g' $(BUILDDIR)/index.html
-	# npm install minify -g
+	$(GSED) -i 's/resources\/antos_tags.js/scripts\/riot.min.js/g' $(BUILDDIR)/index.html
+	$(GSED) -i 's/scripts\/riot.compiler.min.js/resources\/antos_tags.js/g' $(BUILDDIR)/index.html
+	$(GSED) -i 's/type=\"riot\/tag\"/ /g' "$(BUILDDIR)/index.html"
+	# npm install uglifycss -g
 	# uglify the css
-	minify  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
-	minify  --output $(BUILDDIR)/resources/themes/system/font-awesome.css $(BUILDDIR)/resources/themes/system/font-awesome.css
+	uglifycss  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
+	uglifycss  --output $(BUILDDIR)/resources/themes/system/font-awesome.css $(BUILDDIR)/resources/themes/system/font-awesome.css
 	#uglify each packages
 
 	for d in $(packages); do\
+		echo "Uglifying $$d";\
 		test -f $(BUILDDIR)/packages/$$d/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
-		test -f $(BUILDDIR)/packages/$$d/main.css  &&  minify --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
+		test -f $(BUILDDIR)/packages/$$d/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
 	done
 
 release: main uglify
