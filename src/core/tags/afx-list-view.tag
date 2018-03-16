@@ -1,6 +1,8 @@
 <afx-list-view class = {dropdown: opts.dropdown == "true"} style = "display:flex; flex-direction:column">
     <div class = "list-container" ref = "container" style="flex:1;">
-        <div if = {opts.dropdown == "true"} ref = "current" style = {opts.width?"min-width:" + opts.width + "px;":""}  onclick = {show_list}></div>
+        <div if = {opts.dropdown == "true"} ref = "current"  onclick = {show_list}>
+            <afx-label ref = "drlabel"></afx-label>
+        </div>
         <ul  ref = "mlist" >
             <li each={item,i in items } class={selected: parent._autoselect(item,i)} ondblclick = {parent._dbclick}  onclick = {parent._select} oncontextmenu = {parent._select}>
                 <afx-label class = {item.class} color = {item.color} iconclass = {item.iconclass} icon = {item.icon} text = {item.text}></afx-label>
@@ -119,9 +121,18 @@
             
             if(opts.dropdown == "true")
             {
-                self.root.observable.on("calibrate", function(){
+                var cl = function()
+                {
                     $(self.refs.container).css("width", $(self.root).width() + "px" )
+                    $(self.refs.current).css("width", $(self.root).width() + "px" )
                     $(self.refs.mlist).css("width", $(self.root).width() + "px" )
+                }
+                cl()
+                self.root.observable.on("calibrate", function(){
+                    cl()
+                })
+                self.root.observable.on("resize", function(){
+                    cl()
                 })
                 $(document).click(function(event) { 
                     if(!$(event.target).closest(self.refs.container).length) {
@@ -180,7 +191,8 @@
             if(opts.dropdown  == "true")
             {
                 $(self.refs.mlist).hide()
-                $(self.refs.current).html(it.text.__())
+
+                self.refs.drlabel.root.set("*",it)
             }
             
             if(self.onlistselect)

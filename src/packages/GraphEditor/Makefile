@@ -1,9 +1,8 @@
 coffee_files = main.coffee
 
-jsfiles = viz-lite.js svg-pan-zoom.js
+jsfiles = libs/viz-lite.js libs/svg-pan-zoom.js libs/mermaidAPI.js
 
 cssfiles = main.css
-
 copyfiles = scheme.html package.json 
 
 

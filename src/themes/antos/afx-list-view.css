@@ -1,6 +1,6 @@
 afx-list-view{
     overflow:hidden;
-    padding: 5px;
+    /*padding: 5px;*/
     display: block;
 }
 /*
@@ -94,7 +94,7 @@ afx-list-view.dropdown > div.list-container > ul{
     border:1px solid #a6a6a6;
     box-shadow: 1px 1px 1px #9f9F9F;
     border-radius: 3px;
-    padding:2px;
+    /*padding:2px;*/
     border-top-left-radius: 0px;
     z-index: 10;
 }
@@ -104,12 +104,16 @@ afx-list-view.dropdown > div.list-container > ul > li{
 }
 
 afx-list-view.dropdown div.list-container div{
-    padding:3px;
+    color: #414339;
+    padding-top:3px;
+    padding-bottom: 3px;
     border:1px solid #a6a6a6;
     border-radius: 3px;
-    padding-right:15px;
     background-color: white;
     height: 17px;
+}
+afx-list-view.dropdown div.list-container div > afx-label{
+    padding-left:3px;
 }
 afx-list-view.dropdown div.list-container div:before {
     content: "\f107"; 

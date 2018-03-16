@@ -1,7 +1,7 @@
 {
-    "app":"DotEditor",
-    "name":"Dot Graph Editor",
-    "description":"Create graph with dot language",
+    "app":"GraphEditor",
+    "name":"Graph Editor",
+    "description":"Create graph with dot language or mermaid",
     "info":{
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com",

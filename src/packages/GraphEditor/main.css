@@ -1,19 +1,19 @@
-afx-app-window[data-id="dot-edit-win"] div[data-id="preview"]
+afx-app-window[data-id="graph_editor_win"] div[data-id="preview"]
 {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-afx-app-window[data-id="dot-edit-win"] afx-button button
+afx-app-window[data-id="graph_editor_win"] afx-button button
 {
     border-radius: 0;
     padding-top:2px;
     padding-bottom: 2px;
 }
-afx-app-window[data-id="dot-edit-win"] afx-resizer{
+afx-app-window[data-id="graph_editor_win"] afx-resizer{
     background-color: transparent;
 }
-afx-app-window[data-id="dot-edit-win"] div[data-id="btn-container"]{
+afx-app-window[data-id="graph_editor_win"] div[data-id="btn-container"]{
     background-color: transparent;
     position: absolute;
     bottom:10px;
