@@ -29,7 +29,7 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = CoreServices NotePad wTerm ActivityMonitor Files MarkOn MarketPlace Blogger Preview Setting
+packages = CoreServices NotePad wTerm ActivityMonitor Files MarkOn MarketPlace Preview Setting
 
 main:  build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
