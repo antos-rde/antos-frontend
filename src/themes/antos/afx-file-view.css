@@ -11,6 +11,7 @@ afx-file-view afx-label.status{
     background-color: #f6F6F6;
     border-top: 1px solid #cbcbcb;
     color:#414339;
+    transform: translateZ(0);
 }
 afx-file-view afx-list-view > div.list-container > ul > li{
     float:left;
