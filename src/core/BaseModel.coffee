@@ -77,9 +77,9 @@ class BaseModel
         @dialog.title = title
         @dialog.init()
 
-    publish: (t, m) ->
+    publish: (t, m, e) ->
         mt = @meta()
-        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass } }
+        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass }, error: e }
 
     notify: (m) ->
         @publish "notification", m
@@ -88,7 +88,7 @@ class BaseModel
         @publish "warning", m
 
     error: (m) ->
-        @publish "error", m + (@_api.throwe @name)
+        @publish "error", m, (@_api.throwe @name)
         
     fail: (m) ->
         @publish "fail", m

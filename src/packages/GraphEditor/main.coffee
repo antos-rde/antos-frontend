@@ -178,12 +178,18 @@ class GraphEditor extends this.OS.GUI.BaseApplication
     renderSVG: (silent) ->
         me = @
         id = Math.floor(Math.random() * 100000) + 1
-        if silent
-            mermaid.parseError = (e, h) ->
-        else
-            mermaid.parseError = (e, h) ->
-                me.error e
-        mermaid.render "c#{id}", @editor.getValue(), (text, f) ->
+        #if silent
+        #    mermaid.parseError = (e, h) ->
+        #else
+        #    mermaid.parseError = (e, h) ->
+        #        me.error e
+        text = @editor.getValue()
+        try
+            mermaid.parse text
+        catch e
+            me.error __("Syntax error: {0}", e.str) if not silent
+            return
+        mermaid.render "c#{id}", text, (text, f) ->
             me.preview.innerHTML = text
             $(me.preview).append me.btctn
             me.calibrate()
