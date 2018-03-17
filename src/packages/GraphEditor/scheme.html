@@ -1,18 +1,14 @@
 <afx-app-window data-id="graph_editor_win" apptitle="__(Graph editor)" width="650" height="500">
     <afx-hbox>
-            <afx-vbox clas="section0">
-                <afx-list-view data-height="25" dropdown="true" data-id="render-list"></afx-list-view>
-                <div data-id="datarea"></div>
-            </afx-vbox>
+            <div data-id="datarea"></div>
             <afx-resizer data-width="5" ></afx-resizer>
             <div data-id="preview">
                 <div data-height="25" data-id="btn-container">
                     <afx-button data-id="btn-zoomin" iconclass="fa fa-search-plus"></afx-button>
                     <afx-button data-id="btn-zoomout" iconclass="fa fa-search-minus"></afx-button>
                     <afx-button data-id="btn-reset" iconclass="fa fa-square-o"></afx-button>
-                </div>
-                
+                </div>     
             </div>
-            <canvas data-id="offscreen" data-width='0' style="display:none;"></canvas>
+            <canvas data-id="offscreen" data-width="0" style="display:none" ></canvas>
     </afx-hbox>
 </afx-app-window>
