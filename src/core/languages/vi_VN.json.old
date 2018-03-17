@@ -246,6 +246,21 @@
 	"Edit mount point":"Sửa điểm truy cập"
 
 ,
-	"Services":"Services",
-	"Startup":"Startup"
+	"Services":"Dịch vụ",
+	"Startup":"Khởi chạy"
+
+,
+	"Add application":"Thêm ứng dụng",
+	"Add service":"Thêm dịch vụ",
+	"Please select an entry":"Vui lòng chọn 1 mục từ danh sách",
+	"Startup applications":"Ứng dụng khởi chạy",
+	"Startup services":"Dịch vụ khởi chạy"
+
+,
+	"Cannot export to PNG in this browser: {0}":"Cannot export to PNG in this browser: {0}",
+	"Cannot export to {0}: {1}":"Cannot export to {0}: {1}",
+	"Cannot export: {0}":"Cannot export: {0}",
+	"Export as":"Export as",
+	"File exported":"File exported",
+	"Syntax error: {0}":"Syntax error: {0}"
 }
