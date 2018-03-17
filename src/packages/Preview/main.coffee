@@ -46,6 +46,8 @@ class Preview extends this.OS.GUI.BaseApplication
         return unless mime
         if mime.match /^[^\/]+\/.*pdf.*/g
             @renderPDF file
+        else if mime.match /image\/.*svg.*/g
+            @renderSVG file
         else if mime.match /image\/.*/g
             @renderImage file
         else
@@ -90,14 +92,19 @@ class Preview extends this.OS.GUI.BaseApplication
                 me._api.loaded q, "FAIL"
         , "binary"
 
+    renderSVG: (file) ->
+        me = @
+        ($ @view).attr("class", "image").empty()
+        file.read (d) ->
+            #console.log d
+            me.view.innerHTML = d
+
     renderImage: (file) ->
         me = @
         ($ @view).attr("class", "image").empty()
 
         file.read (d) ->
-            blob = new Blob [d], { type: file.mime }
             img = new Image()
-            img.src = URL.createObjectURL blob
             canvas = ($ "<canvas/>")[0]
             ($ me.view).append canvas
 
@@ -106,9 +113,12 @@ class Preview extends this.OS.GUI.BaseApplication
                 context = canvas.getContext '2d'
                 canvas.height = img.height
                 canvas.width = img.width
-                console.log canvas.width, canvas.height
+                #console.log canvas.width, canvas.height
                 context.drawImage img, 0, 0
                 me.setStatus "#{file.info.name} (#{file.info.size} Kb) - #{img.width}x#{img.height}"
+            
+            blob = new Blob [d], { type: file.info.mime }
+            img.src = URL.createObjectURL blob
         , "binary"
 
     menu: () ->
