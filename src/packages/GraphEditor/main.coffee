@@ -112,7 +112,7 @@ class GraphEditor extends this.OS.GUI.BaseApplication
             me.currfile.dirty = false
             me.editor.setValue d
             me.scheme.set "apptitle", "#{me.currfile.basename}"
-            #me.renderSVG false
+            me.renderSVG false
     save: (file) ->
         me = @
         file.write "text/plain", (d) ->
