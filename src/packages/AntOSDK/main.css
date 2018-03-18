@@ -1,0 +1,82 @@
+afx-app-window[data-id="antOSDK"] afx-list-view {
+    margin: 2px;
+    margin-right: 5px;
+}
+
+afx-app-window[data-id="antOSDK"] afx-list-view div.list-container{
+    z-index: 10;
+}
+afx-app-window[data-id="antOSDK"] afx-resizer{
+    z-index: 11;
+    background-color: transparent;
+    border-right: 1px solid #a6a6a6;
+}
+afx-app-window[data-id="antOSDK"] afx-resizer[data-id="botrz"]
+{
+    background-color: #252621;
+}
+
+afx-app-window[data-id="antOSDK"] div.welcome-cnt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+afx-app-window[data-id="antOSDK"] div.welcome-cnt afx-label.wmsg {
+    font-weight: bold;
+    color: #a6A6A6;
+    font-size: 20px;
+}
+afx-app-window[data-id="antOSDK"] div.welcome-cnt p{
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+afx-app-window[data-id="antOSDK"] afx-label[data-id="editorstat"]{
+    padding:5px;
+    display: inline-block;
+}
+afx-app-window[data-id="antOSDK"] afx-vbox[data-id="bottom-vbox"]{
+    background-color: #dfdfdf;
+}
+afx-app-window[data-id="antOSDK"] .afx-window-content {
+    background-color: #f6F6F6;
+}
+afx-app-window[data-id="antOSDK"] div[data-id= "output"] {
+    background-color: #2f3129;
+    color:white;
+}
+afx-app-window[data-id="antOSDK"] afx-label.outputheader {
+    background-color: #2f3129;
+    font-weight: bold;
+    padding-left: 10px;
+    border-bottom: 1px solid #a6a6a6;;
+    color:white;
+}
+
+afx-app-window[data-id="antOSDK"] afx-hbox[data-id="bottom-vbox"] {
+    border-top: 1px solid #a6a6a6;
+    border-bottom: 1px solid #a6a6a6;
+}
+
+afx-tab-bar[data-id="tabarea"] afx-list-view >  div.list-container > ul > li {
+    background-color: #dfdfdf;
+    color:#272822;
+    border: 0;
+    border-top: 1px solid #a6a6a6;
+    border-right: 1px solid #a6a6a6;
+    border-radius: 0;
+}
+afx-tab-bar[data-id="tabarea"] afx-list-view{
+    padding:0;
+    margin: 0;
+    border-left: 0;
+    border-bottom: 1px solid #a6a6a6;
+}
+/*afx-tab-bar[data-id="tabarea"] afx-list-view i.closable:before{
+    color: white;
+}*/
+afx-tab-bar[data-id="tabarea"] afx-list-view  > div.list-container > ul > li.selected {
+    background-color: #f6F6F6;
+    border-radius: 0;
+}

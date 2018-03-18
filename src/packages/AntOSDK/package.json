@@ -1,0 +1,15 @@
+{
+    "app":"AntOSDK",
+    "name":"AntOS development kit",
+    "description":"Development tool for building AntOS application",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.1a",
+    "category":"System",
+    "iconclass":"fa fa-cubes",
+    "mimes":[
+        "text/antos-project"
+    ]
+}

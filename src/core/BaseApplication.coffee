@@ -47,6 +47,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
             switch d.e.item.data.dataid
                 when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
+        @loadScheme()
+    loadScheme: () ->
         #now load the scheme
         path = "#{@meta().path}/scheme.html"
         @.render path

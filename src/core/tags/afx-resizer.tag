@@ -9,6 +9,7 @@
             //self.parent = $(self.root).parent().parent()
             var tagname = $(self.parent.root).prop("tagName")
             self.resizable = $(self.root).prev().length == 1 ?  $(self.root).prev()[0]: undefined
+            //self.nextel = $(self.root).next().length == 1 ? $(self.root).next()[0]: undefined
             if(tagname == "AFX-HBOX")
             {
                 self.dir = "hz"
@@ -32,7 +33,8 @@
                 //$(self.root).css("cursor", "normal")
                 self.dir = "none"
             }
-            
+            if(!self.minsize)
+                self.minsize = 10
             enable_dragging()
         })
 

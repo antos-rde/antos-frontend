@@ -62,8 +62,7 @@
                     }
                     else
                     {
-                        $(this)
-                        .css("flex-grow","1")
+                        $(this).css("flex-grow","1")
                         auto_width.push(this)
                     }
                 })

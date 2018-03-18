@@ -64,8 +64,7 @@
                     }
                     else
                     {
-                        $(this)
-                        .css("flex-grow","1")
+                        $(this).css("flex-grow","1")
                         auto_height.push(this)
                     }
                 })

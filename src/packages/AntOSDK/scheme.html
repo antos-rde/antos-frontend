@@ -1,0 +1,18 @@
+<afx-app-window apptitle="" width="600" height="500" data-id="antOSDK">
+    <afx-hbox >
+        <afx-file-view data-width = "155" min-width="155" data-id = "fileview" view='tree' status = false></afx-file-view>
+        <afx-resizer data-width = "3" ></afx-resizer>
+        <afx-vbox>
+            <afx-tab-bar data-id="tabarea" data-height="23" closable = true></afx-tab-bar>
+            <div data-id="datarea" data-height="80%"></div>
+            <afx-resizer data-height="3" data-id="botrz"></afx-resizer>
+            <afx-label data-height="20" class="outputheader" iconclass= "fa fa-wpforms" text = "__(Output)"></afx-label>
+            <div data-id= "output" ></div>
+            <afx-hbox data-height="30" data-id="bottom-vbox">
+                    <afx-label data-id="editorstat"></afx-label>
+                    <afx-list-view data-width="160" data-id = "themelist" dropdown = "true" width="135"></afx-list-view>
+                    <afx-list-view data-width="125" data-id = "modelist" dropdown = "true" width="100"></afx-list-view>
+                </afx-hbox>
+        </afx-vbox>
+    </afx-hbox>
+</afx-app-window>

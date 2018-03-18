@@ -6,5 +6,5 @@ cssfiles = main.css
 copyfiles = scheme.html package.json 
 
 
-PKG_NAME=DotEditor
+PKG_NAME=GraphEditor
 include ../pkg.mk

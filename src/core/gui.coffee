@@ -37,6 +37,7 @@ self.OS.GUI =
     ]
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
+        $(app.scheme).remove() if app.scheme
         ($ parent).append scheme
         riot.mount ($ scheme), { observable: app.observable }
         app.scheme = scheme[0]
