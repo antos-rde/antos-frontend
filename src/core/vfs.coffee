@@ -290,6 +290,25 @@ class BufferFileHandler extends self.OS.API.VFS.BaseFileHandler
     
 self.OS.API.VFS.register "^mem$", BufferFileHandler
 
+class URLFileHandler extends self.OS.API.VFS.BaseFileHandler
+    constructor: (path) ->
+        super path
+        @ready = true
+    meta: (f) ->
+        f { result: true }
+    action: (n, p, f) ->
+        me = @
+        switch n
+            when "read"
+                _API.get @path, (d) ->
+                    f(d)
+                , (e, s) ->
+                    _courrier.oserror __("VFS cannot read : {0}", me.path), e, s
+                , if p then p else "text"
+            else
+                return _courrier.oserror __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+self.OS.API.VFS.register "^(http|https)$", URLFileHandler
+
 class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
     constructor: (path) ->
         super path

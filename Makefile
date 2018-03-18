@@ -110,7 +110,7 @@ pkgar:
 	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
 	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
 	cd $(BUILDDIR)/packages/$$PKG && zip -r "$$PKG.zip" ./ ; \
-	cd ../../ && mv packages/$$PKG/"$$PKG.zip" repo/ && rm -r packages/$$PKG
+	cd ../../ && (mkdir repo/$$PKG || true) && mv packages/$$PKG/"$$PKG.zip" repo/$$PKG && touch repo/$$PKG/$$PKG.md && rm -r packages/$$PKG
 
 uglify:
 	# uglify antos.js

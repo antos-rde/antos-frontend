@@ -64,10 +64,15 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             me.error __("Fail to fetch packages list from: {0}", url)
 
     appDetail: (d) ->
+        me = @
         ($ @container).css "visibility", "visible"
         ( $ @appname ).html d.name
-        ($ @appdesc).html d.description if d.description
-        ($ @appdesc).prepend ($ "<img/>").attr("src", d.screenshot) if d.screenshot
+        if d.description
+            d.description.asFileHandler().read (text) ->
+                converter = new showdown.Converter()
+                ($ me.appdesc).html converter.makeHtml text
+        else
+            ($ me.appdesc).empty()
         
         if @systemsetting.system.packages[d.className]
             ($ @btinstall).hide()
@@ -175,6 +180,6 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                 return me.installFile n, zip, files, f if r.result
                 me.error __("Cannot install {0}", path)
 
-MarketPlace.dependencies = [ "jszip.min" ]
+MarketPlace.dependencies = [ "jszip.min", "showdown.min" ]
 MarketPlace.singleton = true
 this.OS.register "MarketPlace", MarketPlace
