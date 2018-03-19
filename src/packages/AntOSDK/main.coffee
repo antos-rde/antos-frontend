@@ -39,6 +39,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
 
     initWorkspace: () ->
         me = @
+        @dirty = true
         @fileview = @find "fileview"
         div = @find "datarea"
         @currfile = "Untitled".asFileHandler()
@@ -328,6 +329,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         me = @
         file.write "text/plain", (d) ->
             return me.error __("Error saving file {0}", file.basename) if d.error
+            me.dirty = true
             file.dirty = false
             file.text = file.basename
             me.tabarea.update()
@@ -620,6 +622,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 me.copy copylist, "#{me.prjfile.cache.root}/build"
             .then () ->
                 me.log "INFO", __("Build done")
+                me.dirty = false
                 return new Promise (r, e) -> r()
 
     run: () ->
@@ -644,6 +647,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         , "json"
     
     bnR: () ->
+        return @run() unless @dirty
         me = @
         @build().then () ->
             me.run()
