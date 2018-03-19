@@ -162,7 +162,8 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             dirs = [
                 rpath,
                 "#{rpath}/build",
-                "#{rpath}/release",
+                "#{rpath}/build/release",
+                "#{rpath}/build/debug",
                 "#{rpath}/javascripts",
                 "#{rpath}/css",
                 "#{rpath}/coffees",
@@ -598,7 +599,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             .then (jsrc) ->
                 # write javascript src to file
                 return new Promise (r, e) ->
-                    fp = "#{me.prjfile.cache.root}/build/main.js".asFileHandler()
+                    fp = "#{me.prjfile.cache.root}/build/debug/main.js".asFileHandler()
                     fp.cache = jsrc
                     fp.write "text/plain", (res) ->
                         return e res.error if res.error
@@ -611,7 +612,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 me.cat(csslist, csstxt).then (txt) ->
                     return new Promise (r, e) ->
                         return r() if txt is ""
-                        fp = "#{me.prjfile.cache.root}/build/main.css".asFileHandler()
+                        fp = "#{me.prjfile.cache.root}/build/debug/main.css".asFileHandler()
                         fp.cache = txt
                         fp.write "text/plain", (d) ->
                             return e d.error if d.error
@@ -620,7 +621,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             .then () ->
                 # copy the remain files
                 copylist = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.copies)
-                me.copy copylist, "#{me.prjfile.cache.root}/build"
+                me.copy copylist, "#{me.prjfile.cache.root}/build/debug"
             .then () ->
                 me.log "SUCCESS", __("Build done")
                 me.dirty = false
@@ -628,11 +629,11 @@ class AntOSDK extends this.OS.GUI.BaseApplication
 
     run: () ->
         me = @
-        fp = "#{me.prjfile.cache.root}/build/package.json".asFileHandler()
+        fp = "#{me.prjfile.cache.root}/build/debug/package.json".asFileHandler()
         fp.read (v) ->
             me.log "INFO", __("Metadata found...")
             v.text = v.name
-            v.path = "#{me.prjfile.cache.root}/build"
+            v.path = "#{me.prjfile.cache.root}/build/debug"
             v.filename = me.prjfile.cache.name
             v.type = "app"
             v.mime = "antos/app"
@@ -661,7 +662,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         @log "INFO", __("Preparing for release")
         new Promise (r, e) ->
             me._api.require "jszip.min", () ->
-                fp = "#{me.prjfile.cache.root}/build".asFileHandler()
+                fp = "#{me.prjfile.cache.root}/build/debug".asFileHandler()
                 fp.read (d) ->
                     return e d.error if d.error
                     r d.result
@@ -680,7 +681,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 fn files
         .then (zip) ->
             zip.generateAsync({type:"base64"}).then (data) ->
-                f = "#{me.prjfile.cache.root}/release/#{me.prjfile.cache.name}.zip".asFileHandler()
+                f = "#{me.prjfile.cache.root}/build/release/#{me.prjfile.cache.name}.zip".asFileHandler()
                 f.cache = 'data:application/zip;base64,' + data
                 f.write "base64", (r) ->
                     return me.log "ERROR", __("Cannot save the zip file {0} : {1}", f.path, r.error) if r.error
