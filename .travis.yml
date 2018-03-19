@@ -1,0 +1,8 @@
+language: javascript
+install:
+  - npm install uglify-js
+  - npm install uglifycss
+  - npm install riot
+script:
+  - make
+  - make release
