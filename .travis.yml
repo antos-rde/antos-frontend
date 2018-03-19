@@ -1,9 +1,9 @@
 language: javascript
 install:
-  - npm install coffeescript
-  - npm install uglify-js
-  - npm install uglifycss
-  - npm install riot
+  - npm install -g coffeescript
+  - npm install -g uglify-js
+  - npm install -g uglifycss
+  - npm install -g riot
 script:
   - make
   - make release
