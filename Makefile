@@ -31,8 +31,11 @@ coffees= 	src/core/core.coffee\
 
 packages = CoreServices NotePad wTerm ActivityMonitor Files MarkOn MarketPlace Preview Setting
 
-main:  build_coffees build_tags build_themes schemes libs  build_packages languages
+main: initd build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
+
+initd:
+	- mkdir -p $(BUILDDIR)
 
 lite: build_coffee build_tag build_theme schemes   build_packages
 #%.js: %.coffee
