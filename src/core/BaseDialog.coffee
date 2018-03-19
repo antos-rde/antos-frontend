@@ -307,10 +307,11 @@ class FileDiaLog extends BaseDialog
             if me.data and me.data.mimes
                 #verify the mime
                 m = false
-                for v in me.data.mimes
-                    if f.mime.match (new RegExp v, "g")
-                        m = true
-                        break
+                if f.mime
+                    for v in me.data.mimes
+                        if f.mime.match (new RegExp v, "g")
+                            m = true
+                            break
                 return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
             d = f.path
             d = f.path.asFileHandler().parent() if f.type is "file"

@@ -77,6 +77,11 @@ class BaseModel
         @dialog.title = title
         @dialog.init()
 
+    ask: (t, m, f) ->
+        @._gui.openDialog "YesNoDialog", (d) ->
+            f() if d
+        , t, { text: m }
+    
     publish: (t, m, e) ->
         mt = @meta()
         _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass }, error: e }

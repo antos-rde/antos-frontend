@@ -1,13 +1,15 @@
 <afx-app-window apptitle="" width="600" height="500" data-id="antOSDK">
-    <afx-hbox >
-        <div class = "welcome-cnt">
-            <afx-label text="__(Wecome to AntOSDK)" class="wmsg"></afx-label>
-            <p>
-                <afx-button data-id="btnnewprj" iconclass= "fa fa-plus-circle"  text = "__(New project)"></afx-button>
-                <afx-button data-id="btnopenprj" iconclass = "fa fa-folder-open" text = "__(Open project)"></afx-button>
-            </p> 
-            <afx-label data-id="editorstat" ></afx-label>
-        </div>
-             
-    </afx-hbox>
+    <afx-vbox>
+        <afx-hbox >
+            <div class = "welcome-cnt">
+                <afx-label text="__(Wecome to AntOSDK)" class="wmsg"></afx-label>
+                <p>
+                    <afx-button data-id="btnnewprj" iconclass= "fa fa-plus-circle"  text = "__(New project)"></afx-button>
+                    <afx-button data-id="btnopenprj" iconclass = "fa fa-folder-open" text = "__(Open project)"></afx-button>
+                </p>
+            </div>
+        </afx-hbox>
+        <div data-id= "output" ></div>
+    </afx-vbox>
+    
 </afx-app-window>

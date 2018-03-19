@@ -13,6 +13,8 @@ afx-app-window[data-id="antOSDK"] afx-resizer{
 }
 afx-app-window[data-id="antOSDK"] afx-resizer[data-id="botrz"]
 {
+    z-index: 9;
+    border-top: 1px solid #a6a6a6;
     background-color: #2f3129;
 }
 
@@ -33,30 +35,59 @@ afx-app-window[data-id="antOSDK"] div.welcome-cnt p{
     width: 100%;
 }
 afx-app-window[data-id="antOSDK"] afx-label[data-id="editorstat"]{
-    padding:5px;
+    padding-right:5px;
+    text-align: right;
     display: inline-block;
-}
-afx-app-window[data-id="antOSDK"] afx-vbox[data-id="bottom-vbox"]{
-    background-color: #dfdfdf;
 }
 afx-app-window[data-id="antOSDK"] .afx-window-content {
     background-color: #f6F6F6;
 }
 afx-app-window[data-id="antOSDK"] div[data-id= "output"] {
     background-color: #2f3129;
+    padding: 10px;
+    padding-left: 40px;
     color:white;
+    overflow: auto;
+}
+afx-app-window[data-id="antOSDK"] div[data-id= "output"] p{
+    margin:0;
+    padding:0;
+    font-family: "HermitLight";
+    text-align: left;
+}
+afx-app-window[data-id="antOSDK"] div[data-id= "output"] p.error{
+    color: red;
+}
+afx-app-window[data-id="antOSDK"] div[data-id= "output"] p.warning{
+    color: orange;
+}
+afx-app-window[data-id="antOSDK"] div[data-id= "output"] p.success {
+    color: green;
 }
 afx-app-window[data-id="antOSDK"] afx-label.outputheader {
     background-color: #2f3129;
     font-weight: bold;
     padding-left: 10px;
-    border-bottom: 1px solid #a6a6a6;;
     color:white;
 }
 
 afx-app-window[data-id="antOSDK"] afx-hbox[data-id="bottom-vbox"] {
-    border-top: 1px solid #a6a6a6;
-    border-bottom: 1px solid #a6a6a6;
+    background-color:#2f3129;
+}
+afx-app-window[data-id="antOSDK"] afx-hbox[data-id="bottom-vbox"] afx-button button{
+    background-color:#2f3129;
+    color:white;
+    border:0;
+    border-radius: 0;
+}
+afx-app-window[data-id="antOSDK"] afx-hbox[data-id="bottom-vbox"]  afx-list-view >  div.list-container > div {
+    background-color: #3c3c3c;
+    color:white;
+    border:0;
+    border-radius: 0;
+}
+afx-app-window[data-id="antOSDK"] afx-hbox[data-id="bottom-vbox"]  afx-list-view >  div.list-container > div::before{
+    color: white;
 }
 
 afx-tab-bar[data-id="tabarea"] afx-list-view >  div.list-container > ul > li {

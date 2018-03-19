@@ -84,7 +84,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
     
     toggle: () ->
         @trigger "toggle"
-    
+
+        
     onexit: (evt) ->
         @cleanup(evt)
         if not evt.prevent

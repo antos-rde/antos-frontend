@@ -19,19 +19,21 @@
 class AntOSDK extends this.OS.GUI.BaseApplication
     constructor: ( args ) ->
         super "AntOSDK", args
-        @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else null
+        @prjfile = if @args and @args.length > 0 then @args[0].asFileHandler() else null
     loadScheme: () ->
-        path = "#{@meta().path}/" + if @currfile then "scheme.html" else "welcome.html"
+        path = "#{@meta().path}/" + if @prjfile then "scheme.html" else "welcome.html"
         @render path
     main: () ->
         me = @
         @scheme.set "apptitle", "AntOSDK"
-        @statbar = @find "editorstat"
-        if not @currfile
+        @output = @find "output"
+        if not @prjfile
             (@find "btnnewprj").set "onbtclick", () ->
                 me.newProject (path) ->
-                    me.currfile = "#{path}/project.apj".asFileHandler()
+                    me.prjfile = "#{path}/project.apj".asFileHandler()
                     me.loadScheme()
+            (@find "btnopenprj").set "onbtclick", () ->
+                me.actionProject "#{me.name}-Open"
             return
         @initWorkspace()
 
@@ -39,9 +41,10 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         me = @
         @fileview = @find "fileview"
         div = @find "datarea"
-        
+        @currfile = "Untitled".asFileHandler()
         ace.require "ace/ext/language_tools"
 
+        @prjfile.dirty = false
         @.editor = ace.edit div
         @.editor.setOptions {
             enableBasicAutocompletion: true,
@@ -85,12 +88,12 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             me.editor.setTheme e.data.mode
         themelist.set "items", ldata
 
-        stat = @find "editorstat"
+        statbar = @find "editorstat"
         #status
         stup = (e) ->
             c = me.editor.session.selection.getCursor()
             l = me.editor.session.getLength()
-            stat.set "text", __("Row {0}, col {1}, lines: {2}", c.row, c.column, l)
+            statbar.set "text", __("Row {0}, col {1}, lines: {2}", c.row, c.column, l)
         stup(0)
         @.editor.getSession().selection.on "changeCursor", (e) -> stup(e)
         @editormux = false
@@ -104,6 +107,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 me.tabarea.update()
 
         @on "resize", () -> me.editor.resize()
+        @on "vboxchange", () -> me.editor.resize()
         @on "focus", () -> me.editor.focus()
 
         @fileview.set "fetch", (e, f) ->
@@ -125,20 +129,28 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         @tabarea.set "onitemclose", (e) ->
             it = e.item.item
             return false unless it
+            me.fileview.set "preventUpdate", true
             return me.closeTab it unless it.dirty
             me.openDialog "YesNoDialog", (d) ->
                 return me.closeTab it if d
                 me.editor.focus()
             , __("Close tab"), { text: __("Close without saving ?") }
             return false
+        (@find "log-clear").set "onbtclick", (e) ->
+            ($ me.output).empty()
         #@tabarea.set "closable", true
         @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
-        @openProject @currfile if @currfile
+        @bindKey "CTRL-R", () -> me.bnR()
+        @bindKey "CTRL-B", () -> me.actionBuild "#{me.name}-Build"
+        @openProject @prjfile if @prjfile
         @trigger "calibrate"
-    
+
+        @log "ERROR", "This is an error"
+        @log "WARNING", "This is a warning"
+
     newProject: (f) ->
         me = @
         @openDialog "FileDiaLog", (d, n, p) ->
@@ -150,6 +162,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             # create asset dir
             dirs = [
                 rpath,
+                "#{rpath}/build",
                 "#{rpath}/javascripts",
                 "#{rpath}/css",
                 "#{rpath}/coffees",
@@ -162,7 +175,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 dir = dir.parent().asFileHandler()
                 dir.mk name, (r) ->
                     return me.error __("Error when create directory: {0}", r.error) if r.error
-                    me.statbar.set "text", __("Created directory: {0}", dir.path + "/" + name)
+                    me.log "INFO", __("Created directory: {0}", dir.path + "/" + name)
                     #console.log "created", dir.path + "/" + name
                     fn list, f1
             
@@ -198,11 +211,12 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                         path: "#{rpath}/project.apj",
                         content: """
                         {
+                            "name": "#{n}",
                             "root": "#{d}/#{n}",
                             "css": [],
                             "javascripts": [],
                             "coffees": ["coffees/main.coffee"],
-                            "copies": ["assets/scheme.htm", "package.json"]
+                            "copies": ["assets/scheme.html", "package.json"]
                         }
                         """
                     },
@@ -234,18 +248,28 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                     file.cache = entry.content
                     file.write "text/plain", (res) ->
                         return me.error __("Cannot create file: {0}", res.error) if res.error
-                        me.statbar.set "text", __("Created file: {0}", file.path)
+                        me.log "INFO", __("Created file: {0}", file.path)
                         fn1 list, f2
                 fn1 files, f
         , "__(New Project at)", { file: { basename: __("ProjectName") } }
 
     openProject: (file) ->
         me = @
-        file.read (d) ->
-            me.chdir d.root if d.root
-            me.pinfo = d
-            me.open "#{d.root}/coffees/main.coffee".asFileHandler()
-        ,"json"
+        me.prjfile = file
+        if(me.tabarea)
+            file.read (d) ->
+                me.log "INFO", __("Opening {0}", me.prjfile.path)
+                me.tabarea.set "selected", -1
+                me.tabarea.set "items", []
+                me.currfile = "#{d.root}/coffees/main.coffee".asFileHandler()
+                me.currfile.dirty = false
+                me.chdir d.root if d.root
+                me.prjfile.cache = d
+                me.log "INFO", __("Opening {0}", me.currfile.path)
+                me.open me.currfile
+            ,"json"
+        else
+            me.loadScheme()
 
     open: (file) ->
         #find table
@@ -344,7 +368,6 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             @currfile.cache = @editor.getValue()
             @currfile.cursor = @editor.selection.getCursor()
             @currfile = file
-
         m = "ace/mode/text"
         m = (@modes.getModeForPath file.path) if file.path.toString() isnt "Untitled"
         @mlist.set "selected", m.idx
@@ -378,16 +401,37 @@ class AntOSDK extends this.OS.GUI.BaseApplication
 
     menu: () ->
         me = @
-        menu = [{
+        menu = [
+            {
                 text: "__(Project)",
                 child: [
-                    { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N"  },
-                    { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O"  },
+                    { text: "__(New)", dataid: "#{@name}-New", },
+                    { text: "__(Open)", dataid: "#{@name}-Open" },
+                    { text: "__(Save)", dataid: "#{@name}-Save" }
+                ],
+                onmenuselect: (e) -> me.actionProject e.item.data.dataid
+            },
+            {
+                text: "__(File)",
+                child: [
+                    { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N" },
+                    { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
-            }]
+            },
+            {
+                text: "__(Build)",
+                child: [
+                    { text: "__(Build and Run)", dataid: "#{@name}-Run", shortcut: "C-R" },
+                    { text: "__(Build release)", dataid: "#{@name}-Release", shortcut: "C-P" },
+                    { text: "__(Build)", dataid: "#{@name}-Build", shortcut: "C-B" },
+                    { text: "__(Build Options)", dataid: "#{@name}-Options", shortcut: "A-P" }
+                ],
+                onmenuselect: (e) -> me.actionBuild e.item.data.dataid
+            }
+        ]
         menu
     
     actionFile: (e) ->
@@ -420,18 +464,191 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             when "#{@name}-New"
                 @open "Untitled".asFileHandler()
     
+    actionProject: (e) ->
+        me = @
+        switch e
+            when "#{@name}-Open"
+                fn = () ->
+                    me.openDialog "FileDiaLog", (d, f, p) ->
+                        me.prjfile =  "#{d}/#{f}".asFileHandler()
+                        me.log "clean"
+                        me.openProject me.prjfile
+                    , "__(Open Project)", { mimes: me.meta().mimes }
+                return fn() unless @isDirty()
+                @ask "__(Unsaved project)", "__(Ignore unsaved project ?)", () ->
+                    fn()
+            when "#{@name}-New"
+                fn = () ->
+                    me.log "clean"
+                    me.newProject (p) ->
+                        me.openProject "#{p}/project.apj".asFileHandler()
+                return fn() unless @isDirty()
+                @ask "__(Unsaved project)", "__(Ignore unsaved project ?)", () ->
+                    fn()
+
+
+    actionBuild: (e) ->
+        me = @
+        switch e
+            when "#{@name}-Run" then me.bnR()
+            when "#{@name}-Build"
+                me.build().then(() ->).catch (ex) ->
+                    me.log "ERROR", ex.toString()
+            
+                    
+    isDirty: () ->
+        return false unless @tabarea
+        dirties = ( v for v in  @tabarea.get "items" when v.dirty )
+        return true if dirties.length > 0 or @prjfile.dirty
+        return false
+
     cleanup: (evt) ->
         return unless @currfile
-        dirties = ( v for v in  @tabarea.get "items" when v.dirty )
-        return if dirties.length is 0
+        return unless @isDirty()
         me = @
         evt.preventDefault()
-        @.openDialog "YesNoDialog", (d) ->
-            if d
-                v.dirty = false for v in dirties
-                me.quit()
-        , "__(Quit)", { text: __("Ignore all {0} unsaved files ?", dirties.length) }
+        dirties = ( v for v in  @tabarea.get "items" when v.dirty )
+        @ask "__(Quit)", __("Ignore all {0} unsaved files ?", dirties.length), () ->
+            v.dirty = false for v in dirties
+            @prjfile.dirty = false
+            me.quit()
 
+    log: (t, m) ->
+        return $(@output).empty() if t is "clean"
+        p = ($ "<p>").attr("class", t.toLowerCase())[0]
+        $(p).html "#{t}: #{m.__()}"
+        ($ @output).append p
+        ($ @output).scrollTop @output.scrollHeight
+
+    verify: () ->
+        me = @
+        return new Promise (r, e) ->
+            return e me._api.throwe "Project not found" unless me.prjfile.cache
+            # perform the verification on each coffee file
+            list = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.coffees)
+            return r() if list.length is 0
+            fn = (l) ->
+                return r() if l.length is 0
+                f = (l.splice 0, 1)[0].asFileHandler()
+                me.log "INFO", __("Verifying {0}", f.path)
+                f.read (d) ->
+                    try
+                        CoffeeScript.nodes d
+                        fn l
+                    catch ex
+                        e ex
+            return fn list
+    
+    cat: (files, t) ->
+        me = @
+        return new Promise (r, e) ->
+            fn = (l) ->
+                return r(t) if l.length is 0
+                f = (l.splice 0, 1)[0].asFileHandler()
+                f.read (d) ->
+                    t = t + "\n" + d
+                    fn l
+            
+            return fn files
+
+    copy: (files, to) ->
+        me = @
+        return new Promise (r, e) ->
+            fn = (l) ->
+                return r() if l.length is 0
+                f = (l.splice 0, 1)[0].asFileHandler()
+                tof = "#{to}/#{f.basename}".asFileHandler()
+                f.read (d) ->
+                    tof.cache = new Blob [d], { type: f.info.mime }
+                    tof.write f.info.mime, (res) ->
+                        return e res.error if res.error
+                        fn(l)
+                , "binary"
+            
+            return fn files
+
+    compile: () ->
+        me = @
+        list = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.coffees)
+        t = ""
+        @verify().then () ->
+            me.cat(list, t)
+        .then (code) ->
+            return new Promise (r, e) ->
+                try
+                    jsrc = CoffeeScript.compile code
+                    me.log "SUCCESS", __("Compiled successful")
+                    r jsrc
+                catch ex
+                    e ex
+
+    build: () ->
+        me = @
+        @log "clean"
+        @compile().then (r) ->
+            # cat to the javascript
+            list = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.javascripts)
+            me.cat(list, r).then (jsrc) ->
+                return new Promise (r, e) ->
+                    r jsrc
+            .then (jsrc) ->
+                # write javascript src to file
+                return new Promise (r, e) ->
+                    fp = "#{me.prjfile.cache.root}/build/main.js".asFileHandler()
+                    fp.cache = jsrc
+                    fp.write "text/plain", (res) ->
+                        return e res.error if res.error
+                        me.log "SUCCESS", __("Generated {0}", fp.path)
+                        r()
+            .then () ->
+                # cat the css file
+                csslist = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.css)
+                csstxt = ""
+                me.cat(csslist, csstxt).then (txt) ->
+                    return new Promise (r, e) ->
+                        return r() if txt is ""
+                        fp = "#{me.prjfile.cache.root}/build/main.css".asFileHandler()
+                        fp.cache = txt
+                        fp.write "text/plain", (d) ->
+                            return e d.error if d.error
+                            me.log "SUCCESS", __("Generated {0}", fp.path)
+                            r()
+            .then () ->
+                # copy the remain files
+                copylist = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.copies)
+                me.copy copylist, "#{me.prjfile.cache.root}/build"
+            .then () ->
+                me.log "INFO", __("Build done")
+                return new Promise (r, e) -> r()
+
+    run: () ->
+        me = @
+        fp = "#{me.prjfile.cache.root}/build/package.json".asFileHandler()
+        fp.read (v) ->
+            me.log "INFO", __("Metadata found...")
+            v.text = v.name
+            v.path = "#{me.prjfile.cache.root}/build"
+            v.filename = me.prjfile.cache.name
+            v.type = "app"
+            v.mime = "antos/app"
+            v.icon = "#{v.path}/#{v.icon}" if v.icon
+            v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
+            me.log "INFO", __("Installing...")
+            me.systemsetting.system.packages[me.prjfile.cache.name] = v
+            # todo: auto matic refresh menu
+            me._gui.refreshSystemMenu()
+            me._gui.buildSystemMenu()
+            me.log "INFO", __("Running {0}...", me.prjfile.cache.name)
+            me._gui.forceLaunch me.prjfile.cache.name
+        , "json"
+    
+    bnR: () ->
+        me = @
+        @build().then () ->
+            me.run()
+        .catch (ex) ->
+            me.log "ERROR", ex.toString()
+        
 AntOSDK.singleton = false
 AntOSDK.dependencies = [
     "ace/ace",

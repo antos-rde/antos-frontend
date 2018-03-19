@@ -6,13 +6,14 @@
             <afx-tab-bar data-id="tabarea" data-height="23" closable = true></afx-tab-bar>
             <div data-id="datarea" data-height="80%"></div>
             <afx-resizer data-height="3" data-id="botrz"></afx-resizer>
-            <afx-label data-height="20" class="outputheader" iconclass= "fa fa-wpforms" text = "__(Output)"></afx-label>
-            <div data-id= "output" ></div>
             <afx-hbox data-height="30" data-id="bottom-vbox">
-                    <afx-label data-id="editorstat"></afx-label>
-                    <afx-list-view data-width="160" data-id = "themelist" dropdown = "true" width="135"></afx-list-view>
-                    <afx-list-view data-width="125" data-id = "modelist" dropdown = "true" width="100"></afx-list-view>
-                </afx-hbox>
+                <afx-label class="outputheader" iconclass= "fa fa-wpforms" text = "__(Output)"></afx-label>
+                <afx-list-view data-width="160" data-id = "themelist" dropdown = "true" width="135"></afx-list-view>
+                <afx-list-view data-width="125" data-id = "modelist" dropdown = "true" width="100"></afx-list-view>
+                <afx-button data-id = "log-clear" data-width="25" iconclass="fa fa-trash"></afx-button>
+            </afx-hbox>
+            <div data-id= "output" ></div>
+            <afx-label data-id="editorstat"  data-height="20"></afx-label>
         </afx-vbox>
     </afx-hbox>
 </afx-app-window>
