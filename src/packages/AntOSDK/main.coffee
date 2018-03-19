@@ -145,12 +145,10 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
         @bindKey "CTRL-R", () -> me.bnR()
-        @bindKey "CTRL-B", () -> me.actionBuild "#{me.name}-Build"
+        @bindKey "ALT-B", () -> me.actionBuild "#{me.name}-Build"
+        @bindKey "ALT-P", () -> me.buildAndRelease()
         @openProject @prjfile if @prjfile
         @trigger "calibrate"
-
-        @log "ERROR", "This is an error"
-        @log "WARNING", "This is a warning"
 
     newProject: (f) ->
         me = @
@@ -164,6 +162,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             dirs = [
                 rpath,
                 "#{rpath}/build",
+                "#{rpath}/release",
                 "#{rpath}/javascripts",
                 "#{rpath}/css",
                 "#{rpath}/coffees",
@@ -217,7 +216,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                             "css": [],
                             "javascripts": [],
                             "coffees": ["coffees/main.coffee"],
-                            "copies": ["assets/scheme.html", "package.json"]
+                            "copies": ["assets/scheme.html", "package.json", "README.md"]
                         }
                         """
                     },
@@ -427,9 +426,9 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 text: "__(Build)",
                 child: [
                     { text: "__(Build and Run)", dataid: "#{@name}-Run", shortcut: "C-R" },
-                    { text: "__(Build release)", dataid: "#{@name}-Release", shortcut: "C-P" },
-                    { text: "__(Build)", dataid: "#{@name}-Build", shortcut: "C-B" },
-                    { text: "__(Build Options)", dataid: "#{@name}-Options", shortcut: "A-P" }
+                    { text: "__(Build release)", dataid: "#{@name}-Release", shortcut: "A-P" },
+                    { text: "__(Build)", dataid: "#{@name}-Build", shortcut: "A-B" },
+                    { text: "__(Build Options)", dataid: "#{@name}-Options", shortcut: "A-C" }
                 ],
                 onmenuselect: (e) -> me.actionBuild e.item.data.dataid
             }
@@ -496,6 +495,8 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             when "#{@name}-Build"
                 me.build().then(() ->).catch (ex) ->
                     me.log "ERROR", ex.toString()
+            when "#{@name}-Release"
+                me.buildAndRelease()
             
                     
     isDirty: () ->
@@ -563,7 +564,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 f.read (d) ->
                     tof.cache = new Blob [d], { type: f.info.mime }
                     tof.write f.info.mime, (res) ->
-                        me.log "SUCCESS", __("Copied {0} -> {1}", f.path, to)
+                        me.log "INFO", __("Copied {0} -> {1}", f.path, to)
                         return e res.error if res.error
                         fn(l)
                 , "binary"
@@ -621,7 +622,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 copylist = ("#{me.prjfile.cache.root}/#{v}" for v in me.prjfile.cache.copies)
                 me.copy copylist, "#{me.prjfile.cache.root}/build"
             .then () ->
-                me.log "INFO", __("Build done")
+                me.log "SUCCESS", __("Build done")
                 me.dirty = false
                 return new Promise (r, e) -> r()
 
@@ -647,13 +648,52 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         , "json"
     
     bnR: () ->
+        @log "clean"
         return @run() unless @dirty
         me = @
         @build().then () ->
             me.run()
         .catch (ex) ->
             me.log "ERROR", ex.toString()
-        
+    
+    release: () ->
+        me = @
+        @log "INFO", __("Preparing for release")
+        new Promise (r, e) ->
+            me._api.require "jszip.min", () ->
+                fp = "#{me.prjfile.cache.root}/build".asFileHandler()
+                fp.read (d) ->
+                    return e d.error if d.error
+                    r d.result
+        .then (files) ->
+            return new Promise (r, e) ->
+                zip = new JSZip()
+                fn = (list) ->
+                    return r zip if list.length is 0
+                    f = (list.splice 0, 1)[0].path.asFileHandler()
+                    return fn list if f.type is "dir"
+                    f.read (d) ->
+                        zip.file f.basename, d, { binary: true }
+                        me.log "INFO", __("add {0} to zip", f.basename)
+                        fn list
+                    , "binary"
+                fn files
+        .then (zip) ->
+            zip.generateAsync({type:"base64"}).then (data) ->
+                f = "#{me.prjfile.cache.root}/release/#{me.prjfile.cache.name}.zip".asFileHandler()
+                f.cache = 'data:application/zip;base64,' + data
+                f.write "base64", (r) ->
+                    return me.log "ERROR", __("Cannot save the zip file {0} : {1}", f.path, r.error) if r.error
+                    me.log "SUCCESS", __("zip file generated in release folder")
+
+    buildAndRelease: () ->
+        @log "clean"
+        return @release() unless @dirty
+        me = @
+        @build().then () ->
+            me.release()
+        .catch (ex) ->
+            me.log "ERROR", ex.toString()
 AntOSDK.singleton = false
 AntOSDK.dependencies = [
     "ace/ace",

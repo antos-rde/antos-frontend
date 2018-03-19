@@ -276,6 +276,7 @@ self.OS.API =
                     f() if f
         else
             console.log l, "Library exist, no need to load"
+            f() if f
             _courrier.trigger "sharedlibraryloaded", l
 
     requires:(libs, f) ->
