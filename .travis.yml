@@ -1,6 +1,6 @@
 language: javascript
 install:
-  - npm install -g coffeescript
+  - npm install -g coffeescript@1.9.3
   - npm install -g uglify-js
   - npm install -g uglifycss
   - npm install -g riot
