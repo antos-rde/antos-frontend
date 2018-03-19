@@ -561,6 +561,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 f.read (d) ->
                     tof.cache = new Blob [d], { type: f.info.mime }
                     tof.write f.info.mime, (res) ->
+                        me.log "SUCCESS", __("Copied {0} -> {1}", f.path, to)
                         return e res.error if res.error
                         fn(l)
                 , "binary"
