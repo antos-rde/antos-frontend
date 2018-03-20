@@ -59,8 +59,6 @@
                 var maxw = $(self.refs.container).width();
                 left = left > maxw?maxw : left
                 self.value = left*self.max/maxw
-                //left = left - $(self.refs.point).width()/2
-                //$(self.refs.point).css("left",left + "px")
                 calibrate()
                 if(self.onchange) self.onchange(self.value)
             })
