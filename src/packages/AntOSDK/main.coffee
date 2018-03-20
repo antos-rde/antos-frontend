@@ -512,6 +512,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 me.openDialog new BuildDialog(), (d) ->
                     me.prjfile.cache[k] = v for k, v of d
                     me.prjfile.dirty = true
+                    me.dirty = true
                 , "__(Add files to build target)"
                     
     isDirty: () ->
