@@ -25,9 +25,9 @@ class BaseApplication extends this.OS.GUI.BaseModel
             CTRL: {}
             SHIFT: {}
             META: {}
-        @subscribe "appregistry"
-            , ( m ) ->
-                me.applySetting m.data.m if (m.name is me.name)
+        me = @
+        @subscribe "appregistry", ( m ) ->
+            me.applySetting m.data.m if (m.name is me.name)
     init: ->
         me = @
         @off "*"
