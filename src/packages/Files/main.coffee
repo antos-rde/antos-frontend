@@ -295,7 +295,7 @@ class Files extends this.OS.GUI.BaseApplication
             when "#{@name}-upload"
                 me = @
                 @currdir.upload (r) ->
-                    me.error __("Fail to upload to {0}: {1}", d, r.error) if r.error
+                    me.error __("Fail to upload to {0}: {1}", me.currdir.path, r.error) if r.error
 
             when "#{@name}-share"
                 me = @
