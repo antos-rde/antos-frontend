@@ -37,7 +37,7 @@ main: initd build_coffees build_tags build_themes schemes libs  build_packages l
 initd:
 	- mkdir -p $(BUILDDIR)
 
-lite: build_coffee build_tag build_theme schemes   build_packages
+lite: build_coffees build_tags build_themes schemes   build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 

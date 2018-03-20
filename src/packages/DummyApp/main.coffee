@@ -104,7 +104,9 @@ class DummyApp extends this.OS.GUI.BaseApplication
             {text:"file2.cpp"}
         ]
         tabs.set "items", tabdatas 
-
+        (@find "slider").set "max", 200
+        (@find "slider").set "onchange", (d) ->
+            console.log d
         @scheme.set "apptitle", "AntOS feature showcase"
 
         @scheme.contextmenuHandler = (e, m) ->
