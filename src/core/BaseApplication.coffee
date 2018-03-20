@@ -25,13 +25,14 @@ class BaseApplication extends this.OS.GUI.BaseModel
             CTRL: {}
             SHIFT: {}
             META: {}
-    init: ->
-        me = @
-        # first register some base event to the app
         @subscribe "appregistry"
             , ( m ) ->
                 me.applySetting m.data.m if (m.name is me.name)
-
+    init: ->
+        me = @
+        @off "*"
+        @on "exit", () -> me.quit()
+        # first register some base event to the app
         @on "focus", () ->
             me.sysdock.set "selectedApp", me
             me.appmenu.pid = me.pid
@@ -48,6 +49,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
                 when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
         @loadScheme()
+
     loadScheme: () ->
         #now load the scheme
         path = "#{@meta().path}/scheme.html"

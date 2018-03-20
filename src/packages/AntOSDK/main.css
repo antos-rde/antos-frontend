@@ -16,6 +16,7 @@ afx-app-window[data-id="antOSDK"] afx-resizer[data-id="botrz"]
     z-index: 9;
     border-top: 1px solid #a6a6a6;
     background-color: #2f3129;
+    border-right: 0;
 }
 
 afx-app-window[data-id="antOSDK"] div.welcome-cnt {

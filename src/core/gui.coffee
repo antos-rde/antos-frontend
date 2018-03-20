@@ -37,6 +37,7 @@ self.OS.GUI =
     ]
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
+            
         $(app.scheme).remove() if app.scheme
         ($ parent).append scheme
         riot.mount ($ scheme), { observable: app.observable }
@@ -186,11 +187,11 @@ self.OS.GUI =
         # so that it can be themed
         data.iconclass = "fa fa-cogs" if (not meta.icon) and (not meta.iconclass)
         dock = $ "#sysdock"
+        app.init()
         app.one "rendered", () ->
             dock.get(0).newapp data
             app.sysdock = dock.get(0)
             app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
-        app.init()
 
     toggleFullscreen: () ->
         el = ($ "body")[0]

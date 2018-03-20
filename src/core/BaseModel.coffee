@@ -52,7 +52,9 @@ class BaseModel
    
     one: (e, f) -> @observable.one e, f
     on: (e, f) -> @observable.on e, f
-
+    off: (e, f) ->
+        return @observable.off e unless f
+        @observable.off e, f
     trigger: (e, d) -> @observable.trigger e, d
 
     subscribe: (e, f) ->
