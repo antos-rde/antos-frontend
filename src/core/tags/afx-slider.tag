@@ -74,6 +74,12 @@
         if(self.dragable)
         {
             $(self.refs.point).css("position", "absolute")
+            $(self.refs.point).hide()
+            $(self.root).mouseover(function(){
+                $(self.refs.point).show()
+            }).mouseout(function(){
+                $(self.refs.point).hide()
+            })
             enable_dragging()
         }
         self.root.observable.on("calibrate",function(){
