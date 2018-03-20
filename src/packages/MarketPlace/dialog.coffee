@@ -91,4 +91,3 @@ RepositoryDialog.scheme = """
         </afx-vbox>
     </afx-app-window>
 """
-this.OS.register "RepositoryDialog", RepositoryDialog

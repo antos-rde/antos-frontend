@@ -52,7 +52,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             me.saveUser()
 
         (@find "cv-cat-add").set "onbtclick", (e) ->
-            me.openDialog "BloggerCategoryDialog",
+            me.openDialog new BloggerCategoryDialog(),
             (d) ->
                 c =
                     name: d.value,
@@ -68,7 +68,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         (@find "cv-cat-edit").set "onbtclick", (e) ->
             cat = me.cvlist.get "selectedItem"
             return unless cat
-            me.openDialog "BloggerCategoryDialog", (d) ->
+            me.openDialog new BloggerCategoryDialog(), (d) ->
                 c =
                     id: cat.id,
                     publish: cat.publish,
@@ -93,7 +93,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         (@find "cv-sec-add").set "onbtclick", (e) ->
             cat = me.cvlist.get "selectedItem"
             return me.notify __("Please select a category") unless cat and cat.id isnt 0
-            me.openDialog "BloggerCVSectionDiaglog", (d) ->
+            me.openDialog new BloggerCVSectionDiaglog(), (d) ->
                 d.cid = Number cat.id
                 d.start = Number d.start
                 d.end = Number d.end
@@ -108,7 +108,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             sec = (me.find "cv-sec-list").get "selected"
             return me.notify __("Please select a section to move") unless sec
             
-            me.openDialog "BloggerCategoryDialog", (d) ->
+            me.openDialog new BloggerCategoryDialog(), (d) ->
                 c =
                     id: sec.id,
                     cid: d.p.id
@@ -123,7 +123,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             sec = (me.find "cv-sec-list").get "selected"
             return me.notify __("Please select a section to edit") unless sec
             
-            me.openDialog "BloggerCVSectionDiaglog", (d) ->
+            me.openDialog new BloggerCVSectionDiaglog(), (d) ->
                 d.cid = Number sec.cid
                 d.start = Number d.start
                 d.end = Number d.end

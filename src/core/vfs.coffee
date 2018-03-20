@@ -68,11 +68,12 @@ class BaseFileHandler
         return -1 unless @path
         return @path.hash()
 
-    sendB64: (m, f) ->
+    sendB64: (p, f) ->
         me = @
+        m = if p is "object" then "text/plain" else p
         return f "" unless @cache
-        if typeof @cache is "string"
-            b64 = @cache.asBase64()
+        if p is "object" or typeof @cache is "string"
+            b64 = if p is "object" then (JSON.stringify @cache).asBase64() else @cache.asBase64()
             b64 = "data:#{m};base64,#{b64}"
             f(b64)
         else

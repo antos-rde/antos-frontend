@@ -52,7 +52,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         @btremove.set "onbtclick", (e) ->
             me.uninstall e
         @bindKey "CTRL-R", () ->
-            me.openDialog "RepositoryDialog"
+            me.openDialog new RepositoryDialog()
     fetchApps: (url) ->
         me = @
         @_api.get url, ( d ) ->
@@ -93,7 +93,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             { text: "__(Options)", child: [
                 { text: "__(Repositories)", shortcut: "C-R" }
             ] , onmenuselect: (e) ->
-                me.openDialog "RepositoryDialog"
+                me.openDialog new RepositoryDialog()
             }
         ]
     

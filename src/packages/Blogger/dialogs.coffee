@@ -60,9 +60,6 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
                     (d.find "bt0").trigger() if e.which is 13
         }
 
-        
-this.OS.register "BloggerCategoryDialog", BloggerCategoryDialog
-
 # This dialog is use for cv section editing
 
 class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
@@ -103,4 +100,3 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
         children = ($ container).children()
         cheight = ($ container).height() - 30
         ($ children[1]).css("height", cheight + "px")
-this.OS.register "BloggerCVSectionDiaglog", BloggerCVSectionDiaglog

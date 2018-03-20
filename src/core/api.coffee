@@ -25,7 +25,7 @@ class FormatedString
     __: () ->
         me = @
         return @fs.l().replace /{(\d+)}/g, (match, number) ->
-            return if typeof me.values[number] != 'undefined' then me.values[number] else match
+            return if typeof me.values[number] != 'undefined' then me.values[number].__() else match
     hash: () ->
         @__().hash()
 
@@ -80,7 +80,7 @@ if not String.prototype.format
     String.prototype.format = () ->
         args = arguments
         return @replace /{(\d+)}/g, (match, number) ->
-            return if typeof args[number] != 'undefined' then args[number] else match
+            return if typeof args[number] != 'undefined' then args[number].__() else match
 
 String.prototype.f = () ->
     args = arguments

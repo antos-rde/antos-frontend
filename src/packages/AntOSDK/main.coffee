@@ -145,8 +145,10 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
         @bindKey "CTRL-R", () -> me.bnR()
-        @bindKey "ALT-B", () -> me.actionBuild "#{me.name}-Build"
+        @bindKey "ALT-C", () -> me.actionBuild "#{me.name}-Build"
         @bindKey "ALT-P", () -> me.buildAndRelease()
+        @bindKey "ALT-Y", () ->
+            me.actionBuild "#{me.name}-Options"
         @openProject @prjfile if @prjfile
         @trigger "calibrate"
 
@@ -428,8 +430,8 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 child: [
                     { text: "__(Build and Run)", dataid: "#{@name}-Run", shortcut: "C-R" },
                     { text: "__(Build release)", dataid: "#{@name}-Release", shortcut: "A-P" },
-                    { text: "__(Build)", dataid: "#{@name}-Build", shortcut: "A-B" },
-                    { text: "__(Build Options)", dataid: "#{@name}-Options", shortcut: "A-C" }
+                    { text: "__(Build)", dataid: "#{@name}-Build", shortcut: "A-C" },
+                    { text: "__(Build Options)", dataid: "#{@name}-Options", shortcut: "A-Y" }
                 ],
                 onmenuselect: (e) -> me.actionBuild e.item.data.dataid
             }
@@ -438,6 +440,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
     
     actionFile: (e) ->
         me = @
+        return unless @prjfile
         saveas = () ->
             me.openDialog "FileDiaLog", (d, n) ->
                 file = "#{d}/#{n}".asFileHandler()
@@ -487,10 +490,17 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                 return fn() unless @isDirty()
                 @ask "__(Unsaved project)", "__(Ignore unsaved project ?)", () ->
                     fn()
+            when "#{@name}-Save"
+                return unless @prjfile
+                @prjfile.write "object", (r) ->
+                    return me.error __("Cannot save project: {0}", r.error) if r.error
+                    me.notify __("project saved")
+                    me.prjfile.dirty = false
 
 
     actionBuild: (e) ->
         me = @
+        return unless @prjfile
         switch e
             when "#{@name}-Run" then me.bnR()
             when "#{@name}-Build"
@@ -498,7 +508,11 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                     me.log "ERROR", ex.toString()
             when "#{@name}-Release"
                 me.buildAndRelease()
-            
+            when "#{@name}-Options"
+                me.openDialog new BuildDialog(), (d) ->
+                    me.prjfile.cache[k] = v for k, v of d
+                    me.prjfile.dirty = true
+                , "__(Add files to build target)"
                     
     isDirty: () ->
         return false unless @tabarea
@@ -512,9 +526,10 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         me = @
         evt.preventDefault()
         dirties = ( v for v in  @tabarea.get "items" when v.dirty )
-        @ask "__(Quit)", __("Ignore all {0} unsaved files ?", dirties.length), () ->
+        m =  __("Ignore: {0} unsaved files {1}?", dirties.length, if @prjfile.dirty then "__(and unsaved project)" else "")
+        @ask "__(Quit)", m, () ->
             v.dirty = false for v in dirties
-            @prjfile.dirty = false
+            me.prjfile.dirty = false
             me.quit()
 
     log: (t, m) ->

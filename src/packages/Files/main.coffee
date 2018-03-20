@@ -242,7 +242,7 @@ class Files extends this.OS.GUI.BaseApplication
                 @notify __("File {0} cut", file.filename)
             
             when "#{@name}-copy"
-                return unless file
+                return unless file or file.type is "dir"
                 @clipboard =
                     cut: false
                     file: file.path.asFileHandler()
@@ -257,8 +257,14 @@ class Files extends this.OS.GUI.BaseApplication
                                 me.clipboard = undefined
                                 me.error __("Fail to paste: {0}", r.error) if r.error
                 else
-                    @notify __("Copy not yet implemented")
-                    @clipboard = undefined
+                    @clipboard.file.read (d) ->
+                        blob = new Blob [d], { type: me.clipboard.file.info.mime }
+                        fp = "#{me.currdir.path}/#{me.clipboard.file.basename}".asFileHandler()
+                        fp.cache = blob
+                        fp.write me.clipboard.file.info.mime, (r) ->
+                            me.clipboard = undefined
+                            me.error __("Fail to paste: {0}", r.error) if r.error
+                    , "binary"
             else
                 @_api.handler.setting()
     

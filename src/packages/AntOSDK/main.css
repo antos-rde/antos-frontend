@@ -111,3 +111,10 @@ afx-tab-bar[data-id="tabarea"] afx-list-view  > div.list-container > ul > li.sel
     background-color: #f6F6F6;
     border-radius: 0;
 }
+afx-app-window[data-id="BuildDialog"] afx-label.header {
+    font-weight: bold;
+    margin: 0;
+}
+afx-app-window[data-id="BuildDialog"] afx-list-view {
+    border: 1px solid #a6A6A6;
+}

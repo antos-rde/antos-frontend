@@ -71,12 +71,12 @@ class BasicDialog extends BaseDialog
     
     init: () ->
         @title = @name if not @title
-        html = "<afx-app-window  data-id = 'dia-window'  width='#{@conf.width}' height='#{@conf.height}'>
-                <afx-vbox>"
-        html += "<#{v.tag} #{v.att} style = 'margin-left:5px; margin-right:5px;' data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
+        html = "<afx-app-window  data-id = '#{@name}'  width='#{@conf.width}' height='#{@conf.height}'>"
+        html += "<afx-hbox><div data-width='7'></div><afx-vbox><div data-height='5'></div>"
+        html += "<#{v.tag} #{v.att}  data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
         html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
-        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-right:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div><div data-height='5'></div></afx-vbox></afx-app-window>"
+        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:5px;'></afx-button>" for k,v of @conf.buttons
+        html += "</div><div data-height='5'></div></afx-vbox><div data-width='7'></div></afx-hbox></afx-app-window>"
         #render the html
         _GUI.htmlToScheme html, @, @host
     
@@ -200,7 +200,7 @@ this.OS.register "InfoDialog", InfoDialog
 class YesNoDialog extends BasicDialog
     constructor: () ->
         super "YesNoDialog", {
-            tags: [{ tag: "afx-label", att: "style = 'padding-left:10px;'" }],
+            tags: [{ tag: "afx-label" }],
             width: 300,
             height: 100,
             resizable: true,
@@ -290,20 +290,28 @@ class FileDiaLog extends BaseDialog
             e.child.path.asFileHandler().read (d) ->
                 return me.error __("Resource not found: {0}", e.child.path) if d.error
                 f d.result
-        location.set "onlistselect", (e) ->
-            return unless e and e.data.path
-            e.data.path.asFileHandler().read (d) ->
+        setroot = (path) ->
+            path.asFileHandler().read (d) ->
                 if(d.error)
-                    return me.error __("Resource not found: {0}", e.data.path)
-                fileview.set "path", e.data.path
+                    return me.error __("Resource not found: {0}", path)
+                fileview.set "path", path
                 fileview.set "data", d.result
-        location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
-        location.set "selected", 0 unless location.get "selected"
+        if not @data or not @data.root
+            location.set "onlistselect", (e) ->
+                return unless e and e.data.path
+                setroot e.data.path
+            location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
+            location.set "selected", 0 unless location.get "selected"
+        else
+            $(location).hide()
+            @trigger "calibrate"
+            setroot @data.root
         fileview.set "onfileselect", (f) ->
             ($ filename).val f.filename  if f.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
-            return me.notify __("Please select a file") unless f
+            return me.notify __("Please select a file/fofler") unless f
+            return me.notify __("Please select {0} only", me.data.type) if me.data and me.data.type and me.data.type isnt f.type
             if me.data and me.data.mimes
                 #verify the mime
                 m = false

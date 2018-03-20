@@ -62,6 +62,9 @@ afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > 
     background-color: transparent;
     border-radius: 5px;
 }
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li.selected ul.complex-content li{
+    color: #414339;
+}
 afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-content{
     text-align: justify;
 }
