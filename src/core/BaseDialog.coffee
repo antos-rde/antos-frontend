@@ -323,7 +323,7 @@ class FileDiaLog extends BaseDialog
                 return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
             d = f.path
             d = f.path.asFileHandler().parent() if f.type is "file"
-            me.handler d, ($ filename).val(), f.path if me.handler
+            me.handler d, ($ filename).val(), f.path, f if me.handler
             #sel = if  me.data and me.data.selection then me.data.selection else "file"
             #me.handler f, ($ filename).val() if me.handler and ((f.type is sel) or (sel is "*"))
             me.quit()

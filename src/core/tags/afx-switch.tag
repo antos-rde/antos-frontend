@@ -41,12 +41,13 @@
         {
             if(!self.enable) return
             opts.swon = !self.swon
+            self.swon = opts.swon
             var data = {
                 id: self.rid,
                 data: opts.swon
             }
-            if(self.onchange)
-                self.onchange(data)
+            if(opts.onchange)
+                opts.onchange(data)
             if(self.root.observable)
                 self.root.observable.trigger("switch", data)
             
