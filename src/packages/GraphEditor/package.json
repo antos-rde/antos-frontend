@@ -7,7 +7,7 @@
         "email": "xsang.le@gmail.com",
         "licences": "GPLv3"
     },
-    "version":"0.1a",
+    "version":"0.0.1-a",
     "category":"Office",
     "iconclass": "fa fa-sitemap",
     "mimes":["text/.*graphviz"]

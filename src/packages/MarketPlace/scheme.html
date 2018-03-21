@@ -7,14 +7,15 @@
             <afx-resizer data-width = "3" ></afx-resizer>
             <afx-vbox data-id = "container">
                     <div data-id = "appname" data-height = "25"></div>
-                    <afx-hbox data-height = "25">
+                    <afx-hbox data-height = "grow">
                         <div style = "text-align:left;">
                             <afx-button data-id = "bt-remove" text = "__(Uninstall)"></afx-button>
                             <afx-button data-id = "bt-exec" text = "__(Launch)"></afx-button>
                             <afx-button data-id = "bt-install" text = "__(Install)" ></afx-button>
+                            <p class="stat"><afx-label data-id="vstat"></afx-label></p>
                         </div>
                     </afx-hbox>
-                    <div>
+                    <div data-height = "grow">
                         <p data-id = "app-desc"></p>
                         <ul data-id = "app-detail"></ul>
                     </div>

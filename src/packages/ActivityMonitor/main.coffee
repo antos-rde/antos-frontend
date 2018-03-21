@@ -29,7 +29,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
             item = me.grid.get "selected"
             return unless item
             app = _PM.appByPid item[0].value
-            app.quit() if app
+            app.quit(true) if app
 
         header = [{width:50,value: "__(Pid)"},{value:"__(Name)"}, {value:"__(Type)", width:80},{width:75,value: "__(Alive (ms))"}]
         @gdata = 

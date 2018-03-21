@@ -103,11 +103,11 @@ self.OS or=
                 delete _PM.processes[app.name][i]
                 _PM.processes[app.name].splice i, 1
         
-        killAll: (app) ->
+        killAll: (app, force) ->
             return unless _PM.processes[app]
             tmp = []
             tmp.push a for a in _PM.processes[app]
-            a.quit() for a in tmp
+            a.quit(force) for a in tmp
 
     cleanup: ->
         console.log "Clean up system"

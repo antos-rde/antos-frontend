@@ -133,11 +133,14 @@ self.OS.GUI =
 
     forceLaunch: (app, args) ->
         console.log "This method is used for developing only, please use the launch method instead"
-        _PM.killAll app
-        ($ _OS.APP[app].style).remove() if _OS.APP[app] and _OS.APP[app].style
-        _OS.APP[app] = undefined
+        _GUI.unloadApp app
         _GUI.launch app, args
 
+    unloadApp: (app) ->
+        _PM.killAll app, true
+        ($ _OS.APP[app].style).remove() if _OS.APP[app] and _OS.APP[app].style
+        _OS.APP[app] = undefined
+    
     loadApp: (app, ok, err) ->
         path = "os://packages/#{app}"
         path = _OS.setting.system.packages[app].path if _OS.setting.system.packages[app].path

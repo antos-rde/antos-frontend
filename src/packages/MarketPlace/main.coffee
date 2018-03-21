@@ -48,9 +48,10 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             return unless app
             me._gui.launch app.className if app.className
         @btinstall.set "onbtclick", (e) ->
-            me.install e
+            return me.update() if me.btinstall.get "dirty"
+            me.install()
         @btremove.set "onbtclick", (e) ->
-            me.uninstall e
+            me.uninstall()
         @bindKey "CTRL-R", () ->
             me.openDialog new RepositoryDialog()
     fetchApps: (url) ->
@@ -67,15 +68,28 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         me = @
         ($ @container).css "visibility", "visible"
         ( $ @appname ).html d.name
+        (@find "vstat").set "text", ""
         if d.description
             d.description.asFileHandler().read (text) ->
                 converter = new showdown.Converter()
                 ($ me.appdesc).html converter.makeHtml text
         else
             ($ me.appdesc).empty()
-        
-        if @systemsetting.system.packages[d.className]
+        pkgcache = @systemsetting.system.packages
+        @btinstall.set "text", "__(Install)"
+        @btinstall.set "dirty", false
+        if pkgcache[d.className]
+            vs = pkgcache[d.className].version
+            ovs = d.version
             ($ @btinstall).hide()
+            if vs and ovs
+                vs = vs.__v()
+                ovs = ovs.__v()
+                if ovs.nt vs
+                    @btinstall.set "dirty", true
+                    @btinstall.set "text", "__(Update)"
+                    ($ @btinstall).show()
+                    (@find "vstat").set "text", __("Your application version is older ({0} < {1})", vs, ovs)
             ($ @btremove).show()
             ($ @btexec).show()
         else
@@ -97,7 +111,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             }
         ]
     
-    install: (e) ->
+    install: (f) ->
         me = @
         app = @applist.get "selected"
         return unless app
@@ -134,7 +148,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                    
         , (err, s) ->
             return me.error __("Cannot down load the app {0}", err) if err
-    uninstall: (e) ->
+    uninstall: (f) ->
         me = @
         sel = @applist.get "selected"
         name = sel.className
@@ -148,12 +162,21 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     return me.error __("Cannot uninstall package: {0}", r.error) if r.error
                     me.notify __("Package uninstalled")
                     delete me.systemsetting.system.packages[name]
-                    window.OS.PM.killAll name
-                    delete window.OS.APP[name]
+                    me._gui.unloadApp name
                     me._gui.refreshSystemMenu()
                     me.appDetail sel
+                    f() if f
         , __("Uninstall") ,
-        { text: __("Uninstall : {0}?", app.name) }
+        { text: __("Uninstall: {0}?", app.name) }
+    
+    update: () ->
+        me = @
+        new Promise (r, e) ->
+            me.uninstall () ->
+                r()
+        .then () ->
+            me.install()
+
     mkdirs: (n, list, f) ->
         me = @
         if list.length is 0

@@ -9,7 +9,7 @@
         "credit": "dedicated to some one here",
         "licences": "GPLv3"
     },
-    "version":"0.1a",
+    "version":"0.0.1-a",
     "category":"System",
     "mimes":["*"]
 }

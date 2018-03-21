@@ -32,10 +32,10 @@ class BaseModel
     render: (p) ->
         _GUI.loadScheme p, @, @host
 
-    quit: () ->
+    quit: (force) ->
         evt = new _GUI.BaseEvent("exit")
-        @onexit(evt)
-        if not evt.prevent
+        @onexit(evt) if not force
+        if force or not evt.prevent
             delete @.observable
             @dialog.quit() if @dialog
             _PM.kill @

@@ -42,6 +42,46 @@ class FormatedString
         args = arguments
         @values[i] = args[i] for i in [0..args.length - 1]
 
+class Version
+    constructor:(@string) ->
+        arr = @string.split "-"
+        br =
+            "r": 3,
+            "b": 2,
+            "a": 1
+        @branch = 3
+        @branch = br[arr[1]] if arr.length is 2 and br[arr[1]]
+        mt = arr[0].match /\d+/g
+        throw new Error __("Version string is in invalid format: {0}", @string) if not mt
+        @major = 0
+        @minor = 0
+        @patch = 0
+        @major = Number mt[0] if mt.length >= 1
+        @minor = Number mt[1]  if mt.length >= 2
+        @patch = Number mt[2] if mt.length >= 3
+    
+    # this function return 
+    #   0 if the version is unchanged
+    #   1 if the current version is newer
+    #   -1 if the current version is older
+    compare: (o) ->
+        other = o.__v()
+        return 1 if @branch > other.branch
+        return -1 if @branch < other.branch
+        return 0 if @major is other.major and @minor is other.minor and @patch is other.patch
+        return 1 if @major > other.major
+        return -1 if @major < other.major
+        return 1 if @minor > other.minor
+        return -1 if @minor < other.minor
+        return 1 if @patch > other.patch
+        return -1
+    nt: (o) ->
+        return (@compare o) is 1
+    ot: (o) ->
+        return (@compare o) is -1
+    __v: () -> @
+    toString: () -> @string
+
 Object.defineProperty Object.prototype, '__',
     value: () ->
         return @toString()
@@ -53,7 +93,8 @@ String.prototype.hash = () ->
     i = this.length
     hash = (hash * 33) ^ this.charCodeAt(--i) while i
     hash >>> 0
-
+String.prototype.__v = () ->
+    return new Version @
 String.prototype.asBase64 = () ->
     tmp = encodeURIComponent this
     return btoa ( tmp.replace /%([0-9A-F]{2})/g, (match, p1) ->
