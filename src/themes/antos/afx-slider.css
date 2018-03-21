@@ -11,6 +11,7 @@ afx-slider div.container{
     background-color: #e6e6e6;
     position: relative;
     padding:0;
+    cursor: pointer;
 }
 
 afx-slider div.progress {

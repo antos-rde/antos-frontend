@@ -33,9 +33,9 @@ class BaseModel
         _GUI.loadScheme p, @, @host
 
     quit: (force) ->
-        evt = new _GUI.BaseEvent("exit")
-        @onexit(evt) if not force
-        if force or not evt.prevent
+        evt = new _GUI.BaseEvent("exit", force)
+        @onexit(evt)
+        if not evt.prevent
             delete @.observable
             @dialog.quit() if @dialog
             _PM.kill @

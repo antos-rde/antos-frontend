@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 class BaseEvent 
-    constructor: (@name) ->
+    constructor: (@name, @force) ->
         @prevent = false
-    preventDefault:()->
-        @prevent = true
+    preventDefault: () ->
+        @prevent = true if not @force
 
 this.OS.GUI.BaseEvent = BaseEvent

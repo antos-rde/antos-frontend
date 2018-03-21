@@ -10,6 +10,7 @@
         this.dragable = eval(opts.dragable)
     else
         this.dragable = true
+    this.onchanging = opts.onchanging
     this.onchange = opts.onchange
     //this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
     var self = this
@@ -20,8 +21,11 @@
                 self[i] = v[i]
         else
             self[k] = v
-        if(k == "value" && self.onchange)
-            self.onchange(self.value)
+        if(k == "value")
+        {
+            if(self.onchange) self.onchange(self.value)
+            if(self.onchanging) self.onchanging(self.value)
+        }
         self.update()
     }
     self.root.get = function(k)
@@ -60,9 +64,10 @@
                 left = left > maxw?maxw : left
                 self.value = left*self.max/maxw
                 calibrate()
-                if(self.onchange) self.onchange(self.value)
+                if(self.onchanging) self.onchanging(self.value)
             })
             $(window).on("mouseup", function(e){
+                if(self.onchange) self.onchange(self.value)
                 $(window).unbind("mousemove", null)
             })
         })
@@ -80,6 +85,15 @@
             })
             enable_dragging()
         }
+        $(self.refs.container).click( function(e){
+            var offset = $(self.refs.container).offset()
+            var left = e.clientX  - offset.left
+            var maxw = $(self.refs.container).width()
+            self.value = left*self.max/maxw
+            calibrate()
+            if(self.onchange) self.onchange(self.value)
+            if(self.onchanging) self.onchanging(self.value)
+        })
         self.root.observable.on("calibrate",function(){
             calibrate()
         })
