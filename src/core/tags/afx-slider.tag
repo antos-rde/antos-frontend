@@ -21,11 +21,11 @@
                 self[i] = v[i]
         else
             self[k] = v
-        if(k == "value")
+        /*if(k == "value")
         {
             if(self.onchange) self.onchange(self.value)
             if(self.onchanging) self.onchanging(self.value)
-        }
+        }*/
         self.update()
     }
     self.root.get = function(k)
