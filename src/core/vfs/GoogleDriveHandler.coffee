@@ -144,6 +144,10 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         @sendB64 m, (data) ->
             xhr.send data.replace /^data:[^;]+;base64,/g, ""
 
+    getlink: () ->
+        return @info.webContentLink if @ready
+        return undefined
+
     action: (n, p, f) ->
         me = @
         q = _courrier.getMID()

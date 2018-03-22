@@ -148,6 +148,7 @@ class BaseFileHandler
 
     meta: (f) ->
 
+    getlink: () -> @path
     # for main action read, write, remove, execute
     # must be implemented by subclasses
     action: (n, p, f) ->
@@ -164,6 +165,9 @@ class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
     meta: (f) ->
         _API.handler.fileinfo @path, f
     
+    getlink: () ->
+        _API.handler.get + "/" + @path
+
     action: (n, p, f) ->
         me = @
         switch n
