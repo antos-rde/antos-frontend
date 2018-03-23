@@ -113,6 +113,7 @@ self.OS or=
         console.log "Clean up system"
         ($ "#wrapper").empty()
         _GUI.clearTheme()
+        _courrier.observable.off("*") if _courrier.observable
         _courrier.observable = riot.observable()
         _courrier.quota = 0
         _OS.APP = {}
