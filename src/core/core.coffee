@@ -34,7 +34,7 @@ self.OS or=
     courrier:
         observable: riot.observable()
         quota: 0
-        listeners: new Object
+        listeners: {}
         on: (e, f, a) ->
             _courrier.listeners[a.pid] = [] unless _courrier.listeners[a.pid]
             _courrier.listeners[a.pid].push { e: e, f: f }
@@ -111,6 +111,8 @@ self.OS or=
         console.log "Clean up system"
         _PM.killAll a, true for a, v of _PM.processes
         _courrier.observable.off("*") if _courrier.observable
+        $(window).off('keydown')
+        delete _courrier.observable
         ($ "#wrapper").empty()
         _GUI.clearTheme()
         _courrier.observable = riot.observable()
@@ -142,6 +144,7 @@ self.OS or=
     exit: ->
         #do clean up first
         f() for n, f of _OS.cleanupHandlers
+        _OS.cleanup()
         _API.handler.setting (r) ->
             _API.handler.logout()
     onexit: (n, f) ->

@@ -36,6 +36,7 @@ class BaseModel
         evt = new _GUI.BaseEvent("exit", force)
         @onexit(evt)
         if not evt.prevent
+            @observable.off "*"
             delete @.observable
             @dialog.quit() if @dialog
             _PM.kill @

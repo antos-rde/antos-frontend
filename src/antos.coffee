@@ -21,4 +21,6 @@ _PM  = self.OS.PM
 _OS = self.OS
 _courrier = self.OS.courrier
 this.onload = () ->
+    ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
+            _GUI.fullscreen = not _GUI.fullscreen
     self.OS.boot()

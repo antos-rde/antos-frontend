@@ -244,8 +244,6 @@ self.OS.GUI =
             .css("background-repeat", wp.repeat)
 
     initDM: ->
-        ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
-            _GUI.fullscreen = not _GUI.fullscreen
         # check login first
         _API.resource "schemes/dm.html", (x) ->
             return null unless x
@@ -400,7 +398,6 @@ self.OS.GUI =
         return new _GUI.BasicDialog conf.name, conf.layout
         
     login: () ->
-        _OS.cleanup()
         _API.resource "schemes/login.html", (x) ->
             return null unless x
             scheme = $.parseHTML x
