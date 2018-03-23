@@ -105,15 +105,14 @@ self.OS or=
         
         killAll: (app, force) ->
             return unless _PM.processes[app]
-            tmp = []
-            tmp.push a for a in _PM.processes[app]
-            a.quit(force) for a in tmp
+            a.quit(force) for a in  _PM.processes[app]
 
     cleanup: ->
         console.log "Clean up system"
+        _PM.killAll a, true for a, v of _PM.processes
+        _courrier.observable.off("*") if _courrier.observable
         ($ "#wrapper").empty()
         _GUI.clearTheme()
-        _courrier.observable.off("*") if _courrier.observable
         _courrier.observable = riot.observable()
         _courrier.quota = 0
         _OS.APP = {}
