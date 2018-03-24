@@ -144,8 +144,8 @@ self.OS or=
     exit: ->
         #do clean up first
         f() for n, f of _OS.cleanupHandlers
-        _OS.cleanup()
         _API.handler.setting (r) ->
+            _OS.cleanup()
             _API.handler.logout()
     onexit: (n, f) ->
         self.OS.cleanupHandlers[n] = f unless self.OS.cleanupHandlers[n]
