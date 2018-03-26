@@ -34,6 +34,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
         @on "exit", () -> me.quit()
         # first register some base event to the app
         @on "focus", () ->
+            me.sysdock.update()
             me.sysdock.set "selectedApp", me
             me.appmenu.pid = me.pid
             me.appmenu.set "items", (me.baseMenu() || [])
@@ -48,6 +49,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
             switch d.e.item.data.dataid
                 when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
+        @on "apptitlechange", () -> me.sysdock.update()
         @loadScheme()
 
     loadScheme: () ->
@@ -87,6 +89,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
     toggle: () ->
         @trigger "toggle"
 
+    title: () ->
+        @scheme.get "apptitle"
         
     onexit: (evt) ->
         @cleanup(evt)

@@ -112,6 +112,7 @@ self.OS or=
         _PM.killAll a, true for a, v of _PM.processes
         _courrier.observable.off("*") if _courrier.observable
         $(window).off('keydown')
+        ($ "#workspace").off("mouseover")
         delete _courrier.observable
         ($ "#wrapper").empty()
         _GUI.clearTheme()

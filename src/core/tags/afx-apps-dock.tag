@@ -1,5 +1,5 @@
 <afx-apps-dock>
-    <afx-button class = {selected: parent.selectedApp && app.pid == parent.selectedApp.pid} each={ items } icon = {icon} text = {text} onbtclick = {onbtclick}>
+    <afx-button class = {selected: parent.selectedApp && it.app.pid == parent.selectedApp.pid} each={ it,i in items} iconclass = {it.iconclass} icon = {it.icon} appindex = {i} text = {it.text} onbtclick = {it.onbtclick} tooltip= {"cr:" + it.app.title()} >
     </afx-button>
     <script>
         this.items = opts.items || []
@@ -48,6 +48,10 @@
                 self.update()
             }
         }
+        self.root.update = function()
+        {
+            self.update()
+        }
         self.root.get = function(k)
         {
             return self[k]
@@ -56,5 +60,23 @@
             window.OS.courrier.trigger("sysdockloaded")
         })
         
+        self.root.contextmenuHandler = function(e, m) 
+        {
+            if(e.target == self.root) return;
+            var appidx = $(e.target).parent().attr("appindex")
+            var app = self.items[appidx].app
+            m.set("items", [
+                { text: "__(Show)", dataid:"show" },
+                { text: "__(Hide)", dataid:"hide" },
+                { text: "__(Close)", dataid:"quit" }
+            ])
+            m.set("onmenuselect", function(evt)
+            {
+                if(app[evt.item.data.dataid])
+                    app[evt.item.data.dataid]()
+            })
+            m.show(e)
+        }
+
     </script>
 </afx-apps-dock>

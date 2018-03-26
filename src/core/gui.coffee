@@ -40,8 +40,8 @@ self.OS.GUI =
             
         $(app.scheme).remove() if app.scheme
         ($ parent).append scheme
-        riot.mount ($ scheme), { observable: app.observable }
         app.scheme = scheme[0]
+        riot.mount ($ scheme), { observable: app.observable }
         app.main()
         app.show()
     loadScheme: (path, app, parent) ->
@@ -176,6 +176,7 @@ self.OS.GUI =
             # now launch it
             if _OS.APP[app]
                 _PM.createProcess app, _OS.APP[app], args
+
     dock: (app, meta) ->
         # dock an application to a dock
         # create a data object
@@ -243,6 +244,31 @@ self.OS.GUI =
             .css("background-size", wp.size)
             .css("background-repeat", wp.repeat)
 
+    showTooltip: (e, el, text) ->
+        el = el[0]
+        label = ($ "#systooltip")[0]
+        $("#workspace").on "mousemove", (ev) ->
+            if $(ev.target).closest(el).length is 0
+                $(label).hide()
+                $("#workspace").off "mousemove"
+        arr = text.split /:(.+)/
+        tip = text
+        tip = arr[1] if arr.length > 1
+        offset = $(el).offset()
+        w = $(el).width()
+        h = $(el).height()
+        label.set "text", tip
+        $(label).show()
+        switch arr[0]
+            when "cr" # center right of the element
+                left = offset.left + w + 5
+                top = offset.top + h / 2 - $(label).height() / 2
+                $(label).css "top", top + "px"
+                    .css "left", left + "px"
+            else
+                $(label).css "top", e.clientY + 5 + "px"
+                    .css "left", e.clientX + 5 +  "px"
+
     initDM: ->
         # check login first
         _API.resource "schemes/dm.html", (x) ->
@@ -276,11 +302,16 @@ self.OS.GUI =
                     event.preventDefault()
             # system menu and dock
             riot.mount ($ "#syspanel", $ "#wrapper")
-            riot.mount ($ "#sysdock", $ "#wrapper"), { items: [] }
-
+            riot.mount ($ "#sysdock", $ "#workspace"), { items: [] }
+            riot.mount ($ "#systooltip", $ "#wrapper")
             # context menu
-            riot.mount ($ "#contextmenu")
+            riot.mount ($ "#contextmenu", $ "#wrapper")
             ($ "#workspace").contextmenu (e) -> _GUI.bindContextMenu e
+            # tooltip
+            ($ "#workspace").mouseover (e) ->
+                el = $(e.target).closest "[tooltip]"
+                return unless el.length > 0
+                _GUI.showTooltip e, el, $(el).attr "tooltip"
             
             # desktop default file manager
             desktop = $ "#desktop"

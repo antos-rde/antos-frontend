@@ -43,6 +43,8 @@
                     self[i] = v[i]
             else
                 self[k] = v
+            if(k == "apptitle")
+                self.root.observable.trigger("apptitlechange")
             self.update()
         }
         self.root.get = function(k)

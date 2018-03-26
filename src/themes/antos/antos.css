@@ -81,6 +81,15 @@ html,body{
     font-weight: normal;
     font-style: normal;
 }
+#systooltip {
+    border:1px solid #a6a6a6;
+    border-radius: 3px;
+    padding-left:3px;
+    padding-right:3px;
+    /*box-shadow: 2px 2px 2px #cbcbcb;*/
+    box-shadow: 1px 1px 1px #9f9F9F;
+    background-color: #e7e7e7;
+}
 input {
     outline: none;
     padding: 2px;
