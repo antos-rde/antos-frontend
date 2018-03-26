@@ -34,7 +34,6 @@ class BaseApplication extends this.OS.GUI.BaseModel
         @on "exit", () -> me.quit()
         # first register some base event to the app
         @on "focus", () ->
-            me.sysdock.update()
             me.sysdock.set "selectedApp", me
             me.appmenu.pid = me.pid
             me.appmenu.set "items", (me.baseMenu() || [])
