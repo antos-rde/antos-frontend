@@ -89,6 +89,7 @@ html,body{
     /*box-shadow: 2px 2px 2px #cbcbcb;*/
     box-shadow: 1px 1px 1px #9f9F9F;
     background-color: #e7e7e7;
+    z-index: 99999;
 }
 input {
     outline: none;
