@@ -244,7 +244,7 @@ self.OS.GUI =
             .css("background-size", wp.size)
             .css("background-repeat", wp.repeat)
 
-    showTooltip: (e, el, text) ->
+    showTooltip: (el, text, e) ->
         el = el[0]
         label = ($ "#systooltip")[0]
         $("#workspace").on "mousemove", (ev) ->
@@ -266,6 +266,7 @@ self.OS.GUI =
                 $(label).css "top", top + "px"
                     .css "left", left + "px"
             else
+                return unless e
                 $(label).css "top", e.clientY + 5 + "px"
                     .css "left", e.clientX + 5 +  "px"
 
@@ -311,7 +312,7 @@ self.OS.GUI =
             ($ "#workspace").mouseover (e) ->
                 el = $(e.target).closest "[tooltip]"
                 return unless el.length > 0
-                _GUI.showTooltip e, el, $(el).attr "tooltip"
+                _GUI.showTooltip el, ($(el).attr "tooltip"), e
             
             # desktop default file manager
             desktop = $ "#desktop"
