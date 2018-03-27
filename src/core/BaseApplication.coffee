@@ -26,8 +26,6 @@ class BaseApplication extends this.OS.GUI.BaseModel
             SHIFT: {}
             META: {}
         me = @
-        @subscribe "appregistry", ( m ) ->
-            me.applySetting m.data.m if (m.name is me.name)
     init: ->
         me = @
         @off "*"
@@ -121,8 +119,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
     data:->
         #implement by subclasses
         # to return app data
-    update:->
-        #implement by subclasses
+    
     cleanup: (e) ->
         #implement by subclasses
         # to handle the exit event

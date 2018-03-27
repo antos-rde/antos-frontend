@@ -27,8 +27,6 @@ class BaseModel
         @on "exit", () -> me.quit()
         @host = "#desktop"
         @dialog = undefined
-        @subscribe "systemlocalechange", (name) ->
-            me.scheme.update() if me.scheme
     render: (p) ->
         _GUI.loadScheme p, @, @host
 
@@ -104,6 +102,9 @@ class BaseModel
     throwe: () ->
         @_api.throwe @name
     
+    update:->
+        @scheme.update() if @scheme
+        
     find: (id) -> ($ "[data-id='#{id}']", @scheme)[0] if @scheme
     
     select: (sel) -> $ sel, @scheme if @scheme

@@ -82,6 +82,8 @@ class Files extends this.OS.GUI.BaseApplication
         @favo.set "items", mntpoints
         #@favo.set "selected", -1
         @applySetting()
+        @view.set "view", @setting.view if @setting.view
+        
         @subscribe "VFS", (d) ->
             me.chdir null if d.data.file.hash() is me.currdir.hash() or d.data.file.parent().hash() is me.currdir.hash()
         @bindKey "CTRL-F", () -> me.actionFile "#{me.name}-mkf"
@@ -106,10 +108,12 @@ class Files extends this.OS.GUI.BaseApplication
 
     applySetting: (k) ->
         # view setting
-        @view.set "view", @setting.view if @setting.view
-        @view.set "showhidden", @setting.showhidden
-        @toggleSidebar @setting.sidebar
-        @toggleNav @setting.nav
+        switch k
+            when "showhidden" then @view.set "showhidden", @setting.showhidden
+            when "nav" then @toggleNav @setting.nav
+            when "sidebar" then @toggleSidebar @setting.sidebar
+        #@view.set "view", @setting.view if @setting.view
+        
 
     chdir: (p) ->
         me = @

@@ -196,6 +196,9 @@ self.OS.GUI =
             dock.get(0).newapp data
             app.sysdock = dock.get(0)
             app.appmenu = ($ "[data-id = 'appmenu']", "#syspanel")[0]
+            app.subscribe "systemlocalechange", (name) -> app.update()
+            app.subscribe "appregistry", ( m ) ->
+                app.applySetting m.data.m if (m.name is app.name)
 
     toggleFullscreen: () ->
         el = ($ "body")[0]
@@ -216,6 +219,7 @@ self.OS.GUI =
     attachservice: (srv) ->
         ($ "#syspanel")[0].attachservice srv
         srv.init()
+        srv.subscribe "systemlocalechange", (name) -> srv.update()
     detachservice: (srv) ->
         ($ "#syspanel")[0].detachservice srv
     bindContextMenu: (event) ->

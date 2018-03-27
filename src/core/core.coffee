@@ -52,7 +52,7 @@ self.OS or=
             return unless _courrier.listeners[app.pid] and _courrier.listeners[app.pid].length > 0
             _courrier.observable.off i.e, i.f for i in _courrier.listeners[app.pid]
             delete _courrier.listeners[app.pid]
-            _courrier.listeners[app.pid] = []
+            # _courrier.listeners[app.pid]
         getMID: () ->
             _courrier.quota += 1
             _courrier.quota

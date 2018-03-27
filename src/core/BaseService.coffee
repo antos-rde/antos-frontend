@@ -34,7 +34,9 @@ class BaseService extends this.OS.GUI.BaseModel
     attach: (h) ->
         @holder = h
 
-    update: () -> @holder.update() if @holder
+    update: () ->
+        @holder.update() if @holder
+        @scheme.update() if @scheme
     
     watch: ( t, f) ->
         me = @
