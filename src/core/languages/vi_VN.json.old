@@ -263,4 +263,8 @@
 	"Export as":"Export as",
 	"File exported":"File exported",
 	"Syntax error: {0}":"Syntax error: {0}"
+
+,
+	"Graph editor":"Graph editor",
+	"Render":"Render"
 }
