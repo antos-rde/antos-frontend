@@ -181,6 +181,8 @@ class Blogger extends this.OS.GUI.BaseApplication
                     action: (e) ->
                         me.previewOn = !me.previewOn
                         SimpleMDE.togglePreview e
+                        #/console.log me.select ".editor-preview editor-preview-active"
+                        renderMathInElement me.find "editor-container"
                 }
             ]
         @bloglist.set "onlistselect", (e) ->

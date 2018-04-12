@@ -1,10 +1,10 @@
 coffee_files = dialogs.coffee main.coffee
 
-jsfiles =
+jsfiles = katex/katex.js katex/auto-render.js
 
-cssfiles = main.css
+cssfiles = main.css katex/katex.css
 
-copyfiles = scheme.html cvsection.html package.json
+copyfiles = scheme.html cvsection.html package.json katex/fonts
 
 
 PKG_NAME=Blogger
