@@ -200,7 +200,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                                     "author": "",
                                     "email": ""
                                 },
-                                "version":"0.1a",
+                                "version":"0.0.1-a",
                                 "category":"Other",
                                 "iconclass":"fa fa-adn",
                                 "mimes":["none"]
