@@ -166,7 +166,8 @@ self.OS.GUI =
                     #load css file
                     css =  "#{path}/main.css"
                     css.asFileHandler().onready (d) ->
-                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                        stamp = (new Date).timestamp()
+                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}?r=#{stamp}" }
                             .appendTo 'head'
                         _OS.APP[app].style = el[0] if _OS.APP[app]
                         ok app
