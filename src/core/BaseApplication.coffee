@@ -69,6 +69,8 @@ class BaseApplication extends this.OS.GUI.BaseModel
         return false
     
     applySetting: (k) ->
+    applyAllSetting: () ->
+         @applySetting k for k, v of @setting
     registry: (k, v) ->
         @setting[k] = v
         @publish "appregistry", k

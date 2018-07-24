@@ -27,12 +27,23 @@ self.OS.GUI =
         META: {}
     SYS_MENU: [
         {
-            text: "__(Applications)",
-            child: [],
-            dataid: "sys-apps"
-            iconclass: "fa fa-adn",
+            text: "",
+            iconclass: "fa fa-eercast",
+            dataid: "sys-menu-root",
+            child: [
+                {
+                    text: "__(Applications)",
+                    child: [],
+                    dataid: "sys-apps"
+                    iconclass: "fa fa-adn",
+                    onmenuselect: (d) ->
+                        _GUI.launch d.item.data.app
+                }
+            ],
             onmenuselect: (d) ->
-                _GUI.launch d.item.data.app
+                return _OS.exit() if d.item.data.dataid is "sys-logout"
+                return _GUI.toggleFullscreen() if d.item.data.dataid is "os-fullsize"
+                _GUI.launch d.item.data.app unless d.item.data.dataid
         }
     ]
     htmlToScheme: (html, app, parent) ->
@@ -402,31 +413,23 @@ self.OS.GUI =
             console.log s, e
     refreshDesktop: () ->
         ($ "#desktop")[0].fetch()
+    
     refreshSystemMenu: () ->
-        _GUI.SYS_MENU.length = 1
-        _GUI.SYS_MENU[0].child.length = 0
-        _GUI.SYS_MENU[0].child.push v for k, v of _OS.setting.system.packages when (v and v.app)
-        _GUI.SYS_MENU.push v for k, v of _OS.setting.system.menu
-        _GUI.SYS_MENU.push
+        _GUI.SYS_MENU[0].child.length = 1
+        _GUI.SYS_MENU[0].child[0].child.length = 0
+        _GUI.SYS_MENU[0].child[0].child.push v for k, v of _OS.setting.system.packages when (v and v.app)
+        _GUI.SYS_MENU[0].child.push v for k, v of _OS.setting.system.menu
+        _GUI.SYS_MENU[0].child.push
             text: "__(Toggle Full screen)",
             dataid: "os-fullsize",
             iconclass: "fa fa-tv"
-        _GUI.SYS_MENU.push
+        _GUI.SYS_MENU[0].child.push
             text: "__(Log out)",
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
+        ($ "[data-id = 'os_menu']", "#syspanel")[0].update()
     buildSystemMenu: () ->
-        menu =
-            text: ""
-            iconclass: "fa fa-eercast"
-            dataid: "sys-menu-root"
-            child: _GUI.SYS_MENU
-        menu.onmenuselect = (d) ->
-            return _OS.exit() if d.item.data.dataid is "sys-logout"
-            return _GUI.toggleFullscreen() if d.item.data.dataid is "os-fullsize"
-            _GUI.launch d.item.data.app unless d.item.data.dataid
-        menu = [menu]
-        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", menu
+        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", _GUI.SYS_MENU
 
         #console.log menu
     

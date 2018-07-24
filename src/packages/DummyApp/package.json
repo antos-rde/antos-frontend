@@ -8,7 +8,7 @@
         "credit": "dedicated to some one here",
         "licences": "GPLv3"
     },
-    "version":"0.0.2-a",
+    "version":"0.0.3-a",
     "category":"System",
     "icon": "icon.png",
     "mimes":["none"]

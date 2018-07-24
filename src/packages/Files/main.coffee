@@ -75,13 +75,13 @@ class Files extends this.OS.GUI.BaseApplication
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
-        
+        @applyAllSetting()
+
         mntpoints = @systemsetting.VFS.mountpoints
         el.selected = false for el, i in mntpoints
 
         @favo.set "items", mntpoints
         #@favo.set "selected", -1
-        @applySetting()
         @view.set "view", @setting.view if @setting.view
         
         @subscribe "VFS", (d) ->

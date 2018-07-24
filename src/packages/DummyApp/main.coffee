@@ -24,7 +24,12 @@ class DummyApp extends this.OS.GUI.BaseApplication
         self = @
         @on "btclick", (e)->
             #_GUI.pushService "Budgy"
-            self.openDialog "ColorPickerDialog", (d) -> console.log d
+            #self.openDialog "ColorPickerDialog", (d) -> console.log d
+            self.addMenu()
+            self.systemsetting.system.menu["test"] = 
+                text: 'Adding system menu'
+            self._gui.refreshSystemMenu()
+            "self._gui.buildSystemMenu()"
         @on "resize", (w,h)->
             console.log "#{self.name}: resize"
         #@on "listselect", (i)->
@@ -122,6 +127,28 @@ class DummyApp extends this.OS.GUI.BaseApplication
             ]
             m.set "items", mdata
             m.show(e)
-
+        
+        @menu_ = [
+            {
+                text: "__(View)",
+                child: [
+                    { text: "__(Refresh)", dataid: "#{@name}-refresh" },
+                    { text: "__(Sidebar)", dataid: "#{@name}-side" },
+                    { text: "__(Navigation bar)",  dataid: "#{@name}-nav" },
+                    { text: "__(Hidden files)",  dataid: "#{@name}-hidden" },
+                    { text: "__(Type)", child: [
+                        { text: "__(Icon view)", dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "__(List view)", dataid: "#{@name}-list", type: 'list' },
+                        { text: "__(Tree view)", dataid: "#{@name}-tree", type: 'tree' }
+                     ], onmenuselect: (e) ->
+                       console.log e
+                    },
+                ], onmenuselect: (e) ->console.log e
+            },
+        ]
+    menu: () ->
+        @menu_
+    addMenu: () ->
+        @menu_[0].child.push {text:'One more menu'}
 DummyApp.singleton = false
 this.OS.register "DummyApp",DummyApp

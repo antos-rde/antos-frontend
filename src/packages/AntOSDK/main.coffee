@@ -684,7 +684,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
             me.systemsetting.system.packages[me.prjfile.cache.name] = v
             # todo: auto matic refresh menu
             me._gui.refreshSystemMenu()
-            me._gui.buildSystemMenu()
+            #me._gui.buildSystemMenu()
             me.log "INFO", __("Running {0}...", me.prjfile.cache.name)
             me._gui.forceLaunch me.prjfile.cache.name
         , "json"
