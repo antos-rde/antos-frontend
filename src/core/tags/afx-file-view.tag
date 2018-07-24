@@ -218,6 +218,9 @@
             self.root.observable.on("calibrate", function(e){
                 calibre_size()
             })
+            /*self.root.observable.on("*", function(e){
+                console.log(e)
+            })*/
         })
     </script>
 </afx-file-view>

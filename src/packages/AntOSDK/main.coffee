@@ -130,7 +130,6 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         @tabarea.set "onitemclose", (e) ->
             it = e.item.item
             return false unless it
-            me.fileview.set "preventUpdate", true
             return me.closeTab it unless it.dirty
             me.openDialog "YesNoDialog", (d) ->
                 return me.closeTab it if d
@@ -302,7 +301,6 @@ class AntOSDK extends this.OS.GUI.BaseApplication
     open: (file) ->
         #find table
         i = @findTabByFile file
-        @fileview.set "preventUpdate", true
         return @tabarea.set "selected", i if i isnt -1
         return @newtab file if file.path.toString() is "Untitled"
         me = @
@@ -391,6 +389,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         #return if i is @tabarea.get "selidx"
         file = (@tabarea.get "items")[i]
         return unless file
+        @fileview.set "preventUpdate", true
         @scheme.set "apptitle", file.text.toString()
         #return if file is @currfile
         if @currfile isnt file

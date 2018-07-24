@@ -4,9 +4,6 @@
         var self = this
         this.closable = opts.closable || false
         self.ontabselect = opts.ontabselect
-        get_observable(){
-            return self.root.observable
-        }
 
         self.root.get = function (k) {
             return self.refs.list.root.get(k)
