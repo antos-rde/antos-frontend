@@ -63,7 +63,7 @@
         self.root.contextmenuHandler = function(e, m) 
         {
             if(e.target == self.root) return;
-            var appidx = $(e.target).parent().attr("appindex")
+            var appidx = $(e.target).closest( "afx-button" ).attr("appindex")
             var app = self.items[appidx].app
             m.set("items", [
                 { text: "__(Show)", dataid:"show" },
