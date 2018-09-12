@@ -76,7 +76,8 @@ class wTerm extends this.OS.GUI.BaseApplication
         @term.clear()
         @term.focus()
         proto = if window.location.protocol is "https:" then "wss://" else "ws://"
-        @socket = new WebSocket proto + @_api.HOST + "/wterm"
+        #@socket = new WebSocket proto + @_api.HOST + "/wterm"
+        @socket = new WebSocket @_api.TERMURI
         @socket.onopen = () ->
             #el.style.display = "none"
             me.resizeContent (($ me.mterm).width()) ,  (($ me.mterm).height())
