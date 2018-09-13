@@ -284,16 +284,29 @@ class AntOSDK extends this.OS.GUI.BaseApplication
         me = @
         me.prjfile = file
         if(me.tabarea)
-            file.read (d) ->
+            file.read (data) ->
                 me.log "INFO", __("Opening {0}", me.prjfile.path)
-                me.tabarea.set "selected", -1
-                me.tabarea.set "items", []
-                me.currfile = "#{d.root}/README.md".asFileHandler()
-                me.currfile.dirty = false
-                me.chdir d.root if d.root
-                me.prjfile.cache = d
-                me.log "INFO", __("Opening {0}", me.currfile.path)
-                me.open me.currfile
+                fn = (d, dt) ->
+                    me.tabarea.set "selected", -1
+                    me.tabarea.set "items", []
+                    me.currfile = "#{d.root}/README.md".asFileHandler()
+                    me.currfile.dirty = dt
+                    me.chdir d.root if d.root
+                    me.prjfile.cache = d
+                    me.log "INFO", __("Opening {0}", me.currfile.path)
+                    me.open me.currfile
+                # verify if the path is ok
+                data.root.asFileHandler().onready () ->
+                    fn(data, false)
+                , (e) ->
+                    # try the current folder of the project file
+                    pr = file.parent()
+                    me.log "INFO", __("Project root folder not found, try {0}", pr)
+                    pr.asFileHandler().onready () ->
+                        data.root = pr
+                        fn(data, true)
+                    , (e) ->
+                        me.error __("Cannot find the project root, please modify the project file")
             ,"json"
         else
             me.init()

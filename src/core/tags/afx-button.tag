@@ -1,5 +1,5 @@
-<afx-button class= { btactive: selected }>
-    <button disabled={ enable == false } onclick="{ _onbtclick }" ref = "mybtn" > 
+<afx-button >
+    <button class= { btactive: selected } disabled={ enable == false } onclick="{ _onbtclick }" ref = "mybtn" > 
         <afx-label color = {color} icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
     </button>
     <script>
