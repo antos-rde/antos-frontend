@@ -1,13 +1,16 @@
-<afx-button>
-    <button disabled={ enable == "false" } onclick="{ _onbtclick }" ref = "mybtn" > 
+<afx-button class= { btactive: selected }>
+    <button disabled={ enable == false } onclick="{ _onbtclick }" ref = "mybtn" > 
         <afx-label color = {color} icon={icon} iconclass = {iconclass} text = {text} ></afx-label>
     </button>
     <script>
-        this.enable = opts.enable
+        opts.enable = opts.enable || "true"
+        this.enable = eval(opts.enable) || false
         this.icon = opts.icon
         this.iconclass = opts.iconclass
         this.color = opts.color
         this.text = opts.text || ""
+        this.selected = eval(opts.selected) || false
+        this.toggle = eval(opts.toggle) || false
         var self = this
         this.onbtclick = opts.onbtclick
         self.root.set = function(k,v)
@@ -37,6 +40,8 @@
             {
                 self.root.observable.trigger("btclick",{id:$(self.root).attr("data-id"),data:self.root})
             }
+            if(self.toggle)
+                self.root.set("selected",!self.selected)
         }
     </script>
 </afx-button>

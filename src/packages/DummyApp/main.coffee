@@ -74,7 +74,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
         (@find "sw").set "onchange", (e) ->
             console.log e, ((self.find "sw").get "swon")
         tree.set "data",tdata
-
+        (@find "spinner").set "onchange", (e) -> console.log e
         list = @find "mylist"
         ldata = [
             {text:"some thing with avery long text"},

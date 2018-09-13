@@ -1,0 +1,44 @@
+afx-nspinner{
+    display: flex;
+    flex-direction: row;
+}
+afx-nspinner ul{
+    padding:0;
+    margin: 0;
+    list-style: none;
+}
+afx-nspinner ul li{
+    display: block;
+    border: 1px solid #a6a6a6;
+    width: 100%;
+    padding:0;
+    margin: 0;
+    height:45%;
+    border-radius: 3px;
+    color: #414339;
+    position: relative;
+}
+afx-nspinner ul li:hover{
+    color:#116cD6;
+}
+afx-nspinner ul li i {
+    display: block;
+}
+afx-nspinner ul li.incr i:before{
+    content: "\f0d8"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    position: absolute;
+    top:-6px;
+    left: 5px;
+}
+afx-nspinner ul li.decr i:before{
+    content: "\f0d7"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    position: absolute;
+    bottom: -4px;
+    left: 5px;
+}

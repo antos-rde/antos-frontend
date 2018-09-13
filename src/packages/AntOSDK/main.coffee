@@ -262,7 +262,7 @@ class AntOSDK extends this.OS.GUI.BaseApplication
                     {
                         path: "#{rpath}/assets/scheme.html",
                         content: """
-                        <afx-app-window apptitle="" width="600" height="500" data-id="#{n}">
+                        <afx-app-window apptitle="#{n}" width="600" height="500" data-id="#{n}">
                             <afx-hbox ></afx-hbox>
                         </afx-app-window>
                         """

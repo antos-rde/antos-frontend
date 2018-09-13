@@ -35,7 +35,7 @@ class BuildDialog extends this.OS.GUI.BasicDialog
                     {
                         text: "+",
                         onbtclick: (e) ->
-                            d.selectFile ["text/coffeescript"], (f) ->
+                            d.selectFile ["text/.*coffeescript"], (f) ->
                                 lv.push { text: f }, true if f
                     },
                     {
