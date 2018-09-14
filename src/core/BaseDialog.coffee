@@ -157,9 +157,9 @@ this.OS.register "CalendarDialog", CalendarDialog
 class ColorPickerDialog extends BasicDialog
     constructor: () ->
         super "ColorPickerDialog", {
-            tags: [{ tag: 'afx-color-picker' }],
+            tags: [{ tag: 'afx-color-picker' }, {tag:'div', att: 'data-height="5"' }],
             width: 313,
-            height: 220,
+            height: 250,
             resizable: false,
             buttons: [
                 {

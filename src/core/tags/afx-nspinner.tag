@@ -7,6 +7,7 @@
 <script>
 
 this.value = eval(opts.value) || 0
+this.step = Number(opts.step) || 1
 this.onchange = opts.onchange
 var self = this
 this.rid = $(self.root).attr("data-id") || Math.floor(Math.random() * 100000) + 1
@@ -26,7 +27,7 @@ self.root.get = function(k)
 
 self._incr = function(e)
 {
-    self.value = self.value + 1;
+    self.value = self.value + self.step;
     self.update();
     if(self.onchange) self.onchange(self.value);
 }
@@ -37,8 +38,32 @@ self.on("mount", function(){
     var cl = function()
     {
         $(self.refs.holder).css("width", $(self.root).width() - 20 + "px" )
-        $(self.refs.holder).css("height", $(self.root).height() - 3 + "px" )
-        $(self.refs.spinner).css("height", $(self.root).height() - 5 + "px" )
+        $(self.refs.holder).css("height", $(self.root).height() + "px" )
+        $(self.refs.spinner)
+            .css("width","20px")
+            .css("height", $(self.root).height() + "px" )
+
+        $(self.refs.incr)
+            .css("height", $(self.root).height()/2 - 2 + "px")
+            .css("position", "relative")
+        $(self.refs.decr).css("height", $(self.root).height()/2 -2 + "px")
+            .css("position", "relative")
+        $(self.refs.spinner).find("li")
+            .css("display","block")
+            .css("text-align", "center")
+            .css("vertical-align", "middle")
+        $(self.refs.spinner).find("i")
+            .css("font-size", "16px")
+            .css("position", "absolute")
+        var fn = function(ie, pos)
+        {
+            var el = $(ie).find("i")
+            el
+            .css(pos,($(ie).height()-el.height()) /2 + "px" )
+            .css("left", ($(ie).width()-el.width())/2 + "px" )
+        }
+        fn(self.refs.decr, "bottom")
+        fn(self.refs.incr, "top")
     }
     cl()
     self.root.observable.on("calibrate", function(){
@@ -66,7 +91,7 @@ self.on("mount", function(){
 self._decr = function(e)
 {
     if(self.value == 0) return;
-    self.value = self.value - 1;
+    self.value = self.value - self.step;
     self.update();
     if(self.onchange) self.onchange(self.value);
 }

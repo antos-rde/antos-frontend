@@ -24,7 +24,7 @@ class DummyApp extends this.OS.GUI.BaseApplication
         self = @
         @on "btclick", (e)->
             #_GUI.pushService "Budgy"
-            #self.openDialog "ColorPickerDialog", (d) -> console.log d
+            self.openDialog "ColorPickerDialog", (d) -> console.log d
             self.addMenu()
             self.systemsetting.system.menu["test"] = 
                 text: 'Adding system menu'

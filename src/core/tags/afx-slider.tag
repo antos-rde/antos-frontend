@@ -69,6 +69,7 @@
             $(window).on("mouseup", function(e){
                 if(self.onchange) self.onchange(self.value)
                 $(window).unbind("mousemove", null)
+                $(window).unbind("mouseup", null)
             })
         })
     }
