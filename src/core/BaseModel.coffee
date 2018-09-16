@@ -85,7 +85,9 @@ class BaseModel
     
     publish: (t, m, e) ->
         mt = @meta()
-        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: mt.icon, iconclass: mt.iconclass }, error: e }
+        icon = undefined
+        icon = "#{mt.path}/#{mt.icon}" if mt.icon
+        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: icon, iconclass: mt.iconclass }, error: e }
 
     notify: (m) ->
         @publish "notification", m
