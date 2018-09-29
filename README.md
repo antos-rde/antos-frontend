@@ -11,6 +11,9 @@ The WebOS is tested on recent Firefox, Chrome and Safari, however i did not test
 A demo of the web desktop is available at my page  [https://os.lxsang.me](https://os.lxsang.me) using username: demo and password: demo
 
 ![Screenshot](screenshot.png "Screenshot")
+
+## AntOS applications
+[https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
  
 ## Build
 
