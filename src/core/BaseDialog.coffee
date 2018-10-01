@@ -121,6 +121,7 @@ class PromptDialog extends BasicDialog
                 return unless d.data
                 (d.find "content0").set "text", d.data.label
                 (d.find "content1").value = d.data.value if d.data.value
+                $(d.find "content1").attr("type", d.data.type) if d.data.type
             xtra: (d) ->
                 $( d.find "content1" ).keyup (e) ->
                     (d.find "bt0").trigger() if e.which is 13
