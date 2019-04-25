@@ -118,11 +118,15 @@
         {
             if(opts.context == "true")
             {
+                if(event.button == 2 || event.originalEvent.button == 2)
+                {
+                    return
+                }
                 if(!$(event.target).closest(self.root).length) {
                     $(self.root).hide()
                     $(document).unbind("click",mnhide)
                 }
-                return;
+                return
             }
             if(!$(event.target).closest(self.refs.container).length && self.refs.container) {
                 var arr = self.refs.container.length?self.refs.container:[self.refs.container]
