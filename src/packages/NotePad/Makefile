@@ -1,4 +1,4 @@
-coffee_files = main.coffee
+coffee_files = extensions/extensions.coffee extensions/RemoteRunExtension.coffee main.coffee
 
 jsfiles =
 
