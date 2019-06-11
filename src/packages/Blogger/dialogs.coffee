@@ -84,6 +84,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
         inputs = me.select "[input-class='user-input']"
         (($ v).val me.data[v.name] for v in inputs ) if me.data
         @editor.value me.data.content if me.data and me.data.content
+        (me.find "section-publish").set "swon", (if Number(me.data.publish) then true else false)
         (@find "bt-cv-sec-save").set "onbtclick", (e) ->
             data = {}
             console.log inputs
@@ -92,6 +93,11 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
             return me.notify __("Title or content must not be blank") if data.title is "" and data.content is ""
             #return me.notify "Content must not be blank" if data.content is ""
             data.id = me.data.id if me.data and me.data.id
+            if (me.find "section-publish").get "swon"
+                data.publish = 1
+            else
+                data.publish = 0
+            
             me.handler data if me.handler
             me.quit()
         me.resizeContent()

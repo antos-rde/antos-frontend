@@ -127,7 +127,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 d.cid = Number sec.cid
                 d.start = Number d.start
                 d.end = Number d.end
-                d.publish = Number sec.publish
+                #d.publish = Number sec.publish
                 me.cvsecdb.save d, (r) ->
                     return me.error __("Cannot save section: {0}", r.error) if r.error
                     me.CVSectionByCID Number(sec.cid)
@@ -322,6 +322,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 ,  __("Delete section") ,
                 { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?",e.item.item.text) }
                 return false
+
             el.set "items", items
 
     # blog
