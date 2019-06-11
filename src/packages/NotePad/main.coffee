@@ -126,6 +126,7 @@ class NotePad extends this.OS.GUI.BaseApplication
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
         @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
+        @bindKey "ALT-R", () -> me.actionFile "#{me.name}-Run"
         @open @currfile
     
     open: (file) ->
@@ -266,7 +267,8 @@ class NotePad extends this.OS.GUI.BaseApplication
                     { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N"  },
                     { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O"  },
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
-                    { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
+                    { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" },
+                    { text: "__(Run)", dataid: "#{@name}-Run", shortcut: "A-R" }
                 ],
                 onmenuselect: (e) -> me.actionFile e.item.data.dataid
             }]
@@ -301,7 +303,12 @@ class NotePad extends this.OS.GUI.BaseApplication
                 saveas()
             when "#{@name}-New"
                 @open "Untitled".asFileHandler()
-    
+            when "#{@name}-Run"
+                if @currfile.dirty
+                    return @notify __("Please save the file before running it")
+                else
+                    if @dialog then @dialog.quit()
+                    @openDialog new RemoteRunExtension(), null, null, @currfile 
     cleanup: (evt) ->
         dirties = ( v for v in  @tabarea.get "items" when v.dirty )
         return if dirties.length is 0
@@ -320,4 +327,5 @@ NotePad.dependencies = [
     "ace/ext-modelist",
     "ace/ext-themelist"
 ]
+NotePad.extensions = {}
 this.OS.register "NotePad", NotePad

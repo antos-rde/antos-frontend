@@ -43,3 +43,37 @@ afx-tab-bar[data-id="tabarea"] afx-list-view  > div.list-container > ul > li.sel
     background-color: #f6F6F6;
     border-radius: 0;
 }
+
+afx-app-window[data-id="win-remote-run"] div[data-id="output"] p{
+    margin:0;
+    padding:0;
+    font-family: "HermitLight";
+    text-align: left;
+}
+afx-app-window[data-id="win-remote-run"] div[data-id="output"]{
+    background-color: #2f3129;
+    padding: 10px;
+    color:white;
+    overflow: auto;
+}
+afx-app-window[data-id="win-remote-run"] div[data-id="stat"]{
+    background-color: #2f3129;
+    padding: 5px;
+    color:white;
+    font-weight: bold;
+    font-size: 10px;
+}
+afx-app-window[data-id="win-remote-run"] afx-resizer{
+    border-top: 1px solid #a6a6a6;
+    background-color: #2f3129;
+    border-right: 0;
+}
+afx-app-window[data-id="win-remote-run"] afx-hbox[data-id="bottom-vbox"] {
+    background-color:#2f3129;
+}
+afx-app-window[data-id="win-remote-run"] afx-hbox[data-id="bottom-vbox"] afx-button button{
+    background-color:#2f3129;
+    color:white;
+    border:0;
+    border-radius: 0;
+}
