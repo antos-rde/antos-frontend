@@ -1,0 +1,20 @@
+<afx-app-window data-id = "blogger-send-mail-win" apptitle="Send mail" width="500" height="400" resizable = "false">
+    <afx-hbox>
+        <afx-menu data-width="150" data-id="email-list"></afx-menu>
+        <afx-resizer data-width="3"></afx-resizer>
+        <div data-width="5"></div>
+        <afx-vbox >
+                <div data-height="5"></div>
+                <afx-label data-height="20" text = "__(Title)"></afx-label>
+                <input type = "text" data-height="20" name="title" data-id = "mail-title"/>
+                <afx-label data-height = "20" text = "Content" />
+                <textarea name="content" data-id = "contentarea" />
+                <div data-height="5"></div>
+                <afx-hbox data-height = "30">
+                    <div></div>
+                    <afx-button iconclass = "fa fa-paper-plane" data-id = "bt-sendmail" data-width="60" text = "__(Send)"/>
+                </afx-hbox>
+        </afx-vbox>
+        <div data-width="5"></div>
+    </afx-hbox>
+</afx-app-window>

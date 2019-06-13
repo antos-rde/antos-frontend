@@ -106,3 +106,71 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
         children = ($ container).children()
         cheight = ($ container).height() - 30
         ($ children[1]).css("height", cheight + "px")
+
+# this dialog is for send mail
+class BloggerSendmailDiaglog extends this.OS.GUI.BaseDialog
+    constructor: () ->
+        super "BloggerCVSectionDiaglog"
+
+    init: () ->
+        @render "#{@path()}/sendmail.html"
+        @subdb = new @.parent._api.DB("subscribers")
+
+    main: () ->
+        # get db
+        me = @
+        @maillinglist = @find "email-list"
+        title = (new RegExp "^#+(.*)\n", "g").exec @data.content
+        (@find "mail-title").value = title[1]
+        content = (@data.content.substring 0, 500) + "..."
+        (@find "contentarea").value = BloggerSendmailDiaglog.template.format @data.id, content, @data.id
+
+        @subdb.find {}, (d) ->
+            return me.error __("Cannot fetch subscribers data: {0}", d.error) if d.error
+            for v in d.result
+                v.text = v.name
+                v.switch = true
+                v.checked = true
+
+            me.maillinglist.set "items", d.result
+
+        (@find "bt-sendmail").set "onbtclick", (e) ->
+            items = me.maillinglist.get "items"
+            emails = []
+            emails.push v.email for v in items when v.checked is true
+            return me.notify __("No email selected") if emails.length is 0
+            # send the email
+            data =
+                path: "#{me.parent.path()}/sendmail.lua",
+                parameters:
+                    to: emails,
+                    title: (me.find "mail-title").value,
+                    content: (me.find "contentarea").value
+            me._api.post "system/apigateway", data, (d) ->
+                me.notify "Sendmail: {0}".format d
+                me.quit()
+            , (e, s) ->
+                console.log e
+                me.error __("Error sending mail: {0}", e.responseText)
+
+            
+
+BloggerSendmailDiaglog.template = """
+Hello,
+
+Xuan Sang LE has just published a new post on his blog: https://blog.lxsang.me/post/id/{0}
+
+==========
+{1}
+==========
+
+
+Read the full article via:
+https://blog.lxsang.me/post/id/{2}
+
+You receive this email because you have been subscribed to his blog.
+
+Have a nice day,
+
+Sent from Blogger, an AntOS application
+"""

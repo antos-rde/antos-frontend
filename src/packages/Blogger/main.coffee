@@ -183,6 +183,17 @@ class Blogger extends this.OS.GUI.BaseApplication
                         SimpleMDE.togglePreview e
                         #/console.log me.select ".editor-preview editor-preview-active"
                         renderMathInElement me.find "editor-container"
+                },
+                "|",
+                {
+                    name: __("Send mail"),
+                    className: "fa fa-paper-plane",
+                    action: (e) ->
+                        sel = me.bloglist.get "selected"
+                        return me.error __("No post selected") unless sel
+                        me.openDialog new BloggerSendmailDiaglog(), (d) ->
+                            console.log "test"
+                        , __("Send mail"), { content: me.editor.value(), id: sel.id }
                 }
             ]
         @bloglist.set "onlistselect", (e) ->
