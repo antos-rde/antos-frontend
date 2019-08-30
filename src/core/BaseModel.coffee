@@ -43,7 +43,15 @@ class BaseModel
         mt = @meta()
         return mt.path if mt and mt.path
         return null
-        
+    
+    # call a server side script
+    call: (cmd, func) ->
+        @_api.apigateway cmd, false, func
+    
+    # get a stream
+    stream: () ->
+        return @_api.apigateway null, true, null
+
     init: ->
         #implement by sub class
     onexit: (e) ->

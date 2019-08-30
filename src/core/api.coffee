@@ -337,6 +337,8 @@ self.OS.API =
             }, f
     setting: (f) ->
         _API.handler.setting f
+    apigateway: (d, ws, c) ->
+        return _API.handler.apigateway d, ws, c
     search: (text) ->
         r = []
         

@@ -18,7 +18,8 @@
 class BaseApplication extends this.OS.GUI.BaseModel
     constructor: (name, args) ->
         super name, args
-        _OS.setting.applications[@name] = {} if not _OS.setting.applications[@name]
+        if (not _OS.setting.applications[@name]) or (Array.isArray OS.setting.applications[@name])
+            _OS.setting.applications[@name] = {}
         @setting = _OS.setting.applications[@name]
         @keycomb =
             ALT: {}

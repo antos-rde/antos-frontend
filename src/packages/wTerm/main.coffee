@@ -75,9 +75,9 @@ class wTerm extends this.OS.GUI.BaseApplication
         me = @
         @term.clear()
         @term.focus()
-        proto = if window.location.protocol is "https:" then "wss://" else "ws://"
-        #@socket = new WebSocket proto + @_api.HOST + "/wterm"
-        @socket = new WebSocket @_api.TERMURI
+        return @configure() unless @setting.uri
+
+        @socket = new WebSocket @setting.uri
         @socket.onopen = () ->
             #el.style.display = "none"
             me.resizeContent (($ me.mterm).width()) ,  (($ me.mterm).height())
@@ -86,9 +86,29 @@ class wTerm extends this.OS.GUI.BaseApplication
         @socket.onmessage =  (e) -> me.term.write e.data if me.term and e.data
         @socket.onclose = () ->
             me.socket = null
-            me.quit()
+            #me.quit()
             console.log "socket closed"
             #el.style.display = "block"
-    cleanup: (e)->
+    cleanup: (e) ->
         @socket.close() if @socket
+
+    menu: () ->
+        me = @
+        {
+            text: "__(Edit)",
+            child: [
+                { text: "__(Terminal URI)", dataid: "#{@name}-termuri" }
+            ],
+            onmenuselect: (e) -> me.configure()
+        }
+    
+    configure: () ->
+        @sock.close() if @socket
+        me = @
+        @openDialog "PromptDialog",
+            (d) ->
+                return unless (d and d isnt "")
+                me.setting.uri = d
+                me.openSession()
+            , "__(Please enter terminal URI)", { label: "__(URI)", value: me.setting.uri || "wss://lxsang.me/wterm" }
 this.OS.register "wTerm", wTerm

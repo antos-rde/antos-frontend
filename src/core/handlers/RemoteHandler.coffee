@@ -18,9 +18,8 @@
 self.OS.API.HOST = self.location.hostname+ (if self.location.port then":#{self.location.port}" else "")
 self.OS.API.REST = "#{self.location.protocol}//#{self.OS.API.HOST}"
 
-self.OS.API.TERMURI = "wss://lxsang.me/wterm"
-
 _REST = self.OS.API.REST
+_HOST = self.OS.API.HOST
 self.OS.API.handler =
     # get file, require authentification
     get: "#{_REST}/VFS/get"
@@ -82,6 +81,19 @@ self.OS.API.handler =
 
     scanapp: (p, c ) ->
         path = "#{_REST}/system/application"
+    
+    apigateway: (d, ws, c) ->
+        if ws
+            path = "#{_HOST}/system/apigateway?ws=1"
+            proto = if window.location.protocol is "https:" then "wss://" else "ws://"
+            socket = new WebSocket proto + path
+            if c then c(socket)
+            return socket
+        else
+            path = "#{_REST}/system/apigateway?ws=0"
+            _API.post path, d, c, (e, s) ->
+                _courrier.osfail __("Fail to invoke gateway api"), e, s
+    
     auth: (c) ->
         p = "#{_REST}/user/auth"
         _API.post p, {}, c, (e, s) ->
