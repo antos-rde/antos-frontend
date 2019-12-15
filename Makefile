@@ -117,10 +117,11 @@ pkgar:
 
 uglify:
 	# uglify antos.js
+	# npm install uglify-es -g
 	# npm install uglify-js -g
 	uglifyjs $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
 	# uglify tags
-	# npm install riot -g
+	# npm install riot-cli -g
 	riot --ext js $(BUILDDIR)/resources/antos_tags.js $(BUILDDIR)/resources/antos_tags.js
 	uglifyjs $(BUILDDIR)/resources/antos_tags.js --compress --mangle --output $(BUILDDIR)/resources/antos_tags.js
 	$(GSED) -i 's/resources\/antos_tags.js/scripts\/riot.min.js/g' $(BUILDDIR)/index.html
