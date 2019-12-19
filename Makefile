@@ -1,6 +1,6 @@
 
 
-BUILDDIR = build/htdocs/os
+BUILDDIR?=build/htdocs/os
 BLUE=\033[1;34m
 NC=\033[0m
 
