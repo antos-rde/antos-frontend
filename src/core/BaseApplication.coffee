@@ -18,9 +18,9 @@
 class BaseApplication extends this.OS.GUI.BaseModel
     constructor: (name, args) ->
         super name, args
-        if (not _OS.setting.applications[@name]) or (Array.isArray OS.setting.applications[@name])
-            _OS.setting.applications[@name] = {}
-        @setting = _OS.setting.applications[@name]
+        if (not Ant.OS.setting.applications[@name]) or (Array.isArray OS.setting.applications[@name])
+            Ant.OS.setting.applications[@name] = {}
+        @setting = Ant.OS.setting.applications[@name]
         @keycomb =
             ALT: {}
             CTRL: {}
@@ -97,11 +97,11 @@ class BaseApplication extends this.OS.GUI.BaseModel
         if not evt.prevent
             @.appmenu.set "items", [] if @.pid == @.appmenu.pid
             ($ @scheme).remove()
-    meta: () -> _OS.APP[@name].meta
+    meta: () -> Ant.OS.APP[@name].meta
     baseMenu: ->
         mn =
             [{
-                text: _OS.APP[@name].meta.name,
+                text: Ant.OS.APP[@name].meta.name,
                 child: [
                     { text: "__(About)", dataid: "#{@name}-about" },
                     { text: "__(Exit)", dataid: "#{@name}-exit" }

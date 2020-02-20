@@ -15,24 +15,24 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
-String.prototype.asFileHandler = () ->
+String.prototype.asFileHandle = () ->
     list = @split "://"
-    handlers = _API.VFS.findHandlers list[0]
-    if not handlers or handlers.length is 0
-        _courrier.osfail __("VFS unknown handler: {0}", @), (_API.throwe "OS.VFS"), @
+    handles = Ant.OS.API.VFS.findHandles list[0]
+    if not handles or handles.length is 0
+        Ant.OS.announcer.osfail __("VFS unknown handle: {0}", @), (Ant.OS.API.throwe "OS.VFS"), @
         return null
-    return new handlers[0](@)
+    return new handles[0](@)
 
 this.OS.API.VFS =
-    handlers: { }
+    handles: { }
     register: ( protos, cls ) ->
-        return self.OS.API.VFS.handlers[protos] = cls # if typeof protos is "string"
-        #_API.VFS.handlers[v] = cls for v in protos
-    findHandlers: (proto) ->
-        l = (v for k, v of _API.VFS.handlers when proto.trim().match (new RegExp k , "g"))
+        return Ant.OS.API.VFS.handles[protos] = cls # if typeof protos is "string"
+        #Ant.OS.API.VFS.handles[v] = cls for v in protos
+    findHandles: (proto) ->
+        l = (v for k, v of Ant.OS.API.VFS.handles when proto.trim().match (new RegExp k , "g"))
         return l
 
-class BaseFileHandler
+class BaseFileHandle
     constructor: (path) ->
         @dirty = false
         @cache = undefined
@@ -50,7 +50,7 @@ class BaseFileHandler
         @genealogy = re.split("/")
         @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
         @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
-    asFileHandler: () ->
+    asFileHandle: () ->
         @
     isRoot: () -> (not @genealogy) or (@genealogy.size is 0)
     
@@ -82,7 +82,7 @@ class BaseFileHandler
             reader.onload =  () ->
                 f reader.result
             reader.onerror = (e) ->
-                return _courrier.osfail __("VFS Cannot encode file: {0}", me.path), (_API.throwe "OS.VFS"), e
+                return Ant.OS.announcer.osfail __("VFS Cannot encode file: {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), e
     parent: () ->
         return @ if @isRoot()
         return (@protocol + "://" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
@@ -93,7 +93,7 @@ class BaseFileHandler
         me = @
         me.meta (d) ->
             if d.error
-                return if err then err d else _courrier.osfail "#{me.path}: #{d.error}", (_API.throwe "OS.VFS"), d.error
+                return if err then err d else Ant.OS.announcer.osfail "#{me.path}: #{d.error}", (Ant.OS.API.throwe "OS.VFS"), d.error
             me.info = d.result
             me.ready = true
             f()
@@ -105,30 +105,30 @@ class BaseFileHandler
     write: (d, f) ->
         me = @
         @action "write", d, (r) ->
-            _courrier.ostrigger "VFS", { m: "write", file: me } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "write", file: me } if r.result
             f r
     
     mk: (d, f) ->
         me = @
         @onready (() -> me.action "mk", d, (r) ->
-            _courrier.ostrigger "VFS", { m: "mk", file: me } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "mk", file: me } if r.result
             f r)
     
     remove: (f) ->
         me = @
         @onready (() -> me.action "remove", null, (r) ->
-            _courrier.ostrigger "VFS", { m: "remove", file: me } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "remove", file: me } if r.result
             f r)
 
     upload: (f) ->
         me = @
         @onready (() -> me.action "upload", null, (r) ->
-            _courrier.ostrigger "VFS", { m: "upload", file: me } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "upload", file: me } if r.result
             f r)
     publish: (f) ->
         me = @
         @onready (() -> me.action "publish", null, (r) ->
-            _courrier.ostrigger "VFS", { m: "publish", file: me } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "publish", file: me } if r.result
             f r)
     download: (f) ->
         me = @
@@ -137,7 +137,7 @@ class BaseFileHandler
     move: (d, f) ->
         me = @
         @onready (() -> me.action "move", d, (r) ->
-            _courrier.ostrigger "VFS", { m: "move", file: d.asFileHandler() } if r.result
+            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: d.asFileHandle() } if r.result
             f r)
 
     execute: (f) ->
@@ -152,61 +152,61 @@ class BaseFileHandler
     # for main action read, write, remove, execute
     # must be implemented by subclasses
     action: (n, p, f) ->
-        return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+        return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
 
 # now export the class
-self.OS.API.VFS.BaseFileHandler = BaseFileHandler
+Ant.OS.API.VFS.BaseFileHandle = BaseFileHandle
 
 # Remote file handle
-class RemoteFileHandler extends self.OS.API.VFS.BaseFileHandler
+class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
 
     meta: (f) ->
-        _API.handler.fileinfo @path, f
+        Ant.OS.API.handle.fileinfo @path, f
     
     getlink: () ->
-        _API.handler.get + "/" + @path
+        Ant.OS.API.handle.get + "/" + @path
 
     action: (n, p, f) ->
         me = @
         switch n
             when "read"
-                return _API.handler.scandir @path, f if @info.type is "dir"
+                return Ant.OS.API.handle.scandir @path, f if @info.type is "dir"
                 #read the file
-                return _API.handler.fileblob @path, f if p is "binary"
-                _API.handler.readfile @path, f, if p then p else "text"
+                return Ant.OS.API.handle.fileblob @path, f if p is "binary"
+                Ant.OS.API.handle.readfile @path, f, if p then p else "text"
             when "mk"
                 return f { error: __("{0} is not a directory", @path) } if @info.type is "file"
-                _API.handler.mkdir "#{@path}/#{p}", f
+                Ant.OS.API.handle.mkdir "#{@path}/#{p}", f
             when "write"
-                return _API.handler.write me.path, me.cache, f if p is "base64"
+                return Ant.OS.API.handle.write me.path, me.cache, f if p is "base64"
                 @sendB64 p, (data) ->
-                    _API.handler.write me.path, data, f
+                    Ant.OS.API.handle.write me.path, data, f
             when "upload"
                 return if @info.type is "file"
-                _API.handler.upload @path, f
+                Ant.OS.API.handle.upload @path, f
             when "remove"
-                _API.handler.delete @path, f
+                Ant.OS.API.handle.delete @path, f
             when "publish"
-                _API.handler.sharefile @path, true , f
+                Ant.OS.API.handle.sharefile @path, true , f
             when "download"
                 return if @info.type is "dir"
-                _API.handler.fileblob @path, (d) ->
+                Ant.OS.API.handle.fileblob @path, (d) ->
                     blob = new Blob [d], { type: "octet/stream" }
-                    _API.saveblob me.basename, blob
+                    Ant.OS.API.saveblob me.basename, blob
             when "move"
-                _API.handler.move @path, p, f
+                Ant.OS.API.handle.move @path, p, f
             else
-                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandler
+Ant.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandle
 
-# Application Handler
-class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
+# Application Handle
+class ApplicationHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
-        @info = _OS.setting.system.packages[@basename] if @basename
+        @info = Ant.OS.setting.system.packages[@basename] if @basename
         @ready = true
     
     meta: (f) ->
@@ -218,7 +218,7 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
             when "read"
                 return f { result: @info } if @info
                 return unless @isRoot()
-                f { result: ( v for k, v of _OS.setting.system.packages ) }
+                f { result: ( v for k, v of Ant.OS.setting.system.packages ) }
 
             when "mk"
                 return
@@ -241,11 +241,11 @@ class ApplicationHandler extends self.OS.API.VFS.BaseFileHandler
             when "move"
                 return
             else
-                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
 
-self.OS.API.VFS.register "^app$", ApplicationHandler
+Ant.OS.API.VFS.register "^app$", ApplicationHandle
 
-class BufferFileHandler extends self.OS.API.VFS.BaseFileHandler
+class BufferFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path, mime, data) ->
         super path
         @cache = data if data
@@ -286,16 +286,16 @@ class BufferFileHandler extends self.OS.API.VFS.BaseFileHandler
                 return
             when "download"
                 blob = new Blob [@cache], { type: "octet/stream" }
-                _API.saveblob me.basename, blob
+                Ant.OS.API.saveblob me.basename, blob
 
             when "move"
                 return
             else
-                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
     
-self.OS.API.VFS.register "^mem$", BufferFileHandler
+Ant.OS.API.VFS.register "^mem$", BufferFileHandle
 
-class URLFileHandler extends self.OS.API.VFS.BaseFileHandler
+class URLFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
         @ready = true
@@ -305,38 +305,38 @@ class URLFileHandler extends self.OS.API.VFS.BaseFileHandler
         me = @
         switch n
             when "read"
-                _API.get @path, (d) ->
+                Ant.OS.API.get @path, (d) ->
                     f(d)
                 , (e, s) ->
-                    _courrier.oserror __("VFS cannot read : {0}", me.path), e, s
+                    Ant.OS.announcer.oserror __("VFS cannot read : {0}", me.path), e, s
                 , if p then p else "text"
             else
-                return _courrier.oserror __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
-self.OS.API.VFS.register "^(http|https)$", URLFileHandler
+                return Ant.OS.announcer.oserror __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
+Ant.OS.API.VFS.register "^(http|https)$", URLFileHandle
 
-class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
+class SharedFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
         @ready = true if @isRoot()
     meta: (f) ->
-        _API.handler.fileinfo @path, f
+        Ant.OS.API.handle.fileinfo @path, f
     
     action: (n, p, f) ->
         me = @
         switch n
             when "read"
-                return _API.get "#{_API.handler.shared}/all", f, ((e, s)->) if @isRoot()
+                return Ant.OS.API.get "#{Ant.OS.API.handle.shared}/all", f, ((e, s)->) if @isRoot()
                 #read the file
-                return _API.handler.fileblob @path, f if p is "binary"
-                _API.handler.readfile @path, f, if p then p else "text"
+                return Ant.OS.API.handle.fileblob @path, f if p is "binary"
+                Ant.OS.API.handle.readfile @path, f, if p then p else "text"
             when "mk"
                 return
 
             when "write"
-               _API.handler.write @path, p, f
+               Ant.OS.API.handle.write @path, p, f
 
             when "remove"
-                _API.handler.sharefile @basename, false, f
+                Ant.OS.API.handle.sharefile @basename, false, f
                 
             when "upload"
                 return
@@ -346,12 +346,12 @@ class SharedFileHandler extends self.OS.API.VFS.BaseFileHandler
 
             when "download"
                 return if @info.type is "dir"
-                _API.handler.fileblob @path, (d) ->
+                Ant.OS.API.handle.fileblob @path, (d) ->
                     blob = new Blob [d], { type: "octet/stream" }
-                    _API.saveblob me.basename, blob
+                    Ant.OS.API.saveblob me.basename, blob
             when "move"
                 return
             else
-                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
     
-self.OS.API.VFS.register "^shared$", SharedFileHandler
+Ant.OS.API.VFS.register "^shared$", SharedFileHandle

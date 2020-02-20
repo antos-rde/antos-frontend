@@ -14,9 +14,9 @@ endif
 coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
 			src/core/settings.coffee\
-        	src/core/handlers/RemoteHandler.coffee\
+        	src/core/handles/RemoteHandle.coffee\
         	src/core/vfs.coffee\
-			src/core/vfs/GoogleDriveHandler.coffee\
+			src/core/vfs/GoogleDriveHandle.coffee\
 			src/core/db.coffee\
 			src/core/gui.coffee\
 			src/core/BaseModel.coffee\
@@ -29,7 +29,7 @@ coffees= 	src/core/core.coffee\
 
 
 
-packages = CoreServices NotePad wTerm ActivityMonitor Files MarkOn MarketPlace Preview Setting
+packages = CoreServices ActivityMonitor Setting # Files MarkOn MarketPlace Preview NotePad wTerm
 
 main: initd build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/

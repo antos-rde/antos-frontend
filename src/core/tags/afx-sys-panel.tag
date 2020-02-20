@@ -48,7 +48,7 @@
             $(self.refs.aOsmenu.root).css("z-index",1000000)
             $(self.refs.aAppmenu.root).css("z-index",1000000)
             $(self.refs.aTray.root).css("z-index",1000000)
-            window.OS.courrier.trigger("syspanelloaded")
+            window.OS.announcer.trigger("syspanelloaded")
         })
     </script>
 </afx-sys-panel>

@@ -1,4 +1,7 @@
 # antOS
+
+**This version 1.0.0a will remove the dependencies on Riot.js by rewriting the major API for GUI and Announcement system**
+
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 

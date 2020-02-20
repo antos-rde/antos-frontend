@@ -15,9 +15,9 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
-self.OS.API.handler =
+Ant.OS.API.handle =
     scandir: (p, c ) ->
         path = 'resources/jsons/scandir.json'
-        _API.get path , c, (e, s) ->
-            _courrier.osfail "System fall: Cannot read #{path}", e, s
+        Ant.OS.API.get path , c, (e, s) ->
+            Ant.OS.announcer.osfail "System fall: Cannot read #{path}", e, s
                

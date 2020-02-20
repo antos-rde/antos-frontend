@@ -22,7 +22,7 @@ class SubWindow extends this.OS.GUI.BaseModel
         @modal = false
         
     quit: () ->
-        evt = new _GUI.BaseEvent("exit")
+        evt = new Ant.OS.GUI.BaseEvent("exit")
         @onexit(evt)
         if not evt.prevent
             delete @.observable
@@ -44,7 +44,7 @@ this.OS.GUI.SubWindow = SubWindow
 class BaseDialog extends SubWindow
     constructor: (name) ->
         super name
-        @handler = undefined
+        @handle = undefined
 
     onexit: (e) ->
         @parent.dialog = undefined if @parent
@@ -78,7 +78,7 @@ class BasicDialog extends BaseDialog
         html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:5px;'></afx-button>" for k,v of @conf.buttons
         html += "</div><div data-height='5'></div></afx-vbox><div data-width='7'></div></afx-hbox></afx-app-window>"
         #render the html
-        _GUI.htmlToScheme html, @, @host
+        Ant.OS.GUI.htmlToScheme html, @, @host
     
     main: () ->
         @scheme.set "apptitle", @title
@@ -109,7 +109,7 @@ class PromptDialog extends BasicDialog
                     onclick: (d) ->
                         txt = (d.find "content1").value
                         return d.quit() if txt is ""
-                        d.handler txt if d.handler
+                        d.handle txt if d.handle
                         d.quit()
                 },
                 {
@@ -142,7 +142,7 @@ class CalendarDialog extends BasicDialog
                     onclick: (d) ->
                         date = (d.find "content0").get "selectedDate"
                         if date
-                            d.handler date if d.handler
+                            d.handle date if d.handle
                             d.quit()
                         else
                             d.notify __("Please select a date")
@@ -168,7 +168,7 @@ class ColorPickerDialog extends BasicDialog
                     onclick: (d) ->
                         c = (d.find "content0").get "selectedColor"
                         if c
-                            d.handler c if d.handler
+                            d.handle c if d.handle
                             d.quit()
                         else
                             d.notify "Please select a color"
@@ -208,12 +208,12 @@ class YesNoDialog extends BasicDialog
             buttons: [
                 {
                     label: "__(Yes)", onclick: (d) ->
-                        d.handler true if d.handler
+                        d.handle true if d.handle
                         d.quit()
                 },
                 {
                     label: "__(No)", onclick: (d) ->
-                        d.handler false if d.handler
+                        d.handle false if d.handle
                         d.quit()
                 }
             ],
@@ -238,7 +238,7 @@ class SelectionDialog extends BasicDialog
                         el = d.find "content0"
                         it = el.get "selected"
                         return unless it
-                        d.handler it if d.handler
+                        d.handle it if d.handle
                         d.quit()
                 },
                 { label: "__(Cancel)", onclick: (d) -> d.quit() }
@@ -288,11 +288,11 @@ class FileDiaLog extends BaseDialog
         @scheme.set "apptitle", @title
         fileview.set "fetch", (e, f) ->
             return unless e.child
-            e.child.path.asFileHandler().read (d) ->
+            e.child.path.asFileHandle().read (d) ->
                 return me.error __("Resource not found: {0}", e.child.path) if d.error
                 f d.result
         setroot = (path) ->
-            path.asFileHandler().read (d) ->
+            path.asFileHandle().read (d) ->
                 if(d.error)
                     return me.error __("Resource not found: {0}", path)
                 fileview.set "path", path
@@ -323,10 +323,10 @@ class FileDiaLog extends BaseDialog
                             break
                 return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
             d = f.path
-            d = f.path.asFileHandler().parent() if f.type is "file"
-            me.handler d, ($ filename).val(), f.path, f if me.handler
+            d = f.path.asFileHandle().parent() if f.type is "file"
+            me.handle d, ($ filename).val(), f.path, f if me.handle
             #sel = if  me.data and me.data.selection then me.data.selection else "file"
-            #me.handler f, ($ filename).val() if me.handler and ((f.type is sel) or (sel is "*"))
+            #me.handle f, ($ filename).val() if me.handle and ((f.type is sel) or (sel is "*"))
             me.quit()
 
         (@find "bt-cancel").set "onbtclick", (e) ->

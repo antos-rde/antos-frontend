@@ -64,7 +64,7 @@
             self.tabbar.push(el)
             if(el.url)
             {
-                el.url.asFileHandler().read(function(d){
+                el.url.asFileHandle().read(function(d){
                     el.scheme = d
                     render(el)
                 })

@@ -18,8 +18,8 @@
 
 'use strict'
 #define the OS object
-self = this
-self.OS or=
+Ant = this
+Ant.OS or=
 
     API: {}
     GUI: {}
@@ -31,33 +31,33 @@ self.OS or=
         appearance: {}
         VFS: {}
         system: {}
-    courrier:
+    announcer:
         observable: riot.observable()
         quota: 0
         listeners: {}
         on: (e, f, a) ->
-            _courrier.listeners[a.pid] = [] unless _courrier.listeners[a.pid]
-            _courrier.listeners[a.pid].push { e: e, f: f }
-            _courrier.observable.on e, f
-        trigger: (e, d) -> _courrier.observable.trigger e, d
+            Ant.OS.announcer.listeners[a.pid] = [] unless Ant.OS.announcer.listeners[a.pid]
+            Ant.OS.announcer.listeners[a.pid].push { e: e, f: f }
+            Ant.OS.announcer.observable.on e, f
+        trigger: (e, d) -> Ant.OS.announcer.observable.trigger e, d
         osfail: (m, e, s) ->
-            _courrier.ostrigger "fail", { m: m,  e: e, s: s }
+            Ant.OS.announcer.ostrigger "fail", { m: m,  e: e, s: s }
         oserror: (m, e, s) ->
-            _courrier.ostrigger "error", { m: m,  e: e, s: s }
+            Ant.OS.announcer.ostrigger "error", { m: m,  e: e, s: s }
         osinfo: (m) ->
-            _courrier.ostrigger "info", { m: m,  e: null, s: null }
+            Ant.OS.announcer.ostrigger "info", { m: m,  e: null, s: null }
         ostrigger: (e, d) ->
-            _courrier.trigger e, { id: 0, data: d, name: "OS" }
+            Ant.OS.announcer.trigger e, { id: 0, data: d, name: "OS" }
         unregister: (app) ->
-            return unless _courrier.listeners[app.pid] and _courrier.listeners[app.pid].length > 0
-            _courrier.observable.off i.e, i.f for i in _courrier.listeners[app.pid]
-            delete _courrier.listeners[app.pid]
-            # _courrier.listeners[app.pid]
+            return unless Ant.OS.announcer.listeners[app.pid] and Ant.OS.announcer.listeners[app.pid].length > 0
+            Ant.OS.announcer.observable.off i.e, i.f for i in Ant.OS.announcer.listeners[app.pid]
+            delete Ant.OS.announcer.listeners[app.pid]
+            # Ant.OS.announcer.listeners[app.pid]
         getMID: () ->
-            _courrier.quota += 1
-            _courrier.quota
+            Ant.OS.announcer.quota += 1
+            Ant.OS.announcer.quota
     register: (name, x) ->
-        if x.type is 3 then self.OS.GUI.subwindows[name] = x else _OS.APP[name] = x
+        if x.type is 3 then Ant.OS.GUI.subwindows[name] = x else Ant.OS.APP[name] = x
     
     PM:
         pidalloc: 0
@@ -67,86 +67,86 @@ self.OS or=
                 #if it is single ton
                 # and a process is existing
                 # just return it
-                if cls.singleton and _PM.processes[app] and _PM.processes[app].length == 1
-                    _PM.processes[app][0].show()
+                if cls.singleton and Ant.OS.PM.processes[app] and Ant.OS.PM.processes[app].length == 1
+                    Ant.OS.PM.processes[app][0].show()
                 else
-                    _PM.processes[app] = [] if not _PM.processes[app]
+                    Ant.OS.PM.processes[app] = [] if not Ant.OS.PM.processes[app]
                     obj = new cls(args)
                     obj.birth = (new Date).getTime()
-                    _PM.pidalloc++
-                    obj.pid = _PM.pidalloc
-                    _PM.processes[app].push obj
-                    if cls.type is 1 then _GUI.dock obj, cls.meta else _GUI.attachservice obj
+                    Ant.OS.PM.pidalloc++
+                    obj.pid = Ant.OS.PM.pidalloc
+                    Ant.OS.PM.processes[app].push obj
+                    if cls.type is 1 then Ant.OS.GUI.dock obj, cls.meta else Ant.OS.GUI.attachservice obj
                 if cls.type is 2
-                    _courrier.trigger "srvroutineready", app
+                    Ant.OS.announcer.trigger "srvroutineready", app
             if cls.dependencies
                 libs = (v for v in cls.dependencies)
-                _API.requires libs, f
+                Ant.OS.API.requires libs, f
             else
                 f()
         appByPid: (pid) ->
             app = undefined
             find = (l) ->
                 return a for a in l when a.pid is pid
-            for k, v of _PM.processes
+            for k, v of Ant.OS.PM.processes
                 app = find v
                 break if app
             app
             
         kill: (app) ->
-            return if not app.name or not _PM.processes[app.name]
+            return if not app.name or not Ant.OS.PM.processes[app.name]
 
-            i = _PM.processes[app.name].indexOf app
+            i = Ant.OS.PM.processes[app.name].indexOf app
             if i >= 0
-                if _OS.APP[app.name].type == 1 then _GUI.undock app else _GUI.detachservice app
-                _courrier.unregister app
-                delete _PM.processes[app.name][i]
-                _PM.processes[app.name].splice i, 1
+                if Ant.OS.APP[app.name].type == 1 then Ant.OS.GUI.undock app else Ant.OS.GUI.detachservice app
+                Ant.OS.announcer.unregister app
+                delete Ant.OS.PM.processes[app.name][i]
+                Ant.OS.PM.processes[app.name].splice i, 1
         
         killAll: (app, force) ->
-            return unless _PM.processes[app]
-            a.quit(force) for a in  _PM.processes[app]
+            return unless Ant.OS.PM.processes[app]
+            a.quit(force) for a in  Ant.OS.PM.processes[app]
 
     cleanup: ->
         console.log "Clean up system"
-        _PM.killAll a, true for a, v of _PM.processes
-        _courrier.observable.off("*") if _courrier.observable
+        Ant.OS.PM.killAll a, true for a, v of Ant.OS.PM.processes
+        Ant.OS.announcer.observable.off("*") if Ant.OS.announcer.observable
         $(window).off('keydown')
         ($ "#workspace").off("mouseover")
-        delete _courrier.observable
+        delete Ant.OS.announcer.observable
         ($ "#wrapper").empty()
-        _GUI.clearTheme()
-        _courrier.observable = riot.observable()
-        _courrier.quota = 0
-        _OS.APP = {}
-        _OS.setting =
+        Ant.OS.GUI.clearTheme()
+        Ant.OS.announcer.observable = riot.observable()
+        Ant.OS.announcer.quota = 0
+        Ant.OS.APP = {}
+        Ant.OS.setting =
             user: {}
             applications: {}
             desktop: {}
             appearance: {}
             VFS: {}
             system: {}
-        _PM.processes = {}
-        _PM.pidalloc = 0
+        Ant.OS.PM.processes = {}
+        Ant.OS.PM.pidalloc = 0
         
     boot: ->
         #first login
         console.log "Booting sytem"
-        _API.handler.auth (d) ->
+        Ant.OS.API.handle.auth (d) ->
             # in case someone call it more than once :)
             if d.error
                 # show login screen
-                _GUI.login()
+                Ant.OS.GUI.login()
             else
                 # startX :)
-                _GUI.startAntOS d.result
+                Ant.OS.GUI.startAntOS d.result
     
-    cleanupHandlers: {}
+    cleanupHandles: {}
     exit: ->
         #do clean up first
-        f() for n, f of _OS.cleanupHandlers
-        _API.handler.setting (r) ->
-            _OS.cleanup()
-            _API.handler.logout()
+        f() for n, f of Ant.OS.cleanupHandles
+        Ant.OS.API.handle.setting (r) ->
+            Ant.OS.cleanup()
+            Ant.OS.API.handle.logout()
     onexit: (n, f) ->
-        self.OS.cleanupHandlers[n] = f unless self.OS.cleanupHandlers[n]
+        Ant.OS.cleanupHandles[n] = f unless Ant.OS.cleanupHandles[n]

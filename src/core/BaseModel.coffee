@@ -20,24 +20,24 @@ class BaseModel
     constructor: (@name, @args) ->
         me = @
         @observable = riot.observable()
-        @_api = self.OS.API
-        @_gui = self.OS.GUI
-        @systemsetting = self.OS.setting
+        @_api = Ant.OS.API
+        @_gui = Ant.OS.GUI
+        @systemsetting = Ant.OS.setting
         me = @
         @on "exit", () -> me.quit()
         @host = "#desktop"
         @dialog = undefined
     render: (p) ->
-        _GUI.loadScheme p, @, @host
+        Ant.OS.GUI.loadScheme p, @, @host
 
     quit: (force) ->
-        evt = new _GUI.BaseEvent("exit", force)
+        evt = new Ant.OS.GUI.BaseEvent("exit", force)
         @onexit(evt)
         if not evt.prevent
             @observable.off "*"
             delete @.observable
             @dialog.quit() if @dialog
-            _PM.kill @
+            Ant.OS.PM.kill @
 
     path: () ->
         mt = @meta()
@@ -65,22 +65,22 @@ class BaseModel
     trigger: (e, d) -> @observable.trigger e, d
 
     subscribe: (e, f) ->
-        _courrier.on e, f, @
+        Ant.OS.announcer.on e, f, @
 
     openDialog: (d, f, title, data) ->
         if @dialog
             @dialog.show()
             return
         if typeof d is "string"
-            if not _GUI.subwindows[d]
+            if not Ant.OS.GUI.subwindows[d]
                 @error __("Dialog {0} not found", d)
                 return
-            @dialog = new _GUI.subwindows[d]()
+            @dialog = new Ant.OS.GUI.subwindows[d]()
         else
             @dialog = d
         #@dialog.observable = riot.observable() unless @dialog
         @dialog.parent = @
-        @dialog.handler = f
+        @dialog.handle = f
         @dialog.pid = @pid
         @dialog.data = data
         @dialog.title = title
@@ -95,7 +95,7 @@ class BaseModel
         mt = @meta()
         icon = undefined
         icon = "#{mt.path}/#{mt.icon}" if mt.icon
-        _courrier.trigger t, { id: @pid, name: @name, data: { m: m, icon: icon, iconclass: mt.iconclass }, error: e }
+        Ant.OS.announcer.trigger t, { id: @pid, name: @name, data: { m: m, icon: icon, iconclass: mt.iconclass }, error: e }
 
     notify: (m) ->
         @publish "notification", m

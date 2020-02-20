@@ -132,13 +132,11 @@ String.prototype.__ = () ->
     return match[1].l() if match
     return @
 String.prototype.l = () ->
-    _API = window.OS.API
-    _API.lang[@] = @ unless _API.lang[@]
-    return _API.lang[@]
+    Ant.OS.API.lang[@] = @ unless Ant.OS.API.lang[@]
+    return Ant.OS.API.lang[@]
 # language directive
 
 this.__ = () ->
-    _API = window.OS.API
     args = arguments
     return "Undefined" unless args.length > 0
     d = args[0]
@@ -163,20 +161,20 @@ Date.prototype.toString = () ->
 Date.prototype.timestamp = () ->
     return @getTime() / 1000 | 0
 
-self.OS.API =
-    # the handler object could be a any remote or local handle to
+Ant.OS.API =
+    # the handle object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
-    # handlers are defined in /src/handlers
-    handler: {}
+    # handles are defined in /src/handles
+    handle: {}
     shared: {} # shared libraries
-    searchHandler:{}
+    searchHandle:{}
     lang:{}
     #request a user data
     mid: () ->
-        return _courrier.getMID()
+        return Ant.OS.announcer.getMID()
     post: (p, d, c, f) ->
-        q = _courrier.getMID()
-        _API.loading q, p
+        q = Ant.OS.announcer.getMID()
+        Ant.OS.API.loading q, p
         
         $.ajax {
             type: 'POST',
@@ -188,14 +186,14 @@ self.OS.API =
         }
         #$.getJSON p, d
         .done (data) ->
-            _API.loaded q, p, "OK"
+            Ant.OS.API.loaded q, p, "OK"
             c(data)
         .fail (e, s) ->
-            _API.loaded q, p, "FAIL"
+            Ant.OS.API.loaded q, p, "FAIL"
             f(e, s)
     
     blob: (p, c, f) ->
-        q = _courrier.getMID()
+        q = Ant.OS.announcer.getMID()
         r = new XMLHttpRequest()
         r.open "GET", p, true
         r.responseType = "arraybuffer"
@@ -203,20 +201,20 @@ self.OS.API =
         r.onload = (e) ->
            if @status is 200 and @readyState is 4
                 c @response
-                _API.loaded q, p, "OK"
+                Ant.OS.API.loaded q, p, "OK"
             else
                 f e, @
-                _API.loaded q, p, "FAIL"
+                Ant.OS.API.loaded q, p, "FAIL"
         
-        _API.loading q, p
+        Ant.OS.API.loading q, p
         r.send()
 
     upload: (p, d, c, f) ->
-        q = _courrier.getMID()
+        q = Ant.OS.announcer.getMID()
         #insert a temporal file selector
         o = ($ '<input>').attr('type', 'file').css("display", "none")
         o.change () ->
-            _API.loading q, p
+            Ant.OS.API.loading q, p
             formd = new FormData()
             formd.append 'path', d
             # TODO: only one file is selected at this time
@@ -230,11 +228,11 @@ self.OS.API =
                 processData: false,
             }
             .done (data) ->
-                _API.loaded q, p, "OK"
+                Ant.OS.API.loaded q, p, "OK"
                 c(data)
                 o.remove()
             .fail (e, s) ->
-                _API.loaded q, p, "FAIL"
+                Ant.OS.API.loaded q, p, "FAIL"
                 f(e, s)
                 o.remove()
                 
@@ -252,115 +250,115 @@ self.OS.API =
         o.remove()
 
     systemConfig: ->
-        _API.request 'config', (result) ->
+        Ant.OS.API.request 'config', (result) ->
             console.log  result
     loading: (q, p) ->
-        _courrier.trigger "loading", { id: q, data: { m: "#{p}", s: true }, name: "OS" }
+        Ant.OS.announcer.trigger "loading", { id: q, data: { m: "#{p}", s: true }, name: "OS" }
     loaded: (q, p, m ) ->
-        _courrier.trigger "loaded", { id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
+        Ant.OS.announcer.trigger "loaded", { id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
     get: (p, c, f, t) ->
         conf =
             type: 'GET',
             url: p,
         conf.dataType = t if t
 
-        q = _courrier.getMID()
-        _API.loading q, p
+        q = Ant.OS.announcer.getMID()
+        Ant.OS.API.loading q, p
         $.ajax conf
             .done (data) ->
-                _API.loaded q, p, "OK"
+                Ant.OS.API.loaded q, p, "OK"
                 c(data)
             .fail (e, s) ->
-                _API.loaded q, p, "FAIL"
+                Ant.OS.API.loaded q, p, "FAIL"
                 f(e, s)
     script: (p, c, f) ->
-        q = _courrier.getMID()
-        _API.loading q, p
+        q = Ant.OS.announcer.getMID()
+        Ant.OS.API.loading q, p
         $.getScript p
             .done (data) ->
-                _API.loaded q, p, "OK"
+                Ant.OS.API.loaded q, p, "OK"
                 c(data)
             .fail (e, s) ->
-                _API.loaded q, p, "FAIL"
+                Ant.OS.API.loaded q, p, "FAIL"
                 f(e, s)
     resource: (r, c, f) ->
         path = "resources/#{r}"
-        _API.get path, c, f
+        Ant.OS.API.get path, c, f
     
     libready: (l) ->
-        return _API.shared[l] || false
+        return Ant.OS.API.shared[l] || false
 
     require: (l,f) ->
-        if not _API.shared[l]
+        if not Ant.OS.API.shared[l]
             if l.match /^(https?:\/\/[^\s]+)/g
-                _API.script l, () ->
-                    _API.shared[l] = true
-                    _courrier.trigger "sharedlibraryloaded", l
+                Ant.OS.API.script l, () ->
+                    Ant.OS.API.shared[l] = true
+                    Ant.OS.announcer.trigger "sharedlibraryloaded", l
                     f() if f
                 , (e, s) ->
-                    _courrier.oserror __("Cannot load 3rd library at: {0}", l), e, r
+                    Ant.OS.announcer.oserror __("Cannot load 3rd library at: {0}", l), e, r
             else
                 path = "os://scripts/"
                 js = "#{path}#{l}.js"
-                js.asFileHandler().onready (d) ->
-                    _API.shared[l] = true
-                    el = $ '<script>', { src: "#{_API.handler.get}/#{js}" }
+                js.asFileHandle().onready (d) ->
+                    Ant.OS.API.shared[l] = true
+                    el = $ '<script>', { src: "#{Ant.OS.API.handle.get}/#{js}" }
                             .appendTo 'head'
                     #load css file
                     css =  "#{path}#{l}.css"
-                    css.asFileHandler().onready (d) ->
-                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{_API.handler.get}/#{css}" }
+                    css.asFileHandle().onready (d) ->
+                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{Ant.OS.API.handle.get}/#{css}" }
                             .appendTo 'head'
                     , () ->
                     console.log "loaded", l
-                    _courrier.trigger "sharedlibraryloaded", l
+                    Ant.OS.announcer.trigger "sharedlibraryloaded", l
                     f() if f
         else
             console.log l, "Library exist, no need to load"
             f() if f
-            _courrier.trigger "sharedlibraryloaded", l
+            Ant.OS.announcer.trigger "sharedlibraryloaded", l
 
     requires:(libs, f) ->
         return f() unless libs.length > 0
-        _courrier.observable.one "sharedlibraryloaded", (l) ->
+        Ant.OS.announcer.observable.one "sharedlibraryloaded", (l) ->
             libs.splice 0, 1
-            _API.requires libs, f
-        _API.require libs[0], null
+            Ant.OS.API.requires libs, f
+        Ant.OS.API.require libs[0], null
     packages:
         fetch: (f) ->
-            _API.handler.packages {
-                command: "list", args: { paths: (v for k, v of _OS.setting.system.pkgpaths) }
+            Ant.OS.API.handle.packages {
+                command: "list", args: { paths: (v for k, v of Ant.OS.setting.system.pkgpaths) }
             }, f
         cache: (f) ->
-            _API.handler.packages {
-                command: "cache", args: { paths: (v for k, v of _OS.setting.system.pkgpaths) }
+            Ant.OS.API.handle.packages {
+                command: "cache", args: { paths: (v for k, v of Ant.OS.setting.system.pkgpaths) }
             }, f
     setting: (f) ->
-        _API.handler.setting f
+        Ant.OS.API.handle.setting f
     apigateway: (d, ws, c) ->
-        return _API.handler.apigateway d, ws, c
+        return Ant.OS.API.handle.apigateway d, ws, c
     search: (text) ->
         r = []
         
-        for k, v of _API.searchHandler
-            ret =  _API.searchHandler[k](text)
+        for k, v of Ant.OS.API.searchHandle
+            ret =  Ant.OS.API.searchHandle[k](text)
             if ret.length > 0
                 ret.unshift { text: k, class: "search-header", dataid: "header" }
                 r = r.concat ret
         return r
 
     onsearch: (name, fn) ->
-        self.OS.API.searchHandler[name] = fn unless self.OS.API.searchHandler[name]
+        Ant.OS.API.searchHandle[name] = fn unless Ant.OS.API.searchHandle[name]
 
     setLocale: (name, f) ->
         path = "resources/languages/#{name}.json"
-        _API.get path, (d) ->
-            _OS.setting.system.locale = name
-            _API.lang = d
-            if f then f() else _courrier.trigger "systemlocalechange", name
+        Ant.OS.API.get path, (d) ->
+            Ant.OS.setting.system.locale = name
+            Ant.OS.API.lang = d
+            if f then f() else Ant.OS.announcer.trigger "systemlocalechange", name
         , (e, s) ->
-            #_OS.setting.system.locale = "en_GB"
-            _courrier.oserror __("Language file {0} not found", path), e, s
+            #Ant.OS.setting.system.locale = "en_GB"
+            Ant.OS.announcer.oserror __("Language file {0} not found", path), e, s
             f() if f
         , "json"
 

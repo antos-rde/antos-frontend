@@ -57,7 +57,7 @@
             return self[k]
         }
         this.on("mount", function(){
-            window.OS.courrier.trigger("sysdockloaded")
+            window.OS.announcer.trigger("sysdockloaded")
         })
         
         self.root.contextmenuHandler = function(e, m) 

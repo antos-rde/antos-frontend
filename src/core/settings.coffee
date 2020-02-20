@@ -16,32 +16,32 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
  self.OS.systemSetting = (conf) ->
-    _OS.setting.desktop = conf.desktop if conf.desktop
-    _OS.setting.applications = conf.applications if conf.applications
-    _OS.setting.appearance = conf.appearance if conf.appearance
-    _OS.setting.appearance.wp = {
+    Ant.OS.setting.desktop = conf.desktop if conf.desktop
+    Ant.OS.setting.applications = conf.applications if conf.applications
+    Ant.OS.setting.appearance = conf.appearance if conf.appearance
+    Ant.OS.setting.appearance.wp = {
         url: "os://resources/themes/system/wp/wp2.jpg",
         size: "cover",
         repeat: "repeat"
-    } unless _OS.setting.appearance.wp
-    _OS.setting.appearance.wps = [] unless _OS.setting.appearance.wps
-    _OS.setting.applications = {} unless _OS.setting.applications
-    _OS.setting.user = conf.user
-    _OS.setting.VFS = conf.VFS if conf.VFS
-    _OS.setting.desktop.path = "home://.desktop" unless _OS.setting.desktop.path
-    _OS.setting.desktop.menu = {} unless _OS.setting.desktop.menu
-    _OS.setting.VFS.mountpoints = [
+    } unless Ant.OS.setting.appearance.wp
+    Ant.OS.setting.appearance.wps = [] unless Ant.OS.setting.appearance.wps
+    Ant.OS.setting.applications = {} unless Ant.OS.setting.applications
+    Ant.OS.setting.user = conf.user
+    Ant.OS.setting.VFS = conf.VFS if conf.VFS
+    Ant.OS.setting.desktop.path = "home://.desktop" unless Ant.OS.setting.desktop.path
+    Ant.OS.setting.desktop.menu = {} unless Ant.OS.setting.desktop.menu
+    Ant.OS.setting.VFS.mountpoints = [
         #TODO: multi app try to write to this object, it neet to be cloned
         { text: "__(Applications)", path: 'app://', iconclass: "fa  fa-adn", type: "app" },
         { text: "__(Home)", path: 'home://', iconclass: "fa fa-home", type: "fs" },
-        { text: "__(Desktop)", path: _OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
+        { text: "__(Desktop)", path: Ant.OS.setting.desktop.path , iconclass: "fa fa-desktop", type: "fs" },
         { text: "__(OS)", path: 'os://', iconclass: "fa fa-inbox", type: "fs" },
         { text: "__(Google Drive)", path: 'gdv://', iconclass: "fa fa-inbox", type: "fs" },
         { text: "__(Shared)", path: 'shared://' , iconclass: "fa fa-share-square", type: "fs" }
-    ] if not _OS.setting.VFS.mountpoints
+    ] if not Ant.OS.setting.VFS.mountpoints
 
-    _OS.setting.system = conf.system if conf.system
-    _OS.setting.system.startup = {
+    Ant.OS.setting.system = conf.system if conf.system
+    Ant.OS.setting.system.startup = {
         services: [
             "CoreServices/PushNotification",
             "CoreServices/UserService",
@@ -49,30 +49,30 @@
             "CoreServices/Spotlight"
         ],
         apps: []
-    } if not _OS.setting.system.startup
+    } if not Ant.OS.setting.system.startup
 
-    _OS.setting.system.pkgpaths = {
+    Ant.OS.setting.system.pkgpaths = {
         user: "home://.packages",
         system: "os://packages"
-     } unless _OS.setting.system.pkgpaths
-    _OS.setting.system.locale = "en_GB" unless _OS.setting.system.locale
-    _OS.setting.system.menu = {} unless _OS.setting.system.menu
-    _OS.setting.system.repositories = [] unless _OS.setting.system.repositories
-    _OS.setting.appearance.theme = "antos" unless _OS.setting.appearance.theme
+     } unless Ant.OS.setting.system.pkgpaths
+    Ant.OS.setting.system.locale = "en_GB" unless Ant.OS.setting.system.locale
+    Ant.OS.setting.system.menu = {} unless Ant.OS.setting.system.menu
+    Ant.OS.setting.system.repositories = [] unless Ant.OS.setting.system.repositories
+    Ant.OS.setting.appearance.theme = "antos" unless Ant.OS.setting.appearance.theme
 
-    _OS.setting.VFS.gdrive = {
+    Ant.OS.setting.VFS.gdrive = {
         CLIENT_ID: ""
         API_KEY: ""
         apilink: "https://apis.google.com/js/api.js"
         DISCOVERY_DOCS: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
         SCOPES: 'https://www.googleapis.com/auth/drive'
-    } unless _OS.setting.VFS.gdrive
+    } unless Ant.OS.setting.VFS.gdrive
 
         #search for app
-    _API.onsearch "__(Applications)", (t) ->
+    Ant.OS.API.onsearch "__(Applications)", (t) ->
         ar = []
         term = new RegExp t, "i"
-        for k, v of _OS.setting.system.packages when v.app
+        for k, v of Ant.OS.setting.system.packages when v.app
             if (v.name.match term) or (v.description and v.description.match term)
                 v1 = {}
                 v1[k1] = e for k1, e of v when k1 isnt "selected"

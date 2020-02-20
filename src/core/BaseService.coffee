@@ -30,7 +30,7 @@ class BaseService extends this.OS.GUI.BaseModel
         # event registe, etc
         # scheme loader
     meta: () ->
-        _OS.APP[@name].meta
+        Ant.OS.APP[@name].meta
     attach: (h) ->
         @holder = h
 

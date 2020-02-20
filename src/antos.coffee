@@ -15,12 +15,7 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
-_GUI = self.OS.GUI
-_API = self.OS.API
-_PM  = self.OS.PM
-_OS = self.OS
-_courrier = self.OS.courrier
 this.onload = () ->
     ($ document).on 'webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', ()->
-            _GUI.fullscreen = not _GUI.fullscreen
-    self.OS.boot()
+            Ant.OS.GUI.fullscreen = not Ant.OS.GUI.fullscreen
+    Ant.OS.boot()

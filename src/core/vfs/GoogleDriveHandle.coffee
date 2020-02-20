@@ -17,15 +17,15 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-# GoogleDrive File Handler
+# GoogleDrive File Handle
 G_CACHE = {"gdv://":{ id: "root", mime: 'dir' } }
 
-class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
+class GoogleDriveHandle extends this.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
         me = @
-        @setting = _OS.setting.VFS.gdrive
-        return  _courrier.oserror __("Unknown API setting for {0}", "GAPI"),   (_API.throwe "OS.VFS"), null unless @setting
+        @setting = Ant.OS.setting.VFS.gdrive
+        return  Ant.OS.announcer.oserror __("Unknown API setting for {0}", "GAPI"),   (Ant.OS.API.throwe "OS.VFS"), null unless @setting
         @gid = 'root' if @isRoot()
         @cache = ""
 
@@ -38,16 +38,16 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
             G_CACHE = {"gdv://":{ id: "root", mime: 'dir' } }
             gapi.auth2.getAuthInstance().signIn()
 
-        if _API.libready @setting.apilink
+        if Ant.OS.API.libready @setting.apilink
             gapi.auth2.getAuthInstance().isSignedIn.listen (r) ->
                 fn(r)
             fn(gapi.auth2.getAuthInstance().isSignedIn.get())
         else
-            _API.require @setting.apilink, () ->
+            Ant.OS.API.require @setting.apilink, () ->
                 # avoid popup block
-                q = _courrier.getMID()
+                q = Ant.OS.announcer.getMID()
                 gapi.load "client:auth2", () ->
-                    _API.loading q, "GAPI"
+                    Ant.OS.API.loading q, "GAPI"
                     gapi.client.init {
                         apiKey: me.setting.API_KEY,
                         clientId: me.setting.CLIENT_ID,
@@ -55,45 +55,45 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         scope: me.setting.SCOPES
                     }
                     .then () ->
-                        _API.loaded q, "OK"
+                        Ant.OS.API.loaded q, "OK"
                         gapi.auth2.getAuthInstance().isSignedIn.listen (r) ->
                             fn(r)
                         _GUI.openDialog "YesNoDialog", (d) ->
-                            return _courrier.osinfo __("User abort the authentication") unless d
+                            return Ant.OS.announcer.osinfo __("User abort the authentication") unless d
                             fn(gapi.auth2.getAuthInstance().isSignedIn.get())
                         , __("Authentication")
                         , { text: __("Would you like to login to {0}?", "Google Drive") }
                     .catch (err) ->
-                        _API.loaded q, "FAIL"
-                        _courrier.oserror __("VFS cannot init {0}: {1}", "GAPI",err.error), (_API.throwe "OS.VFS"), err
+                        Ant.OS.API.loaded q, "FAIL"
+                        Ant.OS.announcer.oserror __("VFS cannot init {0}: {1}", "GAPI",err.error), (Ant.OS.API.throwe "OS.VFS"), err
 
     meta: (f) ->
         me = @
         @oninit () ->
-            q = _courrier.getMID()
+            q = Ant.OS.announcer.getMID()
             me.gid = G_CACHE[me.path].id if G_CACHE[me.path]
             if me.gid
                 #console.log "Gid exists ", me.gid
-                _API.loading q, "GAPI"
+                Ant.OS.API.loading q, "GAPI"
                 gapi.client.drive.files.get {
                     fileId: me.gid,
                     fields: me.fields()
                 }
                 .then (r) ->
-                    _API.loaded q, "OK"
+                    Ant.OS.API.loaded q, "OK"
                     return unless r.result
                     r.result.mime = r.result.mimeType
                     f(r)
                 .catch (err) ->
-                    _API.loaded q, "FAIL"
-                    _courrier.oserror __("VFS cannot get meta data for {0}", me.gid), (_API.throwe "OS.VFS"), err
+                    Ant.OS.API.loaded q, "FAIL"
+                    Ant.OS.announcer.oserror __("VFS cannot get meta data for {0}", me.gid), (Ant.OS.API.throwe "OS.VFS"), err
             else 
                 #console.log "Find file in ", me.parent()
-                fp = me.parent().asFileHandler()
+                fp = me.parent().asFileHandle()
                 fp.meta (d) ->
                     file = d.result
-                    q1 = _courrier.getMID()
-                    _API.loading q1, "GAPI"
+                    q1 = Ant.OS.announcer.getMID()
+                    Ant.OS.API.loading q1, "GAPI"
                     G_CACHE[fp.path] = { id: file.id, mime: file.mimeType }
                     gapi.client.drive.files.list {
                         q: "name = '#{me.basename}' and '#{file.id}' in parents and trashed = false",
@@ -101,14 +101,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     }
                     .then (r) ->
                         #console.log r
-                        _API.loaded q1, "OK"
+                        Ant.OS.API.loaded q1, "OK"
                         return unless r.result.files and r.result.files.length > 0
                         G_CACHE[me.path] = { id: r.result.files[0].id, mime: r.result.files[0].mimeType }
                         r.result.files[0].mime = r.result.files[0].mimeType
                         f { result: r.result.files[0] }
                     .catch (err) ->
-                        _API.loaded q1, "FAIL"
-                        _courrier.oserror __("VFS cannot get meta data for {0}", me.path), (_API.throwe "OS.VFS"), err
+                        Ant.OS.API.loaded q1, "FAIL"
+                        Ant.OS.announcer.oserror __("VFS cannot get meta data for {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
     
     fields: () ->
         return "webContentLink, id, name,mimeType,description, kind, parents, properties, iconLink, createdTime, modifiedTime, owners, permissions, fullFileExtension, fileExtension, size"
@@ -119,7 +119,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         me = @
         user = gapi.auth2.getAuthInstance().currentUser.get()
         oauthToken = user.getAuthResponse().access_token
-        q = _courrier.getMID()
+        q = Ant.OS.announcer.getMID()
         xhr = new XMLHttpRequest()
         url = 'https://www.googleapis.com/upload/drive/v3/files/' + id + '?uploadType=media'
         xhr.open('PATCH', url)
@@ -127,14 +127,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
         xhr.setRequestHeader 'Content-Type', m
         xhr.setRequestHeader 'Content-Encoding', 'base64'
         xhr.setRequestHeader 'Content-Transfer-Encoding', 'base64'
-        _API.loading q, "GAPI"
+        Ant.OS.API.loading q, "GAPI"
         error = (e, s) ->
-            _API.loaded q, "FAIL"
-            _courrier.oserror __("VFS cannot save : {0}", me.path), e, s
+            Ant.OS.API.loaded q, "FAIL"
+            Ant.OS.announcer.oserror __("VFS cannot save : {0}", me.path), e, s
         xhr.onreadystatechange = () ->
             if ( xhr.readyState == 4 )
                 if ( xhr.status == 200 )
-                    _API.loaded q, "OK"
+                    Ant.OS.API.loaded q, "OK"
                     f { result: JSON.parse(xhr.responseText) }
                 else
                     error xhr, xhr.status
@@ -150,8 +150,8 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
 
     action: (n, p, f) ->
         me = @
-        q = _courrier.getMID()
-        _API.loading q, "GAPI"
+        q = Ant.OS.announcer.getMID()
+        Ant.OS.API.loading q, "GAPI"
         switch n
             when "read"
                 return unless @info.id
@@ -161,7 +161,7 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         fields: "files(#{me.fields()})"
                     }
                     .then (r) ->
-                        _API.loaded q, "OK"
+                        Ant.OS.API.loaded q, "OK"
                         return unless r.result.files
                         for file in r.result.files
                             file.path = me.child file.name
@@ -176,20 +176,20 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                             G_CACHE[file.path] = { id: file.gid, mime: file.mime }
                         f { result: r.result.files }
                     .catch (err) ->
-                        _API.loaded q, "FAIL"
-                        _courrier.oserror __("VFS cannot read : {0}", me.path), (_API.throwe "OS.VFS"), err
+                        Ant.OS.API.loaded q, "FAIL"
+                        Ant.OS.announcer.oserror __("VFS cannot read : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
                 else
                     gapi.client.drive.files.get {
                         fileId: me.info.id,
                         alt: 'media'
                     }
                     .then (r) ->
-                        _API.loaded q, "OK"
+                        Ant.OS.API.loaded q, "OK"
                         return f r.body unless p is "binary"
                         f r.body.asUint8Array()
                     .catch (err) ->
-                        _API.loaded q, "FAIL"
-                        _courrier.oserror __("VFS cannot read : {0}", me.path), (_API.throwe "OS.VFS"), err
+                        Ant.OS.API.loaded q, "FAIL"
+                        Ant.OS.announcer.oserror __("VFS cannot read : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
                 
             when "mk"
                 return f { error: __("{0} is not a directory", @path) } unless @isFolder()
@@ -203,14 +203,14 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     fields: 'id'
                 }
                 .then (r) ->
-                    _API.loaded q, "OK"
+                    Ant.OS.API.loaded q, "OK"
                     #console.log r
-                    return _courrier.oserror __("VFS cannot create : {0}", p), (_API.throwe "OS.VFS"), r unless r and r.result
+                    return Ant.OS.announcer.oserror __("VFS cannot create : {0}", p), (Ant.OS.API.throwe "OS.VFS"), r unless r and r.result
                     G_CACHE[me.child p] = { id: r.result.id, mime: "dir" }
                     f r
                 .catch (err) ->
-                    _API.loaded q, "FAIL"
-                    _courrier.oserror __("VFS cannot create : {0}", p), (_API.throwe "OS.VFS"), err
+                    Ant.OS.API.loaded q, "FAIL"
+                    Ant.OS.announcer.oserror __("VFS cannot create : {0}", p), (Ant.OS.API.throwe "OS.VFS"), err
                     
                 return
             
@@ -218,10 +218,10 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 gid = undefined
                 gid = G_CACHE[me.path].id if G_CACHE[me.path]
                 if gid
-                    _API.loaded q, "OK"
+                    Ant.OS.API.loaded q, "OK"
                     @save gid, p, f
                 else
-                    dir = @parent().asFileHandler()
+                    dir = @parent().asFileHandle()
                     dir.onready () ->
                         meta =
                             name: me.basename,
@@ -233,29 +233,29 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                             fields: 'id'
                         }
                         .then (r) ->
-                            _API.loaded q, "OK"
-                            return _courrier.oserror __("VFS cannot write : {0}", me.path), (_API.throwe "OS.VFS"), r unless r and r.result
+                            Ant.OS.API.loaded q, "OK"
+                            return Ant.OS.announcer.oserror __("VFS cannot write : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), r unless r and r.result
                             G_CACHE[me.path] = { id: r.result.id, mime: p }
                             me.save r.result.id, p, f
                         .catch (err) ->
-                            _API.loaded q, "FAIL"
-                            _courrier.oserror __("VFS cannot write : {0}", me.path), (_API.throwe "OS.VFS"), err
+                            Ant.OS.API.loaded q, "FAIL"
+                            Ant.OS.announcer.oserror __("VFS cannot write : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
                             
             when "upload"
                 return unless @isFolder()
                 #insert a temporal file selector
                 o = ($ '<input>').attr('type', 'file').css("display", "none")
-                _API.loaded q, "OK"
+                Ant.OS.API.loaded q, "OK"
                 o.change () ->
-                    #_API.loading q, p
+                    #Ant.OS.API.loading q, p
                     fo = o[0].files[0]
-                    file = (me.child fo.name).asFileHandler()
+                    file = (me.child fo.name).asFileHandle()
                     file.cache = fo
                     file.write fo.type, f
                     o.remove()
                     
-                    #_API.loaded q, p, "OK"
-                    #_API.loaded q, p, "FAIL"
+                    #Ant.OS.API.loaded q, p, "OK"
+                    #Ant.OS.API.loaded q, p, "FAIL"
                         
                 o.click()
             
@@ -266,16 +266,16 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                 }
                 .then (r) ->
                     #console.log r
-                    _API.loaded q, "OK"
-                    return _courrier.oserror __("VFS cannot delete : {0}", me.path), (_API.throwe "OS.VFS"), r unless r
+                    Ant.OS.API.loaded q, "OK"
+                    return Ant.OS.announcer.oserror __("VFS cannot delete : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), r unless r
                     G_CACHE[me.path] = null
                     f { result: true }
                 .catch (err) ->
-                    _API.loaded q, "FAIL"
-                    _courrier.oserror __("VFS cannot delete : {0}", me.path), (_API.throwe "OS.VFS"), err
+                    Ant.OS.API.loaded q, "FAIL"
+                    Ant.OS.announcer.oserror __("VFS cannot delete : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
             
             when "publish"
-                _API.loaded q, "OK"
+                Ant.OS.API.loaded q, "OK"
                 return
             
             when "download"
@@ -284,20 +284,20 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                     alt: 'media'
                 }
                 .then (r) ->
-                    _API.loaded q, "OK"
-                    return _courrier.oserror __("VFS cannot download file : {0}", me.path), (_API.throwe "OS.VFS"), r unless r.body
+                    Ant.OS.API.loaded q, "OK"
+                    return Ant.OS.announcer.oserror __("VFS cannot download file : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), r unless r.body
                     bytes = []
                     for i in [0..(r.body.length - 1)]
                         bytes.push r.body.charCodeAt i
                     bytes = new Uint8Array(bytes)
                     blob = new Blob [bytes], { type: "octet/stream" }
-                    _API.saveblob me.basename, blob
+                    Ant.OS.API.saveblob me.basename, blob
                 .catch (err) ->
-                    _API.loaded q, "FAIL"
-                    _courrier.oserror __("VFS cannot download file : {0}", me.path), (_API.throwe "OS.VFS"), err
+                    Ant.OS.API.loaded q, "FAIL"
+                    Ant.OS.announcer.oserror __("VFS cannot download file : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), err
             
             when "move"
-                dest = p.asFileHandler().parent().asFileHandler()
+                dest = p.asFileHandle().parent().asFileHandle()
                 dest.onready () ->
                     previousParents = me.info.parents.join ','
                     gapi.client.drive.files.update {
@@ -307,27 +307,27 @@ class GoogleDriveHandler extends this.OS.API.VFS.BaseFileHandler
                         fields: "id"
                     }
                     .then (r) ->
-                        _API.loaded q, "OK"
-                        return _courrier.oserror __("VFS cannot move : {0}", me.path), (_API.throwe "OS.VFS"), r unless r
+                        Ant.OS.API.loaded q, "OK"
+                        return Ant.OS.announcer.oserror __("VFS cannot move : {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), r unless r
                         f r
                     .catch (err) ->
-                        _API.loaded q, "FAIL"
-                        _courrier.oserror __("VFS cannot move : {0}", me.gid), (_API.throwe "OS.VFS"), err
+                        Ant.OS.API.loaded q, "FAIL"
+                        Ant.OS.announcer.oserror __("VFS cannot move : {0}", me.gid), (Ant.OS.API.throwe "OS.VFS"), err
                 , (err) ->
-                    _API.loaded q, "FAIL"
+                    Ant.OS.API.loaded q, "FAIL"
             else
-                _API.loaded q, "FAIL"
-                return _courrier.osfail __("VFS unknown action: {0}", n), (_API.throwe "OS.VFS"), n
+                Ant.OS.API.loaded q, "FAIL"
+                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
 
 
-self.OS.API.VFS.register "^gdv$", GoogleDriveHandler
+self.OS.API.VFS.register "^gdv$", GoogleDriveHandle
 # search the cache for file
 self.OS.API.onsearch "Google Drive", (t) ->
     arr = []
     term = new RegExp t, "i"
     for k, v of G_CACHE
         if (k.match term) or (v and v.mime.match term)
-            file = k.asFileHandler()
+            file = k.asFileHandle()
             file.text = file.basename
             file.mime = v.mime
             file.iconclass = "fa fa-file"
@@ -339,7 +339,7 @@ self.OS.API.onsearch "Google Drive", (t) ->
 
 self.OS.onexit "cleanUpGoogleDrive", () ->
     G_CACHE = { "gdv://": { id: "root", mime: 'dir' } }
-    return unless _OS.setting.VFS.gdrive and _API.libready _OS.setting.VFS.gdrive.apilink
+    return unless Ant.OS.setting.VFS.gdrive and Ant.OS.API.libready Ant.OS.setting.VFS.gdrive.apilink
     auth2 = gapi.auth2.getAuthInstance()
     return unless auth2
     if auth2.isSignedIn.get()
