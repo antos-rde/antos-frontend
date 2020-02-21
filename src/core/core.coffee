@@ -31,31 +31,6 @@ Ant.OS or=
         appearance: {}
         VFS: {}
         system: {}
-    announcer:
-        observable: riot.observable()
-        quota: 0
-        listeners: {}
-        on: (e, f, a) ->
-            Ant.OS.announcer.listeners[a.pid] = [] unless Ant.OS.announcer.listeners[a.pid]
-            Ant.OS.announcer.listeners[a.pid].push { e: e, f: f }
-            Ant.OS.announcer.observable.on e, f
-        trigger: (e, d) -> Ant.OS.announcer.observable.trigger e, d
-        osfail: (m, e, s) ->
-            Ant.OS.announcer.ostrigger "fail", { m: m,  e: e, s: s }
-        oserror: (m, e, s) ->
-            Ant.OS.announcer.ostrigger "error", { m: m,  e: e, s: s }
-        osinfo: (m) ->
-            Ant.OS.announcer.ostrigger "info", { m: m,  e: null, s: null }
-        ostrigger: (e, d) ->
-            Ant.OS.announcer.trigger e, { id: 0, data: d, name: "OS" }
-        unregister: (app) ->
-            return unless Ant.OS.announcer.listeners[app.pid] and Ant.OS.announcer.listeners[app.pid].length > 0
-            Ant.OS.announcer.observable.off i.e, i.f for i in Ant.OS.announcer.listeners[app.pid]
-            delete Ant.OS.announcer.listeners[app.pid]
-            # Ant.OS.announcer.listeners[app.pid]
-        getMID: () ->
-            Ant.OS.announcer.quota += 1
-            Ant.OS.announcer.quota
     register: (name, x) ->
         if x.type is 3 then Ant.OS.GUI.subwindows[name] = x else Ant.OS.APP[name] = x
     

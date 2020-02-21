@@ -1,0 +1,13 @@
+{
+    "app":"ShowCase",
+    "name": "ShowCase",
+    "description":"AntOS 1.1.0a features showcase",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "licences": "GPLv3"
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "mimes":["none"]
+}

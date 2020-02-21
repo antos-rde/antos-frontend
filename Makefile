@@ -15,6 +15,7 @@ coffees= 	src/core/core.coffee\
         	src/core/api.coffee\
 			src/core/settings.coffee\
         	src/core/handles/RemoteHandle.coffee\
+			src/core/Announcerment.coffee\
         	src/core/vfs.coffee\
 			src/core/vfs/GoogleDriveHandle.coffee\
 			src/core/db.coffee\
@@ -24,12 +25,13 @@ coffees= 	src/core/core.coffee\
 			src/core/BaseService.coffee\
 			src/core/BaseEvent.coffee\
 			src/core/BaseDialog.coffee\
+			src/core/tag.coffee\
         	src/antos.coffee
  
 
 
 
-packages = CoreServices ActivityMonitor Setting # Files MarkOn MarketPlace Preview NotePad wTerm
+packages = CoreServices ActivityMonitor Setting ShowCase # Files MarkOn MarketPlace Preview NotePad wTerm
 
 main: initd build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
@@ -68,7 +70,7 @@ build_tags:
 	@echo "$(BLUE)Building tag files$(NC)"
 	-mkdir $(BUILDDIR)/resources
 	-rm $(BUILDDIR)/resources/antos_tags.js
-	for f in src/core/tags/*; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
+	for f in src/core/tags/*.tag; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
 languages:
 	-mkdir $(BUILDDIR)/resources
@@ -104,7 +106,7 @@ package:
 	cd src/packages/$$PKG && make;\
 	cd ../../../;\
 	test -d $(BUILDDIR)/packages/$$PKG || mkdir -p $(BUILDDIR)/packages/$$PKG;\
-	cp -rf src/packages/$$PKG/build/* $(BUILDDIR)/packages/$$PKG/;\
+	cp -rfv src/packages/$$PKG/build/* $(BUILDDIR)/packages/$$PKG/;\
 	test -d src/packages/$$PKG/build && rm -r src/packages/$$PKG/build;
 
 pkgar:
@@ -142,4 +144,4 @@ uglify:
 release: main uglify
 
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)/{resources,scripts,packages,index.html}
