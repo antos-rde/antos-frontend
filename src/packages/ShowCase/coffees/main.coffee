@@ -23,14 +23,31 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         console.log me.announcer
         @on "btclick", (e) ->
+            me.openwin()
+            ###
             me.announcer.trigger("evt1", "Hello 1")
             me.announcer.off("*")
             me.announcer.trigger("evt2", "Hello 2")
             console.log me.announcer
             me.notify "Hello"
-            tag = new Ant.OS.GUI.tags["afx-window"]()
             console.log tag
-
+            ###
+    openwin: () ->
+        scheme =  $.parseHTML """
+        <afx-app-window apptitle="Preview" width="650" height="500">
+            <div>
+                <p>hello</p>
+            </div>
+        </afx-app-window>
+        """
+        obj = scheme[0].uify()
+        ($ "#desktop").append obj
+        obj.set "resizable", false
+        obj.set "minimizable", false
+        obj.observable.on "exit", () ->
+            console.log "exit"
+            obj.observable.off "*"
+            $(obj).remove()
 
 ShowCase.singleton = false
 this.OS.register "ShowCase", ShowCase

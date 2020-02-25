@@ -25,7 +25,8 @@ coffees= 	src/core/core.coffee\
 			src/core/BaseService.coffee\
 			src/core/BaseEvent.coffee\
 			src/core/BaseDialog.coffee\
-			src/core/tag.coffee\
+			src/core/tags/tag.coffee\
+			src/core/tags/WindowTag.coffee\
         	src/antos.coffee
  
 
