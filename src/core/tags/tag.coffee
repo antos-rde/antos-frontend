@@ -9,16 +9,19 @@ class Ant.OS.GUI.BaseTag
         @root.observable = @observable
         @root.set = (k, v) -> me.set k, v
         @root.get = (k) -> me.get k
-        
+        @root.aid = () -> me.aid()
         @refs = {}
         @setopt "data-id", Math.floor(Math.random() * 100000) + 1
-        @wrapper = @mkui()
-        if @refs["yield"]
-            ($($(v).detach()[0].uify(@observable)).appendTo(@refs.yield)) for v in $(@root).children()
-            $(@wrapper).appendTo(@root)
-        else
-            $(@root).empty()
-            $(@wrapper).appendTo(@root)
+        @children = []
+        dom = @mkui()
+        if dom
+            if @refs.yield
+                @children = $(@root).children()
+                $(v).detach().appendTo @refs.yield for v in @children
+                $(dom).appendTo(@root)
+            else
+                $(@root).empty()
+                $(dom).appendTo(@root)
 
     setopt: (name, val) ->
         value = val
@@ -34,19 +37,27 @@ class Ant.OS.GUI.BaseTag
         @opts[opt] = value
         @["on_#{opt}_changed"](value) if @["on_#{opt}_changed"]
     
-    id: () ->
+    aid: () ->
         @get "data-id"
     
 
     get: (opt) ->
         @opts[opt]
     
+    uify: () ->
+        @mount()
+        v.uify(@observable) for v in @children
+        @root
+
+    mount: () ->
+
     layout: () ->
         # should be defined by subclasses
 
     mkui: (obj) ->
         tag = obj
         tag = @layout() unless tag
+        return undefined unless tag
         dom = $("<#{tag.el}>")
         $(dom).addClass tag.class if tag.class
         if tag.children
@@ -54,12 +65,13 @@ class Ant.OS.GUI.BaseTag
         if tag.ref
             @refs[tag.ref] = dom
         # dom.mount @observable
-        return dom
+        dom
 
 Element.prototype.uify = (observable) ->
     tag = @tagName.toLowerCase()
-    if RegExp('afx-*', "i" ).test(tag) and Ant.OS.GUI.tag[tag]
-        return new Ant.OS.GUI.tag[tag](@, observable).root
+    if RegExp("afx-*", "i" ).test(tag) and Ant.OS.GUI.tag[tag]
+        o = new Ant.OS.GUI.tag[tag](@, observable)
+        return o.uify()
     return @
 
 Ant.OS.GUI.define = (name, cls) ->

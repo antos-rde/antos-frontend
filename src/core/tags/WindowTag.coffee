@@ -12,6 +12,13 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
         @history = {}
         @desktop = $(@get "desktop")
         @desktop_pos = @desktop.offset()
+
+    resize: () ->
+        ch = $(@refs["yield"]).height() / $(@refs["yield"]).children().length
+        $(@refs["yield"]).children().each (e) ->
+            $(this).css "height", "#{ch}px"
+
+    mount: () ->
         me = @
         @root.contextmenuHandle = (e) ->
         $(@refs["minbt"]).click (e) ->
@@ -22,15 +29,6 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
 
         $(@refs["closebt"]).click (e) ->
             me.observable.trigger("exit")
-        @mount()
-
-    resize: () ->
-        ch = $(@refs["yield"]).height() / $(@refs["yield"]).children().length
-        $(@refs["yield"]).children().each (e) ->
-            $(this).css "height", "#{ch}px"
-
-    mount: () ->
-        me = @
         left = ($(@desktop).width()  - (@get "width")) / 2
         top = ($(@desktop).height() - (@get "height")) / 2
         $(@root)
@@ -146,7 +144,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                     .css("width", "#{w}px")
                     .css("height", "#{h}px")
                 me.isMaxi = false
-                me.observable.trigger "resize", { id: me.id(), w: w, h: h }
+                me.observable.trigger "resize", { id: me.aid(), w: w, h: h }
 
             $(window).on "mouseup", (e) ->
                 $(window).unbind "mousemove", null
@@ -169,7 +167,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 .css("height", "#{h}px")
                 .css("top", "0")
                 .css("left", "0")
-            @observable.trigger 'resize', { id: @id(), w: w, h: h }
+            @observable.trigger 'resize', { id: @aid(), w: w, h: h }
             @isMaxi = true
         else
             @isMaxi = false
@@ -178,7 +176,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 .css("height", @history.height)
                 .css("top", @history.top)
                 .css("left", @history.left)
-            @observable.trigger 'resize', { id: @id(), w: history.width, h: history.height }
+            @observable.trigger 'resize', { id: @aid(), w: history.width, h: history.height }
 
     layout: () ->
         {

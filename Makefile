@@ -11,22 +11,25 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 
-coffees= 	src/core/core.coffee\
-        	src/core/api.coffee\
-			src/core/settings.coffee\
-        	src/core/handles/RemoteHandle.coffee\
-			src/core/Announcerment.coffee\
-        	src/core/vfs.coffee\
-			src/core/vfs/GoogleDriveHandle.coffee\
-			src/core/db.coffee\
-			src/core/gui.coffee\
-			src/core/BaseModel.coffee\
-			src/core/BaseApplication.coffee\
-			src/core/BaseService.coffee\
-			src/core/BaseEvent.coffee\
-			src/core/BaseDialog.coffee\
-			src/core/tags/tag.coffee\
-			src/core/tags/WindowTag.coffee\
+coffees= 	src/core/core.coffee \
+        	src/core/api.coffee \
+			src/core/settings.coffee \
+        	src/core/handles/RemoteHandle.coffee \
+			src/core/Announcerment.coffee \
+        	src/core/vfs.coffee \
+			src/core/vfs/GoogleDriveHandle.coffee \
+			src/core/db.coffee \
+			src/core/gui.coffee \
+			src/core/BaseModel.coffee \
+			src/core/BaseApplication.coffee \
+			src/core/BaseService.coffee \
+			src/core/BaseEvent.coffee \
+			src/core/BaseDialog.coffee \
+			src/core/tags/tag.coffee \
+			src/core/tags/WindowTag.coffee \
+			src/core/tags/TileLayoutTags.coffee \
+			src/core/tags/ResizerTag.coffee \
+			src/core/tags/LabelTag.coffee \
         	src/antos.coffee
  
 
@@ -145,4 +148,7 @@ uglify:
 release: main uglify
 
 clean:
-	rm -rf $(BUILDDIR)/{resources,scripts,packages,index.html}
+	rm -rf $(BUILDDIR)/resources
+	rm -rf $(BUILDDIR)/scripts
+	rm -rf $(BUILDDIR)/packages
+	rm -rf $(BUILDDIR)/index.html
