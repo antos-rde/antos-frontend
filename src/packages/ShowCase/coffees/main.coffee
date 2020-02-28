@@ -50,7 +50,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     </afx-hbox>
                     <afx-resizer data-height="5" />
                     <afx-hbox>
-                        <afx-list-view data-id="list" />
+                        <afx-list-view data-id="list" multiselect="true" />
                     </afx-hbox>
                      <afx-hbox data-height="150">
                         <div>box center 3</div>
@@ -90,6 +90,9 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 4" },
             { text: "some thing 5" }
         ]
+        list[0].set "onlistselect", (e) ->
+            console.log(e.items)
+        
 
 ShowCase.singleton = true
 this.OS.register "ShowCase", ShowCase

@@ -71,11 +71,15 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @setopt "itemtag", "afx-list-item"
         @setopt "multiselect", false
         @setopt "selectedItem", undefined
-        @setopt "selectedIndex", -1
+        @setopt "selectedItems", []
         @items = []
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
+
+    multiselect: () ->
+        @get "multiselect"
+
 
     on_buttons_changed: (v) ->
         return if @get "dropdown"
@@ -94,12 +98,20 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
                 .set "ondbclick", (e) ->
                     me.idbclick e
                 .set "onclick", (e) ->
-                    return if not e.item or e.item is me.selectedItem
-                    e.item.set "selected", true
+                    me.iclick e
                 .set "onselect", (e) ->
                     me.iselect e
                 .set "onclose", (e) ->
                     me.iclose e
+
+    iclick: (e) ->
+        return if not e.item
+        list = @get("selectedItems")
+        if @multiselect() and list.includes(e.item)
+            list.splice(list.indexOf(e.item))
+            return e.item.set "selected", false
+        
+        e.item.set "selected", true
 
     icontextmenu: (e) ->
         console.log "context menu", e
@@ -107,8 +119,15 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         console.log "db click", e
     iselect: (e) ->
         return unless e.item
-        @selectedItem.set "selected", false if @selectedItem
-        @selectedItem = e.item
+        if @multiselect()
+            return if @get("selectedItems").includes e.item
+            @set "selectedItem", e.item
+            @get("selectedItems").push e.item
+            e.items = @get("selectedItems")
+        else
+            @get("selectedItem").set "selected", false if @get("selectedItem")
+            @set "selectedItem", e.item
+            @set "selectedItems", [e.item]
         @get("onlistselect")(e)
 
     iclose: (e) ->
