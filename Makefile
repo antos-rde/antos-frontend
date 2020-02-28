@@ -30,6 +30,8 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/TileLayoutTags.coffee \
 			src/core/tags/ResizerTag.coffee \
 			src/core/tags/LabelTag.coffee \
+			src/core/tags/ButtonTag.coffee \
+			src/core/tags/ListViewTag.coffee \
         	src/antos.coffee
  
 

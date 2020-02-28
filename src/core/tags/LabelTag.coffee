@@ -4,7 +4,11 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         @setopt "color", undefined
         @setopt "icon", undefined
         @setopt "iconclass", undefined
+        @refs.text = document.createTextNode ""
+        $(@refs.container).append @refs.text
         @setopt "text", ""
+
+    mount: () ->
 
     on_color_changed: (v) ->
         return unless v
@@ -32,16 +36,15 @@ class LabelTag extends Ant.OS.GUI.BaseTag
 
 
     on_text_changed: (v) ->
-        $(@refs.text).text v.__() if v
+        @refs.text.nodeValue =  v.__() if v
 
     layout: () ->
-        {
+       [{
             el: "span", ref: "container", children: [
                 { el: "i", ref: "iclass" },
-                { el: "i", ref: "i", class: "icon-style" },
-                { el: "i", ref: "text" }
+                { el: "i", ref: "i", class: "icon-style" }
             ]
-        }
+        }]
 
 
 Ant.OS.GUI.define "afx-label", LabelTag

@@ -13,15 +13,17 @@ class Ant.OS.GUI.BaseTag
         @refs = {}
         @setopt "data-id", Math.floor(Math.random() * 100000) + 1
         @children = []
-        dom = @mkui()
-        if dom
-            if @refs.yield
-                @children = $(@root).children()
-                $(v).detach().appendTo @refs.yield for v in @children
-                $(dom).appendTo(@root)
-            else
-                $(@root).empty()
-                $(dom).appendTo(@root)
+
+        for obj in @layout()
+            dom = @mkui obj
+            if dom
+                if @refs.yield
+                    @children = $(@root).children()
+                    $(v).detach().appendTo @refs.yield for v in @children
+                    $(dom).appendTo(@root)
+                else
+                    # $(@root).empty()
+                    $(dom).appendTo(@root)
 
     setopt: (name, val) ->
         value = val
@@ -36,6 +38,7 @@ class Ant.OS.GUI.BaseTag
     set: (opt, value) ->
         @opts[opt] = value
         @["on_#{opt}_changed"](value) if @["on_#{opt}_changed"]
+        @
     
     aid: () ->
         @get "data-id"
@@ -52,20 +55,19 @@ class Ant.OS.GUI.BaseTag
     mount: () ->
 
     layout: () ->
+        []
         # should be defined by subclasses
 
-    mkui: (obj) ->
-        tag = obj
-        tag = @layout() unless tag
+    mkui: (tag) ->
         return undefined unless tag
         dom = $("<#{tag.el}>")
         $(dom).addClass tag.class if tag.class
         if tag.children
             $(@mkui(v)).appendTo(dom) for v in tag.children
         if tag.ref
-            @refs[tag.ref] = dom
+            @refs[tag.ref] = dom[0]
         # dom.mount @observable
-        dom
+        dom[0].uify(@observable)
 
 Element.prototype.uify = (observable) ->
     tag = @tagName.toLowerCase()

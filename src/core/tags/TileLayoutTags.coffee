@@ -19,9 +19,9 @@ class TileLayoutTag extends Ant.OS.GUI.BaseTag
 
 
     layout: () ->
-        {
+        [{
             el: "div", ref: "yield"
-        }
+        }]
 
 
 class HBoxTag extends TileLayoutTag

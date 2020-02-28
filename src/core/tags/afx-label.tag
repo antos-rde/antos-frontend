@@ -1,7 +1,7 @@
 <afx-label>
     <span style = {color?"color:" + color:""} >
         <i if={iconclass} class = {iconclass} ></i>
-        <i if={icon} class="icon-style" style = { "background: url("+window.OS.API.handler.get+"/"+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
+        <i if={icon} class="icon-style" style = { "background: url("+window.OS.API.handle.get+"/"+icon+");background-size: 100% 100%;background-repeat: no-repeat;" }></i>
         { text?text.__():"" }
     </span>
     <script>

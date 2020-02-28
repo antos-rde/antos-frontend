@@ -62,6 +62,6 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         @observable.trigger "calibrate", @resizable_el.aid()
 
     layout: () ->
-        return undefined
+        []
 
 Ant.OS.GUI.define "afx-resizer", ResizerTag

@@ -4,7 +4,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
         @setopt "minimizable", true
         @setopt "resizable", true
         @setopt "apptitle", "Untitled"
-        @setopt "desktop", "#desktop"
+        @setopt "desktop", Ant.OS.GUI.workspace
         @setopt "width", 400
         @setopt "height", 300
         @shown = false
@@ -179,7 +179,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             @observable.trigger 'resize', { id: @aid(), w: history.width, h: history.height }
 
     layout: () ->
-        {
+        [{
             el: "div", class: "afx-window-wrapper", children: [
                 {
                     el: "ul", class: "afx-window-top", children: [
@@ -193,6 +193,6 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 { el: "div", ref: "yield", class: "afx-window-content" },
                 { el: "div", ref: "grip", class: "afx-window-grip" }
             ]
-        }
+        }]
 
 Ant.OS.GUI.define "afx-app-window", WindowTag

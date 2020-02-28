@@ -19,7 +19,7 @@ afx-list-view > div.list-container >  ul{
     padding: 0;
 }
 
-afx-list-view  > div.list-container > ul > li{
+afx-list-view  > div.list-container > ul  li{
     margin:0;
     padding:0;
     list-style: none;
@@ -33,7 +33,7 @@ afx-list-view  > div.list-container > ul > li{
     -webkit-user-select:none;
     cursor:default;
 }
-afx-list-view > div.list-container > ul >li:nth-child(odd){
+afx-list-view > div.list-container > ul li:nth-of-type(odd){
     background-color: #f5F5F5;
 }
 afx-list-view  i.closable{
@@ -54,11 +54,11 @@ afx-list-view  i.closable:before{
     font-style: normal;
 }
 
-afx-list-view  > div.list-container > ul > li > i {
+afx-list-view  > div.list-container > ul  li > i {
     margin-right: 3px;
     
 }
-afx-list-view  > div.list-container > ul > li.selected {
+afx-list-view  > div.list-container > ul  li.selected {
     background-color: #116cd6;
     color:white;
 }
@@ -98,7 +98,7 @@ afx-list-view.dropdown > div.list-container > ul{
     border-top-left-radius: 0px;
     z-index: 10;
 }
-afx-list-view.dropdown > div.list-container > ul > li{
+afx-list-view.dropdown > div.list-container > ul  li{
     display: inline-block;
     width:100%;
 }
@@ -125,7 +125,7 @@ afx-list-view.dropdown div.list-container div:before {
     top:25%;
     right: 5px;
  }
-afx-list-view.dropdown > div.list-container > ul > li:hover{
+afx-list-view.dropdown > div.list-container > ul  li:hover{
     background-color: #dcdcdc;
     color: #414339;
 }
@@ -140,7 +140,7 @@ afx-list-view ul.complex-content li{
     color:#5e5f59;
     list-style: none;
 }
-afx-list-view  > div.list-container > ul > li.selected ul.complex-content li{
+afx-list-view  > div.list-container > ul  li.selected ul.complex-content li{
     color:white;
 }
 /*

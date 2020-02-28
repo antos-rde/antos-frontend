@@ -20,6 +20,7 @@ Ant.OS.GUI =
     subwindows: new Object()
     dialog: undefined
     fullscreen: false
+    workspace: "#desktop"
     shortcut:
         ALT: {}
         CTRL: {}
@@ -331,7 +332,7 @@ Ant.OS.GUI =
                 Ant.OS.GUI.showTooltip el, ($(el).attr "tooltip"), e
             
             # desktop default file manager
-            desktop = $ "#desktop"
+            desktop = $ Ant.OS.GUI.workspace
             fp = Ant.OS.setting.desktop.path.asFileHandle()
             desktop[0].fetch = () ->
                 fn = () ->
@@ -413,7 +414,7 @@ Ant.OS.GUI =
             alert __("System fail: Cannot init desktop manager")
             console.log s, e
     refreshDesktop: () ->
-        ($ "#desktop")[0].fetch()
+        ($ Ant.OS.GUI.workspace)[0].fetch()
     
     refreshSystemMenu: () ->
         Ant.OS.GUI.SYS_MENU[0].child.length = 1
