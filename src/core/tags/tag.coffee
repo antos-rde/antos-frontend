@@ -36,8 +36,11 @@ class Ant.OS.GUI.BaseTag
         @set name, value
     
     set: (opt, value) ->
-        @opts[opt] = value
-        @["on_#{opt}_changed"](value) if @["on_#{opt}_changed"]
+        if opt is "*"
+            @set k, v for k, v of value
+        else
+            @opts[opt] = value
+            @["on_#{opt}_changed"](value) if @["on_#{opt}_changed"]
         @
     
     aid: () ->
@@ -45,6 +48,7 @@ class Ant.OS.GUI.BaseTag
     
 
     get: (opt) ->
+        return @opts if opt is "*"
         @opts[opt]
     
     uify: () ->

@@ -43,14 +43,16 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 <afx-resizer data-width="5" />
                 <afx-vbox data-width="grow">
                     <afx-hbox min-height="50">
+                    <afx-switch data-id="switch" />
                     <afx-button text="__(This is the label)"
                         data-id="bttest"
                         iconclass="fa fa-camera-retro fa-lg"
                         icon="os://packages/DummyApp/icon.png"/>
+                    <afx-nspinner data-id="spin" value="10" step="2" />
                     </afx-hbox>
                     <afx-resizer data-height="5" />
                     <afx-hbox>
-                        <afx-list-view data-id="list" multiselect="true" />
+                        <afx-list-view data-id="list" dropdown="true" multiselect="false" />
                     </afx-hbox>
                      <afx-hbox data-height="150">
                         <div>box center 3</div>
@@ -84,8 +86,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         list[0].set "data", [
             { text: "some thing with avery long text" },
-            { text: "some thing 1" },
-            { text: "some thing 2" },
+            { text: "some thing 1", closable: true },
+            { text: "some thing 2", iconclass: "fa fa-camera-retro fa-lg" },
             { text: "some thing 3" },
             { text: "some thing 4" },
             { text: "some thing 5" }
@@ -93,6 +95,13 @@ class ShowCase extends this.OS.GUI.BaseApplication
         list[0].set "onlistselect", (e) ->
             console.log(e.items)
         
+        sw = $ "[data-id='switch']", scheme[0]
+        sw[0].set "onchange", (e) ->
+            console.log e.swon
+        
+        spin = $ "[data-id='spin']", scheme[0]
+        spin[0].set "onchange", (e) ->
+            console.log e.nspin
 
 ShowCase.singleton = true
 this.OS.register "ShowCase", ShowCase

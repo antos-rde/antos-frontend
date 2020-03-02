@@ -72,12 +72,12 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @setopt "multiselect", false
         @setopt "selectedItem", undefined
         @setopt "selectedItems", []
-        @items = []
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
 
     multiselect: () ->
+        return false if @get "dropdown"
         @get "multiselect"
 
 
@@ -89,12 +89,11 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         for item in data
             el = $("<#{@get "itemtag"}>").appendTo @refs.mlist
             el[0].uify @observable
-            console.log el
             me = @
             el[0]
                 .set "data", item
                 .set "oncontextmenu", (e) ->
-                    me.icontextmenu e
+                    me.iclick e
                 .set "ondbclick", (e) ->
                     me.idbclick e
                 .set "onclick", (e) ->
@@ -108,15 +107,12 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         return if not e.item
         list = @get("selectedItems")
         if @multiselect() and list.includes(e.item)
-            list.splice(list.indexOf(e.item))
+            list.splice(list.indexOf(e.item), 1)
             return e.item.set "selected", false
-        
         e.item.set "selected", true
 
-    icontextmenu: (e) ->
-        console.log "context menu", e
     idbclick: (e) ->
-        console.log "db click", e
+        @get("onlistdbclick")(e)
     iselect: (e) ->
         return unless e.item
         if @multiselect()
@@ -128,10 +124,18 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @get("selectedItem").set "selected", false if @get("selectedItem")
             @set "selectedItem", e.item
             @set "selectedItems", [e.item]
+            e.items = [e.item]
+
+        if @get "dropdown"
+            @refs.drlabel.set "*", e.item.get "data"
+            $(@refs.mlist).hide()
+
         @get("onlistselect")(e)
+        @observable.trigger "listselect", { id: @aid(), evt: e }
 
     iclose: (e) ->
-        console.log "close", e
+        return unless e.item
+        $(e.item).remove()
 
     on_dropdown_changed: (v) ->
         $(@refs.container).removeAttr "style"
