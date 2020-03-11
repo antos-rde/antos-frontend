@@ -35,9 +35,11 @@ class ShowCase extends this.OS.GUI.BaseApplication
     openwin: () ->
         scheme =  $.parseHTML """
         <afx-app-window apptitle="Preview" width="650" height="500">
+            <afx-vbox>
+                <afx-menu data-height="30" data-id="menu" />
             <afx-hbox>
                <afx-vbox data-width="150">
-                    <div data-height="30%">box 1</div>
+                    <div>box 2</div>
                     <div>box 2</div>
                 </afx-vbox>
                 <afx-resizer data-width="5" />
@@ -64,6 +66,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     <div data-height="200">box 4</div>
                 </afx-vbox>
             </afx-hbox>
+            </afx-vbox>
         </afx-app-window>
         """
         ($ "#desktop").append scheme[0]
@@ -93,15 +96,33 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 5" }
         ]
         list[0].set "onlistselect", (e) ->
-            console.log(e.items)
+            console.log(e.data.items)
         
         sw = $ "[data-id='switch']", scheme[0]
         sw[0].set "onchange", (e) ->
-            console.log e.swon
+            console.log e.data
         
         spin = $ "[data-id='spin']", scheme[0]
         spin[0].set "onchange", (e) ->
-            console.log e.nspin
+            console.log e.data
 
+        menu = $ "[data-id='menu']", scheme[0]
+        console.log menu[0]
+        menudata = [
+            { text: "__(Refresh)", dataid: "refresh" },
+            { text: "__(Sidebar)", dataid: "side" },
+            { text: "__(Navigation bar)",  dataid: "nav" },
+            { text: "__(Hidden files)",  dataid: "hidden" },
+            { text: "__(Type)", children: [
+                    { text: "__(Icon view)", dataid: "icon", type: 'icon' },
+                    { text: "__(List view)", dataid: "list", type: 'list', children: [
+                        { text: "__(Refresh)" },
+                        { text: "__(Sidebar)" }
+                    ] },
+                    { text: "__(Tree view)", dataid: "tree", type: 'tree' }
+                ]
+            }
+        ]
+        menu[0].set "items", menudata
 ShowCase.singleton = true
 this.OS.register "ShowCase", ShowCase

@@ -44,8 +44,8 @@ class ButtonTag extends Ant.OS.GUI.BaseTag
         if typeof hd is "string"
             eval hd
         else if hd
-            hd e
-        @observable.trigger "btclick", { id: @aid(), data: @root }
+            hd { id: @aid(), data: e }
+        @observable.trigger "btclick", { id: @aid(), data: e }
         if @toggle
             @set "selected", !@get "selected"
 

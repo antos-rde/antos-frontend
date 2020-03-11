@@ -78,6 +78,9 @@ Element.prototype.uify = (observable) ->
     if RegExp("afx-*", "i" ).test(tag) and Ant.OS.GUI.tag[tag]
         o = new Ant.OS.GUI.tag[tag](@, observable)
         return o.uify()
+    ### else
+        $(@).children().each () ->
+            @uify(observable) ###
     return @
 
 Ant.OS.GUI.define = (name, cls) ->

@@ -14,9 +14,9 @@ class SwitchTag extends Ant.OS.GUI.BaseTag
     onchange: (e) ->
         return unless @get "enable"
         @setopt "swon", !@get("swon")
-        e.swon = @get "swon"
-        @get("onchange")(e)
-        @observable.trigger "switch", { id: @aid(), evt: e }
+        evt = { id: @aid(), data: @get "swon" }
+        @get("onchange") evt
+        @observable.trigger "switch", evt
 
     on_swon_changed: (v) ->
         $(@refs.switch).removeClass()

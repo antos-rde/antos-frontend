@@ -22,13 +22,13 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
         me = @
         @root.contextmenuHandle = (e) ->
         $(@refs["minbt"]).click (e) ->
-            me.observable.trigger("hide")
+            me.observable.trigger "hide", { id: me.aid() }
         
         $(@refs["maxbt"]).click (e) ->
             me.toggle_window()
 
         $(@refs["closebt"]).click (e) ->
-            me.observable.trigger("exit")
+            me.observable.trigger("exit", { id: me.aid() })
         left = ($(@desktop).width()  - (@get "width")) / 2
         top = ($(@desktop).height() - (@get "height")) / 2
         $(@root)
@@ -40,7 +40,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             .css("z-index", Ant.OS.GUI.zindex++)
         $(@root).on "mousedown", (e) ->
             return if me.shown
-            me.observable.trigger "focus"
+            me.observable.trigger "focus", { id: me.aid() }
 
         $(@refs["dragger"]).dblclick (e) ->
             me.toggle_window()
@@ -66,13 +66,13 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
 
         @observable.on "toggle", () ->
             if me.shown
-                me.observable.trigger "hide"
+                me.observable.trigger "hide", { id: me.aid() }
             else
-                me.observable.trigger "focus"
+                me.observable.trigger "focus", { id: me.aid() }
         @enable_dragging()
         @enable_resize()
         @resize()
-        @observable.trigger "rendered", @root
+        @observable.trigger "rendered", { id: me.aid() }
 
     on_minimizable_changed: (value) ->
         if value then $(@refs["minbt"]).show() else $(@refs["minbt"]).hide()
@@ -144,7 +144,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                     .css("width", "#{w}px")
                     .css("height", "#{h}px")
                 me.isMaxi = false
-                me.observable.trigger "resize", { id: me.aid(), w: w, h: h }
+                me.observable.trigger "resize", { id: me.aid(), data: { w: w, h: h } }
 
             $(window).on "mouseup", (e) ->
                 $(window).unbind "mousemove", null
@@ -167,7 +167,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 .css("height", "#{h}px")
                 .css("top", "0")
                 .css("left", "0")
-            @observable.trigger 'resize', { id: @aid(), w: w, h: h }
+            @observable.trigger 'resize', { id: @aid(), data: { w: w, h: h } }
             @isMaxi = true
         else
             @isMaxi = false
@@ -176,7 +176,8 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 .css("height", @history.height)
                 .css("top", @history.top)
                 .css("left", @history.left)
-            @observable.trigger 'resize', { id: @aid(), w: history.width, h: history.height }
+            @observable.trigger 'resize',
+                { id: @aid(), data: { w: history.width, h: history.height } }
 
     layout: () ->
         [{

@@ -46,7 +46,7 @@ afx-menu afx-menu ul {
     box-shadow: 1px 1px 1px #9f9F9F;
     background-color: #e7e7e7;
 }
-afx-menu ul > li{
+afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
     list-style:none;
     margin:0;
     position: relative;

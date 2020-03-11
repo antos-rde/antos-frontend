@@ -54,7 +54,7 @@ class HBoxTag extends TileLayoutTag
         if csize > 0
             $.each auto_width, (i, v) ->
                 $(v).css "width", "#{csize}px"
-        @observable.trigger "hboxchange",  { id: @aid(), w: avaiWidth, h: avaiheight }
+        @observable.trigger "hboxchange",  { id: @aid(), data: { w: avaiWidth, h: avaiheight } }
         
 
 class VBoxTag extends TileLayoutTag
@@ -88,7 +88,7 @@ class VBoxTag extends TileLayoutTag
             $.each auto_height, (i, v) ->
                 $(v).css "height", "#{csize}px"
 
-        @observable.trigger "vboxchange", { id: @aid(), w: avaiwidth, h: avaiheight }
+        @observable.trigger "vboxchange", { id: @aid(), data: { w: avaiwidth, h: avaiheight } }
 
 Ant.OS.GUI.define "afx-hbox", HBoxTag
 Ant.OS.GUI.define "afx-vbox", VBoxTag

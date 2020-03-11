@@ -112,7 +112,9 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         e.item.set "selected", true
 
     idbclick: (e) ->
-        @get("onlistdbclick")(e)
+        evt = { id: @aid(), data: e }
+        @get("onlistdbclick") evt
+        @observable.trigger "listdbclick", evt
     iselect: (e) ->
         return unless e.item
         if @multiselect()
@@ -130,8 +132,9 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @refs.drlabel.set "*", e.item.get "data"
             $(@refs.mlist).hide()
 
-        @get("onlistselect")(e)
-        @observable.trigger "listselect", { id: @aid(), evt: e }
+        evt = { id: @aid(), data: e }
+        @get("onlistselect") evt
+        @observable.trigger "listselect", evt
 
     iclose: (e) ->
         return unless e.item
