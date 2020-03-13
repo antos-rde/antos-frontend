@@ -12,7 +12,7 @@ class ListViewItemTag extends Ant.OS.GUI.BaseTag
         @setopt "closable", false
         @setopt "selected", false
         
-class ListItemSimpleTag extends ListViewItemTag
+class SimpleListItemTag extends ListViewItemTag
     constructor: (r, o) ->
         super r, o
     mount: () ->
@@ -217,4 +217,5 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         ]
 
 Ant.OS.GUI.define "afx-list-view", ListViewTag
-Ant.OS.GUI.define "afx-list-item", ListItemSimpleTag
+Ant.OS.GUI.define "afx-list-item-proto", ListViewItemTag
+Ant.OS.GUI.define "afx-list-item", SimpleListItemTag

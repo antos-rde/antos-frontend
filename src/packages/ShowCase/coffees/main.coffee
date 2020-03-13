@@ -107,22 +107,56 @@ class ShowCase extends this.OS.GUI.BaseApplication
             console.log e.data
 
         menu = $ "[data-id='menu']", scheme[0]
-        console.log menu[0]
-        menudata = [
-            { text: "__(Refresh)", dataid: "refresh" },
-            { text: "__(Sidebar)", dataid: "side" },
-            { text: "__(Navigation bar)",  dataid: "nav" },
-            { text: "__(Hidden files)",  dataid: "hidden" },
-            { text: "__(Type)", children: [
-                    { text: "__(Icon view)", dataid: "icon", type: 'icon' },
-                    { text: "__(List view)", dataid: "list", type: 'list', children: [
-                        { text: "__(Refresh)" },
-                        { text: "__(Sidebar)" }
-                    ] },
-                    { text: "__(Tree view)", dataid: "tree", type: 'tree' }
-                ]
-            }
+        menu[0].set "items", @menu()
+    mnFile:() ->
+        #console.log file
+        me = @
+        arr = {
+            text: "__(File)",
+            child: [
+                { text: "__(New file)", dataid: "#{@name}-mkf", shortcut: 'C-F' },
+                { text: "__(New folder)", dataid: "#{@name}-mkdir", shortcut: 'C-D' },
+                { text: "__(Open with)", dataid: "#{@name}-open", child: @apps },
+                { text: "__(Upload)", dataid: "#{@name}-upload", shortcut: 'C-U' },
+                { text: "__(Download)", dataid: "#{@name}-download" },
+                { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
+                { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
+            ], onmenuselect: (e) ->
+        }
+        return arr
+    mnEdit: () ->
+        me = @
+        {
+            text: "__(Edit)",
+            child: [
+                { text: "__(Rename)", dataid: "#{@name}-mv", shortcut: 'C-R' },
+                { text: "__(Delete)", dataid: "#{@name}-rm", shortcut: 'C-M' },
+                { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
+                { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
+                { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
+            ], onmenuselect: (e) ->
+        }
+    menu: () ->
+        me = @
+        menu = [
+            @mnFile(),
+            @mnEdit(),
+            {
+                text: "__(View)",
+                child: [
+                    { text: "__(Refresh)", dataid: "#{@name}-refresh" },
+                    { text: "__(Sidebar)", switch: true, checked: true },
+                    { text: "__(Navigation bar)", switch: true, checked: false },
+                    { text: "__(Hidden files)", switch: true, checked: true, dataid: "#{@name}-hidden" },
+                    { text: "__(Type)", child: [
+                        { text: "__(Icon view)", radio: true, checked: true, dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "__(List view)", radio:true, checked: false, dataid: "#{@name}-list", type: 'list' },
+                        { text: "__(Tree view)", radio:true, checked: false, dataid: "#{@name}-tree", type: 'tree' }
+                     ], onmenuselect: (e) ->
+                    },
+                ], onmenuselect: (e) ->
+            },
         ]
-        menu[0].set "items", menudata
+        menu
 ShowCase.singleton = true
 this.OS.register "ShowCase", ShowCase
