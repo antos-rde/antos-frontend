@@ -33,6 +33,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
             console.log tag
             ###
     openwin: () ->
+        me = @
         scheme =  $.parseHTML """
         <afx-app-window apptitle="Preview" width="650" height="500">
             <afx-vbox>
@@ -54,7 +55,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     </afx-hbox>
                     <afx-resizer data-height="5" />
                     <afx-hbox>
-                        <afx-list-view data-id="list" dropdown="true" multiselect="false" />
+                        <afx-list-view data-id="list" dropdown="false" multiselect="false" />
                     </afx-hbox>
                      <afx-hbox data-height="150">
                         <div>box center 3</div>
@@ -63,13 +64,15 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 </afx-vbox>
                 <afx-vbox data-width="150">
                     <div data-height="grow">box 3</div>
-                    <div data-height="200">box 4</div>
+                    <div data-height="200">box 4
                 </afx-vbox>
             </afx-hbox>
             </afx-vbox>
         </afx-app-window>
         """
+        ctmenu = $.parseHTML """<afx-menu data-id="mn-context" context="true" style="display:none;" /></div>"""
         ($ "#desktop").append scheme[0]
+        ($ "#wrapper").append ctmenu[0]
         obj = scheme[0].uify()
         bt = $ "[data-id='bttest']", scheme[0]
         bt[0].set "onbtclick", (e) ->
@@ -77,9 +80,9 @@ class ShowCase extends this.OS.GUI.BaseApplication
         obj.set "resizable", true
         obj.set "minimizable", false
         obj.observable.on "exit", () ->
-            console.log "exit"
             obj.observable.off "*"
             $(obj).remove()
+            me.quit()
 
         obj.observable.on "btclick", (e) ->
             console.log "button clicked"
@@ -98,6 +101,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
         list[0].set "onlistselect", (e) ->
             console.log(e.data.items)
         
+
         sw = $ "[data-id='switch']", scheme[0]
         sw[0].set "onchange", (e) ->
             console.log e.data
@@ -108,6 +112,11 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         menu = $ "[data-id='menu']", scheme[0]
         menu[0].set "items", @menu()
+        ctmenu = ctmenu[0].uify(obj.observable)
+        ctmenu.set "items", @menu()
+        list[0].contextmenuHandle = (e) ->
+            console.log e
+            ctmenu.show e
     mnFile:() ->
         #console.log file
         me = @

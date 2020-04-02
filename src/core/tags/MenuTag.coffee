@@ -7,6 +7,7 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
         @setopt "children", undefined
         @setopt "child", undefined
         @setopt "parent", undefined
+        @setopt "rootid", undefined
 
     on_data_changed: (data) ->
         @set  k, v for k, v of data
@@ -110,7 +111,7 @@ class SimpleMenuEntryTag extends MenuEntryTag
         evt = { id: @aid(), data: e }
         e.preventDefault()
         children = @get("children")
-        if @is_root() and @has_children()
+        if @is_root() and @has_children() and not @get "context"
             $(@refs.submenu).show()
         else
             @submenuoff()
@@ -145,12 +146,32 @@ class MenuTag extends Ant.OS.GUI.BaseTag
         @setopt "parent", undefined
         @setopt "contentag", "afx-menu-entry"
         @setopt "items", []
+        me = @
+        @root.show = (e) ->
+            me.showctxmenu e
+
+    showctxmenu: (e) ->
+        return unless @get "context"
+        #console.log 
+        $(@root)
+            .css("top", e.clientY - 15 + "px")
+            .css("left", e.clientX  - 5 +  "px")
+            .show()
+
+    isctxmenu: () ->
+        return @get "context"
 
     mount: () ->
+        me = @
 
     on_context_changed: (v) ->
         $(@refs.container).removeClass("context")
-        $(@refs.container).addClass("context") if v
+        return unless v
+        $(@refs.container).addClass("context")
+        $(@root).hide()
+        @observable.on "menuselect", (e) ->
+            console.log e.data.item
+            console.log e.data.item.get("rootid")
 
     on_items_changed: (data) ->
         me = @
@@ -161,6 +182,7 @@ class MenuTag extends Ant.OS.GUI.BaseTag
             el[0].uify @observable
             el[0].set "data", item
             el[0].set "parent", me.get("parent")
+            el[0].set "rootid", if me.get("parent") then me.get("parent").get("rootid") else me.aid()
             item.domel = el[0]
         $("<li>").appendTo(@refs.container).addClass("afx-corner-fix")
 

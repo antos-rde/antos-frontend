@@ -20,11 +20,11 @@ class Announcer
         @observable = {}
     
     on: (evtName, callback) ->
-        @observable[evtName] = { one: [], many: [] } unless @observable[evtName]
+        @observable[evtName] = { one: new Set(), many: new Set() } unless @observable[evtName]
         @observable[evtName].many.push callback
 
     one: (evtName, callback) ->
-        @observable[evtName] = { one: [], many: [] } unless @observable[evtName]
+        @observable[evtName] = { one: new Set(), many: new Set() } unless @observable[evtName]
         @observable[evtName].one.push callback
 
     off: (evtName, callback) ->
@@ -53,7 +53,7 @@ class Announcer
                 continue unless me.observable[evt]
                 for f, i in me.observable[evt].one
                     f data
-                    me.observable[evt].one = []
+                    me.observable[evt].one = new Set()
                 for f, i in me.observable[evt].many
                     f data
         
@@ -68,7 +68,7 @@ Ant.OS.announcer =
         quota: 0
         listeners: {}
         on: (e, f, a) ->
-            Ant.OS.announcer.listeners[a.pid] = [] unless Ant.OS.announcer.listeners[a.pid]
+            Ant.OS.announcer.listeners[a.pid] = new Set() unless Ant.OS.announcer.listeners[a.pid]
             Ant.OS.announcer.listeners[a.pid].push { e: e, f: f }
             Ant.OS.announcer.observable.on e, f
         trigger: (e, d) -> Ant.OS.announcer.observable.trigger e, d
