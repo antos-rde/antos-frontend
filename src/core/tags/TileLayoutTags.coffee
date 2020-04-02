@@ -12,7 +12,7 @@ class TileLayoutTag extends Ant.OS.GUI.BaseTag
             .css("width", "100%")
         me = @
         @observable.on "resize", (e) -> me.calibrate()
-        @observable.on "calibrate", (e) -> me.calibrate()
+        # @observable.on "calibrate", (e) -> me.calibrate()
         @calibrate()
 
     calibrate: () ->

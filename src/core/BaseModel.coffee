@@ -25,7 +25,7 @@ class BaseModel
         @systemsetting = Ant.OS.setting
         me = @
         @on "exit", () -> me.quit()
-        @host = "#desktop"
+        @host = @_gui.workspace
         @dialog = undefined
     render: (p) ->
         Ant.OS.GUI.loadScheme p, @, @host

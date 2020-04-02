@@ -74,10 +74,10 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
         @resize()
         @observable.trigger "rendered", { id: me.aid() }
 
-    on_minimizable_changed: (value) ->
+    __minimizable__: (value) ->
         if value then $(@refs["minbt"]).show() else $(@refs["minbt"]).hide()
     
-    on_resizable_changed: (value) ->
+    __resizable__: (value) ->
         if value
             $(@refs["maxbt"]).show()
             $(@refs["grip"]).show()
@@ -85,7 +85,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             $(@refs["maxbt"]).hide()
             $(@refs["grip"]).hide()
 
-    on_apptitle_changed: (value) ->
+    __apptitle__: (value) ->
         $(@refs["dragger"]).text value.__() if value
 
     enable_dragging: () ->

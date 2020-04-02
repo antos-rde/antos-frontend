@@ -11,23 +11,23 @@ class ButtonTag extends Ant.OS.GUI.BaseTag
         @setopt "onbtclick", () ->
     
 
-    on_color_changed: (v) ->
+    __color__: (v) ->
         console.log @refs
         @refs.label.set "color", v
     
-    on_icon_changed: (v) ->
+    __icon__: (v) ->
         @refs.label.set "icon", v
     
-    on_iconclass_changed: (v) ->
+    __iconclass__: (v) ->
         @refs.label.set "iconclass", v
     
-    on_text_changed: (v) ->
+    __text__: (v) ->
         @refs.label.set "text", v
     
-    on_enable_changed: (v) ->
+    __enable__: (v) ->
         $(@refs.button).prop "disabled", !(@get "enable")
     
-    on_selected_changed: (v) ->
+    __selected__: (v) ->
         $(@button).removeClass()
         $(@button).addClass "selected" if v
 

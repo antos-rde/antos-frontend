@@ -18,7 +18,7 @@ class SwitchTag extends Ant.OS.GUI.BaseTag
         @get("onchange") evt
         @observable.trigger "switch", evt
 
-    on_swon_changed: (v) ->
+    __swon__: (v) ->
         $(@refs.switch).removeClass()
         $(@refs.switch).addClass "swon" if v
         

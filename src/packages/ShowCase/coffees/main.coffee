@@ -58,8 +58,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         <afx-list-view data-id="list" dropdown="false" multiselect="false" />
                     </afx-hbox>
                      <afx-hbox data-height="150">
-                        <div>box center 3</div>
-                        <div>box center 4</div>
+                        <afx-grid-view data-id="grid" />
                     </afx-hbox>
                 </afx-vbox>
                 <afx-vbox data-width="150">
@@ -73,20 +72,22 @@ class ShowCase extends this.OS.GUI.BaseApplication
         ctmenu = $.parseHTML """<afx-menu data-id="mn-context" context="true" style="display:none;" /></div>"""
         ($ "#desktop").append scheme[0]
         ($ "#wrapper").append ctmenu[0]
-        obj = scheme[0].uify()
+        me.subwin = scheme[0].uify()
         bt = $ "[data-id='bttest']", scheme[0]
         bt[0].set "onbtclick", (e) ->
             console.log "btclicked"
-        obj.set "resizable", true
-        obj.set "minimizable", false
-        obj.observable.on "exit", () ->
-            obj.observable.off "*"
-            $(obj).remove()
+        me.subwin.set "resizable", true
+        me.subwin.set "minimizable", false
+        me.subwin.observable.on "exit", () ->
+            me.subwin.observable.off "*"
+            $(me.subwin).remove()
             me.quit()
 
-        obj.observable.on "btclick", (e) ->
+        me.subwin.observable.on "btclick", (e) ->
             console.log "button clicked"
 
+        me.subwin.observable.on "menuselect", (e) ->
+            console.log e.id
         
         list = $ "[data-id='list']", scheme[0]
 
@@ -112,11 +113,30 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         menu = $ "[data-id='menu']", scheme[0]
         menu[0].set "items", @menu()
-        ctmenu = ctmenu[0].uify(obj.observable)
+        ctmenu = ctmenu[0].uify(me.subwin.observable)
         ctmenu.set "items", @menu()
+        ctmenu.set "onmenuselect", (e) ->
+            console.log "root event", e
         list[0].contextmenuHandle = (e) ->
             console.log e
             ctmenu.show e
+        
+        grid = $ "[data-id='grid']", scheme[0]
+        grid[0].set "header", [{ text: "header1", width: 80 }, { text: "header2" }, { text: "header3" }]
+        grid[0].set "rows", [
+            [{ text: "text 1" }, { text: "text 2" }, { text: "text 3" }],
+            [{ text: "text 4" }, { text: "text 5" }, { text: "text 6" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "Subgrid on columns and rows. Subgrid on columns, implicit grid rows. Subgrid on rows, defined column tracks" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
+            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }]
+        ]
+
     mnFile:() ->
         #console.log file
         me = @
@@ -130,7 +150,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Download)", dataid: "#{@name}-download" },
                 { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
                 { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
-            ], onmenuselect: (e) ->
+            ], onchildselect: (e) -> console.log "child", e
         }
         return arr
     mnEdit: () ->
@@ -143,8 +163,11 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
                 { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
                 { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
-            ], onmenuselect: (e) ->
+            ], onchildselect: (e) -> console.log "child", e
         }
+    cleanup: () ->
+        return unless @subwin
+        $(@subwin).remove()
     menu: () ->
         me = @
         menu = [
@@ -153,7 +176,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
             {
                 text: "__(View)",
                 child: [
-                    { text: "__(Refresh)", dataid: "#{@name}-refresh" },
+                    { text: "__(Refresh)", dataid: "#{@name}-refresh", onmenuselect: (e) -> console.log "select", e },
                     { text: "__(Sidebar)", switch: true, checked: true },
                     { text: "__(Navigation bar)", switch: true, checked: false },
                     { text: "__(Hidden files)", switch: true, checked: true, dataid: "#{@name}-hidden" },
@@ -161,9 +184,9 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         { text: "__(Icon view)", radio: true, checked: true, dataid: "#{@name}-icon", type: 'icon' },
                         { text: "__(List view)", radio:true, checked: false, dataid: "#{@name}-list", type: 'list' },
                         { text: "__(Tree view)", radio:true, checked: false, dataid: "#{@name}-tree", type: 'tree' }
-                     ], onmenuselect: (e) ->
+                     ], onchildselect: (e) -> console.log "child", e
                     },
-                ], onmenuselect: (e) ->
+                ], onchildselect: (e) -> console.log "child", e
             },
         ]
         menu

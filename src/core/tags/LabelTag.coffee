@@ -10,11 +10,11 @@ class LabelTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
 
-    on_color_changed: (v) ->
+    __color__: (v) ->
         return unless v
         $(@refs.container).css "color", v
 
-    on_icon_changed: (v) ->
+    __icon__: (v) ->
         $(@refs.i).attr "style", ""
         if v
             $(@refs.i)
@@ -25,7 +25,7 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         else
             $(@refs.i).hide()
 
-    on_iconclass_changed: (v) ->
+    __iconclass__: (v) ->
         $(@refs.iclass).removeClass()
         if v
             $(@refs.iclass).addClass v
@@ -35,7 +35,7 @@ class LabelTag extends Ant.OS.GUI.BaseTag
 
 
 
-    on_text_changed: (v) ->
+    __text__: (v) ->
         @refs.text.nodeValue =  v.__() if v
 
     layout: () ->

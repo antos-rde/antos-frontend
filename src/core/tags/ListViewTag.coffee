@@ -31,16 +31,16 @@ class SimpleListItemTag extends ListViewItemTag
             e.item = me.root
             me.get("onclose")(e)
 
-    on_closable_changed: (v) ->
+    __closable__: (v) ->
         if v then $(@refs.btcl).show() else $(@refs.btcl).hide()
 
-    on_selected_changed: (v) ->
+    __selected__: (v) ->
         $(@refs.item).removeClass()
         return unless v
         $(@refs.item).addClass "selected"
         @get("onselect")({ item: @root })
 
-    on_data_changed: (v) ->
+    __data__: (v) ->
         return unless v
         @refs.label.set "class", v.class if v.class
         @refs.label.set "color", v.color if v.color
@@ -81,10 +81,10 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @get "multiselect"
 
 
-    on_buttons_changed: (v) ->
+    __buttons__: (v) ->
         return if @get "dropdown"
     
-    on_data_changed: (data) ->
+    __data__: (data) ->
         $( @refs.mlist).empty()
         for item in data
             el = $("<#{@get "itemtag"}>").appendTo @refs.mlist
@@ -140,7 +140,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         return unless e.item
         $(e.item).remove()
 
-    on_dropdown_changed: (v) ->
+    __dropdown__: (v) ->
         $(@refs.container).removeAttr "style"
         $(@refs.mlist).removeAttr "style"
         $(@refs.container).css "flex", 1

@@ -33,7 +33,7 @@ class Files extends this.OS.GUI.BaseApplication
         @viewType.list = true
         @apps = []
 
-        @view.contextmenuHandler = (e, m) ->
+        @view.contextmenuHandle = (e, m) ->
             m.set "items", [ me.mnFile(), me.mnEdit() ]
             m.set "onmenuselect", (evt) ->
                 me._gui.launch evt.item.data.app, evt.item.data.args if evt.item.data.app

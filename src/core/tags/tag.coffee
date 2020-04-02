@@ -11,7 +11,8 @@ class Ant.OS.GUI.BaseTag
         @root.get = (k) -> me.get k
         @root.aid = () -> me.aid()
         @refs = {}
-        @setopt "data-id", Math.floor(Math.random() * 100000) + 1
+        @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
+        $(@root).attr "data-id", @get("data-id")
         @children = []
 
         for obj in @layout()
@@ -40,7 +41,7 @@ class Ant.OS.GUI.BaseTag
             @set k, v for k, v of value
         else
             @opts[opt] = value
-            @["on_#{opt}_changed"](value) if @["on_#{opt}_changed"]
+            @["__#{opt}__"](value) if @["__#{opt}__"]
         @
     
     aid: () ->

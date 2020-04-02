@@ -18,29 +18,29 @@
 class Announcer
     constructor: () ->
         @observable = {}
+        @enable = true
     
+    disable: () ->
+        @off("*")
+        @enable = false
+
     on: (evtName, callback) ->
+        return unless @enable
         @observable[evtName] = { one: new Set(), many: new Set() } unless @observable[evtName]
-        @observable[evtName].many.push callback
+        @observable[evtName].many.add callback
 
     one: (evtName, callback) ->
+        return unless @enable
         @observable[evtName] = { one: new Set(), many: new Set() } unless @observable[evtName]
-        @observable[evtName].one.push callback
+        @observable[evtName].one.add callback
 
     off: (evtName, callback) ->
         me = @
         fn = (evt, cb) ->
             return unless me.observable[evt]
             if cb
-                for f, i in me.observable[evt].one
-                    if f == cb
-                        me.observable[evt].one.splice i, 1
-                        break
-
-                for f, i in me.observable[evt].many
-                    if f == cb
-                        me.observable[evt].many.splice i, 1
-                        break
+                me.observable[evt].one.delete(cb)
+                me.observable[evt].many.delete(cb)
             else
                 delete me.observable[evt] if me.observable[evt]
         if evtName is "*" then fn k, callback for k, v of me.observable else fn evtName, callback
@@ -51,10 +51,10 @@ class Announcer
             names = [name, "*"]
             for evt in names
                 continue unless me.observable[evt]
-                for f, i in me.observable[evt].one
+                me.observable[evt].one.forEach (f) ->
                     f data
-                    me.observable[evt].one = new Set()
-                for f, i in me.observable[evt].many
+                me.observable[evt].one = new Set()
+                me.observable[evt].many.forEach (f) ->
                     f data
         
         if evtName is "*"
@@ -68,7 +68,7 @@ Ant.OS.announcer =
         quota: 0
         listeners: {}
         on: (e, f, a) ->
-            Ant.OS.announcer.listeners[a.pid] = new Set() unless Ant.OS.announcer.listeners[a.pid]
+            Ant.OS.announcer.listeners[a.pid] = [] unless Ant.OS.announcer.listeners[a.pid]
             Ant.OS.announcer.listeners[a.pid].push { e: e, f: f }
             Ant.OS.announcer.observable.on e, f
         trigger: (e, d) -> Ant.OS.announcer.observable.trigger e, d

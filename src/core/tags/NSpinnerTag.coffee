@@ -53,7 +53,7 @@ class NSpinnerTag extends Ant.OS.GUI.BaseTag
         fn @refs.decr, "bottom"
         fn @refs.incr, "top"
 
-    on_value_changed: (v) ->
+    __value__: (v) ->
         $(@refs.holder).val @get("value")
         evt = { id: @aid(), data: v }
         @get("onchange")(evt)
