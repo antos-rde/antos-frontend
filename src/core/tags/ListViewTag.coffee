@@ -17,7 +17,8 @@ class SimpleListItemTag extends ListViewItemTag
         super r, o
     mount: () ->
         me = @
-        @refs.item.oncontextmenu = (e) ->
+        $(@refs.item).contextmenu (e) ->
+            e.item = me.root
             me.get("oncontextmenu")(e)
 
         $(@refs.item).click (e) ->
@@ -123,6 +124,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @get("selectedItems").push e.item
             e.items = @get("selectedItems")
         else
+            return if  @get("selectedItem") is e.item
             @get("selectedItem").set "selected", false if @get("selectedItem")
             @set "selectedItem", e.item
             @set "selectedItems", [e.item]
