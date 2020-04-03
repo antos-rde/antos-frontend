@@ -35,7 +35,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
     openwin: () ->
         me = @
         scheme =  $.parseHTML """
-        <afx-app-window apptitle="Preview" width="650" height="500">
+        <afx-app-window data-id="example-show-case" apptitle="Preview" width="650" height="500">
             <afx-vbox>
                 <afx-menu data-height="30" data-id="menu" />
             <afx-hbox>
@@ -55,10 +55,10 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     </afx-hbox>
                     <afx-resizer data-height="5" />
                     <afx-hbox>
-                        <afx-list-view data-id="list" dropdown="false" multiselect="false" />
+                        <afx-list-view data-id="list" dropdown="false" multiselect="true" />
                     </afx-hbox>
                      <afx-hbox data-height="150">
-                        <afx-grid-view data-id="grid" />
+                        <afx-grid-view data-id="grid" multiselect="true" />
                     </afx-hbox>
                 </afx-vbox>
                 <afx-vbox data-width="150">
@@ -122,6 +122,12 @@ class ShowCase extends this.OS.GUI.BaseApplication
             ctmenu.show e
         
         grid = $ "[data-id='grid']", scheme[0]
+        grid[0].set "oncelldbclick", (e) ->
+            console.log  "on dbclick", e
+        grid[0].set "onrowselect", (e) ->
+            console.log  "on rowselect", e.data.items
+        me.subwin.observable.on "cellselect", (e) ->
+            console.log "observable", e
         grid[0].set "header", [{ text: "header1", width: 80 }, { text: "header2" }, { text: "header3" }]
         grid[0].set "rows", [
             [{ text: "text 1" }, { text: "text 2" }, { text: "text 3" }],

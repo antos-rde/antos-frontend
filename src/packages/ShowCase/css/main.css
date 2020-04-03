@@ -1,0 +1,14 @@
+afx-app-window[data-id="example-show-case"] afx-grid-view div.afx-grid-row:nth-child(even) .afx-grid-cell
+{
+    background-color: #f5F5F5;
+}
+
+afx-app-window[data-id="example-show-case"] afx-grid-view div.afx-grid-row-selected .afx-grid-cell
+{
+    background-color: #116cd6;
+    color:white;
+}
+afx-app-window[data-id="example-show-case"] afx-grid-view div.afx-grid-row-selected .afx-grid-cell-selected
+{
+    font-weight: bold;
+}

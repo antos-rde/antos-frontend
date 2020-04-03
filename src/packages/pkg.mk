@@ -25,3 +25,5 @@ copy:
 	cp -rf $(copyfiles) build/
 clean:
 	- rm -rf build/*
+
+.PHONY: all main clean copy css js cofee

@@ -12,8 +12,12 @@ class Ant.OS.GUI.BaseTag
         @root.aid = () -> me.aid()
         @refs = {}
         @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
-        $(@root).attr "data-id", @get("data-id")
+        #$(@root).attr "data-id", @get("data-id")
         @children = []
+
+        __: (k, v) ->
+            @set k, v if v
+            @get k
 
         for obj in @layout()
             dom = @mkui obj

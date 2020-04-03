@@ -1,9 +1,25 @@
 class GridCellPrototype extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
-        @setopt "class", "afxgridcell"
+        @setopt "class", "afx-grid-cell"
+        @setopt "oncellselect", (e) ->
+        @setopt "oncelldbclick", (e) ->
         @setopt "data", {}
     
+    mount: () ->
+        me = @
+        $(@root).css "display", "block"
+        $(@root).click (e) ->
+            me.cellseleck e, false
+        $(@root).dblclick (e) ->
+            me.cellseleck e, true
+    
+
+    cellseleck: (e, flag) ->
+        e.item = @root
+        evt = { id: @aid(), data: e }
+        return @get("oncellselect") evt unless flag
+        @get("oncelldbclick") evt
 
     __class__: (v) ->
         $(@root).removeClass().addClass @get("class")
@@ -19,8 +35,6 @@ class SimpleGridCell extends GridCellPrototype
     __data__: (d) ->
         @refs.cell.set  k, v for k, v of d
 
-    mount: () ->
-        $(@root).css "display", "block"
     layout: () ->
         [{
             el: "afx-label", ref: "cell"
@@ -32,8 +46,14 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         @setopt "header", []
         @setopt "headeritem", "afx-grid-cell"
         @setopt "cellitem", "afx-grid-cell"
-        @setopt "cellclass", "afxgridcell"
+        @setopt "selectedCell", undefined
+        @setopt "selectedRows", []
+        @setopt "selectedRow", undefined
         @setopt "rows", []
+        @setopt "oncellselect", (e) ->
+        @setopt "onrowselect", (e) ->
+        @setopt "oncelldbclick", (e) ->
+        @setopt "multiselect", false
 
     __header__: (v) ->
         return $(@refs.header).hide() if not v or v.length is 0
@@ -46,13 +66,63 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         @calibrate()
 
     __rows__: (rows) ->
+        me = @
         $(@refs.grid).empty()
         for row in rows
+            div = $("<div>")
+                .addClass("afx-grid-row")
+                .css "display", "contents"
+                .appendTo @refs.grid
             for cell in row
-                el = $("<#{@get("cellitem")}>").appendTo @refs.grid
+                el = $("<#{@get("cellitem")}>").appendTo div
                 el[0].uify undefined
                 el[0].set "data", cell
                 cell.domel = el[0]
+                el[0].set "oncellselect", (e) -> me.cellselect e, false
+                el[0].set "oncelldbclick", (e) -> me.cellselect e, true
+
+    multiselect: () ->
+        @get "multiselect"
+
+    cellselect: (e, flag) ->
+        e.id = @aid()
+        selectedCell = @get "selectedCell"
+        # return if e.data.item is selectedCell and not flag
+        selectedCell.set "class", "afx-grid-cell" if selectedCell
+        @set "selectedCell", e.data.item
+        $(e.data.item).addClass "afx-grid-cell-selected"
+        if flag
+            @observable.trigger "celldbclick", e
+            @get("oncelldbclick") e
+        else
+            @observable.trigger "cellselect", e
+            @get("oncellselect") e
+            @rowselect e
+
+    rowselect: (e) ->
+        return unless e.data.item
+        selectedRow = @get "selectedRow"
+        selectedRows = @get "selectedRows"
+        evt = { id: @aid(), data: {} }
+        div = $(e.data.item).parent()[0]
+        if @multiselect()
+            if selectedRows.includes div
+                selectedRows.splice selectedRows.indexOf(div) , 1
+                $(div).removeClass()
+            else
+                selectedRows.push div
+                $(div).removeClass().addClass("afx-grid-row-selected")
+            evt.data.items = @get "selectedRows"
+        else
+            return if selectedRow is div
+            $(selectedRow).removeClass()
+            @set "selectedRow", div
+            @set "selectedRows", [div]
+            evt.data.item = div
+            evt.data.items = [ div ]
+            $(div).removeClass().addClass("afx-grid-row-selected")
+        @get("onrowselect") evt
+        @observable.trigger "rowselect", evt
 
     has_header: () ->
         h = @get("header")

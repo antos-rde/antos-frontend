@@ -158,6 +158,7 @@ class MenuTag extends Ant.OS.GUI.BaseTag
 
     handleselect: (e) ->
         $(@root).hide() if @isctxmenu()
+        e.id = @aid()
         @get("onmenuselect") e
         @observable.trigger "menuselect", e
 
