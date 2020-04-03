@@ -11,6 +11,10 @@ afx-list-view div.list-container{
     position: relative;
     background-color: red;
 }*/
+afx-list-view afx-list-item
+{
+    display: contents;
+}
 afx-list-view > div.list-container{
     overflow: auto;
 }
@@ -33,8 +37,9 @@ afx-list-view  > div.list-container > ul  li{
     -webkit-user-select:none;
     cursor:default;
 }
-afx-list-view > div.list-container > ul li:nth-of-type(odd){
-    background-color: #f5F5F5;
+afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li,
+afx-list-view > div.list-container > ul li:nth-child(even){
+    background-color:#f5F5F5;
 }
 afx-list-view  i.closable{
     width: 16px;
@@ -58,6 +63,7 @@ afx-list-view  > div.list-container > ul  li > i {
     margin-right: 3px;
     
 }
+afx-list-view > div.list-container > ul > afx-list-item > li.selected,
 afx-list-view  > div.list-container > ul  li.selected {
     background-color: #116cd6;
     color:white;

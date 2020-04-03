@@ -65,7 +65,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         super r, o
         @setopt "onlistselect", () ->
         @setopt "onlistdbclick", () ->
-        @setopt "onitemclose", () ->
+        @setopt "onitemclose", () -> true
         @setopt "buttons", []
         @setopt "data", {}
         @setopt "dropdown", false
@@ -76,11 +76,53 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
+        me = @
+        @root.push = (e) -> me.push e
+        @root.remove = (e) -> me.remove e
+        @root.unshift = (e) -> me.unshift e
 
     multiselect: () ->
         return false if @get "dropdown"
         @get "multiselect"
 
+    unshift: (item) ->
+        @push item, true
+
+    has_data: (v) ->
+        @get("data").includes v
+
+    push: (item, flag) ->
+        el = $("<#{@get "itemtag"}>")
+        if flag
+            @get("data").unshift item if not  @has_data item
+            $(@refs.mlist).prepend el[0]
+        else
+            @get("data").push item if not  @has_data item
+            el.appendTo @refs.mlist
+        el[0].uify @observable
+        me = @
+        el[0]
+            .set "data", item
+            .set "oncontextmenu", (e) ->
+                me.iclick e
+            .set "ondbclick", (e) ->
+                me.idbclick e
+            .set "onclick", (e) ->
+                me.iclick e
+            .set "onselect", (e) ->
+                me.iselect e
+            .set "onclose", (e) ->
+                me.iclose e
+
+    remove: (item) ->
+        el = item.get "data"
+        data = @get "data"
+        @set "selectedItem", undefined if @get("selectedItem") is item
+        list = @get("selectedItems")
+        list.splice(list.indexOf(item), 1) if list.includes(item)
+        if data.includes el
+            data.splice data.indexOf(el), 1
+        $(item).remove()
 
     __buttons__: (v) ->
         return if @get "dropdown"
@@ -88,21 +130,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
     __data__: (data) ->
         $( @refs.mlist).empty()
         for item in data
-            el = $("<#{@get "itemtag"}>").appendTo @refs.mlist
-            el[0].uify @observable
-            me = @
-            el[0]
-                .set "data", item
-                .set "oncontextmenu", (e) ->
-                    me.iclick e
-                .set "ondbclick", (e) ->
-                    me.idbclick e
-                .set "onclick", (e) ->
-                    me.iclick e
-                .set "onselect", (e) ->
-                    me.iselect e
-                .set "onclose", (e) ->
-                    me.iclose e
+            @push item, false
 
     iclick: (e) ->
         return if not e.item
@@ -140,7 +168,11 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
 
     iclose: (e) ->
         return unless e.item
-        $(e.item).remove()
+        evt = { id: @aid(), data: e }
+        r = @get("onitemclose") evt
+        return unless r
+        @observable.trigger "itemclose", evt
+        @remove(e.item)
 
     __dropdown__: (v) ->
         $(@refs.container).removeAttr "style"

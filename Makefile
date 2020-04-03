@@ -36,6 +36,7 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/NSpinnerTag.coffee \
 			src/core/tags/MenuTag.coffee \
 			src/core/tags/GridView.coffee \
+			src/core/tags/TabBarTag.coffee \
         	src/antos.coffee
  
 

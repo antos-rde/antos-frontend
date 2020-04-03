@@ -3,7 +3,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
     constructor: (args) ->
         super "ShowCase", args
     
-    main:() ->
+    main: () ->
         me = @
         @announcer = new Ant.OS.API.Announcer()
         @announcer.on "evt1", (data) ->
@@ -38,34 +38,35 @@ class ShowCase extends this.OS.GUI.BaseApplication
         <afx-app-window data-id="example-show-case" apptitle="Preview" width="650" height="500">
             <afx-vbox>
                 <afx-menu data-height="30" data-id="menu" />
-            <afx-hbox>
-               <afx-vbox data-width="150">
-                    <div>box 2</div>
-                    <div>box 2</div>
-                </afx-vbox>
-                <afx-resizer data-width="5" />
-                <afx-vbox data-width="grow">
-                    <afx-hbox min-height="50">
-                    <afx-switch data-id="switch" />
-                    <afx-button text="__(This is the label)"
-                        data-id="bttest"
-                        iconclass="fa fa-camera-retro fa-lg"
-                        icon="os://packages/DummyApp/icon.png"/>
-                    <afx-nspinner data-id="spin" value="10" step="2" />
-                    </afx-hbox>
-                    <afx-resizer data-height="5" />
-                    <afx-hbox>
-                        <afx-list-view data-id="list" dropdown="false" multiselect="true" />
-                    </afx-hbox>
-                     <afx-hbox data-height="150">
-                        <afx-grid-view data-id="grid" multiselect="true" />
-                    </afx-hbox>
-                </afx-vbox>
+                <afx-tab-bar data-height="30" data-id="tab" />
+                <afx-hbox>
                 <afx-vbox data-width="150">
-                    <div data-height="grow">box 3</div>
-                    <div data-height="200">box 4
-                </afx-vbox>
-            </afx-hbox>
+                    <div>box 2</div>
+                    <div>box 2</div>
+                    </afx-vbox>
+                    <afx-resizer data-width="5" />
+                    <afx-vbox data-width="grow">
+                        <afx-hbox min-height="50">
+                        <afx-switch data-id="switch" />
+                        <afx-button text="__(This is the label)"
+                            data-id="bttest"
+                            iconclass="fa fa-camera-retro fa-lg"
+                            icon="os://packages/DummyApp/icon.png"/>
+                        <afx-nspinner data-id="spin" value="10" step="2" />
+                        </afx-hbox>
+                        <afx-resizer data-height="5" />
+                        <afx-hbox>
+                            <afx-list-view data-id="list" dropdown="false" multiselect="true" />
+                        </afx-hbox>
+                        <afx-hbox data-height="150">
+                            <afx-grid-view data-id="grid" multiselect="true" />
+                        </afx-hbox>
+                    </afx-vbox>
+                    <afx-vbox data-width="150">
+                        <div data-height="grow">box 3</div>
+                        <div data-height="200">box 4
+                    </afx-vbox>
+                </afx-hbox>
             </afx-vbox>
         </afx-app-window>
         """
@@ -89,6 +90,12 @@ class ShowCase extends this.OS.GUI.BaseApplication
         me.subwin.observable.on "menuselect", (e) ->
             console.log e.id
         
+        tab = $ "[data-id='tab']", scheme[0]
+        tab[0].set "items", [
+            { text: "data.txt" },
+            { text: "antos.conf", closable: true }
+        ]
+
         list = $ "[data-id='list']", scheme[0]
 
         list[0].set "data", [
@@ -99,9 +106,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 4" },
             { text: "some thing 5" }
         ]
+        list[0].unshift { text: "shifted el" }
+        console.log "after shift", list[0].get("data")
         list[0].set "onlistselect", (e) ->
             console.log(e.data.items)
-        
+         me.subwin.observable.on "itemclose", (e) ->
+            console.log "remove", list[0].get("data")
+            console.log list[0].get "selectedItem"
+            console.log list[0].get "selectedItems"
 
         sw = $ "[data-id='switch']", scheme[0]
         sw[0].set "onchange", (e) ->
@@ -143,7 +155,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
             [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }]
         ]
 
-    mnFile:() ->
+    mnFile: () ->
         #console.log file
         me = @
         arr = {
