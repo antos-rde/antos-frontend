@@ -41,9 +41,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 <afx-tab-bar data-height="30" data-id="tab" />
                 <afx-hbox>
                 <afx-vbox data-width="150">
-                    <div>box 2</div>
-                    <div>box 2</div>
-                    </afx-vbox>
+                    <afx-tree-view data-id="tree" />
+                </afx-vbox>
                     <afx-resizer data-width="5" />
                     <afx-vbox data-width="grow">
                         <afx-hbox min-height="50">
@@ -154,6 +153,44 @@ class ShowCase extends this.OS.GUI.BaseApplication
             [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
             [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }]
         ]
+
+        tdata = {
+            name: 'My Tree',
+            nodes: [
+                { name: 'hello', iconclass:'fa fa-car'},
+                { name: 'wat' },
+                {
+                    name: 'child folder',
+                    nodes: [
+                        {
+                            name: 'child folder',
+                            nodes: [
+                                { name: 'hello' },
+                                { name: 'wat' }
+                            ]
+                        },
+                        { name: 'hello' },
+                        { name: 'wat' },
+                        {
+                            name: 'child folder',
+                            nodes: [
+                                { name: 'hello' },
+                                { name: 'wat' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+        tree = $ "[data-id='tree']", scheme[0]
+        tree[0].set "data", tdata
+        tree[0].set "ontreeselect", (e) ->
+            console.log e.data.item.get "treepath"
+        tree[0].set "ontreedbclick", (e) ->
+            console.log "treedbclick", e
+        me.subwin.observable.on "treedbclick", (e) ->
+            console.log "observable treedbclick", e
 
     mnFile: () ->
         #console.log file

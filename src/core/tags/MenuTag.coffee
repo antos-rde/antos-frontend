@@ -22,6 +22,57 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
 
     is_root: () ->
         return if @get "parent" then false else true
+    
+    layout: () ->
+        [{
+            el: "li", ref: "container", children: [
+                {
+                    el: "a", ref: "entry", children: @itemlayout()
+                },
+                { el: "afx-menu", ref: "submenu" }
+            ]
+        }]
+    __children__: (v) ->
+        me = @
+        $(@refs.container).removeClass("afx_submenu")
+        return $(@refs.submenu).hide() unless v and v.length > 0
+        $(@refs.container).addClass("afx_submenu")
+        $(@refs.submenu)
+            .show()
+            .attr("style", "")
+        @refs.submenu.set "parent", @
+        @refs.submenu.set "root", me.get("root")
+        @refs.submenu.set "items", v
+        if @is_root()
+            $(@refs.container).mouseleave (e) ->
+                $(me.refs.submenu).attr("style", "")
+
+    mount: () ->
+        me = @
+        @refs.switch.set "enable", false
+        $(@refs.entry).click (e) -> me.select e
+
+    submenuoff: () ->
+        p = @get "parent"
+        return $(@refs.submenu).attr("style", "") unless p
+        p.submenuoff()
+
+    select: (e) ->
+        me = @
+        e.item = @root
+        evt = { id: @aid(), data: e }
+        e.preventDefault()
+        if @is_root() and @has_children() and not @get "context"
+            $(@refs.submenu).show()
+        else
+            @submenuoff()
+        @get("onmenuselect") evt
+        if @get("parent")
+            @get("parent").get("onchildselect") evt
+        if @get("root")
+            @get("root").get("onmenuitemselect") evt
+
+    itemlayout: () ->
 
 class SimpleMenuEntryTag extends MenuEntryTag
     constructor: (r, o) ->
@@ -75,31 +126,6 @@ class SimpleMenuEntryTag extends MenuEntryTag
         $(@refs.shortcut).show()
         $(@refs.shortcut).val v
 
-    __children__: (v) ->
-        me = @
-        $(@refs.container).removeClass("afx_submenu")
-        return $(@refs.submenu).hide() unless v and v.length > 0
-        $(@refs.container).addClass("afx_submenu")
-        $(@refs.submenu)
-            .show()
-            .attr("style", "")
-        @refs.submenu.set "parent", @
-        @refs.submenu.set "root", me.get("root")
-        @refs.submenu.set "items", v
-        if @is_root()
-            $(@refs.container).mouseleave (e) ->
-                $(me.refs.submenu).attr("style", "")
-
-    mount: () ->
-        me = @
-        @refs.switch.set "enable", false
-        $(@refs.entry).click (e) -> me.select e
-
-    submenuoff: () ->
-        p = @get "parent"
-        return $(@refs.submenu).attr("style", "") unless p
-        p.submenuoff()
-
     reset_radio: () ->
         return unless  @has_children()
         for v in @get "children"
@@ -108,39 +134,20 @@ class SimpleMenuEntryTag extends MenuEntryTag
 
 
     select: (e) ->
-        me = @
-        e.item = @root
-        evt = { id: @aid(), data: e }
-        e.preventDefault()
-        if @is_root() and @has_children() and not @get "context"
-            $(@refs.submenu).show()
-        else
-            @submenuoff()
+        super.select(e)
         if @get "switch"
             @set "checked", !@get "checked"
         else if @get "radio"
             p = @get "parent"
             p.reset_radio() if p
             @set "checked", !@get "checked"
-        @get("onmenuselect") evt
-        if @get("parent")
-            @get("parent").get("onchildselect") evt
-        if @get("root")
-            @get("root").get("onmenuitemselect") evt
 
-    layout: () ->
-        [{
-            el: "li", ref: "container", children: [
-                {
-                    el: "a", ref: "entry", children: [
-                        { el: "afx-switch", ref: "switch" },
-                        { el: "afx-label", ref: "label" },
-                        { el: "span", class: "shortcut", ref: "shortcut" }
-                    ]
-                },
-                { el: "afx-menu", ref: "submenu" }
-            ]
-        }]
+    itemlayout: () ->
+        [
+            { el: "afx-switch", ref: "switch" },
+            { el: "afx-label", ref: "label" },
+            { el: "span", class: "shortcut", ref: "shortcut" }
+        ]
 
 class MenuTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->

@@ -11,10 +11,15 @@ class ListViewItemTag extends Ant.OS.GUI.BaseTag
         @setopt "index", 0
         @setopt "closable", false
         @setopt "selected", false
-        
-class SimpleListItemTag extends ListViewItemTag
-    constructor: (r, o) ->
-        super r, o
+    __closable__: (v) ->
+        if v then $(@refs.btcl).show() else $(@refs.btcl).hide()
+
+    __selected__: (v) ->
+        $(@refs.item).removeClass()
+        return unless v
+        $(@refs.item).addClass "selected"
+        @get("onselect")({ item: @root })
+
     mount: () ->
         me = @
         $(@refs.item).contextmenu (e) ->
@@ -31,15 +36,19 @@ class SimpleListItemTag extends ListViewItemTag
         $(@refs.btcl).click (e) ->
             e.item = me.root
             me.get("onclose")(e)
+    layout: () ->
+        [{
+            el: "li", ref: "item", children: [
+                @itemlayout(),
+                { el: "i", class: "closable", ref: "btcl" }
+            ]
+        }]
+    
+    itemlayout: () ->
 
-    __closable__: (v) ->
-        if v then $(@refs.btcl).show() else $(@refs.btcl).hide()
-
-    __selected__: (v) ->
-        $(@refs.item).removeClass()
-        return unless v
-        $(@refs.item).addClass "selected"
-        @get("onselect")({ item: @root })
+class SimpleListItemTag extends ListViewItemTag
+    constructor: (r, o) ->
+        super r, o
 
     __data__: (v) ->
         return unless v
@@ -51,14 +60,8 @@ class SimpleListItemTag extends ListViewItemTag
         @set "selected", v.selected if v.selected
         @set "closable", v.closable if v.closable
 
-    layout: () ->
-        [{
-            el: "li", ref: "item", children: [
-                { el: "afx-label", ref: "label" },
-                { el: "i", class: "closable", ref: "btcl" }
-            ]
-        }]
-
+    itemlayout: () ->
+        { el: "afx-label", ref: "label" }
 
 class ListViewTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
@@ -104,11 +107,11 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         el[0]
             .set "data", item
             .set "oncontextmenu", (e) ->
-                me.iclick e
+                me.iclick e, true
             .set "ondbclick", (e) ->
-                me.idbclick e
+                me.idbclick e, false
             .set "onclick", (e) ->
-                me.iclick e
+                me.iclick e, false
             .set "onselect", (e) ->
                 me.iselect e
             .set "onclose", (e) ->
@@ -132,10 +135,10 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         for item in data
             @push item, false
 
-    iclick: (e) ->
+    iclick: (e, flag) ->
         return if not e.item
         list = @get("selectedItems")
-        if @multiselect() and list.includes(e.item)
+        if @multiselect() and list.includes(e.item) and not flag
             list.splice(list.indexOf(e.item), 1)
             return e.item.set "selected", false
         e.item.set "selected", true
