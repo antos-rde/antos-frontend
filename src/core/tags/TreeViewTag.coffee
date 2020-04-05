@@ -145,12 +145,12 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
     
     __selectedItem__: (v) ->
         return unless v
+        @get("selectedItem").set "selected", false if @get("selectedItem")
         v.set "selected", true
 
     itemclick: (e, flag) ->
         return unless e and e.item
         return if e.item is @get("selectedItem") and not flag
-        @get("selectedItem").set "selected", false if @get("selectedItem")
         @set "selectedItem", e.item
         evt = { id: @aid(), data: e }
         if flag
