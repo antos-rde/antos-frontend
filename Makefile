@@ -38,6 +38,7 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/GridView.coffee \
 			src/core/tags/TabBarTag.coffee \
 			src/core/tags/TreeViewTag.coffee \
+			src/core/tags/SliderTag.coffee \
         	src/antos.coffee
  
 

@@ -44,6 +44,7 @@ class Ant.OS.GUI.BaseTag
         if opt is "*"
             @set k, v for k, v of value
         else
+            @["__#{opt}"](value) if @["__#{opt}"]
             @opts[opt] = value
             @["__#{opt}__"](value) if @["__#{opt}__"]
         @

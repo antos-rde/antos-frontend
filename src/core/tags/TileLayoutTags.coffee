@@ -1,38 +1,36 @@
 class TileLayoutTag extends Ant.OS.GUI.BaseTag
-    constructor: (r, o, @conf) ->
+    constructor: (r, o) ->
         super r, o
-        @setopt @conf.opt, "grow"
+        @setopt "name", undefined
+        @setopt "dir", undefined
+        # @setopt @conf.opt, "grow"
+
+    __name__: (v) ->
+        return unless v
+        $(@refs.yield)
+            .removeClass()
+            .addClass("afx-#{v}-container")
+        @calibrate()
+
+    __dir__: (v) ->
+        return unless v
+        $(@refs.yield)
+            .css("flex-direction", v)
+        @calibrate()
 
     mount: () ->
         $(@root).css("display", "block")
         $(@refs.yield)
-            .addClass("afx-#{@conf.name}-container")
             .css("display", "flex")
-            .css("flex-direction", @conf.dir)
             .css("width", "100%")
         me = @
         @observable.on "resize", (e) -> me.calibrate()
-        # @observable.on "calibrate", (e) -> me.calibrate()
-        @calibrate()
 
     calibrate: () ->
+        return @hcalibrate() if @get("dir") is "row"
+        @vcalibrate() if @get("dir") is "column"
 
-
-    layout: () ->
-        [{
-            el: "div", ref: "yield"
-        }]
-
-
-class HBoxTag extends TileLayoutTag
-    constructor: (r, o) ->
-        super r, o, {
-            name: "hbox",
-            dir: "row",
-            opt: "data-width"
-        }
-    
-    calibrate: () ->
+    hcalibrate: () ->
         auto_width = []
         ocwidth = 0
         avaiheight = $(@root).height()
@@ -55,17 +53,8 @@ class HBoxTag extends TileLayoutTag
             $.each auto_width, (i, v) ->
                 $(v).css "width", "#{csize}px"
         @observable.trigger "hboxchange",  { id: @aid(), data: { w: avaiWidth, h: avaiheight } }
-        
 
-class VBoxTag extends TileLayoutTag
-    constructor: (r, o) ->
-        super r, o, {
-            name: "vbox",
-            dir: "column",
-            opt: "data-height"
-        }
-    
-    calibrate: () ->
+    vcalibrate: () ->
         auto_height = []
         ocheight = 0
         avaiheight = $(@root).height()
@@ -90,5 +79,25 @@ class VBoxTag extends TileLayoutTag
 
         @observable.trigger "vboxchange", { id: @aid(), data: { w: avaiwidth, h: avaiheight } }
 
+    layout: () ->
+        [{
+            el: "div", ref: "yield"
+        }]
+
+
+class HBoxTag extends TileLayoutTag
+    constructor: (r, o) ->
+        super r, o
+        @set "dir", "row"
+        @set "name", "hbox"
+
+class VBoxTag extends TileLayoutTag
+    constructor: (r, o) ->
+        super r, o
+        @set "dir", "column"
+        @set "name", "vbox"
+    
+    
+Ant.OS.GUI.define "afx-tile", TileLayoutTag
 Ant.OS.GUI.define "afx-hbox", HBoxTag
 Ant.OS.GUI.define "afx-vbox", VBoxTag

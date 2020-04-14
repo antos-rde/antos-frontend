@@ -17,14 +17,18 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         @set "nodes", v.nodes if v.nodes
 
     __selected__: (v) ->
+        $(@refs.wrapper).removeClass()
         return $(@refs.wrapper).addClass("afx_tree_item_selected") if v
-        $(@refs.wrapper).removeClass("afx_tree_item_selected")
     
     __open__: (v) ->
+        me = @
         $(@refs.toggle)
             .removeClass()
         return unless @is_folder()
         if(v)
+            if @get("fetch")
+                @get("fetch") @root, (d) ->
+                    me.set "data", d
             $(@refs.childnodes).show()
         else
             $(@refs.childnodes).hide()
@@ -143,7 +147,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @setopt "treepath", @aid()
         @indexcounter = 0
     
-    __selectedItem__: (v) ->
+    __selectedItem: (v) ->
         return unless v
         @get("selectedItem").set "selected", false if @get("selectedItem")
         v.set "selected", true
@@ -154,7 +158,6 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @set "selectedItem", e.item
         evt = { id: @aid(), data: e }
         if flag
-            console.log "dblclick"
             @get("ontreedbclick")  evt
             @observable.trigger "treedbclick", evt
         else

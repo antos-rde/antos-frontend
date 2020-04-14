@@ -42,6 +42,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 <afx-hbox>
                 <afx-vbox data-width="150">
                     <afx-tree-view data-id="tree" />
+                    <afx-slider data-id="slider" data-height="30" value="50"/>
                 </afx-vbox>
                     <afx-resizer data-width="5" />
                     <afx-vbox data-width="grow">
@@ -191,6 +192,10 @@ class ShowCase extends this.OS.GUI.BaseApplication
             console.log "treedbclick", e
         me.subwin.observable.on "treedbclick", (e) ->
             console.log "observable treedbclick", e
+        
+        slider = $ "[data-id='slider']", scheme[0]
+        slider[0].set "onchanging", (v) ->
+            console.log v
 
     mnFile: () ->
         #console.log file
