@@ -3,6 +3,10 @@ class TileLayoutTag extends Ant.OS.GUI.BaseTag
         super r, o
         @setopt "name", undefined
         @setopt "dir", undefined
+        $(@root).css("display", "block")
+        $(@refs.yield)
+            .css("display", "flex")
+            .css("width", "100%")
         # @setopt @conf.opt, "grow"
 
     __name__: (v) ->
@@ -19,12 +23,9 @@ class TileLayoutTag extends Ant.OS.GUI.BaseTag
         @calibrate()
 
     mount: () ->
-        $(@root).css("display", "block")
-        $(@refs.yield)
-            .css("display", "flex")
-            .css("width", "100%")
         me = @
         @observable.on "resize", (e) -> me.calibrate()
+        @calibrate()
 
     calibrate: () ->
         return @hcalibrate() if @get("dir") is "row"

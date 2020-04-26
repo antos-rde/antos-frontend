@@ -37,6 +37,7 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/MenuTag.coffee \
 			src/core/tags/GridView.coffee \
 			src/core/tags/TabBarTag.coffee \
+			src/core/tags/TabContainer.coffee \
 			src/core/tags/TreeViewTag.coffee \
 			src/core/tags/SliderTag.coffee \
         	src/antos.coffee
@@ -44,7 +45,7 @@ coffees= 	src/core/core.coffee \
 
 
 
-packages = CoreServices ActivityMonitor Setting ShowCase # Files MarkOn MarketPlace Preview NotePad wTerm
+packages = CoreServices ActivityMonitor Setting ShowCase DummyApp # Files MarkOn MarketPlace Preview NotePad wTerm
 
 main: initd build_coffees build_tags build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/

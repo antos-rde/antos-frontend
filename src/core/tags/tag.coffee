@@ -10,25 +10,27 @@ class Ant.OS.GUI.BaseTag
         @root.set = (k, v) -> me.set k, v
         @root.get = (k) -> me.get k
         @root.aid = () -> me.aid()
+        @root.calibrate = () -> me.calibrate()
+        @mounted = false
+        @root.sync = () -> me.sync()
         @refs = {}
         @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
         #$(@root).attr "data-id", @get("data-id")
-        @children = []
-
-        __: (k, v) ->
-            @set k, v if v
-            @get k
-
+        @children = $(@root).children()
+        
         for obj in @layout()
             dom = @mkui obj
             if dom
-                if @refs.yield
-                    @children = $(@root).children()
-                    $(v).detach().appendTo @refs.yield for v in @children
-                    $(dom).appendTo(@root)
-                else
-                    # $(@root).empty()
-                    $(dom).appendTo(@root)
+                $(dom).appendTo(@root)
+        if @refs.yield
+            $(v).detach().appendTo @refs.yield for v in @children
+        else
+            @children = []
+        $(@root).children().each () -> @.mkui me.observable
+
+    __: (k, v) ->
+            @set k, v if v
+            @get k
 
     setopt: (name, val) ->
         value = val
@@ -52,14 +54,17 @@ class Ant.OS.GUI.BaseTag
     aid: () ->
         @get "data-id"
     
+    calibrate: () ->
 
     get: (opt) ->
         return @opts if opt is "*"
         @opts[opt]
-    
-    uify: () ->
+
+    sync: () ->
+        return if @mounted
+        @mounted = true
         @mount()
-        v.uify(@observable) for v in @children
+        $(@root).children().each () -> @.mount()
         @root
 
     mount: () ->
@@ -77,17 +82,27 @@ class Ant.OS.GUI.BaseTag
         if tag.ref
             @refs[tag.ref] = dom[0]
         # dom.mount @observable
-        dom[0].uify(@observable)
+        dom[0] #.uify(@observable)
 
-Element.prototype.uify = (observable) ->
+Element.prototype.mkui = (observable) ->
     tag = @tagName.toLowerCase()
     if RegExp("afx-*", "i" ).test(tag) and Ant.OS.GUI.tag[tag]
         o = new Ant.OS.GUI.tag[tag](@, observable)
-        return o.uify()
-    ### else
+        return o.root
+    else
         $(@).children().each () ->
-            @uify(observable) ###
+            @mkui(observable)
     return @
+
+
+Element.prototype.mount = () ->
+    return @sync() if @sync
+    $(@).children().each () -> @mount()
+    @
+
+Element.prototype.uify = (observable) ->
+    @mkui(observable)
+    @sync()
 
 Ant.OS.GUI.define = (name, cls) ->
     Ant.OS.GUI.tag[name] = cls

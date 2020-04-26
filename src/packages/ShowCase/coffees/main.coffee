@@ -38,35 +38,42 @@ class ShowCase extends this.OS.GUI.BaseApplication
         <afx-app-window data-id="example-show-case" apptitle="Preview" width="650" height="500">
             <afx-vbox>
                 <afx-menu data-height="30" data-id="menu" />
-                <afx-tab-bar data-height="30" data-id="tab" />
-                <afx-hbox>
-                <afx-vbox data-width="150">
-                    <afx-tree-view data-id="tree" />
-                    <afx-slider data-id="slider" data-height="30" value="50"/>
-                </afx-vbox>
-                    <afx-resizer data-width="5" />
-                    <afx-vbox data-width="grow">
-                        <afx-hbox min-height="50">
-                        <afx-switch data-id="switch" />
-                        <afx-button text="__(This is the label)"
-                            data-id="bttest"
-                            iconclass="fa fa-camera-retro fa-lg"
-                            icon="os://packages/DummyApp/icon.png"/>
-                        <afx-nspinner data-id="spin" value="10" step="2" />
-                        </afx-hbox>
-                        <afx-resizer data-height="5" />
-                        <afx-hbox>
-                            <afx-list-view data-id="list" dropdown="false" multiselect="true" />
-                        </afx-hbox>
-                        <afx-hbox data-height="150">
-                            <afx-grid-view data-id="grid" multiselect="true" />
-                        </afx-hbox>
-                    </afx-vbox>
-                    <afx-vbox data-width="150">
-                        <div data-height="grow">box 3</div>
-                        <div data-height="200">box 4
-                    </afx-vbox>
-                </afx-hbox>
+                <afx-tab-container data-id="tabctn" tabbarheight= "30">
+
+                    <afx-hbox title="Widgets">
+                        <afx-vbox data-width="150">
+                            <afx-tree-view data-id="tree" />
+                            <afx-slider data-id="slider" data-height="30" value="50"/>
+                        </afx-vbox>
+                        <afx-resizer data-width="5" />
+                        <afx-vbox data-width="grow">
+                            <afx-hbox min-height="50">
+                            <afx-switch data-id="switch" />
+                            <afx-button text="__(This is the label)"
+                                data-id="bttest"
+                                iconclass="fa fa-camera-retro fa-lg"
+                                icon="os://packages/DummyApp/icon.png"/>
+                            <afx-nspinner data-id="spin" value="10" step="2" />
+                            </afx-hbox>
+                            <afx-resizer data-height="5" />
+                            <afx-hbox>
+                                <afx-list-view data-id="list" dropdown="false" multiselect="true" />
+                            </afx-hbox>
+                            <afx-hbox data-height="150">
+                                <afx-grid-view data-id="grid" multiselect="true" />
+                            </afx-hbox>
+                        </afx-vbox>
+                        <afx-vbox data-width="150">
+                            <div data-height="grow">box 3</div>
+                            <div data-height="200">box 4</div>
+                        </afx-vbox>
+                    </afx-hbox>
+
+                    <afx-hbox title="Virtual desktop">
+                        <div data-height="200">desktop</div>
+                    </afx-hbox>
+
+                </afx-tab-container>
             </afx-vbox>
         </afx-app-window>
         """
@@ -89,12 +96,6 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         me.subwin.observable.on "menuselect", (e) ->
             console.log e.id
-        
-        tab = $ "[data-id='tab']", scheme[0]
-        tab[0].set "items", [
-            { text: "data.txt" },
-            { text: "antos.conf", closable: true }
-        ]
 
         list = $ "[data-id='list']", scheme[0]
 

@@ -105,7 +105,6 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         el[0].uify @observable
         me = @
         el[0]
-            .set "data", item
             .set "oncontextmenu", (e) ->
                 me.iclick e, true
             .set "ondbclick", (e) ->
@@ -116,6 +115,8 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
                 me.iselect e
             .set "onclose", (e) ->
                 me.iclose e
+            .set "data", item
+        el[0]
 
     remove: (item) ->
         el = item.get "data"

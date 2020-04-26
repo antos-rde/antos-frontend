@@ -44,6 +44,7 @@ class SliderTag extends Ant.OS.GUI.BaseTag
             evt = { id: me.aid(), data: me.get("value") }
             me.get("onchange") evt
             me.get("onchanging") evt
+        @calibrate()
 
     calibrate: () ->
         @set "value", @get("max") if @get("value") > @get("max")

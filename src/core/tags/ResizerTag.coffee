@@ -7,6 +7,7 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         @minsize = 0
 
     mount: () ->
+        $(@root).css " display", "block"
         tagname = $(@parent).prop("tagName")
         @resizable_el = if $(@root).prev().length is 1 then  $(@root).prev()[0] else undefined
         if tagname is "AFX-HBOX"
