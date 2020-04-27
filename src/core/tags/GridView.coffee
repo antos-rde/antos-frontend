@@ -160,6 +160,11 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
         me = @
+        $(@root)
+            .css "overflow", "hidden"
+            .css "display", "block"
+            .css "padding", "5px"
+            
         $(@refs.grid).css "display", "grid"
         $(@refs.header).css "display", "grid"
         @observable.on "resize", (e) -> me.calibrate()

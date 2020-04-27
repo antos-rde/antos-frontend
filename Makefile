@@ -40,6 +40,7 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/TabContainer.coffee \
 			src/core/tags/TreeViewTag.coffee \
 			src/core/tags/SliderTag.coffee \
+			src/core/tags/FloatListTag.coffee \
         	src/antos.coffee
  
 

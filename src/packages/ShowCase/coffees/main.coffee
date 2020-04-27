@@ -70,7 +70,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     </afx-hbox>
 
                     <afx-hbox title="Virtual desktop">
-                        <div data-height="200">desktop</div>
+                        <afx-float-list1 data-id = "flist"/>
                     </afx-hbox>
 
                 </afx-tab-container>
@@ -197,6 +197,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
         slider = $ "[data-id='slider']", scheme[0]
         slider[0].set "onchanging", (v) ->
             console.log v
+
+
+        list = $ "[data-id='flist']", scheme[0]
+        list[0].set "data", [
+            { text: "File.txt" },
+            { text: "FileB.doc" },
+            { text: "Data.doc", iconclass: "fa fa-camera-retro fa-lg" }
+        ]
 
     mnFile: () ->
         #console.log file

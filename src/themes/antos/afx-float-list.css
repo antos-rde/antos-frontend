@@ -1,0 +1,14 @@
+
+afx-float-list1 div.list-container > ul{
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+
+afx-float-list1 div.list-container > ul li{
+    padding: 0;
+    background-color: transparent;
+    list-style: none;
+    max-width: 100px;
+}
