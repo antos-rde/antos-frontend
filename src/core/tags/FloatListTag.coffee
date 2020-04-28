@@ -3,7 +3,7 @@ class FloatListTag extends ListViewTag
         super r, o
         me = @
         @setopt "dir", "horizontal"
-        @root.refresh = () -> me.refresh()
+        @root.refresh = () -> me.calibrate()
         @root.push = (e) -> me.refs.mlist.push(e)
         @root.unshift = (e) -> me.refs.mlist.unshift(e)
         @root.remove = (e) -> me.refs.mlist.remove(e)
@@ -15,11 +15,11 @@ class FloatListTag extends ListViewTag
     dropoff: (e) ->
     __data__: (v) ->
         super.__data__(v)
-        @refresh()
+        @calibrate()
     __dir__: (v) ->
-        @refresh()
-    calibrate: (e) -> @refresh()
+        @calibrate()
     mount: () ->
+        me = @
         $(@refs.container)
             .css "width", "100%"
             .css "height", "100%"
@@ -27,27 +27,28 @@ class FloatListTag extends ListViewTag
             .css "position", "absolute"
             .css "display", "block"
             .css "width", "100%"
-
+        @observable.on "resize", (e) -> me.calibrate()
     push: (v) ->
         el = super.push(v)
         @enable_drag el
         el
 
     enable_drag: (el) ->
-        globalof = $(@refs.mlist).offset()
+        me = @
         $(el)
             .css "user-select", "none"
             .css "cursor", "default"
             .css "display", "block"
             .css "position", "absolute"
             .on "mousedown", (evt) ->
+                globalof = $(me.refs.mlist).offset()
                 evt.preventDefault()
                 offset = $(el).offset()
                 offset.top = evt.clientY - offset.top
                 offset.left = evt.clientX - offset.left
                 mouse_move = (e) ->
                     top  = e.clientY - offset.top - globalof.top
-                    left = e.clientX - globalof.top - offset.left
+                    left = e.clientX - globalof.left - offset.left
                     left = if left < 0 then 0 else left
                     top = if top < 0 then 0 else top
                     $(el)
@@ -60,7 +61,7 @@ class FloatListTag extends ListViewTag
                 $(window).on "mousemove", mouse_move
                 $(window).on "mouseup", mouse_up
 
-    refresh: () ->
+    calibrate: () ->
         ctop = 20
         cleft = 20
         $(@refs.mlist)

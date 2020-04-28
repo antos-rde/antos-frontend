@@ -1,4 +1,4 @@
-class TabContainer extends Ant.OS.GUI.BaseTag
+class TabContainerTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
         @setopt "dir", "column" # or row
@@ -58,4 +58,4 @@ class TabContainer extends Ant.OS.GUI.BaseTag
             ]
         }]
 
-Ant.OS.GUI.define "afx-tab-container", TabContainer
+Ant.OS.GUI.define "afx-tab-container", TabContainerTag

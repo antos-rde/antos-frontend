@@ -5,7 +5,17 @@ class GridCellPrototype extends Ant.OS.GUI.BaseTag
         @setopt "oncellselect", (e) ->
         @setopt "oncelldbclick", (e) ->
         @setopt "data", {}
+        @setopt "selected", false
     
+    __data__: (v) ->
+        return unless v.selected
+        @set "selected", v.selected
+        delete v.selected
+    
+    __selected__: (v) ->
+        return unless v
+        @cellseleck {}, false
+
     mount: () ->
         me = @
         $(@root).css "display", "block"
@@ -32,7 +42,7 @@ class SimpleGridCell extends GridCellPrototype
     __header__: (v) ->
 
 
-    __data__: (d) ->
+    __data: (d) ->
         @refs.cell.set  k, v for k, v of d
 
     layout: () ->
@@ -76,10 +86,10 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
             for cell in row
                 el = $("<#{@get("cellitem")}>").appendTo div
                 el[0].uify undefined
-                el[0].set "data", cell
                 cell.domel = el[0]
                 el[0].set "oncellselect", (e) -> me.cellselect e, false
                 el[0].set "oncelldbclick", (e) -> me.cellselect e, true
+                el[0].set "data", cell
 
     multiselect: () ->
         @get "multiselect"
@@ -172,6 +182,7 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
             .css "width", "100%"
             .css "overflow-x", "hidden"
             .css "overflow-y", "auto"
+        @calibrate()
 
     layout: () ->
         [

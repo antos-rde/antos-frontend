@@ -60,19 +60,19 @@ class ShowCase extends this.OS.GUI.BaseApplication
                                 <afx-list-view data-id="list" dropdown="false" multiselect="true" />
                             </afx-hbox>
                             <afx-hbox data-height="150">
-                                <afx-grid-view data-id="grid" multiselect="true" />
+                                <afx-grid-view data-id="grid" multiselect="false" />
                             </afx-hbox>
                         </afx-vbox>
-                        <afx-vbox data-width="150">
-                            <div data-height="grow">box 3</div>
-                            <div data-height="200">box 4</div>
-                        </afx-vbox>
                     </afx-hbox>
-
                     <afx-hbox title="Virtual desktop">
                         <afx-float-list1 data-id = "flist"/>
                     </afx-hbox>
-
+                    <afx-hbox title="Calendar">
+                        <afx-calendar-view data-id = "cal"/>
+                    </afx-hbox>
+                    <afx-hbox title="Color picker">
+                        <afx-color-picker data-id = "cpk"/>
+                    </afx-hbox>
                 </afx-tab-container>
             </afx-vbox>
         </afx-app-window>
@@ -205,6 +205,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "FileB.doc" },
             { text: "Data.doc", iconclass: "fa fa-camera-retro fa-lg" }
         ]
+
+        cal = $ "[data-id='cal']", scheme[0]
+        cal[0].set "ondateselect", (e) ->
+            console.log e
+        
+        pk = $ "[data-id='cpk']", scheme[0]
+        pk[0].set "oncolorselect", (e) ->
+            console.log e
 
     mnFile: () ->
         #console.log file

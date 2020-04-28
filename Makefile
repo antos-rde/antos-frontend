@@ -35,12 +35,14 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/SwitchTag.coffee \
 			src/core/tags/NSpinnerTag.coffee \
 			src/core/tags/MenuTag.coffee \
-			src/core/tags/GridView.coffee \
+			src/core/tags/GridViewTag.coffee \
 			src/core/tags/TabBarTag.coffee \
-			src/core/tags/TabContainer.coffee \
+			src/core/tags/TabContainerTag.coffee \
 			src/core/tags/TreeViewTag.coffee \
 			src/core/tags/SliderTag.coffee \
 			src/core/tags/FloatListTag.coffee \
+			src/core/tags/CalendarTag.coffee \
+			src/core/tags/ColorPickerTag.coffee \
         	src/antos.coffee
  
 
