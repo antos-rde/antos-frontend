@@ -170,6 +170,11 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @get("onlistselect") evt
         @observable.trigger "listselect", evt
 
+    mount: () ->
+        me = @
+        @observable.on "resize", (e) -> me.calibrate()
+        @calibrate()
+
     iclose: (e) ->
         return unless e.item
         evt = { id: @aid(), data: e }
@@ -188,13 +193,9 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             me.dropoff e
         show = (e) ->
             me.showlist e
-        calib = (e) ->
-            me.calibrate e
         if v
             $(@root).addClass "dropdown"
             $(@refs.current).show()
-            @observable.on "calibrate", calib
-            @observable.on "resize", calib
             $(document).on "click", drop
             $(@refs.current).on "click", show
             $(@refs.container)
@@ -208,8 +209,6 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @calibrate()
         else
             $(@refs.current).hide()
-            @observable.off "calibrate", calib
-            @observable.off "resize", calib
             $(document).off "click", drop
             $(@refs.current).off "click", show
 

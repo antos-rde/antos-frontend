@@ -186,7 +186,7 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
 
     layout: () ->
         [
-            { el: "div", ref: "header" },
+            { el: "div", ref: "header", class: "grid_row_header" },
             { el: "div", ref: "container", children: [
                 { el: "div", ref: "grid" }
             ] }

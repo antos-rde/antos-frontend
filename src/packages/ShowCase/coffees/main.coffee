@@ -40,7 +40,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 <afx-menu data-height="30" data-id="menu" />
                 <afx-tab-container data-id="tabctn" tabbarheight= "30">
 
-                    <afx-hbox title="Widgets">
+                    <afx-hbox tabname="Widgets">
                         <afx-vbox data-width="150">
                             <afx-tree-view data-id="tree" />
                             <afx-slider data-id="slider" data-height="30" value="50"/>
@@ -64,14 +64,20 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             </afx-hbox>
                         </afx-vbox>
                     </afx-hbox>
-                    <afx-hbox title="Virtual desktop">
+                    <afx-hbox tabname="Virtual desktop">
                         <afx-float-list1 data-id = "flist"/>
                     </afx-hbox>
-                    <afx-hbox title="Calendar">
+                    <afx-hbox tabname="Calendar">
                         <afx-calendar-view data-id = "cal"/>
                     </afx-hbox>
-                    <afx-hbox title="Color picker">
+                    <afx-hbox tabname="Color picker">
                         <afx-color-picker data-id = "cpk"/>
+                    </afx-hbox>
+                    <afx-hbox tabname="File view">
+                        <afx-vbox>
+                            <afx-file-view data-id = "fileview"/>
+                            <afx-list-view data-id = "viewoption" data-height="30" dropdown="true" />
+                        </afx-vbox>
                     </afx-hbox>
                 </afx-tab-container>
             </afx-vbox>
@@ -213,6 +219,32 @@ class ShowCase extends this.OS.GUI.BaseApplication
         pk = $ "[data-id='cpk']", scheme[0]
         pk[0].set "oncolorselect", (e) ->
             console.log e
+        pk[0].set "oncolorselect", (e) ->
+            console.log e
+
+        fileview = $("[data-id='fileview']", scheme[0])[0]
+        fileview.set "fetch", (path) ->
+            new Promise (resolve, reject) ->
+                dir = path.asFileHandle()
+                dir.read (d) ->
+                    p = dir.parent().asFileHandle()
+                    p.filename = "[..]"
+                    p.type = "dir"
+                    return reject d.error if d.error
+                    d.result.unshift p
+                    resolve d.result
+        fileview.set "path", "home:///"
+
+        viewoption =  $("[data-id='viewoption']", scheme[0])[0]
+        viewoption.set "data", [
+            { text: "icon" },
+            { text: "list" },
+            { text: "tree" }
+        ]
+        viewoption.set "onlistselect", (e) ->
+            console.log e.data.item.get("data").text
+            fileview.set "view", e.data.item.get("data").text
+
 
     mnFile: () ->
         #console.log file

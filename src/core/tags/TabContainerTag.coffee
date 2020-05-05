@@ -35,7 +35,7 @@ class TabContainerTag extends Ant.OS.GUI.BaseTag
         me = @
         $(@children).each () ->
             item = {}
-            item.text = $(@).attr "title" if $(@).attr "title"
+            item.text = $(@).attr "tabname" if $(@).attr "tabname"
             item.icon = $(@).attr "icon" if $(@).attr "icon"
             item.iconclass = $(@).attr "iconclass" if $(@).attr "iconclass"
             item.container = @

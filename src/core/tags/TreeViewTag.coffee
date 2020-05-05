@@ -2,7 +2,7 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
         @setopt "data", undefined
-        @setopt "nodes", []
+        @setopt "nodes", undefined
         @setopt "treeroot", undefined
         @setopt "indent", 0
         @setopt "toggle", false
@@ -15,6 +15,7 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
     __data__: (v) ->
         return unless v
         @set "nodes", v.nodes if v.nodes
+        @set "open", v.open
 
     __selected__: (v) ->
         $(@refs.wrapper).removeClass()
@@ -22,13 +23,13 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
     
     __open__: (v) ->
         me = @
+        return unless @is_folder()
         $(@refs.toggle)
             .removeClass()
-        return unless @is_folder()
         if(v)
             if @get("fetch")
-                @get("fetch") @root, (d) ->
-                    me.set "data", d
+                @get("fetch")(@root).then (d) ->
+                    me.set "nodes", d
             $(@refs.childnodes).show()
         else
             $(@refs.childnodes).hide()
@@ -50,11 +51,12 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
                 .css("width", v * 15 + "px" )
 
     is_folder: () ->
-        return @get("nodes") and @get("nodes").length > 0
+        if @get("nodes") then true else false
     
 
     __nodes__: (nodes) ->
-        return unless @get("nodes") and @get("nodes").length > 0
+        return unless nodes
+        # return unless @get("nodes") and @get("nodes").length > 0
         $(@refs.childnodes).empty()
         $(@refs.wrapper).addClass("afx_folder_item")
         root = @get("treeroot")
@@ -66,6 +68,7 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
             root.indexcounter++
             el[0].set "itemindex", root.indexcounter
             el[0].set "treepath", "#{@get("treepath")}/#{el[0].aid()}"
+            el[0].set "fetch", @get("fetch")
             el[0].set "data", v
 
 
@@ -90,6 +93,7 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         $(@refs.toggle)
             .css "display", "inline-block"
             .css "width", "15px"
+            .addClass "afx-tree-view-item"
             .click (e) ->
                 me.set "open", not me.get("open")
                 e.preventDefault()
@@ -144,6 +148,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @setopt "ontreeselect", () ->
         @setopt "ontreedbclick", () ->
         @setopt "selectedItem", undefined
+        @setopt "fetch", undefined
         @setopt "treepath", @aid()
         @indexcounter = 0
     
@@ -176,8 +181,9 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         el[0].set "indent", @get("indent")
         el[0].set "itemindex", @get "itemindex"
         el[0].set "treepath", @get("treepath")
-        el[0].set "data", v
         el[0].set "open", @get("open")
+        el[0].set "fetch", @get("fetch")
+        el[0].set "data", v
 
 Ant.OS.GUI.define "afx-tree-view", TreeViewTag
 Ant.OS.GUI.define "afx-tree-view-item-proto", TreeViewItemPrototype

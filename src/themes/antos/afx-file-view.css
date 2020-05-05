@@ -13,7 +13,7 @@ afx-file-view afx-label.status{
     color:#414339;
     transform: translateZ(0);
 }
-afx-file-view afx-list-view > div.list-container > ul > li{
+afx-file-view afx-list-view > div.list-container > ul  li{
     float:left;
     display: block;
     width:70px;
@@ -24,7 +24,7 @@ afx-file-view afx-list-view > div.list-container > ul > li{
     margin-right: 5px;
     margin-bottom: 5px;
 }
-afx-file-view afx-list-view > div.list-container > ul > li:nth-child(odd){
+afx-file-view afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li {
     background-color: transparent;
 }
 afx-file-view afx-list-view i.dir:before{
@@ -52,7 +52,7 @@ afx-file-view afx-list-view i.file:before{
     font-weight: normal;
 }
 
-afx-file-view afx-list-view > div.list-container > ul > li.selected, afx-file-view afx-list-view div.list-container > ul  li.selected  i:before {
+afx-file-view afx-list-view > div.list-container > ul > afx-list-item > li.selected, afx-file-view afx-list-view div.list-container > ul  li.selected  i:before {
     background-color: #116cd6;
     color:white;
     border-radius: 6px;
@@ -83,10 +83,10 @@ afx-file-view afx-grid-view i{
 afx-file-view afx-grid-view afx-grid-row.selected i:before{
     color:white;
 }
-afx-file-view afx-grid-view afx-grid-row.grid_row_header{
+afx-file-view afx-grid-view .grid_row_header{
     background-color: #dfdfdf;
 }
-afx-file-view afx-grid-view afx-grid-row.grid_row_header div{
+afx-file-view afx-grid-view .grid_row_header afx-grid-cell{
     border-top: 1px solid #a6a6a6;
     border-right: 1px solid #a6a6a6;
 }
@@ -101,18 +101,17 @@ afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
     content: "\f07c"; 
     font-family: "FontAwesome";
     color:#76D2F9;
-    font-size: 16px;   
+    font-size: 16px;
 }
 afx-file-view afx-tree-view{
     margin:0;
     overflow: hidden;
-    display: inline-block;
     background-color: transparent;
 }
 afx-file-view afx-tree-view .afx_tree_item_odd{
     background-color: transparent;
 }
-afx-file-view afx-tree-view i.file:before{
+afx-file-view afx-tree-view .afx-tree-view-item:before{
     content: "\f016"; 
     font-family: "FontAwesome";
     font-size: 16px;
@@ -153,8 +152,4 @@ afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{
 
 afx-file-view afx-tree-view .afx_folder_item{
     font-weight: normal;
-}
-
-afx-file-view afx-tree-view afx-tree-view{
-    display: inline-block;
 }

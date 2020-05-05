@@ -60,7 +60,7 @@
             window.OS.announcer.trigger("sysdockloaded")
         })
         
-        self.root.contextmenuHandler = function(e, m) 
+        self.root.contextmenuHandle = function(e, m) 
         {
             if(e.target == self.root) return;
             var appidx = $(e.target).closest( "afx-button" ).attr("appindex")

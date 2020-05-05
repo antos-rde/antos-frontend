@@ -43,6 +43,8 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/FloatListTag.coffee \
 			src/core/tags/CalendarTag.coffee \
 			src/core/tags/ColorPickerTag.coffee \
+			src/core/tags/FileViewTag.coffee \
+			src/core/tags/OverlayTag.coffee \
         	src/antos.coffee
  
 
@@ -85,13 +87,13 @@ testdata:
 	cp src/core/handlers/jsons/* $(BUILDDIR)/resources/jsons
 build_tags:
 	@echo "$(BLUE)Building tag files$(NC)"
-	-mkdir $(BUILDDIR)/resources
+	-mkdir -p $(BUILDDIR)/resources
 	-rm $(BUILDDIR)/resources/antos_tags.js
 	for f in src/core/tags/*.tag; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
 languages:
-	-mkdir $(BUILDDIR)/resources
-	-mkdir $(BUILDDIR)/resources/languages
+	-mkdir -p $(BUILDDIR)/resources
+	-mkdir -p $(BUILDDIR)/resources/languages
 	cp src/core/languages/*.json $(BUILDDIR)/resources/languages/
 
 genlang:
@@ -111,7 +113,7 @@ antos_themes_build:
 
 
 build_packages:
-	- mkdir $(BUILDDIR)/packages
+	- mkdir -p $(BUILDDIR)/packages
 	- for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d && rm -rf $(BUILDDIR)/packages/$$d/* ); done
 	for d in $(packages); do (cd src/packages/$$d; make);done
 	for d in $(packages); do ( test -d $(BUILDDIR)/packages/$$d || mkdir -p $(BUILDDIR)/packages/$$d && cp -rf src/packages/$$d/build/* $(BUILDDIR)/packages/$$d/);done
