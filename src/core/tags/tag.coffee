@@ -77,6 +77,7 @@ class Ant.OS.GUI.BaseTag
         return undefined unless tag
         dom = $("<#{tag.el}>")
         $(dom).addClass tag.class if tag.class
+        $(dom).attr "data-id", tag.id if tag.id
         if tag.children
             $(@mkui(v)).appendTo(dom) for v in tag.children
         if tag.ref
@@ -102,7 +103,7 @@ Element.prototype.mount = () ->
 
 Element.prototype.uify = (observable) ->
     @mkui(observable)
-    @sync()
+    @mount()
 
 Ant.OS.GUI.define = (name, cls) ->
     Ant.OS.GUI.tag[name] = cls

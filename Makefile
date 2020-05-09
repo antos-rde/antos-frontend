@@ -45,6 +45,8 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/ColorPickerTag.coffee \
 			src/core/tags/FileViewTag.coffee \
 			src/core/tags/OverlayTag.coffee \
+			src/core/tags/AppDockTag.coffee \
+			src/core/tags/SystemPanelTag.coffee \
         	src/antos.coffee
  
 

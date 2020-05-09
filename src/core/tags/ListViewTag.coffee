@@ -70,7 +70,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @setopt "onlistdbclick", () ->
         @setopt "onitemclose", () -> true
         @setopt "buttons", []
-        @setopt "data", {}
+        @setopt "data", []
         @setopt "dropdown", false
         @setopt "itemtag", "afx-list-item"
         @setopt "multiselect", false
@@ -116,6 +116,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             .set "onclose", (e) ->
                 me.iclose e
             .set "data", item
+        item.domel = el[0]
         el[0]
 
     remove: (item) ->

@@ -31,10 +31,10 @@ Ant.OS.GUI =
             text: "",
             iconclass: "fa fa-eercast",
             dataid: "sys-menu-root",
-            child: [
+            children: [
                 {
                     text: "__(Applications)",
-                    child: [],
+                    children: [],
                     dataid: "sys-apps"
                     iconclass: "fa fa-adn",
                     onmenuselect: (d) ->
@@ -53,7 +53,7 @@ Ant.OS.GUI =
         $(app.scheme).remove() if app.scheme
         ($ parent).append scheme
         app.scheme = scheme[0]
-        riot.mount ($ scheme), { observable: app.observable }
+        scheme[0].uify app.observable
         app.main()
         app.show()
     loadScheme: (path, app, parent) ->
@@ -319,11 +319,15 @@ Ant.OS.GUI =
                     Ant.OS.GUI.shortcut[fnk][c](event)
                     event.preventDefault()
             # system menu and dock
-            riot.mount ($ "#syspanel", $ "#wrapper")
-            riot.mount ($ "#sysdock", $ "#workspace"), { items: [] }
-            riot.mount ($ "#systooltip", $ "#wrapper")
+            $("#syspanel")[0].uify()
+            $("#sysdock")[0].uify()
+            $("#systooltip")[0].uify()
+            $("#contextmenu")[0].uify()
+            #riot.mount ($ "#syspanel", $ "#wrapper")
+            #riot.mount ($ "#sysdock", $ "#workspace"), { items: [] }
+            #riot.mount ($ "#systooltip", $ "#wrapper")
             # context menu
-            riot.mount ($ "#contextmenu", $ "#wrapper")
+            #riot.mount ($ "#contextmenu", $ "#wrapper")
             ($ "#workspace").contextmenu (e) -> Ant.OS.GUI.bindContextMenu e
             # tooltip
             ($ "#workspace").mouseover (e) ->
@@ -409,7 +413,8 @@ Ant.OS.GUI =
                     desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
                 Ant.OS.announcer.ostrigger "desktoploaded"
             # mount it
-            riot.mount desktop
+            desktop[0].uify()
+            # riot.mount desktop
         , (e, s) ->
             alert __("System fail: Cannot init desktop manager")
             console.log s, e
@@ -417,21 +422,21 @@ Ant.OS.GUI =
         ($ Ant.OS.GUI.workspace)[0].fetch()
     
     refreshSystemMenu: () ->
-        Ant.OS.GUI.SYS_MENU[0].child.length = 1
-        Ant.OS.GUI.SYS_MENU[0].child[0].child.length = 0
-        Ant.OS.GUI.SYS_MENU[0].child[0].child.push v for k, v of Ant.OS.setting.system.packages when (v and v.app)
-        Ant.OS.GUI.SYS_MENU[0].child.push v for k, v of Ant.OS.setting.system.menu
-        Ant.OS.GUI.SYS_MENU[0].child.push
+        Ant.OS.GUI.SYS_MENU[0].children.length = 1
+        Ant.OS.GUI.SYS_MENU[0].children[0].children.length = 0
+        Ant.OS.GUI.SYS_MENU[0].children[0].children.push v for k, v of Ant.OS.setting.system.packages when (v and v.app)
+        Ant.OS.GUI.SYS_MENU[0].children.push v for k, v of Ant.OS.setting.system.menu
+        Ant.OS.GUI.SYS_MENU[0].children.push
             text: "__(Toggle Full screen)",
             dataid: "os-fullsize",
             iconclass: "fa fa-tv"
-        Ant.OS.GUI.SYS_MENU[0].child.push
+        Ant.OS.GUI.SYS_MENU[0].children.push
             text: "__(Log out)",
             dataid: "sys-logout",
             iconclass: "fa fa-user-times"
-        ($ "[data-id = 'os_menu']", "#syspanel")[0].update()
+        # Ant.OS.GUI.buildSystemMenu()
     buildSystemMenu: () ->
-        ($ "[data-id = 'os_menu']", "#syspanel")[0].set "items", Ant.OS.GUI.SYS_MENU
+        ($ "[data-id = 'osmenu']", "#syspanel")[0].set "items", Ant.OS.GUI.SYS_MENU
 
         #console.log menu
     

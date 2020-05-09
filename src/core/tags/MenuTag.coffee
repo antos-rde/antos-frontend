@@ -162,6 +162,9 @@ class MenuTag extends Ant.OS.GUI.BaseTag
         @setopt "items", []
         @root.show = (e) ->
             me.showctxmenu e
+        @root.push = (e) -> me.push e
+        @root.remove = (e) -> me.remove e
+        @root.unshift = (e) -> me.unshift e
 
     handleselect: (e) ->
         $(@root).hide() if @isctxmenu()
@@ -184,31 +187,54 @@ class MenuTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
         me = @
+        $(@refs.container).css "display", "contents"
         return unless me.isctxmenu()
-        $(@refs.container).mouseleave (e) ->
+        $(@refs.wrapper).mouseleave (e) ->
             return unless me.is_root()
             $(me.root).hide()
+
     __context__: (v) ->
-        $(@refs.container).removeClass("context")
+        $(@refs.wrapper).removeClass("context")
         return unless v
-        $(@refs.container).addClass("context")
+        $(@refs.wrapper).addClass("context")
         $(@root).hide()
 
+    unshift: (item) ->
+        @push item, true
+
+    remove: (item) ->
+        el = item.get "data"
+        data = @get "items"
+        if data.includes el
+            data.splice data.indexOf(el), 1
+        $(item).remove()
+
+    push: (item, flag) ->
+        el = $("<#{@get("contentag")}>")
+        if flag
+            $(@refs.container).prepend el[0]
+            @get("items").unshift item
+        else
+            el.appendTo @refs.container
+            @get("items").push item
+        el[0].uify undefined
+        el[0].set "parent", @get("parent")
+        el[0].set "root", if @get("parent") then @get("parent").get("root") else @
+        el[0].set "data", item
+        item.domel = el[0]
+        el[0]
+
     __items__: (data) ->
-        me = @
         $(@refs.container).empty()
-        $("<li>").appendTo(@refs.container).addClass("afx-corner-fix")
         for item in data
-            el = $("<#{@get("contentag")}>").appendTo @refs.container
-            el[0].uify undefined
-            el[0].set "parent", me.get("parent")
-            el[0].set "root", if me.get("parent") then me.get("parent").get("root") else me
-            el[0].set "data", item
-            item.domel = el[0]
-        $("<li>").appendTo(@refs.container).addClass("afx-corner-fix")
+            @push item, false
 
     layout: () ->
-        [{ el: "ul", ref: "container" }]
+        [{ el: "ul", ref: "wrapper", children: [
+            { el: "li", class: "afx-corner-fix" },
+            { el: "div", ref: "container" },
+            { el: "li", class: "afx-corner-fix" }
+        ] }]
 
 Ant.OS.GUI.define "afx-menu", MenuTag
 Ant.OS.GUI.define "afx-menu-entry-proto", MenuEntryTag

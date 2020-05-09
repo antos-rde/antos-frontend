@@ -20,7 +20,6 @@ class PushNotification extends this.OS.GUI.BaseService
     constructor: (args) ->
         super "PushNotification", args
         @iconclass = "fa fa-bars"
-        @onmenuselect = (e) -> console.log e
         @cb = undefined
         @pending = []
     init: ->
@@ -45,7 +44,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @mfeed = @find "notifeed"
         @nzone = @find "notifyzone"
         @fzone = @find "feedzone"
-        (@find "btclear").set "onbtclick", (e) -> me.mlist.set "items", []
+        (@find "btclear").set "onbtclick", (e) -> me.mlist.set "data", []
         #@subscribe "fail", (e) -> console.log e
         @subscribe "notification", (o) -> me.pushout 'INFO', o
         @subscribe "fail", (o) -> me.pushout 'FAIL', o
@@ -64,15 +63,21 @@ class PushNotification extends this.OS.GUI.BaseService
             
         ($ @nzone).css "right", 0
             .css "top", "-3px"
-            .css "height", ""
+            .css "height", "100%"
             .css "bottom", "0"
             .css "z-index", 1000000
+            .css "display", "flex"
+            .css "flex-direction", "column"
             .hide()
+        ($ @mlist).css "flex", "1"
         ($ @fzone)
             #.css("z-index", 99999)
             .css("bottom", "0")
-            .css("height", "")
+            .css("height", "100%")
+            .css "display", "flex"
+            .css "flex-direction", "column"
             .hide()
+        ($ @mfeed).css "flex", "1"
 
     pushout: (s, o, mfeed) ->
         d = {
@@ -82,7 +87,7 @@ class PushNotification extends this.OS.GUI.BaseService
             closable: true }
         #console.log o.data.s
         #console.log o.data.e
-        @mlist.unshift d, true
+        @mlist.unshift d
         @notifeed d
 
     notifeed: (d) ->
@@ -90,18 +95,17 @@ class PushNotification extends this.OS.GUI.BaseService
         @mfeed.unshift d, true
         ($ @fzone).show()
         timer = setTimeout () ->
-                me.mfeed.remove d, true
+                me.mfeed.remove d.domel
                 clearTimeout timer
         , 3000
 
-    awake: (e) ->
+    awake: (evt) ->
         if  @view then ($ @nzone).hide() else ($ @nzone).show()
         @view = not @view
         me = @
         if not @cb
             @cb = (e) ->
-                return if e.originalEvent.item and e.originalEvent.item.i isnt undefined
-                if not ($ e.target).closest($ me.nzone).length and not ($ e.target).closest($ me.holder.root).length
+                if not ($ e.target).closest($ me.nzone).length and not ($ e.target).closest(evt.data.item).length
                     ($ me.nzone).hide()
                     $(document).unbind "click", me.cb
                     me.view = not me.view
@@ -113,15 +117,15 @@ class PushNotification extends this.OS.GUI.BaseService
     cleanup: (evt) ->
         # do nothing
 PushNotification.scheme = """
-<afx-dummy>
+<divs>
     <afx-overlay data-id = "notifyzone" width = "250">
-        <afx-button text = "__(Clear all)" data-id = "btclear"></afx-button>
+        <afx-button text = "__(Clear all)" data-id = "btclear" ></afx-button>
         <afx-list-view data-id="notifylist"></afx-list-view>
     </afx-overlay>
     <afx-overlay data-id = "feedzone" width = "250">
         <afx-list-view data-id = "notifeed">
         </afx-list-view>
     </afx-overlay>
-</afx-dummy>
+</div>
 """
-this.OS.register "PushNotification",PushNotification
+this.OS.register "PushNotification", PushNotification

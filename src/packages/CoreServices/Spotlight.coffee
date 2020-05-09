@@ -37,7 +37,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         ($ document).keyup @fn
 
         @fn1 = (e) ->
-            return if $(e.target).closest(me.parent.holder.root).length
+            return if $(e.target).closest(me.parent.holder).length
             if not $(e.target).closest(me.scheme).length
                 ($ document).unbind "click", me.fn1
                 ($ document).unbind "keyup", me.fn
@@ -49,7 +49,7 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
         ($ @searchbox).focus()
         ($ @searchbox).keyup (e) ->
             me.search e
-        @container.set "onlistdbclick", (e)->
+        @container.set "onlistdbclick", (e) ->
             return if e.data.dataid and e.data.dataid is "header"
             me.handler(e) if me.handler
             me._gui.openWith e.data
@@ -86,11 +86,14 @@ class SpotlightDialog extends this.OS.GUI.BaseDialog
                 return unless text.length >= 3
                 result = @_api.search text
                 return if result.length is 0
-                @container.set "items", result
+                @container.set "data", result
+                console.log result
                 ($ @scheme).css("height", @height)
 
 SpotlightDialog.scheme = """
-<afx-app-window data-id = "spotlight-win" apptitle="" minimizable="false" resizable = "false" width="500" height="300">
+<afx-app-window data-id = "spotlight-win"
+    apptitle="" minimizable="false"
+    resizable = "false" width="500" height="300">
     <afx-vbox>
         <afx-hbox data-height="45">
             <div data-id = "searchicon" data-width="45"></div>
@@ -99,7 +102,7 @@ SpotlightDialog.scheme = """
         <afx-list-view data-id="container"></afx-list-view>
     </afx-vbox>
 </afx-app-window>
-"""  
+"""
 this.OS.register "SpotlightDialog", SpotlightDialog
 
 class Spotlight extends this.OS.GUI.BaseService
@@ -111,13 +114,7 @@ class Spotlight extends this.OS.GUI.BaseService
         me = @
         @_gui.bindKey "CTRL- ", (e) ->
             me.awake(e)
-        #@child = [
-        #    {
-        #        text: "#{@.name} (#{@.pid}): dummy notif",
-        #        child: [ { text: "submenu" } ]
-        #    }
-        #]
-        # do nothing
+        
     main: ->
         
     awake: (e) ->
@@ -134,4 +131,4 @@ class Spotlight extends this.OS.GUI.BaseService
     cleanup: (evt) ->
         # do nothing
 
-this.OS.register "Spotlight",Spotlight
+this.OS.register "Spotlight", Spotlight

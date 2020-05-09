@@ -65,7 +65,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         </afx-vbox>
                     </afx-hbox>
                     <afx-hbox tabname="Virtual desktop">
-                        <afx-float-list1 data-id = "flist"/>
+                        <afx-float-list data-id = "flist"/>
                     </afx-hbox>
                     <afx-hbox tabname="Calendar">
                         <afx-calendar-view data-id = "cal"/>

@@ -19,7 +19,7 @@
 class BaseModel
     constructor: (@name, @args) ->
         me = @
-        @observable = riot.observable()
+        @observable = new Announcer()
         @_api = Ant.OS.API
         @_gui = Ant.OS.GUI
         @systemsetting = Ant.OS.setting

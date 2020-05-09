@@ -27,7 +27,8 @@ class Calendar extends this.OS.GUI.BaseService
         @watch 1000, () ->
             now = new Date
             me.text = now.toString()
-            me.update()
+            me.domel.set "text", me.text
+
 
     awake: (e) ->
         @.openDialog "CalendarDialog", (d) ->
@@ -38,4 +39,4 @@ class Calendar extends this.OS.GUI.BaseService
         console.log "cleanup for quit"
         # do nothing
 
-this.OS.register "Calendar",Calendar
+this.OS.register "Calendar", Calendar

@@ -1,11 +1,11 @@
 
-afx-float-list1 div.list-container > ul{
+afx-float-list div.list-container > ul{
     padding: 0;
     margin: 0;
     background-color: transparent;
 }
 
-afx-float-list1 div.list-container > ul li{
+afx-float-list div.list-container > ul li{
     padding: 0;
     margin: 0;
     background-color: transparent;

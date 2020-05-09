@@ -24,6 +24,9 @@ class BaseService extends this.OS.GUI.BaseModel
         @text = ""
         @timer = undefined
         @holder = undefined
+        me = @
+        @onmenuselect = (d) ->
+            me.awake d
 
     init: ()->
         #implement by user
@@ -33,10 +36,6 @@ class BaseService extends this.OS.GUI.BaseModel
         Ant.OS.APP[@name].meta
     attach: (h) ->
         @holder = h
-
-    update: () ->
-        @holder.update() if @holder
-        @scheme.update() if @scheme
     
     watch: ( t, f) ->
         me = @

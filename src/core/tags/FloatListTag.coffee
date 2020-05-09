@@ -86,4 +86,4 @@ class FloatListTag extends ListViewTag
                     cleft = 20
                     ctop += h + 20
 
-Ant.OS.GUI.define "afx-float-list1", FloatListTag
+Ant.OS.GUI.define "afx-float-list", FloatListTag
