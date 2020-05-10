@@ -44,7 +44,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
             me.appmenu.set "items", []
             me.dialog.hide() if me.dialog
         @on "menuselect", (d) ->
-            switch d.e.item.data.dataid
+            switch d.data.item.get("data").dataid
                 when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
                 when  "#{me.name}-exit" then me.trigger "exit"
         @on "apptitlechange", () -> me.sysdock.update()

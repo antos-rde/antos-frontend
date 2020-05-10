@@ -7,21 +7,28 @@ afx-grid-view afx-grid-row div{
     cursor:default;
 }
 
-afx-grid-view afx-grid-row:nth-child(even){
+
+afx-grid-view div.afx-grid-row:nth-child(even) .afx-grid-cell
+{
     background-color: #f5F5F5;
 }
 
-afx-grid-view afx-grid-row.grid_row_header div{
+afx-grid-view div.afx-grid-row-selected .afx-grid-cell
+{
+    background-color: #116cd6;
+    color:white;
+}
+afx-grid-view div.afx-grid-row-selected .afx-grid-cell-selected
+{
+    font-weight: bold;
+}
+
+
+afx-grid-view div.grid_row_header{
     border-right: 2px solid #e5e5e5;
     user-select:none;
     -webkit-user-select:none;
     cursor:default;
-}
-afx-grid-view afx-grid-row.selected {
-    background-color: #116cd6;
-    color:white;
-}
-afx-grid-view afx-grid-row.grid_row_header {
     font-weight: bold;
     border: 1px solid #e5e5e5;
      border-right:0;

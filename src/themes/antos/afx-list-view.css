@@ -37,8 +37,7 @@ afx-list-view  > div.list-container > ul  li{
     -webkit-user-select:none;
     cursor:default;
 }
-afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li,
-afx-list-view > div.list-container > ul li:nth-child(even){
+afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li{
     background-color:#f5F5F5;
 }
 afx-list-view  i.closable{
@@ -63,8 +62,7 @@ afx-list-view  > div.list-container > ul  li > i {
     margin-right: 3px;
     
 }
-afx-list-view > div.list-container > ul > afx-list-item > li.selected,
-afx-list-view  > div.list-container > ul  li.selected {
+afx-list-view > div.list-container > ul > afx-list-item > li.selected{
     background-color: #116cd6;
     color:white;
 }

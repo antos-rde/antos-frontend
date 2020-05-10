@@ -68,91 +68,148 @@ class BaseFileHandle
         return -1 unless @path
         return @path.hash()
 
-    sendB64: (p, f) ->
+    b64: (t) ->
+        # t is object or mime type
         me = @
-        m = if p is "object" then "text/plain" else p
-        return f "" unless @cache
-        if p is "object" or typeof @cache is "string"
-            b64 = if p is "object" then (JSON.stringify @cache).asBase64() else @cache.asBase64()
-            b64 = "data:#{m};base64,#{b64}"
-            f(b64)
-        else
-            reader = new FileReader()
-            reader.readAsDataURL(@cache)
-            reader.onload =  () ->
-                f reader.result
-            reader.onerror = (e) ->
-                return Ant.OS.announcer.osfail __("VFS Cannot encode file: {0}", me.path), (Ant.OS.API.throwe "OS.VFS"), e
+        new Promise (resolve, reject) ->
+            m = if t is "object" then "text/plain" else t
+            return resolve "" unless me.cache
+            if t is "object" or typeof me.cache is "string"
+                if t is "object"
+                    b64 = (JSON.stringify me.cache).asBase64()
+                else
+                    b64 = me.cache.asBase64()
+                b64 = "data:#{m};base64,#{b64}"
+                resolve(b64)
+            else
+                reader = new FileReader()
+                reader.readAsDataURL(me.cache)
+                reader.onload =  () ->
+                    resolve reader.result
+                reader.onerror = (e) ->
+                    reject e
+    
     parent: () ->
         return @ if @isRoot()
         return (@protocol + "://" + (@genealogy.slice 0 , @genealogy.length - 1).join "/")
 
-    onready: (f, err) ->
+    onready: () ->
         # read meta data
-        return f() if @ready
         me = @
-        me.meta (d) ->
-            if d.error
-                return if err then err d else Ant.OS.announcer.osfail "#{me.path}: #{d.error}", (Ant.OS.API.throwe "OS.VFS"), d.error
-            me.info = d.result
-            me.ready = true
-            f()
+        new Promise (resolve, reject) ->
+            return resolve(me.info) if me.ready
+            me.meta()
+                .then (d) ->
+                    return reject d if d.errors
+                    me.info = d.result
+                    me.ready = true
+                    resolve(d.result)
+                .catch (e) -> resolve e
 
-    read: (f, t) ->
+    read: (t) ->
         me = @
-        @onready (() -> me.action "read", t, f)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._rd(t)
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    write: (d, f) ->
+    write: (d, t) ->
         me = @
-        @action "write", d, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "write", file: me } if r.result
-            f r
+        new Promise (resolve, reject) ->
+            me._wr(d, t)
+                .then (r) -> resolve r
+                .catch (e) -> reject e
     
-    mk: (d, f) ->
+    mk: (d) ->
         me = @
-        @onready (() -> me.action "mk", d, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "mk", file: me } if r.result
-            f r)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._mk(d)
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
     
-    remove: (f) ->
+    remove: () ->
         me = @
-        @onready (() -> me.action "remove", null, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "remove", file: me } if r.result
-            f r)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._rm()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    upload: (f) ->
+    upload: () ->
         me = @
-        @onready (() -> me.action "upload", null, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "upload", file: me } if r.result
-            f r)
-    publish: (f) ->
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._up()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
+        
+    publish: () ->
         me = @
-        @onready (() -> me.action "publish", null, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "publish", file: me } if r.result
-            f r)
-    download: (f) ->
-        me = @
-        @onready (() -> me.action "download", null, f)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._pub()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    move: (d, f) ->
+    download: () ->
         me = @
-        @onready (() -> me.action "move", d, (r) ->
-            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: d.asFileHandle() } if r.result
-            f r)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._down()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    execute: (f) ->
+    move: (d) ->
         me = @
-        @onready (() -> me.action "execute", null, f)
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._mv()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    #mk: (f) ->
-
-    meta: (f) ->
+    execute: () ->
+        me = @
+        new Promise (resolve, reject) ->
+            me.onready()
+                .then (r) ->
+                    me._exec()
+                        .then (d) -> resolve d
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
     getlink: () -> @path
-    # for main action read, write, remove, execute
-    # must be implemented by subclasses
-    action: (n, p, f) ->
-        return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
+
+    unsupported: (t) ->
+        me = @
+        new Promise (resolve, reject) ->
+            reject { error: __("Action {0} is unsupported on: {1}", t, me.path) }
+    # actions must be implemented by subclasses
+
+    _rd: (t) ->     @unsupported "read"
+    _wr: (d, t) ->  @unsupported "write"
+    _mk: (d) ->     @unsupported "mk"
+    _rm: () ->      @unsupported "remove"
+    _mv: (d) ->     @unsupported "move"
+    _up: () ->      @unsupported "upload"
+    _down: () ->    @unsupported "download"
+    _exec: () ->    @unsupported "execute"
+    _pub: () ->     @unsupported "publish"
 
 # now export the class
 Ant.OS.API.VFS.BaseFileHandle = BaseFileHandle
@@ -162,43 +219,66 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
 
-    meta: (f) ->
-        Ant.OS.API.handle.fileinfo @path, f
+    meta: () ->
+        Ant.OS.API.handle.fileinfo @path
     
     getlink: () ->
         Ant.OS.API.handle.get + "/" + @path
 
-    action: (n, p, f) ->
+    _rd: (t) ->
+        # t: binary, text, any type
+        return Ant.OS.API.handle.scandir @path if @info.type is "dir"
+        #read the file
+        return Ant.OS.API.handle.fileblob @path if t is "binary"
+        Ant.OS.API.handle.readfile @path, if t then t else "text"
+
+    _wr: (d, t) ->
+        # t is base64 or undefined
+        return Ant.OS.API.handle.write me.path, me.cache if p is "base64"
         me = @
-        switch n
-            when "read"
-                return Ant.OS.API.handle.scandir @path, f if @info.type is "dir"
-                #read the file
-                return Ant.OS.API.handle.fileblob @path, f if p is "binary"
-                Ant.OS.API.handle.readfile @path, f, if p then p else "text"
-            when "mk"
-                return f { error: __("{0} is not a directory", @path) } if @info.type is "file"
-                Ant.OS.API.handle.mkdir "#{@path}/#{p}", f
-            when "write"
-                return Ant.OS.API.handle.write me.path, me.cache, f if p is "base64"
-                @sendB64 p, (data) ->
-                    Ant.OS.API.handle.write me.path, data, f
-            when "upload"
-                return if @info.type is "file"
-                Ant.OS.API.handle.upload @path, f
-            when "remove"
-                Ant.OS.API.handle.delete @path, f
-            when "publish"
-                Ant.OS.API.handle.sharefile @path, true , f
-            when "download"
-                return if @info.type is "dir"
-                Ant.OS.API.handle.fileblob @path, (d) ->
+        new Promise (resolve, reject) ->
+            me.b64(t)
+                .then (r) ->
+                    Ant.OS.API.handle.write me.path, d
+                    resolve r
+                .catch (e) -> reject e
+
+    _mk: (d) ->
+        me = @
+        if @info.type is "file"
+            return new Promise (resolve, reject) ->
+                reject { error: __("{0} is not a directory", me.path) }
+        Ant.OS.API.handle.mkdir "#{@path}/#{d}"
+
+    _rm: () ->
+        Ant.OS.API.handle.delete @path
+
+    _mv: (d) ->
+        Ant.OS.API.handle.move @path, d
+
+
+    _up: () ->
+        me = @
+        if @info.type isnt "file"
+            return new Promise (resolve, reject) ->
+                reject { error: __("{0} is not a file", me.path) }
+        Ant.OS.API.handle.upload @path
+
+    _down: () ->
+        me = @
+        new Promise (resolve, reject) ->
+            if me.info.type is "dir"
+                return reject { error: __("{0} is not a file", me.path) }
+            Ant.OS.API.handle.fileblob(@path)
+                .then (d) ->
                     blob = new Blob [d], { type: "octet/stream" }
                     Ant.OS.API.saveblob me.basename, blob
-            when "move"
-                Ant.OS.API.handle.move @path, p, f
-            else
-                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
+                    resolve()
+                .catch (e) ->
+                    reject e
+
+    _pub: () ->
+        Ant.OS.API.handle.sharefile @path, true
 
 Ant.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandle
 
@@ -209,39 +289,13 @@ class ApplicationHandle extends Ant.OS.API.VFS.BaseFileHandle
         @info = Ant.OS.setting.system.packages[@basename] if @basename
         @ready = true
     
-    meta: (f) ->
-        f()
-    
-    action: (n, p, f) ->
+    _rd: (t) ->
         me = @
-        switch n
-            when "read"
-                return f { result: @info } if @info
-                return unless @isRoot()
-                f { result: ( v for k, v of Ant.OS.setting.system.packages ) }
+        new Promise (resolve, reject) ->
+            return resolve { result: me.info } if me.info
+            return reject { error: __("Application meta data isnt found") } unless me.isRoot()
+            resolve { result: ( v for k, v of Ant.OS.setting.system.packages ) }
 
-            when "mk"
-                return
-
-            when "write"
-                return
-
-            when "upload"
-                # install
-                return
-
-            when "remove"
-                #uninstall
-                return
-            when "publish"
-                return
-            when "download"
-                return
-
-            when "move"
-                return
-            else
-                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
 
 Ant.OS.API.VFS.register "^app$", ApplicationHandle
 
@@ -255,103 +309,73 @@ class BufferFileHandle extends Ant.OS.API.VFS.BaseFileHandle
             size: if data then data.length else 0
             name: @basename
             type: "file"
-    meta: (f) ->
-        f()
     
+    _rd: (t) ->
+        me = @
+        new Promise (resolve, reject) ->
+            resolve { result: me.cache }
+
+    _wr: (d, t) ->
+        @cache = d
+        @onchange @ if @onchange
+        new Promise (resolve, reject) ->
+            resolve { result: true }
+
+    _down: () ->
+        me = @
+        new Promise (resolve,  reject) ->
+            blob = new Blob [me.cache], { type: "octet/stream" }
+            Ant.OS.API.saveblob me.basename, blob
+            resolve()
+
     onchange: (f) ->
         @onchange = f
 
-    action: (n, p, f) ->
-        me = @
-        switch n
-            when "read"
-                return f { result: @cache }
-
-            when "mk"
-                return
-
-            when "write"
-                @cache = p
-                @onchange @ if @onchange
-                f { result: true }
-
-            when "upload"
-                # install
-                return
-
-            when "remove"
-                #uninstall
-                return
-             when "publish"
-                return
-            when "download"
-                blob = new Blob [@cache], { type: "octet/stream" }
-                Ant.OS.API.saveblob me.basename, blob
-
-            when "move"
-                return
-            else
-                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
-    
 Ant.OS.API.VFS.register "^mem$", BufferFileHandle
 
 class URLFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
         @ready = true
-    meta: (f) ->
-        f { result: true }
-    action: (n, p, f) ->
-        me = @
-        switch n
-            when "read"
-                Ant.OS.API.get @path, (d) ->
-                    f(d)
-                , (e, s) ->
-                    Ant.OS.announcer.oserror __("VFS cannot read : {0}", me.path), e, s
-                , if p then p else "text"
-            else
-                return Ant.OS.announcer.oserror __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
+    
+    _rd: (t) ->
+        Ant.OS.API.get @path, if t then t else "text"
+
 Ant.OS.API.VFS.register "^(http|https)$", URLFileHandle
+
 
 class SharedFileHandle extends Ant.OS.API.VFS.BaseFileHandle
     constructor: (path) ->
         super path
         @ready = true if @isRoot()
-    meta: (f) ->
-        Ant.OS.API.handle.fileinfo @path, f
+
+    meta: () ->
+        Ant.OS.API.handle.fileinfo @path
     
-    action: (n, p, f) ->
+    _rd: (t) ->
+        return Ant.OS.API.get "#{Ant.OS.API.handle.shared}/all", t if @isRoot()
+        #read the file
+        return Ant.OS.API.handle.fileblob @path if t is "binary"
+        Ant.OS.API.handle.readfile @path, if t then t else "text"
+    
+    _wr: (d, t) ->
+        Ant.OS.API.handle.write @path, d
+
+    _rm: () ->
+        Ant.OS.API.handle.sharefile @basename, false
+
+    _down: () ->
         me = @
-        switch n
-            when "read"
-                return Ant.OS.API.get "#{Ant.OS.API.handle.shared}/all", f, ((e, s)->) if @isRoot()
-                #read the file
-                return Ant.OS.API.handle.fileblob @path, f if p is "binary"
-                Ant.OS.API.handle.readfile @path, f, if p then p else "text"
-            when "mk"
-                return
+        new Promise (resolve, reject) ->
+            if me.info.type is "dir"
+                return reject { error: __("{0} is not a file", me.path) }
+            Ant.OS.API.handle.fileblob me.path, (d) ->
+                blob = new Blob [d], { type: "octet/stream" }
+                Ant.OS.API.saveblob me.basename, blob
+                resolve()
 
-            when "write"
-               Ant.OS.API.handle.write @path, p, f
+    _pub: () ->
+        me = @
+        return new Promise (resolve, reject) -> resolve { result: me.basename }
 
-            when "remove"
-                Ant.OS.API.handle.sharefile @basename, false, f
-                
-            when "upload"
-                return
-
-            when "publish"
-                return f { result: @basename }
-
-            when "download"
-                return if @info.type is "dir"
-                Ant.OS.API.handle.fileblob @path, (d) ->
-                    blob = new Blob [d], { type: "octet/stream" }
-                    Ant.OS.API.saveblob me.basename, blob
-            when "move"
-                return
-            else
-                return Ant.OS.announcer.osfail __("VFS unknown action: {0}", n), (Ant.OS.API.throwe "OS.VFS"), n
-    
 Ant.OS.API.VFS.register "^shared$", SharedFileHandle

@@ -41,12 +41,19 @@ afx-calendar-view i.nextmonth:before{
     right:5px;*/
 }
 
+/*
 afx-calendar-view afx-grid-view afx-grid-row.selected{
     background-color: white;
     color:#414339;
-}
+}*/
 
-afx-calendar-view afx-grid-view afx-grid-row .cellselected{
+afx-calendar-view afx-grid-view div.afx-grid-row-selected .afx-grid-cell
+{
+    background-color: transparent;
+    color:black;
+}
+afx-calendar-view afx-grid-view div.afx-grid-row-selected .afx-grid-cell-selected
+{
     background-color: #116cd6;
     color:white;
     border-radius: 6px;

@@ -50,227 +50,297 @@ class BaseDialog extends SubWindow
         @parent.dialog = undefined if @parent
 
 this.OS.GUI.BaseDialog = BaseDialog
-###
-    this dialog rende a tag as main content
-    and a list of buttons, the behaviour of
-    the button is specified by user. The conf
-    object is in the follow form
-    {
-        tag: <tag_name>,
-        buttons:[
-            {
-                label: 'buton label',
-                onclick: function(d){...}
-            }, ...
-        ]
-    }
-###
+
 class BasicDialog extends BaseDialog
-    constructor: ( name, @conf, @title) ->
+    constructor: ( name, target) ->
         super name
+        if typeof target is "string"
+            Ant.OS.GUI.htmlToScheme target, @, @host
+        else # a file handle
+            @render target.path
     
     init: () ->
-        @title = @name if not @title
-        html = "<afx-app-window  data-id = '#{@name}'  width='#{@conf.width}' height='#{@conf.height}'>"
-        html += "<afx-hbox><div data-width='7'></div><afx-vbox><div data-height='5'></div>"
-        html += "<#{v.tag} #{v.att}  data-id = 'content#{k}'></#{v.tag}>" for k,v of @conf.tags
-        html += "<div data-height = '35' style=' text-align:right;padding-top:3px;'>"
-        html += "<afx-button data-id = 'bt#{k}' text = '#{v.label}' style='margin-left:5px;'></afx-button>" for k,v of @conf.buttons
-        html += "</div><div data-height='5'></div></afx-vbox><div data-width='7'></div></afx-hbox></afx-app-window>"
-        #render the html
-        Ant.OS.GUI.htmlToScheme html, @, @host
-    
-    main: () ->
-        @scheme.set "apptitle", @title
-        @scheme.set "minimizable", false
-        @scheme.set "resizable", @conf.resizable if @conf.resizable isnt undefined
-        me = @
-        f = (_v) -> () -> _v.onclick me
-        # bind action to button
-        ( (me.find "bt#{k}").set "onbtclick", f(v) ) for k, v of @conf.buttons
-        @conf.filldata @ if @conf.filldata
-        @conf.xtra @ if @conf.xtra
+        @scheme.set "apptitle", @data.title if @data and @data.title
 
 this.OS.GUI.BasicDialog = BasicDialog
 
 class PromptDialog extends BasicDialog
     constructor: () ->
-        super "PromptDialog", {
-            tags: [
-                { tag: "afx-label" },
-                { tag: "input", att: "type = 'text' data-height='25'" }
-            ],
-            width: 200,
-            height: 120,
-            resizable: false,
-            buttons: [
-                {
-                    label: "__(Ok)",
-                    onclick: (d) ->
-                        txt = (d.find "content1").value
-                        return d.quit() if txt is ""
-                        d.handle txt if d.handle
-                        d.quit()
-                },
-                {
-                    label: "__(Cancel)",
-                    onclick: (d) -> d.quit()
-                }
-            ],
-            filldata: (d) ->
-                return unless d.data
-                (d.find "content0").set "text", d.data.label
-                (d.find "content1").value = d.data.value if d.data.value
-                $(d.find "content1").attr("type", d.data.type) if d.data.type
-            xtra: (d) ->
-                $( d.find "content1" ).keyup (e) ->
-                    (d.find "bt0").trigger() if e.which is 13
-        }
+        super "PromptDialog", PromptDialog.scheme
+    
+    init: () ->
+        super.init()
+        me = @
+        @find("lbl").set "text", @data.label if @data and @data.label
+        $(@find "txtInput").val @data.value if @data and @data.value
 
+        (@find "btnOk").set "onbtclick", (e) ->
+            me.handle($(me.find "txtInput").val()) if me.handle
+            me.quit()
+        
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+
+PromptDialog.scheme = """
+<afx-app-window  width='200' height='150' apptitle = "Prompt">
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-label data-id = "lbl" />
+                <input type = "text" data-id= "txtInput" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                </afx-hbox>
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
 this.OS.register "PromptDialog", PromptDialog
 
 class CalendarDialog extends BasicDialog
     constructor: () ->
-        super "CalendarDialog", {
-            tags: [{ tag: 'afx-calendar-view' }],
-            width: 300,
-            height: 230,
-            resizable: false,
-            buttons: [
-                {
-                    label: "__(Ok)",
-                    onclick: (d) ->
-                        date = (d.find "content0").get "selectedDate"
-                        if date
-                            d.handle date if d.handle
-                            d.quit()
-                        else
-                            d.notify __("Please select a date")
-                },
-                {
-                    label: "__(Cancel)",
-                    onclick: (d) -> d.quit()
-                }
-            ]
-        }
+        super "CalendarDialog", CalendarDialog.scheme
+    
+    init: () ->
+        super.init()
+        me = @
+        (@find "btnOk").set "onbtclick", (e) ->
+            date = (me.find "cal").get "selectedDate"
+            return me.notify __("Please select a day") unless date
+            me.handle(date) if me.handle
+            me.quit()
+        
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+CalendarDialog.scheme = """
+<afx-app-window  width='300' height='230' apptitle = "Calendar" >
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-calendar-view data-id = "cal" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                </afx-hbox>
+                <div data-height="10" />
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
+
 this.OS.register "CalendarDialog", CalendarDialog
 
 class ColorPickerDialog extends BasicDialog
     constructor: () ->
-        super "ColorPickerDialog", {
-            tags: [{ tag: 'afx-color-picker' }, {tag:'div', att: 'data-height="5"' }],
-            width: 313,
-            height: 250,
-            resizable: false,
-            buttons: [
-                {
-                    label: "__(Ok)",
-                    onclick: (d) ->
-                        c = (d.find "content0").get "selectedColor"
-                        if c
-                            d.handle c if d.handle
-                            d.quit()
-                        else
-                            d.notify "Please select a color"
-                },
-                {
-                    label: "__(Cancel)",
-                    onclick: (d) -> d.quit()
-                }
-            ]
-        }
+        super "ColorPickerDialog", ColorPickerDialog.scheme
+    
+    init: () ->
+        super.init()
+        me = @
+        (@find "btnOk").set "onbtclick", (e) ->
+            color = (me.find "cpicker").get "selectedColor"
+            return me.notify __("Please select color") unless color
+            me.handle(color) if me.handle
+            me.quit()
+        
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+ColorPickerDialog.scheme = """
+<afx-app-window  width='320' height='250' apptitle = "Color picker" >
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-color-picker data-id = "cpicker" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                </afx-hbox>
+                <div data-height="10" />
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
+
 this.OS.register "ColorPickerDialog", ColorPickerDialog
 
 class InfoDialog extends BasicDialog
     constructor: () ->
-        super "InfoDialog", {
-            tags: [{ tag: 'afx-grid-view' }],
-            width: 250,
-            height: 300,
-            resizable: true,
-            buttons: [ { label: "__(Cancel)", onclick: (d) -> d.quit() } ],
-            filldata: (d) ->
-                return unless d.data
-                rows = []
-                rows.push [ { value: k }, { value: v } ] for k, v of d.data
-                (d.find "content0").set "rows", rows
-        }
+        super "InfoDialog", InfoDialog.scheme
+        
+    init: () ->
+        super.init()
+        me = @
+        rows = []
+        delete @data.title if @data and @data.title
+        rows.push [ { text: k }, { text: v } ] for k, v of @data
+        (@find "grid").set "header", [ { text: __("Name"), width: 70 }, { text: __("Value") } ]
+        (@find "grid").set "rows", rows
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+InfoDialog.scheme = """
+<afx-app-window  width='250' height='300' apptitle = "Info" >
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-grid-view data-id = "grid" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                </afx-hbox>
+                <div data-height="10" />
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
+
 this.OS.register "InfoDialog", InfoDialog
 
 
 class YesNoDialog extends BasicDialog
     constructor: () ->
-        super "YesNoDialog", {
-            tags: [{ tag: "afx-label" }],
-            width: 300,
-            height: 100,
-            resizable: true,
-            buttons: [
-                {
-                    label: "__(Yes)", onclick: (d) ->
-                        d.handle true if d.handle
-                        d.quit()
-                },
-                {
-                    label: "__(No)", onclick: (d) ->
-                        d.handle false if d.handle
-                        d.quit()
-                }
-            ],
-            filldata: (d) ->
-                return unless d.data
-                l = d.find "content0"
-                for k, v of d.data
-                    l.set k, v
-        }
+        super "YesNoDialog", YesNoDialog.scheme
+
+    init: () ->
+        super.init()
+        me = @
+        @find("lbl").set "text", @data.label if @data and @data.label
+        (@find "btnYes").set "onbtclick", (e) ->
+            me.handle(true) if me.handle
+            me.quit()
+        (@find "btnNo").set "onbtclick", (e) ->
+            me.handle(false) if me.handle
+            me.quit()
+
+YesNoDialog.scheme = """
+<afx-app-window  width='200' height='150' apptitle = "Prompt">
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-label data-id = "lbl" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" />
+                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" />
+                </afx-hbox>
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
 this.OS.register "YesNoDialog", YesNoDialog
 
 class SelectionDialog extends BasicDialog
     constructor: () ->
-        super "SelectionDialog", {
-            tags: [{ tag: "afx-list-view" }],
-            width: 250,
-            height: 300,
-            resizable: false,
-            buttons: [
-                {
-                    label: "__(Ok)", onclick: (d) ->
-                        el = d.find "content0"
-                        it = el.get "selected"
-                        return unless it
-                        d.handle it if d.handle
-                        d.quit()
-                },
-                { label: "__(Cancel)", onclick: (d) -> d.quit() }
-            ],
-            filldata: (d) ->
-                return unless d.data
-                (d.find "content0").set "items", d.data
-            xtra: (d) ->
-                ( d.find "content0" ).set "onlistdbclick", (e) ->
-                    (d.find "bt0").trigger()
-            
-        }
+        super "SelectionDialog", SelectionDialog.scheme
+    
+    init: () ->
+        super.init()
+        me = @
+        (@find "list").set "data", @data.data if @data and @data.data
+        (@find "btnOk").set "onbtclick", (e) ->
+            data = (me.find "list").get "selectedItem"
+            return me.notify __("Please select an item") unless data
+            me.handle(data) if me.handle
+            me.quit()
+        
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+SelectionDialog.scheme = """
+<afx-app-window  width='250' height='300' apptitle = "Selection">
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-list-view data-id = "list" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancels)" data-width = "50" />
+                </afx-hbox>
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
 this.OS.register "SelectionDialog", SelectionDialog
 
-class AboutDialog extends BaseDialog
+class AboutDialog extends BasicDialog
     constructor: () ->
-        super "AboutDialog"
+        super "AboutDialog", AboutDialog.scheme
 
     init: () ->
-        @render "os://resources/schemes/about.html"
-
-    main: () ->
         mt = @meta()
-        @scheme.set "apptitle", __("About: {0}",mt.name)
-        (@find "mylabel").set "*", {icon:mt.icon, iconclass:mt.iconclass, text:"#{mt.name}(v#{mt.version})"}
+        me = @
+        @scheme.set "apptitle", __("About: {0}", mt.name)
+        (@find "mylabel").set "*", {
+            icon: mt.icon,
+            iconclass: mt.iconclass,
+            text: "#{mt.name}(v#{mt.version})"
+        }
         ($ @find "mydesc").html mt.description
         # grid data for author info
         return unless mt.info
         rows = []
-        rows.push [ { value: k }, { value: v } ] for k, v of mt.info
+        rows.push [ { text: k }, { text: v } ] for k, v of mt.info
+        (@find "mygrid").set "header", [ { text: "", width: 100 }, { text: "" } ]
         (@find "mygrid").set "rows", rows
-        
+        (@find "btnCancel").set "onbtclick", (e) ->
+            me.quit()
+
+AboutDialog.scheme = """
+<afx-app-window data-id = 'about-window'  width='300' height='200'>
+    <afx-vbox>
+        <div style="text-align:center; margin-top:10px;" data-height="50">
+            <h3 style = "margin:0;padding:0;">
+                <afx-label data-id = 'mylabel'></afx-label>
+            </h3>
+            <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
+        </div>
+        <afx-grid-view data-id = 'mygrid'></afx-grid-view>
+        <afx-hbox data-height="30">
+            <div />
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" />
+        </afx-hbox>
+        <div data-height = "10"/>
+    </afx-vbox>
+</afx-app-window>
+"""
 this.OS.register "AboutDialog", AboutDialog
 
 class FileDiaLog extends BaseDialog

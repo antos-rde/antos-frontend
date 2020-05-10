@@ -172,71 +172,69 @@ Ant.OS.API =
     #request a user data
     mid: () ->
         return Ant.OS.announcer.getMID()
-    post: (p, d, c, f) ->
-        q = Ant.OS.announcer.getMID()
-        Ant.OS.API.loading q, p
-        
-        $.ajax {
-            type: 'POST',
-            url: p,
-            contentType: 'application/json',
-            data: JSON.stringify d,
-            dataType: 'json',
-            success: null
-        }
-        #$.getJSON p, d
-        .done (data) ->
-            Ant.OS.API.loaded q, p, "OK"
-            c(data)
-        .fail (e, s) ->
-            Ant.OS.API.loaded q, p, "FAIL"
-            f(e, s)
-    
-    blob: (p, c, f) ->
-        q = Ant.OS.announcer.getMID()
-        r = new XMLHttpRequest()
-        r.open "GET", p, true
-        r.responseType = "arraybuffer"
-
-        r.onload = (e) ->
-           if @status is 200 and @readyState is 4
-                c @response
-                Ant.OS.API.loaded q, p, "OK"
-            else
-                f e, @
-                Ant.OS.API.loaded q, p, "FAIL"
-        
-        Ant.OS.API.loading q, p
-        r.send()
-
-    upload: (p, d, c, f) ->
-        q = Ant.OS.announcer.getMID()
-        #insert a temporal file selector
-        o = ($ '<input>').attr('type', 'file').css("display", "none")
-        o.change () ->
+    post: (p, d) ->
+        new Promise (resolve, reject) ->
+            q = Ant.OS.announcer.getMID()
             Ant.OS.API.loading q, p
-            formd = new FormData()
-            formd.append 'path', d
-            # TODO: only one file is selected at this time
-            formd.append 'upload', o[0].files[0]
-
             $.ajax {
-                url: p,
-                data: formd,
                 type: 'POST',
-                contentType: false,
-                processData: false,
+                url: p,
+                contentType: 'application/json',
+                data: JSON.stringify d,
+                dataType: 'json',
+                success: null
             }
             .done (data) ->
                 Ant.OS.API.loaded q, p, "OK"
-                c(data)
-                o.remove()
+                resolve(data)
             .fail (e, s) ->
                 Ant.OS.API.loaded q, p, "FAIL"
-                f(e, s)
-                o.remove()
-                
-        o.click()
+                reject(e, s)
+    
+    blob: (p) ->
+        new Promise (resolve, reject) ->
+            q = Ant.OS.announcer.getMID()
+            r = new XMLHttpRequest()
+            r.open "GET", p, true
+            r.responseType = "arraybuffer"
+            r.onload = (e) ->
+                if @status is 200 and @readyState is 4
+                    resolve @response
+                    Ant.OS.API.loaded q, p, "OK"
+                else
+                    reject e, @
+                    Ant.OS.API.loaded q, p, "FAIL"
+            Ant.OS.API.loading q, p
+            r.send()
+
+    upload: (p, d) ->
+        new Promise (resolve, reject) ->
+            q = Ant.OS.announcer.getMID()
+            #insert a temporal file selector
+            o = ($ '<input>').attr('type', 'file').css("display", "none")
+            o.change () ->
+                Ant.OS.API.loading q, p
+                formd = new FormData()
+                formd.append 'path', d
+                # TODO: only one file is selected at this time
+                formd.append 'upload', o[0].files[0]
+
+                $.ajax {
+                    url: p,
+                    data: formd,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                }
+                .done (data) ->
+                    Ant.OS.API.loaded q, p, "OK"
+                    resolve(data)
+                    o.remove()
+                .fail (e, s) ->
+                    Ant.OS.API.loaded q, p, "FAIL"
+                    reject(e, s)
+                    o.remove()
+            o.click()
 
     saveblob: (name, b) ->
         url = window.URL.createObjectURL b
@@ -249,41 +247,44 @@ Ant.OS.API =
         window.URL.revokeObjectURL(url)
         o.remove()
 
-    systemConfig: ->
-        Ant.OS.API.request 'config', (result) ->
-            console.log  result
     loading: (q, p) ->
         Ant.OS.announcer.trigger "loading", { id: q, data: { m: "#{p}", s: true }, name: "OS" }
-    loaded: (q, p, m ) ->
-        Ant.OS.announcer.trigger "loaded", { id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
-    get: (p, c, f, t) ->
-        conf =
-            type: 'GET',
-            url: p,
-        conf.dataType = t if t
 
-        q = Ant.OS.announcer.getMID()
-        Ant.OS.API.loading q, p
-        $.ajax conf
-            .done (data) ->
-                Ant.OS.API.loaded q, p, "OK"
-                c(data)
-            .fail (e, s) ->
-                Ant.OS.API.loaded q, p, "FAIL"
-                f(e, s)
-    script: (p, c, f) ->
-        q = Ant.OS.announcer.getMID()
-        Ant.OS.API.loading q, p
-        $.getScript p
-            .done (data) ->
-                Ant.OS.API.loaded q, p, "OK"
-                c(data)
-            .fail (e, s) ->
-                Ant.OS.API.loaded q, p, "FAIL"
-                f(e, s)
-    resource: (r, c, f) ->
+    loaded: (q, p, m ) ->
+        Ant.OS.announcer.trigger "loaded", {
+            id: q, data: { m: "#{m}: #{p}", s: false }, name: "OS" }
+    
+    get: (p, t) ->
+        new Promise (resolve, reject) ->
+            conf =
+                type: 'GET',
+                url: p
+            conf.dataType = t if t
+            q = Ant.OS.announcer.getMID()
+            Ant.OS.API.loading q, p
+            $.ajax conf
+                .done (data) ->
+                    Ant.OS.API.loaded q, p, "OK"
+                    resolve(data)
+                .fail (e, s) ->
+                    Ant.OS.API.loaded q, p, "FAIL"
+                    reject(e, s)
+                
+    script: (p) ->
+        new Promise (resolve, reject) ->
+            q = Ant.OS.announcer.getMID()
+            Ant.OS.API.loading q, p
+            $.getScript p
+                .done (data) ->
+                    Ant.OS.API.loaded q, p, "OK"
+                    resolve(data)
+                .fail (e, s) ->
+                    Ant.OS.API.loaded q, p, "FAIL"
+                    reject(e, s)
+
+    resource: (r) ->
         path = "resources/#{r}"
-        Ant.OS.API.get path, c, f
+        Ant.OS.API.get path
     
     libready: (l) ->
         return Ant.OS.API.shared[l] || false
@@ -324,19 +325,24 @@ Ant.OS.API =
             libs.splice 0, 1
             Ant.OS.API.requires libs, f
         Ant.OS.API.require libs[0], null
+
     packages:
-        fetch: (f) ->
+        fetch: () ->
             Ant.OS.API.handle.packages {
                 command: "list", args: { paths: (v for k, v of Ant.OS.setting.system.pkgpaths) }
-            }, f
-        cache: (f) ->
+            }
+
+        cache: () ->
             Ant.OS.API.handle.packages {
                 command: "cache", args: { paths: (v for k, v of Ant.OS.setting.system.pkgpaths) }
-            }, f
+            }
+
     setting: (f) ->
         Ant.OS.API.handle.setting f
+
     apigateway: (d, ws, c) ->
         return Ant.OS.API.handle.apigateway d, ws, c
+
     search: (text) ->
         r = []
         
@@ -350,17 +356,17 @@ Ant.OS.API =
     onsearch: (name, fn) ->
         Ant.OS.API.searchHandle[name] = fn unless Ant.OS.API.searchHandle[name]
 
-    setLocale: (name, f) ->
-        path = "resources/languages/#{name}.json"
-        Ant.OS.API.get path, (d) ->
-            Ant.OS.setting.system.locale = name
-            Ant.OS.API.lang = d
-            if f then f() else Ant.OS.announcer.trigger "systemlocalechange", name
-        , (e, s) ->
-            #Ant.OS.setting.system.locale = "en_GB"
-            Ant.OS.announcer.oserror __("Language file {0} not found", path), e, s
-            f() if f
-        , "json"
+    setLocale: (name) ->
+        new Promise (resolve, reject) ->
+            path = "resources/languages/#{name}.json"
+            Ant.OS.API.get(path, "json")
+                .then (d) ->
+                    Ant.OS.setting.system.locale = name
+                    Ant.OS.API.lang = d
+                    Ant.OS.announcer.trigger "systemlocalechange", name
+                    resolve d
+                .catch (e) ->
+                    reject e
 
     throwe: (n) ->
         err = undefined

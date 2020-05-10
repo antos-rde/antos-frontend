@@ -19,20 +19,23 @@
 class DB
     constructor: (@table) ->
 
-    save: (d, f) ->
-        Ant.OS.API.handle.dbquery "save", { table: @table, data: d }, f
-    delete: (c, f) ->
+    save: (d) ->
+        Ant.OS.API.handle.dbquery "save", { table: @table, data: d }
+
+    delete: (c) ->
         rq = { table: @table }
-        return  ( Ant.OS.announcer.oserror __("VDB Unknown condition for delete command"),
-        (Ant.OS.API.throwe "OS.DB"), c ) unless c and c isnt ""
+        return new Promise (resolve, reject) ->
+            reject(Ant.OS.API.throwe("OS.DB: unkown condition")) unless c and c isnt ""
         if isNaN c
             rq.cond = c
         else
             rq.id = c
-        Ant.OS.API.handle.dbquery "delete", rq, f
-    get: (id, f) ->
-        Ant.OS.API.handle.dbquery "get", { table: @table, id: id }, f
-    find: (cond, f) ->
-        Ant.OS.API.handle.dbquery "select", { table: @table, cond: cond }, f
+        Ant.OS.API.handle.dbquery "delete", rq
+
+    get: (id) ->
+        Ant.OS.API.handle.dbquery "get", { table: @table, id: id }
+
+    find: (cond) ->
+        Ant.OS.API.handle.dbquery "select", { table: @table, cond: cond }
 
 Ant.OS.API.DB = DB

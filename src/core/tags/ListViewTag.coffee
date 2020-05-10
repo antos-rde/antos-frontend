@@ -83,6 +83,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @root.push = (e) -> me.push e
         @root.remove = (e) -> me.remove e
         @root.unshift = (e) -> me.unshift e
+        @root.unselect = () -> me.unselect()
 
     multiselect: () ->
         return false if @get "dropdown"
@@ -136,6 +137,12 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         $( @refs.mlist).empty()
         for item in data
             @push item, false
+
+
+    unselect: () ->
+        v.set "selected", false for v in @get("selectedItems")
+        @set "selectedItems", []
+        @set "selectedItem", undefined
 
     iclick: (e, flag) ->
         return if not e.item

@@ -1,5 +1,55 @@
-<afx-app-window apptitle="Preview" width="100" height="100">
-    <afx-hbox>
-        <afx-button data-height="30" toggle = "true" text="__(Read more)" iconclass="fa fa-camera-retro fa-lg" id="button"></afx-button>
-    </afx-hbox>
+<afx-app-window data-id="example-show-case" apptitle="AntOS GUI widgets" width="650" height="500">
+    <afx-vbox>
+        <afx-menu data-height="30" data-id="menu" />
+        <afx-tab-container data-id="tabctn" tabbarheight= "30">
+
+            <afx-hbox tabname="Widgets">
+                <afx-vbox data-width="150">
+                    <afx-tree-view data-id="tree" />
+                    <afx-slider data-id="slider" data-height="30" value="50"/>
+                </afx-vbox>
+                <afx-resizer data-width="5" />
+                <afx-vbox data-width="grow">
+                    <afx-hbox min-height="50">
+                    <afx-switch data-id="switch" />
+                    <afx-button text="__(This is the label)"
+                        data-id="bttest"
+                        iconclass="fa fa-camera-retro fa-lg"
+                        icon="os://packages/DummyApp/icon.png"/>
+                    <afx-nspinner data-id="spin" value="10" step="2" />
+                    </afx-hbox>
+                    <afx-resizer data-height="5" />
+                    <afx-hbox>
+                        <afx-list-view data-id="list" dropdown="false" multiselect="true" />
+                    </afx-hbox>
+                    <afx-hbox data-height="150">
+                        <afx-grid-view data-id="grid" multiselect="false" />
+                    </afx-hbox>
+                </afx-vbox>
+            </afx-hbox>
+            <afx-hbox tabname="Virtual desktop">
+                <afx-float-list data-id = "flist"/>
+            </afx-hbox>
+            <afx-hbox tabname="Calendar">
+                <afx-calendar-view data-id = "cal"/>
+            </afx-hbox>
+            <afx-hbox tabname="Color picker">
+                <afx-color-picker data-id = "cpk"/>
+            </afx-hbox>
+            <afx-hbox tabname="File view">
+                <afx-vbox>
+                    <afx-file-view data-id = "fileview"/>
+                    <afx-list-view data-id = "viewoption" data-height="30" dropdown="true" />
+                </afx-vbox>
+            </afx-hbox>
+
+            <afx-hbox tabname="Dialogs">
+                <afx-vbox>
+                    <afx-list-view data-id = "dialoglist"/>
+                    <afx-button data-id = "btrundia" text="Run dialog" data-height="30"/>
+                </afx-vbox>
+            </afx-hbox>
+
+        </afx-tab-container>
+    </afx-vbox>
 </afx-app-window>

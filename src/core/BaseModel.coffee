@@ -67,24 +67,27 @@ class BaseModel
     subscribe: (e, f) ->
         Ant.OS.announcer.on e, f, @
 
-    openDialog: (d, f, title, data) ->
-        if @dialog
-            @dialog.show()
-            return
-        if typeof d is "string"
-            if not Ant.OS.GUI.subwindows[d]
-                @error __("Dialog {0} not found", d)
+    openDialog: (d, data) ->
+        me = @
+        new Promise (resolve, reject) ->
+            if me.dialog
+                me.dialog.show()
                 return
-            @dialog = new Ant.OS.GUI.subwindows[d]()
-        else
-            @dialog = d
-        #@dialog.observable = riot.observable() unless @dialog
-        @dialog.parent = @
-        @dialog.handle = f
-        @dialog.pid = @pid
-        @dialog.data = data
-        @dialog.title = title
-        @dialog.init()
+            if typeof d is "string"
+                if not Ant.OS.GUI.subwindows[d]
+                    me.error __("Dialog {0} not found", d)
+                    return
+                me.dialog = new Ant.OS.GUI.subwindows[d]()
+            else
+                me.dialog = d
+            #@dialog.observable = riot.observable() unless @dialog
+            me.dialog.parent = me
+            me.dialog.handle = resolve
+            me.dialog.reject = reject
+            me.dialog.pid = me.pid
+            me.dialog.data = data
+            me.dialog.title = data.title if data and data.title
+            me.dialog.init()
 
     ask: (t, m, f) ->
         @._gui.openDialog "YesNoDialog", (d) ->

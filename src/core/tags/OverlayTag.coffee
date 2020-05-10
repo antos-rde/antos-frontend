@@ -28,6 +28,6 @@ class OverlayTag extends Ant.OS.GUI.BaseTag
         }
 
     layout: () ->
-        @refs.yield = @root
+        @refs.yield = @roots
         []
 Ant.OS.GUI.define "afx-overlay", OverlayTag

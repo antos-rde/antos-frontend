@@ -32,6 +32,10 @@ class BaseService extends this.OS.GUI.BaseModel
         #implement by user
         # event registe, etc
         # scheme loader
+    
+    update: () ->
+        @domel.set "data", @
+
     meta: () ->
         Ant.OS.APP[@name].meta
     attach: (h) ->

@@ -18,6 +18,7 @@ class FloatListTag extends ListViewTag
         @calibrate()
     __dir__: (v) ->
         @calibrate()
+
     mount: () ->
         me = @
         $(@refs.container)
@@ -28,6 +29,8 @@ class FloatListTag extends ListViewTag
             .css "display", "block"
             .css "width", "100%"
         @observable.on "resize", (e) -> me.calibrate()
+        @root.ready(@root) if @root.ready
+
     push: (v) ->
         el = super.push(v)
         @enable_drag el

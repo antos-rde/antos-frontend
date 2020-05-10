@@ -107,21 +107,29 @@ Ant.OS or=
     boot: ->
         #first login
         console.log "Booting sytem"
-        Ant.OS.API.handle.auth (d) ->
-            # in case someone call it more than once :)
-            if d.error
-                # show login screen
-                Ant.OS.GUI.login()
-            else
-                # startX :)
-                Ant.OS.GUI.startAntOS d.result
+        Ant.OS.API.handle.auth()
+            .then (d) ->
+                # in case someone call it more than once :)
+                if d.error
+                    # show login screen
+                    Ant.OS.GUI.login()
+                else
+                    # startX :)
+                    Ant.OS.GUI.startAntOS d.result
+            .catch (e) ->
+                console.error e
     
     cleanupHandles: {}
+
     exit: ->
         #do clean up first
         f() for n, f of Ant.OS.cleanupHandles
-        Ant.OS.API.handle.setting (r) ->
-            Ant.OS.cleanup()
-            Ant.OS.API.handle.logout()
+        Ant.OS.API.handle.setting()
+            .then (r) ->
+                Ant.OS.cleanup()
+                Ant.OS.API.handle.logout()
+            .catch (e) ->
+                console.error e
+
     onexit: (n, f) ->
         Ant.OS.cleanupHandles[n] = f unless Ant.OS.cleanupHandles[n]

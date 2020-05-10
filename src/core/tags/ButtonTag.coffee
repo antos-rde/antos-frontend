@@ -12,7 +12,6 @@ class ButtonTag extends Ant.OS.GUI.BaseTag
     
 
     __color__: (v) ->
-        console.log @refs
         @refs.label.set "color", v
     
     __icon__: (v) ->

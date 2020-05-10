@@ -7,6 +7,17 @@ afx-tab-bar afx-list-view {
     padding:0;
     margin:0;
 }
+afx-tab-bar afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li
+{
+    background-color: transparent;
+}
+
+afx-tab-bar afx-list-view > div.list-container > ul > afx-list-item > li.selected
+{
+    background-color: #116cd6;
+    color:white;
+}
+
 afx-tab-bar afx-list-view  > div.list-container > ul  li{
     float:left;
     border-top-left-radius: 5px;
