@@ -172,8 +172,6 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         me = @
         $(@root)
             .css "overflow", "hidden"
-            .css "display", "block"
-            .css "padding", "5px"
             
         $(@refs.grid).css "display", "grid"
         $(@refs.header).css "display", "grid"

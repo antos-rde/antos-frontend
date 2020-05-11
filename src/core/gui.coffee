@@ -26,27 +26,6 @@ Ant.OS.GUI =
         CTRL: {}
         SHIFT: {}
         META: {}
-    SYS_MENU: [
-        {
-            text: "",
-            iconclass: "fa fa-eercast",
-            dataid: "sys-menu-root",
-            children: [
-                {
-                    text: "__(Applications)",
-                    children: [],
-                    dataid: "sys-apps"
-                    iconclass: "fa fa-adn",
-                    onchildselect: (d) ->
-                        Ant.OS.GUI.launch d.data.item.get("data").name
-                }
-            ],
-            onchildselect: (d) ->
-                id = d.data.item.get("data").dataid
-                return Ant.OS.exit() if id is "sys-logout"
-                return Ant.OS.GUI.toggleFullscreen() if id is "os-fullsize"
-        }
-    ]
     htmlToScheme: (html, app, parent) ->
         scheme =  $.parseHTML html
             
@@ -80,20 +59,21 @@ Ant.OS.GUI =
             Ant.OS.GUI.pushServices srvs
         Ant.OS.GUI.pushService srvs[0]
     
-    openDialog: (d, f, title, data) ->
-        if Ant.OS.GUI.dialog
-            Ant.OS.GUI.dialog.show()
-            return
-        if not Ant.OS.GUI.subwindows[d]
-            ex = Ant.OS.API.throwe "Dialog"
-            return Ant.OS.announcer.oserror __("Dialog {0} not found", d), ex, null
-        Ant.OS.GUI.dialog = new Ant.OS.GUI.subwindows[d]()
-        Ant.OS.GUI.dialog.parent = Ant.OS.GUI
-        Ant.OS.GUI.dialog.handle = f
-        Ant.OS.GUI.dialog.pid = -1
-        Ant.OS.GUI.dialog.data = data
-        Ant.OS.GUI.dialog.title = title
-        Ant.OS.GUI.dialog.init()
+    openDialog: (d, data) ->
+        new Promise (resolve, reject) ->
+            if Ant.OS.GUI.dialog
+                Ant.OS.GUI.dialog.show()
+                return resolve()
+            if not Ant.OS.GUI.subwindows[d]
+                ex = Ant.OS.API.throwe "Dialog"
+                return reject(ex)
+            Ant.OS.GUI.dialog = new Ant.OS.GUI.subwindows[d]()
+            Ant.OS.GUI.dialog.parent = Ant.OS.GUI
+            Ant.OS.GUI.dialog.handle = resolve
+            Ant.OS.GUI.dialog.reject = reject
+            Ant.OS.GUI.dialog.pid = -1
+            Ant.OS.GUI.dialog.data = data
+            Ant.OS.GUI.dialog.init()
 
     pushService: (ph) ->
         arr = ph.split "/"
@@ -213,7 +193,7 @@ Ant.OS.GUI =
                 app.applySetting m.data.m if (m.name is app.name)
 
     toggleFullscreen: () ->
-        el = ($ "body")[0]
+        el = document.documentElement
         if Ant.OS.GUI.fullscreen
             return document.exitFullscreen() if document.exitFullscreen
             return document.mozCancelFullScreen() if document.mozCancelFullScreen
@@ -263,10 +243,11 @@ Ant.OS.GUI =
     showTooltip: (el, text, e) ->
         el = el[0]
         label = ($ "#systooltip")[0]
-        $("#workspace").on "mousemove", (ev) ->
+        cb = (ev) ->
             if $(ev.target).closest(el).length is 0
                 $(label).hide()
-                $("#workspace").off "mousemove"
+                $(document).off "mousemove", cb
+        $(document).on "mousemove", cb
         arr = text.split /:(.+)/
         tip = text
         tip = arr[1] if arr.length > 1
@@ -279,166 +260,138 @@ Ant.OS.GUI =
             when "cr" # center right of the element
                 left = offset.left + w + 5
                 top = offset.top + h / 2 - $(label).height() / 2
-                $(label).css "top", top + "px"
-                    .css "left", left + "px"
+            when "ct" #ceter top
+                left = offset.left + w / 2 - $(label).width() / 2
+                top = offset.top - $(label).height() - 5
             else
                 return unless e
-                $(label).css "top", e.clientY + 5 + "px"
-                    .css "left", e.clientX + 5 +  "px"
+                top = e.clientY + 5
+                left = e.clientX + 5
+        $(label).css "top", top + "px"
+                .css "left", left + "px"
 
     initDM: ->
-        # check login first
-        Ant.OS.API.resource("schemes/dm.html")
-            .then (x) ->
-                return null unless x
-                scheme =  $.parseHTML x
-                ($ "#wrapper").append scheme
+        scheme =  $.parseHTML Ant.OS.GUI.schemes.ws
+        ($ "#wrapper").append scheme
+        
+        Ant.OS.announcer.observable.one "sysdockloaded", () ->
+            ($ window).bind 'keydown', (event) ->
+                dock = ($ "#sysdock")[0]
+                return unless dock
+                app = dock.get "selectedApp"
+                #return true unless app
+                c = String.fromCharCode(event.which).toUpperCase()
+                fnk = undefined
+                if event.ctrlKey
+                    fnk = "CTRL"
+                else if event.metaKey
+                    fnk = "META"
+                else if event.shiftKey
+                    fnk = "SHIFT"
+                else if event.altKey
+                    fnk = "ALT"
                 
-                Ant.OS.announcer.observable.one "sysdockloaded", () ->
-                    ($ window).bind 'keydown', (event) ->
-                        dock = ($ "#sysdock")[0]
-                        return unless dock
-                        app = dock.get "selectedApp"
-                        #return true unless app
-                        c = String.fromCharCode(event.which).toUpperCase()
-                        fnk = undefined
-                        if event.ctrlKey
-                            fnk = "CTRL"
-                        else if event.metaKey
-                            fnk = "META"
-                        else if event.shiftKey
-                            fnk = "SHIFT"
-                        else if event.altKey
-                            fnk = "ALT"
-                        
-                        return  unless fnk
-                        r = if app then  app.shortcut fnk, c, event else true
-                        return  event.preventDefault() if not r
-                        return  unless Ant.OS.GUI.shortcut[fnk]
-                        return  unless Ant.OS.GUI.shortcut[fnk][c]
-                        Ant.OS.GUI.shortcut[fnk][c](event)
-                        event.preventDefault()
-                # system menu and dock
-                $("#syspanel")[0].uify()
-                $("#sysdock")[0].uify()
-                $("#systooltip")[0].uify()
-                $("#contextmenu")[0].uify()
-                #riot.mount ($ "#syspanel", $ "#wrapper")
-                #riot.mount ($ "#sysdock", $ "#workspace"), { items: [] }
-                #riot.mount ($ "#systooltip", $ "#wrapper")
-                # context menu
-                #riot.mount ($ "#contextmenu", $ "#wrapper")
-                ($ "#workspace").contextmenu (e) -> Ant.OS.GUI.bindContextMenu e
-                # tooltip
-                ($ "#workspace").mouseover (e) ->
-                    el = $(e.target).closest "[tooltip]"
-                    return unless el.length > 0
-                    Ant.OS.GUI.showTooltip el, ($(el).attr "tooltip"), e
-                
-                # desktop default file manager
-                desktop = $ Ant.OS.GUI.workspace
-                desktop[0].fetch = () ->
-                    fp = Ant.OS.setting.desktop.path.asFileHandle()
-                    fn = () ->
-                        fp.read().then (d) ->
-                            return Ant.OS.announcer.osfail d.error, (Ant.OS.API.throwe "OS.VFS"), d.error if d.error
-                            items = []
-                            $.each d.result,  (i, v) ->
-                                return if v.filename[0] is '.' and  not Ant.OS.setting.desktop.showhidden
-                                v.text = v.filename
-                                #v.text = v.text.substring(0,9) + "..." ifv.text.length > 10
-                                v.iconclass = v.type
-                                items.push(v)
-                            desktop[0].set "data", items
-                            desktop[0].refresh()
+                return  unless fnk
+                r = if app then  app.shortcut fnk, c, event else true
+                return  event.preventDefault() if not r
+                return  unless Ant.OS.GUI.shortcut[fnk]
+                return  unless Ant.OS.GUI.shortcut[fnk][c]
+                Ant.OS.GUI.shortcut[fnk][c](event)
+                event.preventDefault()
+        # system menu and dock
+        $("#syspanel")[0].uify()
+        $("#sysdock")[0].uify()
+        $("#systooltip")[0].uify()
+        $("#contextmenu")[0].uify()
+       
+        ($ "#workspace").contextmenu (e) -> Ant.OS.GUI.bindContextMenu e
+        # tooltip
+        ($ document).mouseover (e) ->
+            el = $(e.target).closest "[tooltip]"
+            return unless el.length > 0
+            Ant.OS.GUI.showTooltip el, ($(el).attr "tooltip"), e
+        
+        # desktop default file manager
+        desktop = $ Ant.OS.GUI.workspace
+        desktop[0].fetch = () ->
+            fp = Ant.OS.setting.desktop.path.asFileHandle()
+            fn = () ->
+                fp.read().then (d) ->
+                    return Ant.OS.announcer.osfail d.error, (Ant.OS.API.throwe "OS.VFS"), d.error if d.error
+                    items = []
+                    $.each d.result,  (i, v) ->
+                        return if v.filename[0] is '.' and  not Ant.OS.setting.desktop.showhidden
+                        v.text = v.filename
+                        #v.text = v.text.substring(0,9) + "..." ifv.text.length > 10
+                        v.iconclass = v.type
+                        items.push(v)
+                    desktop[0].set "data", items
+                    desktop[0].refresh()
 
-                    fp.onready()
-                        .then () -> fn()
-                        .catch ( e ) -> # try to create the path
-                            console.log "#{fp.path} not found"
-                            name = fp.basename
-                            fp.parent().asFileHandle().mk(name).then (r) ->
-                                ex = Ant.OS.API.throwe "OS.VFS"
-                                if r.error then Ant.OS.announcer.osfail d.error, ex, d.error else fn()
-                    
-                desktop[0].ready = (e) ->
-                    e.observable = Ant.OS.announcer
-                    window.onresize = () ->
-                        Ant.OS.announcer.trigger "desktopresize"
-                        e.refresh()
+            fp.onready()
+                .then () -> fn()
+                .catch ( e ) -> # try to create the path
+                    console.log "#{fp.path} not found"
+                    name = fp.basename
+                    fp.parent().asFileHandle().mk(name).then (r) ->
+                        ex = Ant.OS.API.throwe "OS.VFS"
+                        if r.error then Ant.OS.announcer.osfail d.error, ex, d.error else fn()
+            
+        desktop[0].ready = (e) ->
+            e.observable = Ant.OS.announcer
+            window.onresize = () ->
+                Ant.OS.announcer.trigger "desktopresize"
+                e.refresh()
 
-                    desktop[0].set "onlistselect", (d) ->
-                        ($ "#sysdock").get(0).set "selectedApp", null
-                
-                    desktop[0].set "onlistdbclick", ( d ) ->
-                        ($ "#sysdock").get(0).set "selectedApp", null
-                        it = desktop[0].get "selectedItem"
-                        Ant.OS.GUI.openWith it.get("data")
+            desktop[0].set "onlistselect", (d) ->
+                ($ "#sysdock").get(0).set "selectedApp", null
+        
+            desktop[0].set "onlistdbclick", ( d ) ->
+                ($ "#sysdock").get(0).set "selectedApp", null
+                it = desktop[0].get "selectedItem"
+                Ant.OS.GUI.openWith it.get("data")
 
-                    #($ "#workingenv").on "click", (e) ->
-                    #     desktop[0].set "selected", -1
+            #($ "#workingenv").on "click", (e) ->
+            #     desktop[0].set "selected", -1
 
-                    desktop.on "click", (e) ->
-                        return unless e.target.tagName.toUpperCase() is "UL"
-                        desktop[0].unselect()
-                        ($ "#sysdock").get(0).set "selectedApp", null
-                
-                    desktop[0].contextmenuHandle = (e, m) ->
-                        desktop[0].unselect() if e.target.tagName.toUpperCase() is "UL"
-                        ($ "#sysdock").get(0).set "selectedApp", null
-                        menu = [
-                            { text: __("Open"), dataid: "desktop-open" },
-                            { text: __("Refresh"), dataid: "desktop-refresh" }
-                        ]
-                        menu = menu.concat ( v for k, v of Ant.OS.setting.desktop.menu)
-                        m.set "items", menu
-                        m.set "onmenuselect", (evt) ->
-                            item = evt.data.item.get("data")
-                            switch item.dataid
-                                when "desktop-open"
-                                    it = desktop[0].get "selectedItem"
-                                    return Ant.OS.GUI.openWith it.get("data") if it
-                                    it = Ant.OS.setting.desktop.path.asFileHandle()
-                                    it.mime = "dir"
-                                    Ant.OS.GUI.openWith it
-                                when "desktop-refresh"
-                                    desktop[0].fetch()
-                                else
-                                    Ant.OS.GUI.launch item.app, item.args if item.app
-                        m.show(e)
-                    
-                    desktop[0].fetch()
-                    Ant.OS.announcer.observable.on "VFS", (d) ->
-                        desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
-                    Ant.OS.announcer.ostrigger "desktoploaded"
-                # mount it
-                desktop[0].uify()
-                # riot.mount desktop
-            .catch (e) ->
-                console.log e
-                alert __("System fail: Cannot init desktop manager")
+            desktop.on "click", (e) ->
+                return unless e.target.tagName.toUpperCase() is "UL"
+                desktop[0].unselect()
+                ($ "#sysdock").get(0).set "selectedApp", null
+        
+            desktop[0].contextmenuHandle = (e, m) ->
+                desktop[0].unselect() if e.target.tagName.toUpperCase() is "UL"
+                ($ "#sysdock").get(0).set "selectedApp", null
+                menu = [
+                    { text: __("Open"), dataid: "desktop-open" },
+                    { text: __("Refresh"), dataid: "desktop-refresh" }
+                ]
+                menu = menu.concat ( v for k, v of Ant.OS.setting.desktop.menu)
+                m.set "items", menu
+                m.set "onmenuselect", (evt) ->
+                    item = evt.data.item.get("data")
+                    switch item.dataid
+                        when "desktop-open"
+                            it = desktop[0].get "selectedItem"
+                            return Ant.OS.GUI.openWith it.get("data") if it
+                            it = Ant.OS.setting.desktop.path.asFileHandle()
+                            it.mime = "dir"
+                            Ant.OS.GUI.openWith it
+                        when "desktop-refresh"
+                            desktop[0].fetch()
+                        else
+                            Ant.OS.GUI.launch item.app, item.args if item.app
+                m.show(e)
+            
+            desktop[0].fetch()
+            Ant.OS.announcer.observable.on "VFS", (d) ->
+                desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
+            Ant.OS.announcer.ostrigger "desktoploaded"
+        # mount it
+        desktop[0].uify()
             
     refreshDesktop: () ->
         ($ Ant.OS.GUI.workspace)[0].fetch()
-    
-    refreshSystemMenu: () ->
-        Ant.OS.GUI.SYS_MENU[0].children.length = 1
-        Ant.OS.GUI.SYS_MENU[0].children[0].children.length = 0
-        Ant.OS.GUI.SYS_MENU[0].children[0].children.push v for k, v of Ant.OS.setting.system.packages when (v and v.app)
-        Ant.OS.GUI.SYS_MENU[0].children.push v for k, v of Ant.OS.setting.system.menu
-        Ant.OS.GUI.SYS_MENU[0].children.push
-            text: "__(Toggle Full screen)",
-            dataid: "os-fullsize",
-            iconclass: "fa fa-tv"
-        Ant.OS.GUI.SYS_MENU[0].children.push
-            text: "__(Log out)",
-            dataid: "sys-logout",
-            iconclass: "fa fa-user-times"
-        # Ant.OS.GUI.buildSystemMenu()
-    buildSystemMenu: () ->
-        ($ "[data-id = 'osmenu']", "#syspanel")[0].set "items", Ant.OS.GUI.SYS_MENU
-
-        #console.log menu
     
     mkdialog: (conf) ->
         return new Ant.OS.GUI.BasicDialog conf.name, conf.layout
@@ -455,7 +408,8 @@ Ant.OS.GUI =
                         password: ($ "#txtpass").val()
                     Ant.OS.API.handle.login data
                         .then (d) ->
-                            if d.error then ($ "#login_error").html d.error else Ant.OS.GUI.startAntOS d.result
+                            return ($ "#login_error").html d.error if d.error
+                            Ant.OS.GUI.startAntOS d.result
                         .catch (e) ->
                             ($ "#login_error").html "Login: server error"
                 ($ "#txtpass").keyup (e) ->
@@ -489,8 +443,8 @@ Ant.OS.GUI =
                                 v.icon = "#{v.path}/#{v.icon}" if v.icon
                                 v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
                         Ant.OS.setting.system.packages = if r.result then r.result else
-                        Ant.OS.GUI.refreshSystemMenu()
-                        Ant.OS.GUI.buildSystemMenu()
+                        # Ant.OS.GUI.refreshSystemMenu()
+                        # Ant.OS.GUI.buildSystemMenu()
                         # push startup services
                         # TODO: get services list from user setting
                         Ant.OS.GUI.pushServices (v for v in Ant.OS.setting.system.startup.services)
@@ -500,3 +454,18 @@ Ant.OS.GUI =
         Ant.OS.API.setLocale Ant.OS.setting.system.locale
             .then () ->
                 Ant.OS.GUI.initDM()
+    
+
+Ant.OS.GUI.schemes = {}
+Ant.OS.GUI.schemes.ws = """
+<afx-sys-panel id = "syspanel"></afx-sys-panel>
+<div id = "workspace">
+    <afx-apps-dock id="sysdock"></afx-apps-dock>
+    <afx-float-list id = "desktop" dir="vertical" ></afx-float-list>
+</div>
+<afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
+<afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>
+"""
+
+Ant.OS.GUI.schemes.login = """
+"""

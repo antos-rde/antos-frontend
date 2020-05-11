@@ -25,8 +25,6 @@ class PushNotification extends this.OS.GUI.BaseService
     init: ->
         @view = false
         @_gui.htmlToScheme PushNotification.scheme, @, @host
-        #path = path = "#{@meta().path}/notifications.html"
-        #@render path
 
     spin: (b) ->
         if b and @iconclass is "fa fa-bars"
@@ -60,24 +58,19 @@ class PushNotification extends this.OS.GUI.BaseService
             i = me.pending.indexOf o.id
             me.pending.splice i, 1 if i >= 0
             me.spin false if me.pending.length is 0
-            
+        
+        @nzone.set "height", "100%"
+        @fzone.set "height", "100%"
+
         ($ @nzone).css "right", 0
             .css "top", "-3px"
-            .css "height", "100%"
             .css "bottom", "0"
-            .css "z-index", 1000000
-            .css "display", "flex"
-            .css "flex-direction", "column"
             .hide()
-        ($ @mlist).css "flex", "1"
         ($ @fzone)
             #.css("z-index", 99999)
             .css("bottom", "0")
-            .css("height", "100%")
-            .css "display", "flex"
-            .css "flex-direction", "column"
+            .css "bottom", "0"
             .hide()
-        ($ @mfeed).css "flex", "1"
 
     pushout: (s, o, mfeed) ->
         d = {
@@ -96,6 +89,7 @@ class PushNotification extends this.OS.GUI.BaseService
         ($ @fzone).show()
         timer = setTimeout () ->
                 me.mfeed.remove d.domel
+                ($ me.fzone).hide() if me.mfeed.get("data").length is 0
                 clearTimeout timer
         , 3000
 
@@ -117,9 +111,9 @@ class PushNotification extends this.OS.GUI.BaseService
     cleanup: (evt) ->
         # do nothing
 PushNotification.scheme = """
-<divs>
-    <afx-overlay data-id = "notifyzone" width = "250">
-        <afx-button text = "__(Clear all)" data-id = "btclear" ></afx-button>
+<div>
+    <afx-overlay data-id = "notifyzone" width = "250px">
+        <afx-button text = "__(Clear all)" data-id = "btclear" data-height="30"></afx-button>
         <afx-list-view data-id="notifylist"></afx-list-view>
     </afx-overlay>
     <afx-overlay data-id = "feedzone" width = "250">

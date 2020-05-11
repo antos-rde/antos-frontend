@@ -15,9 +15,10 @@ class Ant.OS.GUI.BaseTag
         @root.sync = () -> me.sync()
         @refs = {}
         @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
+        @setopt "tooltip", undefined
         #$(@root).attr "data-id", @get("data-id")
         @children = $(@root).children()
-        
+
         for obj in @layout()
             dom = @mkui obj
             if dom
@@ -31,6 +32,10 @@ class Ant.OS.GUI.BaseTag
     __: (k, v) ->
             @set k, v if v
             @get k
+
+    __tooltip__: (v) ->
+        return unless v
+        $(@root).attr "tooltip", v
 
     setopt: (name, val) ->
         value = val
@@ -78,6 +83,9 @@ class Ant.OS.GUI.BaseTag
         dom = $("<#{tag.el}>")
         $(dom).addClass tag.class if tag.class
         $(dom).attr "data-id", tag.id if tag.id
+        $(dom).attr "data-height", tag.height if tag.height
+        $(dom).attr "data-width", tag.width if tag.width
+        $(dom).attr "tooltip", tag.tooltip if tag.tooltip
         if tag.children
             $(@mkui(v)).appendTo(dom) for v in tag.children
         if tag.ref

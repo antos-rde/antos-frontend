@@ -61,6 +61,8 @@ class BasicDialog extends BaseDialog
     
     init: () ->
         @scheme.set "apptitle", @data.title if @data and @data.title
+        @scheme.set "resizable", false
+        @scheme.set "minimizable", false
 
 this.OS.GUI.BasicDialog = BasicDialog
 
@@ -343,42 +345,41 @@ AboutDialog.scheme = """
 """
 this.OS.register "AboutDialog", AboutDialog
 
-class FileDiaLog extends BaseDialog
+class FileDialog extends BasicDialog
     constructor: () ->
-        super "FileDiaLog"
+        super "FileDialog", FileDialog.scheme
     
     init: () ->
-        @render "os://resources/schemes/filedialog.html"
-    
-    main: () ->
+        super.init()
         fileview = @find "fileview"
         location = @find "location"
         filename = @find "filename"
         me = @
-        @scheme.set "apptitle", @title
-        fileview.set "fetch", (e, f) ->
-            return unless e.child
-            e.child.path.asFileHandle().read (d) ->
-                return me.error __("Resource not found: {0}", e.child.path) if d.error
-                f d.result
+        fileview.set "fetch", (path) ->
+            new Promise (resolve, reject) ->
+                path.asFileHandle().read()
+                    .then (d) ->
+                        return reject d if d.error
+                        resolve d.result
+                    .catch (e) -> reject e
         setroot = (path) ->
-            path.asFileHandle().read (d) ->
+            path.asFileHandle().read().then (d) ->
                 if(d.error)
                     return me.error __("Resource not found: {0}", path)
                 fileview.set "path", path
-                fileview.set "data", d.result
+
         if not @data or not @data.root
             location.set "onlistselect", (e) ->
-                return unless e and e.data.path
-                setroot e.data.path
-            location.set "items", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
-            location.set "selected", 0 unless location.get "selected"
+                return unless e and e.data.item
+                setroot e.data.item.get("data").path
+            location.set "data", ( i for i in @systemsetting.VFS.mountpoints when i.type isnt "app" )
+            location.set "selected", 0 if location.get("selectedItem") is undefined
         else
             $(location).hide()
-            @trigger "calibrate"
+            @trigger "resize"
             setroot @data.root
-        fileview.set "onfileselect", (f) ->
-            ($ filename).val f.filename  if f.type is "file"
+        fileview.set "onfileselect", (e) ->
+            ($ filename).val e.data.filename  if e.data.type is "file"
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
             return me.notify __("Please select a file/fofler") unless f
@@ -392,11 +393,9 @@ class FileDiaLog extends BaseDialog
                             m = true
                             break
                 return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
-            d = f.path
-            d = f.path.asFileHandle().parent() if f.type is "file"
-            me.handle d, ($ filename).val(), f.path, f if me.handle
-            #sel = if  me.data and me.data.selection then me.data.selection else "file"
-            #me.handle f, ($ filename).val() if me.handle and ((f.type is sel) or (sel is "*"))
+            
+            name = $(filename).val()
+            me.handle { file: f, name: name } if me.handle
             me.quit()
 
         (@find "bt-cancel").set "onbtclick", (e) ->
@@ -406,4 +405,20 @@ class FileDiaLog extends BaseDialog
             @trigger "resize"
         fileview.set "showhidden", @data.hidden if @data and @data.hidden
 
-this.OS.register "FileDiaLog", FileDiaLog
+FileDialog.scheme = """
+<afx-app-window width='400' height='300'>
+    <afx-hbox>
+        <afx-list-view data-id = "location" dropdown = "false" data-width = "120"></afx-list-view>
+        <afx-vbox>
+            <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
+            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" /> 
+            <div data-height = '30' style=' text-align:right;padding:3px;'>
+                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-vbox>
+    </afx-hbox>
+</afx-app-window>
+"""
+
+this.OS.register "FileDialog", FileDialog

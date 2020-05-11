@@ -109,7 +109,6 @@ class CalendarTag extends Ant.OS.GUI.BaseTag
         for i in [ 0..7 - row.length ]
             row.push { text: "" }
         rows.push(row)
-        console.log rows
         @refs.grid.set "rows", rows
         @refs.mlbl.set "text", "#{months[@month]} #{@year}"
 

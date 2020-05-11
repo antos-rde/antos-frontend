@@ -91,7 +91,7 @@ Ant.OS or=
         delete Ant.OS.announcer.observable
         ($ "#wrapper").empty()
         Ant.OS.GUI.clearTheme()
-        Ant.OS.announcer.observable = riot.observable()
+        Ant.OS.announcer.observable = new Ant.OS.API.Announcer()
         Ant.OS.announcer.quota = 0
         Ant.OS.APP = {}
         Ant.OS.setting =
@@ -128,6 +128,7 @@ Ant.OS or=
             .then (r) ->
                 Ant.OS.cleanup()
                 Ant.OS.API.handle.logout()
+                    .then (d) -> Ant.OS.boot()
             .catch (e) ->
                 console.error e
 

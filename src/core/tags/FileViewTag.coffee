@@ -4,12 +4,12 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @setopt "onfileselect", ()->
         @setopt "onfileopen", () ->
         @setopt "selectedFile", undefined
-        @setopt "view", "list"
         @setopt "data", []
         @setopt "status", true
         @setopt "showhidden", false
         @setopt "fetch", undefined
         @setopt "path", undefined
+        @setopt "view", "list"
         @preventUpdate = false
         @header = [
             { text: "__(File name)" },
@@ -21,6 +21,10 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
     
     __view__: (v) ->
         @switchView()
+
+    __status__: (v) ->
+        return $(@refs.status).show() if v
+        $(@refs.status).hide()
 
     __path__: (v) ->
         return unless v
@@ -147,6 +151,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                 e.filename,
                 if e.size then e.size else "0" )
         evt  = { id: @aid(), data: e }
+        @set "selectedFile", e
         @get("onfileselect") evt
         @observable.trigger "fileselect", evt
 
@@ -183,78 +188,14 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @refs.treeview.set "ontreedbclick", (e) ->
             me.filedbclick e.data.item.get("data")
         @switchView()
-        ### self.refs.listview.onlistselect = function(data)
-        {
-            data.id = self.rid
-            self.root.observable.trigger("fileselect",data)
-        }
-        self.refs.listview.onlistdbclick = function(data)
-        {
-            data.id = self.rid
-            self.root.observable.trigger("filedbclick",data)
-        }
-        self.refs.gridview.root.observable = self.root.observable
-        self.refs.gridview.ongridselect = function(d)
-        {
-            var data = {id:self.rid, data:self.data[d.data.child[3].idx], idx:d.data.child[3].idx}
-            self.root.observable.trigger("fileselect",data)
-        }
-        self.refs.gridview.ongriddbclick = function(d)
-        {
-            var data = {id:self.rid, data:self.data[d.data.child[3].idx], idx:d.data.child[3].idx}
-            self.root.observable.trigger("filedbclick",data)
-        }
-        self.refs.treeview.ontreeselect = function(d)
-        {
-            if(!d) return;
-            var data;
-            var el = d;
-            if(d.treepath == 0)// select the root
-            {
-                el = self.path.asFileHandler()
-                el.size = 0
-                el.filename = el.path
-            }
-            var data = {id:self.rid, data:el}
-            self.root.observable.trigger("fileselect",data)
-        }
-        self.refs.treeview.ontreedbclick = function(d)
-        {
-            if(!d || d.treepath == 0) return;
-            var data = {id:self.rid, data:d}
-            self.root.observable.trigger("filedbclick",data)
-        }
-        self.root.observable.on("fileselect", function(e){
-            if(e.id != self.rid) return
-            self.selectedFile = e.data
-            if(self.onfileselect)
-                self.onfileselect(e.data)
-            if(self.refs.stbar)
-                self.refs.stbar.root.set("text", __("Selected: {0} ({1} bytes)", e.data.filename,  e.data.size?e.data.size:"0"))//.html()
-        })
-        self.root.observable.on("filedbclick", function(e){
-            if(e.id != self.rid ) return
-            if(e.data.type != "dir" && self.onfileopen)
-                self.onfileopen(e.data)
-            else if(self.chdir && e.data.type == "dir")
-                self.chdir(e.data.path)
-        })
-        calibre_size()
-        self.root.observable.on("resize", function(e){
-            calibre_size()
-        })
-        self.root.observable.on("calibrate", function(e){
-            calibre_size()
-        })
-        }) ###
 
     layout: () ->
         [
             { el: "afx-list-view", ref: "listview" },
-            { el: "afx-grid-view", ref: "gridview" },
             { el: "div", class: "treecontainer", ref: "treecontainer", children: [
                 { el: "afx-tree-view", ref: "treeview" }
             ] },
+            { el: "afx-grid-view", ref: "gridview" },
             { el: "afx-label", class: "status", ref: "status" }
         ]
 

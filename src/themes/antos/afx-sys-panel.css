@@ -3,7 +3,7 @@ afx-sys-panel{
     padding:0;
     margin: 0;
 }
-afx-sys-panel div{
+afx-sys-panel > div{
      width: 100%;
      height: 23px;
      margin:0;
@@ -13,10 +13,20 @@ afx-sys-panel div{
      box-shadow: 1px 1px 1px #9F9F9F;
      position:absolute;
  }
-afx-sys-panel .afx-panel-os-menu{
+afx-sys-panel .afx-panel-os-menu {
     padding:0;
     margin: 0;
     float:left;
+}
+afx-sys-panel .afx-panel-os-menu li
+{
+    font-weight: bold;
+    background-color: #e7414d;
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+}
+afx-sys-panel .afx-panel-os-menu a {
+    color: white;
 }
 afx-sys-panel .afx-panel-os-stray{
     float:right;
@@ -56,4 +66,68 @@ afx-sys-panel afx-menu.afx-panel-os-stray afx-menu ul{
 }
 afx-sys-panel afx-menu.afx-panel-os-stray afx-menu li{
     min-width: 150px;
+}
+
+afx-sys-panel afx-overlay
+{
+    background-color: #e7e7e7;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #9c9C9C;
+    width: 250px;
+    margin: 0;
+}
+afx-sys-panel afx-list-view[data-id="applist"]
+{
+    border-top: 1px solid #afafaf;
+    border-bottom: 1px solid #afafaf;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li
+{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: transparent;
+    color: #414339;
+}
+
+afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
+{
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: 0px;
+    border-left: 1px solid #afafaf;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover,
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected
+{
+    background-color: #116cd6;
+    color:white;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] afx-label.search-header {
+    font-weight: bold;
+
+}
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i,
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i::before {
+    margin-right: 10px;
+}
+
+afx-sys-panel div[data-id="searchicon"]:before{
+    content: "\f002";
+    display: block;
+    background-color:transparent;
+    color:#afafaf;
+    font-family: "FontAwesome";
+    padding-left:3px;
+    font-size: 25px;
+}
+afx-sys-panel input{
+    border:0;
+    height: 25px;
+    color:#afafaf;
+    background-color: transparent;
 }

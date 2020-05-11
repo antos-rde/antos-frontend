@@ -76,6 +76,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @setopt "multiselect", false
         @setopt "selectedItem", undefined
         @setopt "selectedItems", []
+        @setopt "selected", -1
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
@@ -84,6 +85,8 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @root.remove = (e) -> me.remove e
         @root.unshift = (e) -> me.unshift e
         @root.unselect = () -> me.unselect()
+        @root.selectNext = () -> me.selectNext()
+        @root.selectPrev = () -> me.selectPrev()
 
     multiselect: () ->
         return false if @get "dropdown"
@@ -129,6 +132,26 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         if data.includes el
             data.splice data.indexOf(el), 1
         $(item).remove()
+
+    selectNext: () ->
+        return if @multiselect()
+        el = @get "selectedItem"
+        idx = 0
+        idx = $(el).index() + 1 if el
+        @set "selected", idx
+
+    selectPrev: () ->
+        return if @multiselect()
+        el = @get "selectedItem"
+        idx = 0
+        idx = $(el).index() - 1 if el
+        @set "selected", idx
+
+    __selected__: (idx) ->
+        return @unselect() if idx < 0
+        data = @get "data"
+        return if idx >= data.length
+        data[idx].domel.set "selected", true
 
     __buttons__: (v) ->
         return if @get "dropdown"

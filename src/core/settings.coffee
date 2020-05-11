@@ -44,9 +44,7 @@
     Ant.OS.setting.system.startup = {
         services: [
             "CoreServices/PushNotification",
-            "CoreServices/UserService",
-            "CoreServices/Calendar",
-            "CoreServices/Spotlight"
+            "CoreServices/Calendar"
         ],
         apps: []
     } if not Ant.OS.setting.system.startup

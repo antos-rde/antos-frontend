@@ -114,14 +114,6 @@ class ShowCase extends this.OS.GUI.BaseApplication
         slider.set "onchanging", (v) ->
             console.log v
 
-
-        flist = @find 'flist'
-        flist.set "data", [
-            { text: "File.txt" },
-            { text: "FileB.doc" },
-            { text: "Data.doc", iconclass: "fa fa-camera-retro fa-lg" }
-        ]
-
         cal = @find 'cal'
         cal.set "ondateselect", (e) ->
             console.log e
@@ -220,6 +212,15 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 when "about"
                     me.openDialog("AboutDialog" )
                         .then (d) ->
+                when "file"
+                    me.openDialog("FileDialog", {
+                            title: "Select file ?",
+                            #root: "home:///",
+                            mimes: ["text/*", "dir"],
+                            file: "Untitled".asFileHandle()
+                        })
+                        .then (f, name) ->
+                            console.log f, name
                 else return
                     
 

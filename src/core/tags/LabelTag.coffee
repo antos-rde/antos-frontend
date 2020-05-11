@@ -4,11 +4,16 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         @setopt "color", undefined
         @setopt "icon", undefined
         @setopt "iconclass", undefined
+        @setopt "class", undefined
         @refs.text = document.createTextNode ""
         $(@refs.container).append @refs.text
         @setopt "text", ""
 
     mount: () ->
+
+    __class__: (v) ->
+        $(@root).removeClass()
+        $(@root).addClass v if v
 
     __color__: (v) ->
         return unless v
@@ -29,6 +34,7 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         $(@refs.iclass).removeClass()
         if v
             $(@refs.iclass).addClass v
+            $(@refs.iclass).css "margin-right", "5px"
             $(@refs.iclass).show()
         else
             $(@refs.iclass).hide()

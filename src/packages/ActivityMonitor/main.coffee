@@ -24,18 +24,34 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         me = @
         @scheme.set "apptitle", "Activity Monitor"
         @grid = @find "mygrid"
-        @on "btclick", (e)->
+        @on "btclick", (e) ->
             return unless e.id == "btkill"
             item = me.grid.get "selected"
             return unless item
             app = _PM.appByPid item[0].value
             app.quit(true) if app
 
-        header = [{width:50,value: "__(Pid)"},{value:"__(Name)"}, {value:"__(Type)", width:80},{width:75,value: "__(Alive (ms))"}]
-        @gdata = 
-            processes:{}
-            alive:[]
-        @grid.set "header",header
+        header = [
+            {
+                width: 50,
+                text: "__(Pid)"
+            },
+            {
+                text: "__(Name)"
+            },
+            {
+                text: "__(Type)",
+                width: 80
+            },
+            {
+                width: 75,
+                text: "__(Alive (ms))"
+            }
+        ]
+        @gdata =
+            processes: {}
+            alive: []
+        @grid.set "header", header
         @monitor()
     
     monitor: () ->
@@ -43,34 +59,40 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         #get all current running process
         me.gdata.alive = []
         now = (new Date).getTime()
-        $.each _PM.processes, (i,d)->
-            $.each d , (j,a)->
+        $.each _PM.processes, (i, d) ->
+            $.each d , (j, a) ->
                 if me.gdata.processes[a.pid] #update it
                     me.gdata.processes[a.pid][3].value = now - a.birth
                 else #add it
                     me.gdata.processes[a.pid] = [
-                        {value:a.pid},
-                        {icon:if _APP[a.name].type == 1 then _APP[a.name].meta.icon else a.icon,
-                        iconclass:if _APP[a.name].type == 1 then _APP[a.name].meta.iconclass else a.iconclass,
-                        value:a.name},
-                        {value: if _APP[a.name].type == 1 then "__(Application)" else "__(Service)"}
-                        {value: now - a.birth}
+                        { text: a.pid },
+                        {
+                            icon: if _APP[a.name].type == 1 then _APP[a.name].meta.icon else a.icon,
+                            iconclass: if _APP[a.name].type == 1 then _APP[a.name].meta.iconclass else a.iconclass,
+                            text: a.name
+                        },
+                        {
+                            text: if _APP[a.name].type == 1 then "__(Application)" else "__(Service)"
+                        }
+                        {
+                            text: now - a.birth
+                        }
                     ]
-                me.gdata.alive.push a.pid
+                    me.gdata.alive.push a.pid
         @refreshGrid()
-        @timer = setTimeout (()-> me.monitor()),500#one second
+        @timer = setTimeout (() -> me.monitor()), 500
     
-    refreshGrid: ()->
+    refreshGrid: () ->
         activeList = []
         me = @
-        $.each @gdata.processes, (i,e) ->
-            if ($.inArray (Number i),me.gdata.alive) >= 0
+        $.each @gdata.processes, (i, e) ->
+            if ($.inArray (Number i), me.gdata.alive) >= 0
                 activeList.push e
-            else 
+            else
                 me.gdata.processes[i] = undefined
-        @grid.set "rows",activeList
+        @grid.set "rows", activeList
     cleanup: (e) ->
         clearTimeout @timer if @timer
 
 ActivityMonitor.singleton = true
-this.OS.register "ActivityMonitor",ActivityMonitor
+this.OS.register "ActivityMonitor", ActivityMonitor

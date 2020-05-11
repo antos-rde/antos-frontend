@@ -54,13 +54,13 @@ coffees= 	src/core/core.coffee \
 
 packages = CoreServices ActivityMonitor Setting ShowCase DummyApp # Files MarkOn MarketPlace Preview NotePad wTerm
 
-main: initd build_coffees build_tags build_themes schemes libs  build_packages languages
+main: initd build_coffees build_themes schemes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
 
 initd:
 	- mkdir -p $(BUILDDIR)
 
-lite: build_coffees build_tags build_themes schemes   build_packages
+lite: build_coffees build_themes schemes build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 
@@ -87,11 +87,6 @@ testdata:
 	@echo "$(BLUE)Copy JSON test files$(NC)"
 	- mkdir -p $(BUILDDIR)/resources/jsons
 	cp src/core/handlers/jsons/* $(BUILDDIR)/resources/jsons
-build_tags:
-	@echo "$(BLUE)Building tag files$(NC)"
-	-mkdir -p $(BUILDDIR)/resources
-	-rm $(BUILDDIR)/resources/antos_tags.js
-	for f in src/core/tags/*.tag; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/antos_tags.js; done
 
 languages:
 	-mkdir -p $(BUILDDIR)/resources
@@ -144,12 +139,6 @@ uglify:
 	# npm install uglify-js -g
 	uglifyjs $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
 	# uglify tags
-	# npm install riot-cli -g
-	riot --ext js $(BUILDDIR)/resources/antos_tags.js $(BUILDDIR)/resources/antos_tags.js
-	uglifyjs $(BUILDDIR)/resources/antos_tags.js --compress --mangle --output $(BUILDDIR)/resources/antos_tags.js
-	$(GSED) -i 's/resources\/antos_tags.js/scripts\/riot.min.js/g' $(BUILDDIR)/index.html
-	$(GSED) -i 's/scripts\/riot.compiler.min.js/resources\/antos_tags.js/g' $(BUILDDIR)/index.html
-	$(GSED) -i 's/type=\"riot\/tag\"/ /g' "$(BUILDDIR)/index.html"
 	# npm install uglifycss -g
 	# uglify the css
 	uglifycss  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
