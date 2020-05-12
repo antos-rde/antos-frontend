@@ -72,12 +72,12 @@ Ant.OS.announcer =
             Ant.OS.announcer.listeners[a.pid].push { e: e, f: f }
             Ant.OS.announcer.observable.on e, f
         trigger: (e, d) -> Ant.OS.announcer.observable.trigger e, d
-        osfail: (m, e, s) ->
-            Ant.OS.announcer.ostrigger "fail", { m: m,  e: e, s: s }
-        oserror: (m, e, s) ->
-            Ant.OS.announcer.ostrigger "error", { m: m,  e: e, s: s }
+        osfail: (m, e) ->
+            Ant.OS.announcer.ostrigger "fail", { m: m,  e: e }
+        oserror: (m, e) ->
+            Ant.OS.announcer.ostrigger "error", { m: m,  e: e }
         osinfo: (m) ->
-            Ant.OS.announcer.ostrigger "info", { m: m,  e: null, s: null }
+            Ant.OS.announcer.ostrigger "info", { m: m,  e: null }
         ostrigger: (e, d) ->
             Ant.OS.announcer.trigger e, { id: 0, data: d, name: "OS" }
         unregister: (app) ->

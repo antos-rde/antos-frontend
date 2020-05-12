@@ -17,6 +17,7 @@ afx-sys-panel .afx-panel-os-menu {
     padding:0;
     margin: 0;
     float:left;
+    margin-right: 10px;
 }
 afx-sys-panel .afx-panel-os-menu li
 {

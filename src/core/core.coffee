@@ -56,7 +56,12 @@ Ant.OS or=
                     Ant.OS.announcer.trigger "srvroutineready", app
             if cls.dependencies
                 libs = (v for v in cls.dependencies)
-                Ant.OS.API.requires libs, f
+                Ant.OS.API.require libs
+                    .then () ->
+                        console.log "launch the app"
+                        f()
+                    .catch (e) ->
+                        Ant.OS.announcer.oserror __("Unable to load libraries"), e
             else
                 f()
         appByPid: (pid) ->

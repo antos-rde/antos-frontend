@@ -289,42 +289,47 @@ Ant.OS.API =
     libready: (l) ->
         return Ant.OS.API.shared[l] || false
 
-    require: (l,f) ->
-        if not Ant.OS.API.shared[l]
-            if l.match /^(https?:\/\/[^\s]+)/g
-                Ant.OS.API.script l, () ->
-                    Ant.OS.API.shared[l] = true
-                    Ant.OS.announcer.trigger "sharedlibraryloaded", l
-                    f() if f
-                , (e, s) ->
-                    Ant.OS.announcer.oserror __("Cannot load 3rd library at: {0}", l), e, r
+    requires: (l) ->
+        new Promise (resolve, reject) ->
+            if not Ant.OS.API.shared[l]
+                link = l
+                if not l.match /^(https?:\/\/[^\s]+)/g
+                    path = "os://scripts/"
+                    cssFile = "#{path}#{l}.css".asFileHandle()
+                    cssFile.onready()
+                        .then () ->
+                            $('<link>', {
+                                rel: 'stylesheet',
+                                type: 'text/css',
+                                'href': "#{cssFile.getlink()}"
+                            })
+                            .appendTo 'head'
+                        .catch (e) ->
+                    js = "#{path}#{l}.js"
+                    link = js.asFileHandle().getlink()
+                Ant.OS.API.script link
+                    .then () ->
+                        Ant.OS.API.shared[l] = true
+                        console.log "loaded:", l
+                        Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                        resolve(l)
+                    .catch (e) ->
+                        reject e
             else
-                path = "os://scripts/"
-                js = "#{path}#{l}.js"
-                js.asFileHandle().onready (d) ->
-                    Ant.OS.API.shared[l] = true
-                    el = $ '<script>', { src: "#{Ant.OS.API.handle.get}/#{js}" }
-                            .appendTo 'head'
-                    #load css file
-                    css =  "#{path}#{l}.css"
-                    css.asFileHandle().onready (d) ->
-                        el = $ '<link>', { rel: 'stylesheet', type: 'text/css', 'href': "#{Ant.OS.API.handle.get}/#{css}" }
-                            .appendTo 'head'
-                    , () ->
-                    console.log "loaded", l
-                    Ant.OS.announcer.trigger "sharedlibraryloaded", l
-                    f() if f
-        else
-            console.log l, "Library exist, no need to load"
-            f() if f
-            Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                console.log l, "Library exist, no need to load"
+                Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                resolve()
 
-    requires:(libs, f) ->
-        return f() unless libs.length > 0
-        Ant.OS.announcer.observable.one "sharedlibraryloaded", (l) ->
-            libs.splice 0, 1
-            Ant.OS.API.requires libs, f
-        Ant.OS.API.require libs[0], null
+    require: (libs) ->
+        new Promise (resolve, reject) ->
+            return resolve() unless libs.length > 0
+            Ant.OS.announcer.observable.one "sharedlibraryloaded", (l) ->
+                libs.splice 0, 1
+                Ant.OS.API.require libs
+                    .catch (e) -> reject e
+                    .then (r) -> resolve(r)
+            Ant.OS.API.requires libs[0]
+                .catch (e) -> reject e
 
     packages:
         fetch: () ->

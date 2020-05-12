@@ -49,7 +49,6 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
         me = @
-        @refs.switch.set "enable", false
         $(@refs.entry).click (e) -> me.select e
 
     submenuoff: () ->
@@ -99,6 +98,7 @@ class SimpleMenuEntryTag extends MenuEntryTag
             $(@refs.switch).hide()
 
     __checked__: (v) ->
+        @get("data").checked = v
         return unless @get("radio") or @get("switch")
         @refs.switch.set "swon", v
 
@@ -124,7 +124,7 @@ class SimpleMenuEntryTag extends MenuEntryTag
         $(@refs.shortcut).hide()
         return unless v
         $(@refs.shortcut).show()
-        $(@refs.shortcut).val v
+        $(@refs.shortcut).text v
 
     reset_radio: () ->
         return unless  @has_children()
@@ -132,15 +132,19 @@ class SimpleMenuEntryTag extends MenuEntryTag
             return unless v.domel.get "radio"
             v.domel.set "checked", false
 
+    mount: () ->
+        super.mount()
+        me = @
+        @refs.switch.set "enable", false
 
     select: (e) ->
-        super.select(e)
         if @get "switch"
             @set "checked", !@get "checked"
         else if @get "radio"
             p = @get "parent"
             p.reset_radio() if p
             @set "checked", !@get "checked"
+        super.select(e)
 
     itemlayout: () ->
         [

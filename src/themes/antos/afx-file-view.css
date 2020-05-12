@@ -80,13 +80,16 @@ afx-file-view afx-grid-view i{
     display: inline-block;
     margin-right: 5px;
 }
-afx-file-view afx-grid-view afx-grid-row.selected i:before{
+afx-file-view afx-grid-view afx-grid-row.afx-grid-row-selected  i:before{
     color:white;
 }
-afx-file-view afx-grid-view .grid_row_header{
-    background-color: #dfdfdf;
+afx-file-view afx-grid-view afx-grid-row afx-grid-cell
+{
+    padding: 3px;
 }
+
 afx-file-view afx-grid-view .grid_row_header afx-grid-cell{
+    background-color: #dfdfdf;
     border-top: 1px solid #a6a6a6;
     border-right: 1px solid #a6a6a6;
 }

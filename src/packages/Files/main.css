@@ -11,6 +11,12 @@ afx-app-window[data-id ='files-app-window'] afx-resizer{
     background-color: transparent;
     border-left: 1px solid #cbcbcb;
 }
+afx-app-window[data-id ='files-app-window'] afx-file-view afx-list-view i:before{
+    font-size: 32px;
+    font-weight: normal;
+    font-style: normal;
+    text-align: center;
+}
 afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri'] li{
     background-color: transparent;
 }

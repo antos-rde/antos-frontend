@@ -194,7 +194,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 when "yesno"
                     me.openDialog("YesNoDialog", {
                             title: "Question ?",
-                            label: "Do you realy want to delete file ?"
+                            text: "Do you realy want to delete file ?"
                         })
                         .then (d) ->
                             console.log d

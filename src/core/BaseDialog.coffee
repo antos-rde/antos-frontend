@@ -233,7 +233,7 @@ class YesNoDialog extends BasicDialog
     init: () ->
         super.init()
         me = @
-        @find("lbl").set "text", @data.label if @data and @data.label
+        @find("lbl").set "*", @data if @data
         (@find "btnYes").set "onbtclick", (e) ->
             me.handle(true) if me.handle
             me.quit()

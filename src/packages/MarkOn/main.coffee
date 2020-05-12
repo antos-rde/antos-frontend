@@ -25,7 +25,10 @@ class MarkOn extends this.OS.GUI.BaseApplication
         markarea = @find "markarea"
         @container = @find "mycontainer"
         @previewOn = false
-        @currfile = if @args and @args.length > 0 then @args[0].asFileHandler() else "Untitled".asFileHandler()
+        if @args and @args.length > 0
+            @currfile =  @args[0].asFileHandle()
+        else
+            @currfile = "Untitled".asFileHandle()
         @editormux = false
         @editor = new SimpleMDE
             element: markarea
@@ -82,21 +85,25 @@ class MarkOn extends this.OS.GUI.BaseApplication
         return if file.path is "Untitled"
         me = @
         file.dirty = false
-        file.read (d) ->
-            me.currfile = file
-            me.editormux = true
-            me.editor.value d
-            me.scheme.set "apptitle", "#{me.currfile.basename}"
-            me.editormux = false
+        file.read()
+            .then (d) ->
+                me.currfile = file
+                me.editormux = true
+                me.editor.value d
+                me.scheme.set "apptitle", "#{me.currfile.basename}"
+                me.editormux = false
+            .catch (e) -> me.error e.stack
             
 
     save: (file) ->
         me = @
-        file.write "text/plain", (d) ->
-            return me.error __("Error saving file {0}", file.basename) if d.error
-            file.dirty = false
-            file.text = file.basename
-            me.scheme.set "apptitle", "#{me.currfile.basename}"
+        file.write("text/plain")
+            .then (d) ->
+                return me.error __("Error saving file {0}: {1}", file.basename, d.error) if d.error
+                file.dirty = false
+                file.text = file.basename
+                me.scheme.set "apptitle", "#{me.currfile.basename}"
+            .catch (e) -> me.error e.stack
     
     menu: () ->
         me = @
@@ -108,22 +115,34 @@ class MarkOn extends this.OS.GUI.BaseApplication
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
-                onmenuselect: (e) -> me.actionFile e.item.data.dataid
+                onchildselect: (e) -> me.actionFile e.data.item.get("data").dataid
             }]
         menu
     
     actionFile: (e) ->
         me = @
         saveas = () ->
-            me.openDialog "FileDiaLog", (d, n) ->
-                me.currfile.setPath "#{d}/#{n}"
+            me.openDialog("FileDialog", {
+                title: __("Save as"),
+                file: me.currfile
+            })
+            .then (f) ->
+                d = f.file.path.asFileHandle()
+                d = d.parent() if f.file.type is "file"
+                me.currfile.setPath "#{d.path}/#{f.name}"
+                console.log me.currfile
                 me.save me.currfile
-            , __("Save as"), { file: me.currfile }
+            .catch (e) ->
+                me.error e.stack
+
         switch e
             when "#{@name}-Open"
-                @openDialog "FileDiaLog", ( d, f ) ->
-                    me.open "#{d}/#{f}".asFileHandler()
-                , __("Open file")
+                @openDialog("FileDialog", {
+                    title: __("Open file")
+                })
+                .then (f) ->
+                    me.open f.file.path.asFileHandle()
+
             when "#{@name}-Save"
                 @currfile.cache = @editor.value()
                 return @save @currfile if @currfile.basename
@@ -132,7 +151,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 @currfile.cache = @editor.value()
                 saveas()
              when "#{@name}-New"
-                @currfile = "Untitled".asFileHandler()
+                @currfile = "Untitled".asFileHandle()
                 @currfile.cache = ""
                 @editor.value("")
     

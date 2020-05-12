@@ -26,6 +26,9 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         return $(@refs.status).show() if v
         $(@refs.status).hide()
 
+    __showhidden__: (v) ->
+        @switchView()
+
     __path__: (v) ->
         return unless v
         me = @
@@ -36,7 +39,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                 me.refs.status.set("text", " ") if me.get "status"
             .catch (e) ->
                 # this should be handled by the OS
-                console.error e
+                Ant.OS.announcer.oserror e
     
     __data__: (v) ->
         return unless v

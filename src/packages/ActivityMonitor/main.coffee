@@ -26,9 +26,10 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         @grid = @find "mygrid"
         @on "btclick", (e) ->
             return unless e.id == "btkill"
-            item = me.grid.get "selected"
+            item = me.grid.get "selectedRow"
             return unless item
-            app = _PM.appByPid item[0].value
+            data = item.get("data")[0]
+            app = _PM.appByPid data.text
             app.quit(true) if app
 
         header = [
@@ -44,13 +45,14 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
                 width: 80
             },
             {
-                width: 75,
+                width: 80,
                 text: "__(Alive (ms))"
             }
         ]
-        @gdata =
+        @gdata = {
             processes: {}
             alive: []
+        }
         @grid.set "header", header
         @monitor()
     
@@ -62,7 +64,8 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         $.each _PM.processes, (i, d) ->
             $.each d , (j, a) ->
                 if me.gdata.processes[a.pid] #update it
-                    me.gdata.processes[a.pid][3].value = now - a.birth
+                    me.gdata.processes[a.pid][3].text = now - a.birth
+                    me.gdata.processes[a.pid][3].domel.update()
                 else #add it
                     me.gdata.processes[a.pid] = [
                         { text: a.pid },
@@ -73,24 +76,22 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
                         },
                         {
                             text: if _APP[a.name].type == 1 then "__(Application)" else "__(Service)"
-                        }
+                        },
                         {
                             text: now - a.birth
                         }
                     ]
-                    me.gdata.alive.push a.pid
-        @refreshGrid()
-        @timer = setTimeout (() -> me.monitor()), 500
-    
-    refreshGrid: () ->
-        activeList = []
-        me = @
+                    me.grid.push me.gdata.processes[a.pid]
+                me.gdata.alive.push a.pid
+        
         $.each @gdata.processes, (i, e) ->
-            if ($.inArray (Number i), me.gdata.alive) >= 0
-                activeList.push e
-            else
+            if ($.inArray (Number i), me.gdata.alive) < 0
+                me.grid.remove me.gdata.processes[i].domel
                 me.gdata.processes[i] = undefined
-        @grid.set "rows", activeList
+                delete me.gdata.processes[i]
+
+        @timer = setTimeout (() -> me.monitor()), 500
+
     cleanup: (e) ->
         clearTimeout @timer if @timer
 

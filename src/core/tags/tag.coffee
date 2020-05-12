@@ -11,6 +11,7 @@ class Ant.OS.GUI.BaseTag
         @root.get = (k) -> me.get k
         @root.aid = () -> me.aid()
         @root.calibrate = () -> me.calibrate()
+        @root.update = () -> me.update()
         @mounted = false
         @root.sync = () -> me.sync()
         @refs = {}
@@ -60,6 +61,7 @@ class Ant.OS.GUI.BaseTag
         @get "data-id"
     
     calibrate: () ->
+    update: () ->
 
     get: (opt) ->
         return @opts if opt is "*"

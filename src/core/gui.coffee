@@ -311,10 +311,10 @@ Ant.OS.GUI =
             return unless el.length > 0
             Ant.OS.GUI.showTooltip el, ($(el).attr "tooltip"), e
         
+        fp = Ant.OS.setting.desktop.path.asFileHandle()
         # desktop default file manager
         desktop = $ Ant.OS.GUI.workspace
         desktop[0].fetch = () ->
-            fp = Ant.OS.setting.desktop.path.asFileHandle()
             fn = () ->
                 fp.read().then (d) ->
                     return Ant.OS.announcer.osfail d.error, (Ant.OS.API.throwe "OS.VFS"), d.error if d.error
@@ -385,6 +385,7 @@ Ant.OS.GUI =
             
             desktop[0].fetch()
             Ant.OS.announcer.observable.on "VFS", (d) ->
+                return if  ["read", "publish", "download"].includes d.data.m
                 desktop[0].fetch() if d.data.file.hash() is fp.hash() or d.data.file.parent().hash() is fp.hash()
             Ant.OS.announcer.ostrigger "desktoploaded"
         # mount it

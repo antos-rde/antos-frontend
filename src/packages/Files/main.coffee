@@ -26,7 +26,10 @@ class Files extends this.OS.GUI.BaseApplication
         @view = @find "fileview"
         @navinput = @find "navinput"
         @navbar = @find "nav-bar"
-        @currdir = if @args and @args.length > 0 then @args[0].asFileHandler() else "home://".asFileHandler()
+        if @args and @args.length > 0
+            @currdir = @args[0].asFileHandle()
+        else
+            @currdir = "home://".asFileHandle()
         @favo = @find "favouri"
         @clipboard = undefined
         @viewType = @_api.switcher "icon", "list", "tree"
@@ -35,37 +38,44 @@ class Files extends this.OS.GUI.BaseApplication
 
         @view.contextmenuHandle = (e, m) ->
             m.set "items", [ me.mnFile(), me.mnEdit() ]
-            m.set "onmenuselect", (evt) ->
-                me._gui.launch evt.item.data.app, evt.item.data.args if evt.item.data.app
+            # Fix m.set "onmenuselect", (evt) ->
+            #    me._gui.launch evt.item.data.app, evt.item.data.args if evt.item.data.app
             m.show e
-        #@on "fileselect", (d) -> console.log d
+        
         @view.set "onfileopen", (e) ->
-            return unless e
-            return if e.type is "dir"
-            me._gui.openWith e
+            return unless e.data
+            return if e.data.type is "dir"
+            me._gui.openWith e.data
 
         @favo.set "onlistselect", (e) ->
-            me.chdir e.data.path
+            me.view.set "path", e.data.item.get("data").path
         
         ($ @find "btback").click () ->
             return if me.currdir.isRoot()
             p = me.currdir.parent()
             me.favo.set "selected", -1
-            me.chdir p
+            me.view.set "path", p.path
 
         ($ @navinput).keyup (e) ->
-            me.chdir ($ me.navinput).val() if e.keyCode is 13 #enter
+            me.view.set "path", ($ me.navinput).val() if e.keyCode is 13 #enter
         
-        @view.set "chdir", (p) -> me.chdir p
-        @view.set "fetch", (e, f) ->
-            return unless e.child
-            return if e.child.filename is "[..]"
-            e.child.path.asFileHandler().read (d) ->
-                return me.error __("Resource not found {0}", e.child.path) if d.error
-                f d.result
+        @view.set "fetch", (path) ->
+            new Promise (resolve, reject) ->
+                dir = path
+                dir = path.asFileHandle() if typeof path is "string"
+                dir.read().then (d) ->
+                    return reject d.error if d.error
+                    if not dir.isRoot()
+                        p = dir.parent()
+                        p.filename = "[..]"
+                        p.type = "dir"
+                        d.result.unshift p
+                    me.currdir = dir
+                    ($ me.navinput).val dir.path
+                    resolve d.result
         
         @view.set "onfileselect", (e) ->
-            file = me.view.get "selectedFile"
+            file = e.data
             return  unless file and file.mime
             file.mime = "dir" if file.type is "dir"
             me.apps.length = 0
@@ -79,13 +89,13 @@ class Files extends this.OS.GUI.BaseApplication
 
         mntpoints = @systemsetting.VFS.mountpoints
         el.selected = false for el, i in mntpoints
-
-        @favo.set "items", mntpoints
+        @favo.set "data", mntpoints
         #@favo.set "selected", -1
         @view.set "view", @setting.view if @setting.view
-        
         @subscribe "VFS", (d) ->
-            me.chdir null if d.data.file.hash() is me.currdir.hash() or d.data.file.parent().hash() is me.currdir.hash()
+            return if  ["read", "publish", "download"].includes d.data.m
+            if d.data.file.hash() is me.currdir.hash() or d.data.file.parent().hash() is me.currdir.hash()
+                me.view.set "path", me.currdir
         @bindKey "CTRL-F", () -> me.actionFile "#{me.name}-mkf"
         @bindKey "CTRL-D", () -> me.actionFile "#{me.name}-mkdir"
         @bindKey "CTRL-U", () -> me.actionFile "#{me.name}-upload"
@@ -101,10 +111,11 @@ class Files extends this.OS.GUI.BaseApplication
         (@find "btgrid").set "onbtclick", (e) ->
             me.view.set 'view', "icon"
             me.viewType.icon = true
+
         (@find "btlist").set "onbtclick", (e) ->
             me.view.set 'view', "list"
             me.viewType.list = true
-        @chdir null
+        @view.set "path", @currdir
 
     applySetting: (k) ->
         # view setting
@@ -112,30 +123,8 @@ class Files extends this.OS.GUI.BaseApplication
             when "showhidden" then @view.set "showhidden", @setting.showhidden
             when "nav" then @toggleNav @setting.nav
             when "sidebar" then @toggleSidebar @setting.sidebar
-        #@view.set "view", @setting.view if @setting.view
-        
 
-    chdir: (p) ->
-        me = @
-        #console.log "ch"
-        dir = if p then p.asFileHandler() else me.currdir
-        dir.read (d) ->
-                if(d.error)
-                    return me.error __("Resource not found {0}", p)
-                
-                me.currdir = dir
-                if not dir.isRoot()
-                    p = dir.parent().asFileHandler()
-                    p.filename = "[..]"
-                    p.type = "dir"
-                    #p.size = 0
-                    d.result.unshift p
-                ($ me.navinput).val dir.path
-                me.view.set "path", dir.path
-                #console.log d.result
-                me.view.set "data", d.result
-
-    mnFile:() ->
+    mnFile: () ->
         #console.log file
         me = @
         arr = {
@@ -148,7 +137,7 @@ class Files extends this.OS.GUI.BaseApplication
                 { text: "__(Download)", dataid: "#{@name}-download" },
                 { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
                 { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
-            ], onmenuselect: (e) -> me.actionFile e.item.data.dataid
+            ], onchildselect: (e) -> me.actionFile e.data.item.get("data").dataid
         }
         return arr
     mnEdit: () ->
@@ -161,7 +150,7 @@ class Files extends this.OS.GUI.BaseApplication
                 { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
                 { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
                 { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
-            ], onmenuselect: (e) -> me.actionEdit e.item.data.dataid
+            ], onchildselect: (e) -> me.actionEdit e.data.item.get("data").dataid
         }
     menu: () ->
         me = @
@@ -176,14 +165,15 @@ class Files extends this.OS.GUI.BaseApplication
                     { text: "__(Navigation bar)", switch: true, checked: @setting.nav, dataid: "#{@name}-nav" },
                     { text: "__(Hidden files)", switch: true, checked: @setting.showhidden, dataid: "#{@name}-hidden" },
                     { text: "__(Type)", child: [
-                        { text: "__(Icon view)", radio: true, checked: (() -> me.viewType.icon), dataid: "#{@name}-icon", type: 'icon' },
-                        { text: "__(List view)", radio:true, checked: (() -> me.viewType.list), dataid: "#{@name}-list", type: 'list' },
-                        { text: "__(Tree view)", radio:true, checked: (() -> me.viewType.tree), dataid: "#{@name}-tree", type: 'tree' }
-                     ], onmenuselect: (e) ->
-                        me.view.set 'view', e.item.data.type
-                        me.viewType[e.item.data.type] = true
+                        { text: "__(Icon view)", radio: true, checked: me.viewType.icon, dataid: "#{@name}-icon", type: 'icon' },
+                        { text: "__(List view)", radio:true, checked: me.viewType.list, dataid: "#{@name}-list", type: 'list' },
+                        { text: "__(Tree view)", radio:true, checked: me.viewType.tree, dataid: "#{@name}-tree", type: 'tree' }
+                     ], onchildselect: (e) ->
+                        type = e.data.item.get("data").type
+                        me.view.set 'view', type
+                        me.viewType[type] = true
                     },
-                ], onmenuselect: (e) -> me.actionView e
+                ], onchildselect: (e) -> me.actionView e
             },
         ]
         menu
@@ -197,19 +187,20 @@ class Files extends this.OS.GUI.BaseApplication
         @trigger "resize"
 
     actionView: (e) ->
-        switch e.item.data.dataid
+        data = e.data.item.get("data")
+        switch data.dataid
             when "#{@name}-hidden"
                 #@.view.set "showhidden", e.item.data.checked
-                @registry "showhidden", e.item.data.checked
+                @registry "showhidden", data.checked
                 #@.setting.showhidden = e.item.data.checked
             when "#{@name}-refresh"
                 @.chdir null
             when "#{@name}-side"
-                @registry "sidebar", e.item.data.checked
+                @registry "sidebar", data.checked
                 #@setting.sidebar = e.item.data.checked
                 #@toggleSidebar e.item.data.checked
             when "#{@name}-nav"
-                @registry "nav", e.item.data.checked
+                @registry "nav", data.checked
                 #@setting.nav = e.item.data.checked
                 #@toggleNav e.item.data.checked
 
@@ -219,98 +210,130 @@ class Files extends this.OS.GUI.BaseApplication
         switch e
             when "#{@name}-mv"
                 return unless file
-                @openDialog "PromptDialog",
-                    (d) ->
+                @openDialog("PromptDialog", {
+                    title: "__(Rename)",
+                    label: "__(File name)",
+                    value: file.filename
+                })
+                    .then (d) ->
                         return if d is file.filename
-                        file.path.asFileHandler()
-                            .move "#{me.currdir.path}/#{d}", (r) ->
+                        file.path.asFileHandle().move "#{me.currdir.path}/#{d}"
+                            .then (r) ->
                                 me.error __("Fail to rename to {0}: {1}", d, r.error) if r.error
-                    , "__(Rename)", { label: "__(File name)", value: file.filename }
+                    .catch (e) ->
+                        console.log e
+                        me.error __("Fail to rename: {0}", e.stack)
             
             when "#{@name}-rm"
                 return unless file
-                @openDialog "YesNoDialog",
-                    (d) ->
+                @openDialog("YesNoDialog", {
+                    title: "__(Delete)",
+                    iconclass: "fa fa-question-circle",
+                    text: __("Do you really want to delete: {0}?", file.filename)
+                })
+                    .then (d) ->
                         return unless d
-                        file.path.asFileHandler()
-                            .remove (r) ->
+                        file.path.asFileHandle().remove()
+                            .then (r) ->
                                 me.error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
-                ,"__(Delete)" ,
-                { iconclass: "fa fa-question-circle", text: __("Do you really want to delete: {0}?", file.filename) }
+                    .catch (e) ->
+                        me.error __("Fail to delete: {0}", e.stack)
             
             when "#{@name}-cut"
                 return unless file
                 @clipboard =
                     cut: true
-                    file: file.path.asFileHandler()
+                    file: file.path.asFileHandle()
                 @notify __("File {0} cut", file.filename)
             
             when "#{@name}-copy"
                 return unless file or file.type is "dir"
                 @clipboard =
                     cut: false
-                    file: file.path.asFileHandler()
+                    file: file.path.asFileHandle()
                 @notify __("File {0} copied", file.filename)
 
             when "#{@name}-paste"
                 me = @
                 return unless @clipboard
                 if @clipboard.cut
-                    @clipboard.file # duplicate file check
-                            .move "#{me.currdir.path}/#{@clipboard.file.basename}", (r) ->
-                                me.clipboard = undefined
-                                me.error __("Fail to paste: {0}", r.error) if r.error
-                else
-                    @clipboard.file.read (d) ->
-                        blob = new Blob [d], { type: me.clipboard.file.info.mime }
-                        fp = "#{me.currdir.path}/#{me.clipboard.file.basename}".asFileHandler()
-                        fp.cache = blob
-                        fp.write me.clipboard.file.info.mime, (r) ->
+                    @clipboard.file.move "#{me.currdir.path}/#{@clipboard.file.basename}"
+                        .then (r) ->
                             me.clipboard = undefined
                             me.error __("Fail to paste: {0}", r.error) if r.error
-                    , "binary"
+                        .catch (e) ->
+                            me.error __("Fail to paste: {0}", e.stack)
+                else
+                    @clipboard.file.read("binary")
+                        .then  (d) ->
+                            blob = new Blob [d], { type: me.clipboard.file.info.mime }
+                            fp = "#{me.currdir.path}/#{me.clipboard.file.basename}".asFileHandle()
+                            fp.cache = blob
+                            fp.write(me.clipboard.file.info.mime)
+                                .then (r) ->
+                                    me.clipboard = undefined
+                                    me.error __("Fail to paste: {0}", r.error) if r.error
+                        .catch (e) ->
+                            me.error __("Fail to paste: {0}", e.stack)
             else
-                @_api.handler.setting()
+                @_api.handle.setting()
     
     actionFile: (e) ->
         me = @
         file = @view.get "selectedFile"
         switch e
-
             when "#{@name}-mkdir"
-                @openDialog "PromptDialog",
-                    (d) ->
-                        me.currdir.mk d, (r) ->
-                             me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , "__(New folder)", { label: "__(Folder name)" }
+                @openDialog("PromptDialog", {
+                    title: "__(New folder)",
+                    label: "__(Folder name)"
+                })
+                    .then (d) ->
+                        me.currdir.mk(d)
+                            .then (r) ->
+                                me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    .catch (e) ->
+                        me.error __("Fail to create: {0}", e.stack)
             
             when "#{@name}-mkf"
-                @openDialog "PromptDialog",
-                    (d) ->
-                        fp = "#{me.currdir.path}/#{d}".asFileHandler()
-                        fp.write "text/plain", (r) ->
-                            me.error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    , "__(New file)",  { label: "__(File name)" }
+                @openDialog("PromptDialog", {
+                    title: "__(New file)",
+                    label: "__(File name)"
+                })
+                    .then (d) ->
+                        fp = "#{me.currdir.path}/#{d}".asFileHandle()
+                        fp.write("text/plain")
+                            .then (r) ->
+                                me.error __("Fail to create {0}: {1}", d, r.error) if r.error
+                    .catch (e) ->
+                        me.error __("Fail to create: {0}", e.stack)
             
             when "#{@name}-info"
                 return unless file
-                @openDialog "InfoDialog", null, file.filename, file
+                @openDialog "InfoDialog", file
             
             when "#{@name}-upload"
                 me = @
-                @currdir.upload (r) ->
-                    me.error __("Fail to upload to {0}: {1}", me.currdir.path, r.error) if r.error
+                @currdir.upload()
+                    .then (r) ->
+                        me.error __("Fail to upload to {0}: {1}", me.currdir.path, r.error) if r.error
+                    .catch (e) ->
+                        me.error __("Fail to upload: {0}", e.stack)
 
             when "#{@name}-share"
                 me = @
                 return unless file and file.type is "file"
-                file.path.asFileHandler().publish (r) ->
-                    return me.error __("Cannot share file: {0}", r.error) if r.error
-                    return me.notify __("Shared url: {0}", r.result)
+                file.path.asFileHandle().publish()
+                    .then (r) ->
+                        return me.error __("Cannot share file: {0}", r.error) if r.error
+                        return me.notify __("Shared url: {0}", r.result)
+                    .catch (e) ->
+                        me.error __("Fail to publish: {0}", e.stack)
 
             when "#{@name}-download"
-                return unless file
-                file.path.asFileHandler().download ()->
+                return unless file.type is "file"
+                file.path.asFileHandle().download()
+                    .catch (e) ->
+                        me.error __("Fail to download: {0}", e.stack)
             else
                 console.log e
 

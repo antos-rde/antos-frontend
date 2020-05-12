@@ -47,12 +47,12 @@ afx-calendar-view afx-grid-view afx-grid-row.selected{
     color:#414339;
 }*/
 
-afx-calendar-view afx-grid-view div.afx-grid-row-selected .afx-grid-cell
+afx-calendar-view afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
 {
     background-color: transparent;
     color:black;
 }
-afx-calendar-view afx-grid-view div.afx-grid-row-selected .afx-grid-cell-selected
+afx-calendar-view afx-grid-view  afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-selected
 {
     background-color: #116cd6;
     color:white;

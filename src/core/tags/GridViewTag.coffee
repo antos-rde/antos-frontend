@@ -1,3 +1,9 @@
+class GridRowTag extends Ant.OS.GUI.BaseTag
+    constructor: (r, o) ->
+        super r, o
+        @setopt "data", []
+        @refs.yield = @root
+
 class GridCellPrototype extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
@@ -10,11 +16,14 @@ class GridCellPrototype extends Ant.OS.GUI.BaseTag
     __data__: (v) ->
         return unless v.selected
         @set "selected", v.selected
-        delete v.selected
     
     __selected__: (v) ->
+        @get("data").selected = v
         return unless v
         @cellseleck {}, false
+
+    update: () ->
+        @set "data", @get("data")
 
     mount: () ->
         me = @
@@ -34,7 +43,7 @@ class GridCellPrototype extends Ant.OS.GUI.BaseTag
     __class__: (v) ->
         $(@root).removeClass().addClass @get("class")
 
-class SimpleGridCell extends GridCellPrototype
+class SimpleGridCellTag extends GridCellPrototype
     constructor: (r, o) ->
         super r, o
         @setopt "header", false
@@ -64,6 +73,10 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         @setopt "onrowselect", (e) ->
         @setopt "oncelldbclick", (e) ->
         @setopt "multiselect", false
+        me = @
+        @root.push = (r) -> me.push r, false
+        @root.unshift = (r) -> me.unshift r
+        @root.remove = (r) -> me.remove r
 
     __header__: (v) ->
         return $(@refs.header).hide() if not v or v.length is 0
@@ -79,17 +92,43 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         me = @
         $(@refs.grid).empty()
         for row in rows
-            div = $("<div>")
-                .addClass("afx-grid-row")
-                .css "display", "contents"
-                .appendTo @refs.grid
-            for cell in row
-                el = $("<#{@get("cellitem")}>").appendTo div
-                el[0].uify undefined
-                cell.domel = el[0]
-                el[0].set "oncellselect", (e) -> me.cellselect e, false
-                el[0].set "oncelldbclick", (e) -> me.cellselect e, true
-                el[0].set "data", cell
+            @push row, false
+
+    remove: (row) ->
+        return unless row
+        rowdata = row.get "data"
+        data = @get "rows"
+        @set "selectedRow", undefined if @get("selectedRow") is row
+        @set "selectedCell", undefined if $(@get("selectedCell")).parent()[0] is row
+        list = @get("selectedRows")
+        list.splice(list.indexOf(row), 1) if list.includes(row)
+        if data.includes rowdata
+            data.splice data.indexOf(rowdata), 1
+        $(row).remove()
+
+
+    push: (row, flag) ->
+        me = @
+        rowel = $("<afx-grid-row>")
+            .css "display", "contents"
+        rowel[0].uify undefined
+        rowel[0].set "data", row
+        row.domel = rowel[0]
+
+        for cell in row
+            el = $("<#{@get("cellitem")}>").appendTo rowel
+            cell.domel = el[0]
+            el[0].uify undefined
+            el[0].set "oncellselect", (e) -> me.cellselect e, false
+            el[0].set "oncelldbclick", (e) -> me.cellselect e, true
+            el[0].set "data", cell
+        if flag
+            $(@refs.grid).prepend rowel[0]
+        else
+            rowel.appendTo @refs.grid
+
+    unshift: (row) ->
+        @push row, true
 
     multiselect: () ->
         @get "multiselect"
@@ -114,23 +153,23 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         selectedRow = @get "selectedRow"
         selectedRows = @get "selectedRows"
         evt = { id: @aid(), data: {} }
-        div = $(e.data.item).parent()[0]
+        row = $(e.data.item).parent()[0]
         if @multiselect()
-            if selectedRows.includes div
-                selectedRows.splice selectedRows.indexOf(div) , 1
-                $(div).removeClass()
+            if selectedRows.includes row
+                selectedRows.splice selectedRows.indexOf(row) , 1
+                $(row).removeClass()
             else
-                selectedRows.push div
-                $(div).removeClass().addClass("afx-grid-row-selected")
+                selectedRows.push row
+                $(row).removeClass().addClass("afx-grid-row-selected")
             evt.data.items = @get "selectedRows"
         else
-            return if selectedRow is div
+            return if selectedRow is row
             $(selectedRow).removeClass()
-            @set "selectedRow", div
-            @set "selectedRows", [div]
-            evt.data.item = div
-            evt.data.items = [ div ]
-            $(div).removeClass().addClass("afx-grid-row-selected")
+            @set "selectedRow", row
+            @set "selectedRows", [row]
+            evt.data.item = row
+            evt.data.items = [ row ]
+            $(row).removeClass().addClass("afx-grid-row-selected")
         @get("onrowselect") evt
         @observable.trigger "rowselect", evt
 
@@ -190,5 +229,6 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
             ] }
         ]
 Ant.OS.GUI.define "afx-grid-view", GridViewTag
-Ant.OS.GUI.define "afx-grid-cell", SimpleGridCell
+Ant.OS.GUI.define "afx-grid-cell", SimpleGridCellTag
+Ant.OS.GUI.define "afx-grid-row", GridRowTag
 Ant.OS.GUI.define "afx-grid-cell-proto", GridCellPrototype

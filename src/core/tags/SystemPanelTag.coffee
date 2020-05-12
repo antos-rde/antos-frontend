@@ -156,7 +156,12 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
 
         $(@refs.applist).click (e) ->
             me.open()
-
+        Ant.OS.GUI.bindKey "CTRL- ", (e) ->
+            if me.view is false
+                me.toggle true
+            else
+                me.toggle false
+            me.view = not me.view
         Ant.OS.announcer.trigger("syspanelloaded")
 
 Ant.OS.GUI.define "afx-sys-panel", SystemPanelTag
