@@ -54,13 +54,13 @@ coffees= 	src/core/core.coffee \
 
 packages = CoreServices ActivityMonitor Files Setting ShowCase MarkOn# Files  MarketPlace Preview NotePad wTerm
 
-main: initd build_coffees build_themes schemes libs  build_packages languages
+main: initd build_coffees build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
 
 initd:
 	- mkdir -p $(BUILDDIR)
 
-lite: build_coffees build_themes schemes build_packages
+lite: build_coffees build_themes build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 
@@ -78,11 +78,6 @@ libs:
 	@echo "$(BLUE)Copy lib files$(NC)"
 	cp -rf src/libs/* $(BUILDDIR)/scripts/
 
-schemes:
-	@echo "$(BLUE)Copy schemes files$(NC)"
-	- mkdir -p $(BUILDDIR)/resources/schemes
-	cp src/core/schemes/* $(BUILDDIR)/resources/schemes/
-
 testdata:
 	@echo "$(BLUE)Copy JSON test files$(NC)"
 	- mkdir -p $(BUILDDIR)/resources/jsons
@@ -97,7 +92,11 @@ genlang:
 	read -r -p "Enter locale: " LOCAL;\
 		./src/core/languages/gen.sh ./src ./src/core/languages/$$LOCAL.json
 build_themes: antos_themes_build
-	cp -r src/themes/system $(BUILDDIR)/resources/themes/
+	-rm -rf $(BUILDDIR)/resources/themes/system/*
+	-mkdir -p $(BUILDDIR)/resources/themes/system
+	cp -r src/themes/system/fonts $(BUILDDIR)/resources/themes/system
+	cp -r src/themes/system/wp $(BUILDDIR)/resources/themes/system
+	for f in src/themes/system/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/system/system.css;done
 
 antos_themes_build:
 	@echo "$(BLUE)Building themes name: antos$(NC)"
@@ -106,7 +105,6 @@ antos_themes_build:
 	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
 	-mkdir -p $(BUILDDIR)/resources/themes/antos/fonts
 	cp -rf src/themes/antos/fonts/* $(BUILDDIR)/resources/themes/antos/fonts
-	cp src/themes/antos/wp* $(BUILDDIR)/resources/themes/antos/
 
 
 build_packages:
@@ -142,7 +140,7 @@ uglify:
 	# npm install uglifycss -g
 	# uglify the css
 	uglifycss  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
-	uglifycss  --output $(BUILDDIR)/resources/themes/system/font-awesome.css $(BUILDDIR)/resources/themes/system/font-awesome.css
+	uglifycss  --output $(BUILDDIR)/resources/themes/system/system.css $(BUILDDIR)/resources/themes/system/system.css
 	#uglify each packages
 
 	for d in $(packages); do\

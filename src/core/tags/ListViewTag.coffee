@@ -155,7 +155,15 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
 
     __buttons__: (v) ->
         return if @get "dropdown"
-    
+        return unless v.length > 0
+        for item in v
+            $(@refs.btlist).show()
+            bt = $("<afx-button>").appendTo @refs.btlist
+            bt[0].uify @observable
+            bt[0].set "*", item
+            item.domel = bt[0]
+
+
     __data__: (data) ->
         $( @refs.mlist).empty()
         for item in data
@@ -203,6 +211,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
         me = @
+        $(@refs.btlist).hide()
         @observable.on "resize", (e) -> me.calibrate()
         @calibrate()
 

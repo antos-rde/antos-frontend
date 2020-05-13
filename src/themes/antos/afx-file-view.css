@@ -1,21 +1,12 @@
-afx-file-view {
-    position: relative;
-}
 afx-file-view afx-label.status{
-    position: absolute;
-    bottom: 1px;
-    left:0px;
     padding:3px;
     right: 0px;
     height: 15px;
     background-color: #f6F6F6;
     border-top: 1px solid #cbcbcb;
     color:#414339;
-    transform: translateZ(0);
 }
 afx-file-view afx-list-view > div.list-container > ul  li{
-    float:left;
-    display: block;
     width:70px;
     height: 60px;
     background-color: transparent;
@@ -38,7 +29,6 @@ afx-file-view afx-list-view i.dir:before{
 afx-file-view afx-list-view i{
     width: 32px;
     height: 32px;
-    display: block;
     margin-left: 19px;
 }
 
@@ -77,7 +67,6 @@ afx-file-view afx-grid-view i.dir:before{
     font-weight: normal;
 }
 afx-file-view afx-grid-view i{
-    display: inline-block;
     margin-right: 5px;
 }
 afx-file-view afx-grid-view afx-grid-row.afx-grid-row-selected  i:before{
@@ -106,14 +95,7 @@ afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
     color:#76D2F9;
     font-size: 16px;
 }
-afx-file-view afx-tree-view{
-    margin:0;
-    overflow: hidden;
-    background-color: transparent;
-}
-afx-file-view afx-tree-view .afx_tree_item_odd{
-    background-color: transparent;
-}
+
 afx-file-view afx-tree-view .afx-tree-view-item:before{
     content: "\f016"; 
     font-family: "FontAwesome";
@@ -122,18 +104,7 @@ afx-file-view afx-tree-view .afx-tree-view-item:before{
     font-style: normal;
     font-weight: normal;
 }
-afx-file-view afx-tree-view div{
-    overflow: hidden;
-    white-space: nowrap;
-    background-color: transparent;
-    padding:0;
-}
-afx-file-view  div.treecontainer{
-    display: block;
-    overflow: auto;
-    padding:0;
-    margin:0;
-}
+
 afx-file-view afx-tree-view div.afx_tree_item_selected, afx-file-view afx-tree-view div.afx_tree_item_selected:hover{
     background-color: transparent;
     color:#414339;

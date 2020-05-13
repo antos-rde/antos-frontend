@@ -1,27 +1,6 @@
 
-afx-menu {
-    position:relative;
-    display:inline-block;
-    z-index: 100000;
-}
 afx-menu a{
-    text-decoration: none;
     color: #414339;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: row;
-}
-afx-menu a afx-label{
-    flex:1;
-}
-afx-menu ul{
-    padding:0;
-    margin: 0;
-    display:inline-block;
-}
-afx-menu ul li{
-    white-space:nowrap;
 }
 afx-menu afx-switch span{
     width: 20px;
@@ -30,7 +9,6 @@ afx-menu afx-switch span{
     /*margin-top:5px;*/
 }
 afx-menu span.shortcut{
-   width:40px;
    text-align: right;
 }
 afx-menu li:hover > a afx-switch span:before{
@@ -47,44 +25,15 @@ afx-menu afx-menu ul {
     background-color: #e7e7e7;
 }
 afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
-    list-style:none;
-    margin:0;
-    position: relative;
-    float: left;
     padding:3px;
     padding-left: 5px;
     padding-right: 5px;
-    cursor:default;
-}
-afx-menu ul  li.fix_padding{
-    padding-top:1px;
-    padding-bottom: 0;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-afx-menu afx-menu ul  li.fix_padding{
-    padding:3px;
-    padding-left: 5px;
-    padding-right: 5px;
-} 
-afx-menu  afx-menu {
-    top:100%;
-    left:0;
-    position: absolute;
-    display:none;
 }
 afx-menu  afx-menu i{
     margin-right: 5px;
 }
 afx-menu  afx-menu li{
-    float:none;
     min-width: 150px;
-    cursor:default;
-}
-afx-menu  afx-menu afx-menu, afx-menu  ul.context afx-menu{
-    top:-4px;
-    left: 100%;
 }
 
 afx-menu li:hover  {
@@ -92,20 +41,6 @@ afx-menu li:hover  {
 }
 afx-menu li:hover > a {
     color: white;
-}
-
-afx-menu afx-menu   li:hover > afx-menu, ul.context  li:hover > afx-menu
-{
-    display: block;
-}
-afx-menu li.afx-corner-fix{
-    height: 3px;
-    padding: 0;
-    margin: 0;
-    background-color: transparent;
-}
-afx-menu li.afx-corner-fix:hover{
-    background-color: transparent;
 }
 
 afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before{
@@ -119,17 +54,12 @@ afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before
  }
 
  afx-menu ul.context{
-    position: absolute;
-    z-index: 1000000;
-    padding: 0;
     border:1px solid #a6a6a6;
     border-radius: 5px;
     border-top-left-radius: 0px;
-    /*box-shadow: 2px 2px 2px #cbcbcb;*/
     box-shadow: 1px 1px 1px #9f9F9F;
     background-color: #e7e7e7;
  }
  afx-menu  ul.context li{
-     clear:float;
-     min-width: 150px;
+    min-width: 150px;
  }

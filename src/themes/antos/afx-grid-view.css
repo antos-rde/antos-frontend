@@ -1,9 +1,3 @@
-afx-grid-view afx-grid-row afx-grid-cell{
-    user-select:none;
-    -webkit-user-select:none;
-    cursor:default;
-}
-
 afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
 {
     background-color: #f5F5F5;
@@ -22,9 +16,4 @@ afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-sel
 
 afx-grid-view .grid_row_header afx-grid-cell{
     border-right: 2px solid #e5e5e5;
-    user-select:none;
-    -webkit-user-select:none;
-    cursor:default;
-    font-weight: bold;
-    border-right:0;
 }

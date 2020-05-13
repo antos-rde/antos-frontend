@@ -11,6 +11,9 @@ class LabelTag extends Ant.OS.GUI.BaseTag
 
     mount: () ->
 
+    update: () ->
+        @set "text", @get("text")
+
     __class__: (v) ->
         $(@root).removeClass()
         $(@root).addClass v if v

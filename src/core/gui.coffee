@@ -36,12 +36,12 @@ Ant.OS.GUI =
         app.main()
         app.show()
     loadScheme: (path, app, parent) ->
-        path.asFileHandle().read().then (x) ->
-            return null unless x
-            Ant.OS.GUI.htmlToScheme x, app, parent
-        #, (e, s) ->
-        #    Ant.OS.announcer.osfail "Cannot load scheme file: #{path} for #{app.name} (#{app.pid})", e, s
-
+        path.asFileHandle().read()
+            .then (x) ->
+                return null unless x
+                Ant.OS.GUI.htmlToScheme x, app, parent
+            .catch (e) ->
+                Ant.OS.announcer.oserror __("Cannot load scheme: {0}", path), e
     clearTheme: () ->
          $ "head link#ostheme"
             .attr "href", ""
@@ -83,9 +83,9 @@ Ant.OS.GUI =
         Ant.OS.GUI.loadApp app
             .then (a) ->
                 return Ant.OS.PM.createProcess srv, Ant.OS.APP[srv] if Ant.OS.APP[srv]
-            .catch (e, s) ->
+            .catch (e) ->
                 Ant.OS.announcer.trigger "srvroutineready", srv
-                Ant.OS.announcer.osfail __("Cannot read service script: {0}", srv), e, s
+                Ant.OS.announcer.osfail __("Cannot read service script: {0}", srv), e
 
     appsByMime: (mime) ->
         metas = ( v for k, v of Ant.OS.setting.system.packages when v and v.app )
@@ -101,7 +101,7 @@ Ant.OS.GUI =
                         return false
                     return false
             catch e
-                Ant.OS.announcer.osfail __("Error find app by mimes {0}", mime), e, mime
+                Ant.OS.announcer.osfail __("Error find app by mimes {0}", mime), e
 
         ( f m, i if m ) for m, i in mimes
         return apps
@@ -315,8 +315,9 @@ Ant.OS.GUI =
         # desktop default file manager
         desktop = $ Ant.OS.GUI.workspace
         desktop[0].fetch = () ->
+            file = Ant.OS.setting.desktop.path.asFileHandle()
             fn = () ->
-                fp.read().then (d) ->
+                file.read().then (d) ->
                     return Ant.OS.announcer.osfail d.error, (Ant.OS.API.throwe "OS.VFS"), d.error if d.error
                     items = []
                     $.each d.result,  (i, v) ->
@@ -328,12 +329,12 @@ Ant.OS.GUI =
                     desktop[0].set "data", items
                     desktop[0].refresh()
 
-            fp.onready()
+            file.onready()
                 .then () -> fn()
                 .catch ( e ) -> # try to create the path
-                    console.log "#{fp.path} not found"
-                    name = fp.basename
-                    fp.parent().asFileHandle().mk(name).then (r) ->
+                    console.log "#{file.path} not found"
+                    name = file.basename
+                    file.parent().asFileHandle().mk(name).then (r) ->
                         ex = Ant.OS.API.throwe "OS.VFS"
                         if r.error then Ant.OS.announcer.osfail d.error, ex, d.error else fn()
             
@@ -398,25 +399,20 @@ Ant.OS.GUI =
         return new Ant.OS.GUI.BasicDialog conf.name, conf.layout
         
     login: () ->
-        Ant.OS.API.resource "schemes/login.html"
-            .then (x) ->
-                return null unless x
-                scheme = $.parseHTML x
-                ($ "#wrapper").append scheme
-                ($ "#btlogin").click () ->
-                    data =
-                        username: ($ "#txtuser").val(),
-                        password: ($ "#txtpass").val()
-                    Ant.OS.API.handle.login data
-                        .then (d) ->
-                            return ($ "#login_error").html d.error if d.error
-                            Ant.OS.GUI.startAntOS d.result
-                        .catch (e) ->
-                            ($ "#login_error").html "Login: server error"
-                ($ "#txtpass").keyup (e) ->
-                    ($ "#btlogin").click() if e.which is 13
-            .catch (e) ->
-                alert __("System fail: Cannot init login screen")
+        scheme = $.parseHTML Ant.OS.GUI.schemes.login
+        ($ "#wrapper").append scheme
+        ($ "#btlogin").click () ->
+            data =
+                username: ($ "#txtuser").val(),
+                password: ($ "#txtpass").val()
+            Ant.OS.API.handle.login data
+                .then (d) ->
+                    return ($ "#login_error").html d.error if d.error
+                    Ant.OS.GUI.startAntOS d.result
+                .catch (e) ->
+                    ($ "#login_error").html "Login: server error"
+        ($ "#txtpass").keyup (e) ->
+            ($ "#btlogin").click() if e.which is 13
     
     startAntOS: (conf) ->
         # clean up things
@@ -469,4 +465,11 @@ Ant.OS.GUI.schemes.ws = """
 """
 
 Ant.OS.GUI.schemes.login = """
+<div id = "login_form">
+    <p>Welcome to AntOS, please identify</p>
+    <input id = "txtuser" type = "text" value = "demo" />
+    <input id = "txtpass" type = "password" value = "demo" />
+    <button id = "btlogin">Login</button>
+    <div id = "login_error"></div>
+</div>
 """

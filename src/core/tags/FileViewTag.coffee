@@ -27,6 +27,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         $(@refs.status).hide()
 
     __showhidden__: (v) ->
+        return unless @get "data"
         @switchView()
 
     __path__: (v) ->
@@ -35,6 +36,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         return unless @get "fetch"
         @get("fetch")(v)
             .then (data) ->
+                return unless data
                 me.set "data", data
                 me.refs.status.set("text", " ") if me.get "status"
             .catch (e) ->
@@ -172,6 +174,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @refs.treeview.set "fetch", (v) ->
             new Promise (resolve, reject) ->
                 return resolve undefined unless me.get("fetch")
+                return resolve undefined unless v.get("data").path
                 me.get("fetch")(v.get("data").path)
                     .then (d) -> resolve me.getTreeData(d.sort me.sortByType)
                     .catch (e) -> reject e

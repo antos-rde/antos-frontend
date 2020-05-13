@@ -28,8 +28,11 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
             .removeClass()
         if(v)
             if @get("fetch")
-                @get("fetch")(@root).then (d) ->
-                    me.set "nodes", d
+                @get("fetch")(@root)
+                    .then (d) ->
+                        return unless d
+                        me.set "nodes", d
+                    .catch (e) -> Ant.OS.announcer.oserror e
             $(@refs.childnodes).show()
         else
             $(@refs.childnodes).hide()

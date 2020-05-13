@@ -20,7 +20,7 @@
     Ant.OS.setting.applications = conf.applications if conf.applications
     Ant.OS.setting.appearance = conf.appearance if conf.appearance
     Ant.OS.setting.appearance.wp = {
-        url: "os://resources/themes/system/wp/wp2.jpg",
+        url: "os://resources/themes/system/wp/wp3.jpg",
         size: "cover",
         repeat: "repeat"
     } unless Ant.OS.setting.appearance.wp

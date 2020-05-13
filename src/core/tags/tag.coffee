@@ -11,9 +11,9 @@ class Ant.OS.GUI.BaseTag
         @root.get = (k) -> me.get k
         @root.aid = () -> me.aid()
         @root.calibrate = () -> me.calibrate()
-        @root.update = () -> me.update()
-        @mounted = false
         @root.sync = () -> me.sync()
+        @mounted = false
+        @root.setup = () -> me.setup()
         @refs = {}
         @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
         @setopt "tooltip", undefined
@@ -61,13 +61,19 @@ class Ant.OS.GUI.BaseTag
         @get "data-id"
     
     calibrate: () ->
-    update: () ->
 
+    update: () ->
+    
     get: (opt) ->
         return @opts if opt is "*"
         @opts[opt]
 
     sync: () ->
+        @update()
+        $(@root).children().each () -> @update()
+        @root
+
+    setup: () ->
         return if @mounted
         @mounted = true
         @mount()
@@ -107,8 +113,13 @@ Element.prototype.mkui = (observable) ->
 
 
 Element.prototype.mount = () ->
-    return @sync() if @sync
+    return @setup() if @setup
     $(@).children().each () -> @mount()
+    @
+
+Element.prototype.update = () ->
+    return @sync() if @sync
+    $(@).children().each () -> @update()
     @
 
 Element.prototype.uify = (observable) ->

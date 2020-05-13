@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class StartupHandler extends SettingHandler
-    constructor:(scheme, parent) ->
+class StartupHandle extends SettingHandle
+    constructor: (scheme, parent) ->
         super(scheme, parent)
         me = @
         @srvlist = @find "srvlist"
@@ -28,19 +28,22 @@ class StartupHandler extends SettingHandler
                     services = []
                     for k, v of me.parent.systemsetting.system.packages
                         if v.services
-                            srvs = ({ text: "#{k}/#{x}", iconclass:"fa fa-tasks" } for x in v.services)
+                            srvs = ({ text: "#{k}/#{x}", iconclass: "fa fa-tasks" } for x in v.services)
                             services = services.concat srvs
-                    me.parent.openDialog me.mkdialog(), (d) ->
-                       me.parent.systemsetting.system.startup.services.push d
-                       me.render()
-                    , "__(Add service)", services
+                    me.parent.openDialog("SelectionDialog", {
+                        title: "__(Add service)",
+                        data: services
+                    }).then (d) ->
+                       me.parent.systemsetting.system.startup.services.push d.text
+                       me.refresh()
             },
             {
                 text: "-", onbtclick: (e) ->
-                    selidx = me.srvlist.get "selidx"
-                    return unless selidx >= 0
-                    me.parent.systemsetting.system.startup.services.splice selidx,1
-                    me.render()
+                    item = me.srvlist.get "selectedItem"
+                    return unless item
+                    selidx = $(item).index()
+                    me.parent.systemsetting.system.startup.services.splice selidx, 1
+                    me.refresh()
             }
         ]
 
@@ -48,23 +51,27 @@ class StartupHandler extends SettingHandler
             {
                 text: "+", onbtclick: (e) ->
                     apps = ( { text: k, iconclass: v.iconclass } for k, v of  me.parent.systemsetting.system.packages )
-                    me.parent.openDialog me.mkdialog(), (d) ->
-                       me.parent.systemsetting.system.startup.apps.push d
-                       me.render()
-                    , "__(Add application)", apps
+                    me.parent.openDialog("SelectionDialog", {
+                        title: "__(Add application)",
+                        data: apps
+                    }).then (d) ->
+                       me.parent.systemsetting.system.startup.apps.push d.text
+                       me.refresh()
             },
             {
                 text: "-", onbtclick: (e) ->
-                    selidx = me.applist.get "selidx"
-                    return unless selidx >= 0
-                    me.parent.systemsetting.system.startup.apps.splice selidx,1
-                    me.render()
+                    item = me.applist.get "selectedItem"
+                    return unless item
+                    selidx = $(item).index()
+                    me.parent.systemsetting.system.startup.apps.splice selidx, 1
+                    me.refresh()
             }
         ]
+        @refresh()
        
-    render: () ->
-        @srvlist.set "items", ( { text:v } for v in @parent.systemsetting.system.startup.services )
-        @applist.set "items", ( { text:v } for v in @parent.systemsetting.system.startup.apps )
+    refresh: () ->
+        @srvlist.set "data", ( { text:v } for v in @parent.systemsetting.system.startup.services )
+        @applist.set "data", ( { text:v } for v in @parent.systemsetting.system.startup.apps )
         
 
     mkdialog: () ->

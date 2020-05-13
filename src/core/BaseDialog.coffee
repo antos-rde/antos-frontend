@@ -274,7 +274,7 @@ class SelectionDialog extends BasicDialog
         (@find "btnOk").set "onbtclick", (e) ->
             data = (me.find "list").get "selectedItem"
             return me.notify __("Please select an item") unless data
-            me.handle(data) if me.handle
+            me.handle(data.get("data")) if me.handle
             me.quit()
         
         (@find "btnCancel").set "onbtclick", (e) ->
@@ -357,6 +357,7 @@ class FileDialog extends BasicDialog
         me = @
         fileview.set "fetch", (path) ->
             new Promise (resolve, reject) ->
+                return resolve() unless path
                 path.asFileHandle().read()
                     .then (d) ->
                         return reject d if d.error

@@ -1,10 +1,10 @@
-coffee_files = main.coffee AppearanceHandler.coffee VFSHandler.coffee LocaleHandler.coffee StartupHandler.coffee
+coffee_files = main.coffee AppearanceHandle.coffee VFSHandle.coffee LocaleHandle.coffee StartupHandle.coffee
 
 jsfiles = 
 
 cssfiles = main.css
 
-copyfiles = scheme.html package.json schemes
+copyfiles = scheme.html package.json
 
 
 PKG_NAME=Setting

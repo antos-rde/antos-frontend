@@ -21,7 +21,7 @@ class GridCellPrototype extends Ant.OS.GUI.BaseTag
         @get("data").selected = v
         return unless v
         @cellseleck {}, false
-
+    
     update: () ->
         @set "data", @get("data")
 

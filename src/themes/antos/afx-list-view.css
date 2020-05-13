@@ -1,41 +1,10 @@
-afx-list-view{
-    overflow:hidden;
-    /*padding: 5px;*/
-    display: block;
-}
-/*
-afx-list-view div.list-container{
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-    position: relative;
-    background-color: red;
-}*/
-afx-list-view afx-list-item
-{
-    display: contents;
-}
-afx-list-view > div.list-container{
-    overflow: auto;
-}
-afx-list-view > div.list-container >  ul{
-    margin:0;
-    padding: 0;
-}
-
 afx-list-view  > div.list-container > ul  li{
-    margin:0;
-    padding:0;
-    list-style: none;
     padding: 5px;
     padding-top:3px;
     padding-bottom: 3px;
     padding-right: 10px;
     color: #414339;
     background-color: white;
-    position: relative;
-    -webkit-user-select:none;
-    cursor:default;
 }
 afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li{
     background-color:#f5F5F5;
@@ -43,19 +12,12 @@ afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li{
 afx-list-view  i.closable{
     width: 16px;
     height: 16px;
-    display: inline-block;
-    position:absolute;
-    top:0px;
-    right:2px;
-    cursor: pointer;
 }
+
 afx-list-view  i.closable:before{
-    content: "\f00d"; 
-    font-family: "FontAwesome";
     font-size: 10px;
     margin-left: 10px;
     color: #414339;
-    font-style: normal;
 }
 
 afx-list-view  > div.list-container > ul  li > i {
@@ -67,44 +29,14 @@ afx-list-view > div.list-container > ul > afx-list-item > li.selected{
     color:white;
 }
 
-/*
-afx-list-view.dropdown div.list-container{
-    position: relative;
-    display: inline-block;
-}
-
-afx-list-view.dropdown div.list-container ul{
-    position:absolute;
-    top:100%;
-    left:0;
-    display: none;
-    border:1px solid red;
-}*/
-
-afx-list-view.dropdown {
-    padding:0;
-    margin: 0;
-}
-afx-list-view.dropdown > div.list-container{
-    overflow: visible;
-}
-afx-list-view.dropdown > div.list-container > ul{
-    max-height: 150px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: white;
-}
 afx-list-view.dropdown > div.list-container > ul{
     border:1px solid #a6a6a6;
     box-shadow: 1px 1px 1px #9f9F9F;
     border-radius: 3px;
-    /*padding:2px;*/
+    max-height: 150px;
+    background-color: white;
     border-top-left-radius: 0px;
     z-index: 10;
-}
-afx-list-view.dropdown > div.list-container > ul  li{
-    display: inline-block;
-    width:100%;
 }
 
 afx-list-view.dropdown div.list-container div{
@@ -147,12 +79,7 @@ afx-list-view ul.complex-content li{
 afx-list-view  > div.list-container > ul  li.selected ul.complex-content li{
     color:white;
 }
-/*
-afx-list-view  div.button_container {
-    padding-top:2px;
-    border-top:1px solid #cbcbcb;
-}
-*/
+
 afx-list-view  div.button_container afx-button{
     margin-right: 2px;
 }

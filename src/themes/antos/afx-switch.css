@@ -1,8 +1,6 @@
 afx-switch span{
-    display: inline-block;
     width: 30px;
     height:24px;
-    cursor: pointer;
     font-size: 24px;
     font-family: "FontAwesome";
 }

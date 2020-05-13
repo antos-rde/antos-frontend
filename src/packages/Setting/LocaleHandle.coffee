@@ -16,24 +16,24 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class LocaleHandler extends SettingHandler
-    constructor:(scheme, parent) ->
+class LocaleHandle extends SettingHandle
+    constructor: (scheme, parent) ->
         super(scheme, parent)
         me = @
         @lglist = @find "lglist"
         @localelist = undefined
         @lglist.set "onlistselect", (e) ->
-            me.parent._api.setLocale e.data.text
-    render: () ->
-        me = @
+            me.parent._api.setLocale e.data.item.get("data").text
         if not @localelist
             path = "os://resources/languages"
-            path.asFileHandler().read (d) ->
+            path.asFileHandle().read()
+            .then (d) ->
                 return me.parent.error __("Cannot fetch system locales: {0}", d.error) if d.derror
                 for v in d.result
                     v.text = v.filename.replace /\.json$/g, ""
                     v.selected = v.text is me.parent.systemsetting.system.locale
                 me.localelist = d.result
-                me.lglist.set "items", me.localelist
+                me.lglist.set "data", me.localelist
+            .catch (e) -> me.parent.error e.stack
         else
-            me.lglist.set "items", me.localelist
+            me.lglist.set "data", me.localelist

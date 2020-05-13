@@ -1,0 +1,56 @@
+afx-list-view{
+    overflow:hidden;
+    display: block;
+}
+
+afx-list-view afx-list-item
+{
+    display: contents;
+}
+afx-list-view > div.list-container{
+    overflow: auto;
+}
+afx-list-view > div.list-container >  ul{
+    margin:0;
+    padding: 0;
+}
+
+afx-list-view  > div.list-container > ul  li{
+    margin:0;
+    padding:0;
+    list-style: none;
+    position: relative;
+    -webkit-user-select:none;
+    cursor:default;
+}
+
+afx-list-view  i.closable{
+    display: inline-block;
+    position:absolute;
+    top:0px;
+    right:2px;
+    cursor: pointer;
+}
+
+afx-list-view  i.closable:before{
+    content: "\f00d"; 
+    font-family: "FontAwesome";
+    font-style: normal;
+}
+
+afx-list-view.dropdown {
+    padding:0;
+    margin: 0;
+}
+afx-list-view.dropdown > div.list-container{
+    overflow: visible;
+}
+afx-list-view.dropdown > div.list-container > ul{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+afx-list-view.dropdown > div.list-container > ul  li{
+    display: inline-block;
+    width:100%;
+}

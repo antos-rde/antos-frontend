@@ -16,14 +16,12 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class SettingHandler
-    constructor:(@scheme, @parent) ->
+class SettingHandle
+    constructor: (@scheme, @parent) ->
 
     find: (id) -> ($ "[data-id='#{id}']", @scheme)[0] if @scheme
 
     render: () ->
-
-
 
 class Setting extends this.OS.GUI.BaseApplication
     constructor: (args) ->
@@ -32,39 +30,18 @@ class Setting extends this.OS.GUI.BaseApplication
     main: () ->
         me = @
         @container = @find "container"
-        @container.setTabs [ 
-            {
-                text: "__(Appearance)",
-                iconclass: "fa fa-paint-brush",
-                url: "#{@path()}/schemes/appearance.html",
-                handler: (sch) ->
-                    new AppearanceHandler sch, me
-            },
-            {
-                text: "__(VFS)",
-                iconclass: "fa fa-inbox" ,
-                url: "#{@path()}/schemes/vfs.html" ,
-                handler: (sch) ->
-                    new VFSHandler sch, me
-            },
-            {
-                text: "__(Languages)",
-                iconclass: "fa fa-globe",
-                url: "#{@path()}/schemes/locale.html",
-                handler: (sch) ->
-                    new LocaleHandler sch, me
-            },
-            {
-                text: "__(Startup)",
-                iconclass: "fa fa-cog",
-                url: "#{@path()}/schemes/startup.html",
-                handler: (sch) ->
-                    new StartupHandler sch,me
-            }
-        ]
+
+        new AppearanceHandle @find("appearance"), @
+        new VFSHandle @find("vfs"), @
+        new LocaleHandle @find("locale"), @
+        new StartupHandle @find("startup"), @
+
         (@find "btnsave").set "onbtclick", (e) ->
-            me._api.setting  (d) ->
-                return me.error __("Cannot save system setting: {0}", d.error) if d.error
-                me.notify __("System setting saved")
+            me._api.setting()
+                .then (d) ->
+                    return me.error __("Cannot save system setting: {0}", d.error) if d.error
+                    me.notify __("System setting saved")
+                .catch (e) ->
+                    me.error __("Cannot save system setting: {0}", e.stack)
 Setting.singleton = true
 this.OS.register "Setting", Setting

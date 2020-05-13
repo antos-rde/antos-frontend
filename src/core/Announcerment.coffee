@@ -52,10 +52,10 @@ class Announcer
             for evt in names
                 continue unless me.observable[evt]
                 me.observable[evt].one.forEach (f) ->
-                    f data
+                    f d
                 me.observable[evt].one = new Set()
                 me.observable[evt].many.forEach (f) ->
-                    f data
+                    f d
         
         if evtName is "*"
             trig k, data for k, v of me.observable when k isnt "*"

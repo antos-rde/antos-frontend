@@ -1,0 +1,23 @@
+afx-slider{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+afx-slider div.container{
+    display: block;
+    border:0;
+    position: relative;
+    padding:0;
+    cursor: pointer;
+}
+
+afx-slider div.progress {
+    padding:0;
+    margin: 0;
+    display: block;
+    border:0;
+}
+
+afx-slider div.dragpoint {
+    display: block;
+}

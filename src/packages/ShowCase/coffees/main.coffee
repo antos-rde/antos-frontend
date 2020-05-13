@@ -8,13 +8,13 @@ class ShowCase extends this.OS.GUI.BaseApplication
         
         bt = @find 'bttest'
         bt.set "onbtclick", (e) ->
-            console.log "btclicked"
+            me.notify "btclicked"
         
         @observable.on "btclick", (e) ->
-            console.log "button clicked"
+            me.notify "button clicked"
 
         @observable.on "menuselect", (e) ->
-            console.log e.id
+            me.notify e.id
 
         list = @find 'list'
 
@@ -27,19 +27,15 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 5" }
         ]
         list.unshift { text: "shifted el" }
-        list.set "onlistselect", (e) -> console.log(e.data.items)
-        @observable.on "itemclose", (e) ->
-            console.log "remove", list.get("data")
-            console.log list[0].get "selectedItem"
-            console.log list[0].get "selectedItems"
+        list.set "onlistselect", (e) -> me.notify(e.data.items)
 
         sw = @find 'switch'
         sw.set "onchange", (e) ->
-            console.log e.data
+            me.notify e.data
         
         spin = @find 'spin'
         spin.set "onchange", (e) ->
-            console.log e.data
+            me.notify e.data
 
         menu = @find 'menu'
         menu.set "items", @menu()
@@ -50,12 +46,12 @@ class ShowCase extends this.OS.GUI.BaseApplication
         
         grid = @find 'grid'
         grid.set "oncelldbclick", (e) ->
-            console.log  "on dbclick", e
+            me.notify  "on dbclick", e
         grid.set "onrowselect", (e) ->
-            console.log  "on rowselect", e.data.items
+            me.notify  "on rowselect", e.data.items
         
         @observable.on "cellselect", (e) ->
-            console.log "observable", e
+            console.log  "observable", e
         
         grid.set "header", [{ text: "header1", width: 80 }, { text: "header2" }, { text: "header3" }]
         grid.set "rows", [
@@ -104,25 +100,25 @@ class ShowCase extends this.OS.GUI.BaseApplication
         tree = @find 'tree'
         tree.set "data", tdata
         tree.set "ontreeselect", (e) ->
-            console.log e.data.item.get "treepath"
+            me.notify e.data.item.get "treepath"
         tree.set "ontreedbclick", (e) ->
-            console.log "treedbclick", e
+            me.notify "treedbclick", e
         @observable.on "treedbclick", (e) ->
-            console.log "observable treedbclick", e
+            me.notify "observable treedbclick", e
         
         slider = @find 'slider'
-        slider.set "onchanging", (v) ->
-            console.log v
+        slider.set "onchange", (v) ->
+            me.notify v
 
         cal = @find 'cal'
         cal.set "ondateselect", (e) ->
-            console.log e
+            me.notify e
         
         pk = @find 'cpk'
         pk.set "oncolorselect", (e) ->
-            console.log e
+            me.notify e
         pk.set "oncolorselect", (e) ->
-            console.log e
+            me.notify e
 
         fileview = @find 'fileview'
         fileview.set "fetch", (path) ->
@@ -144,7 +140,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "tree" }
         ]
         viewoption.set "onlistselect", (e) ->
-            console.log e.data.item.get("data").text
+            me.notify e.data.item.get("data").text
             fileview.set "view", e.data.item.get("data").text
 
         dllist = @find "dialoglist"
@@ -172,17 +168,17 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             label: "enter value"
                         })
                         .then (d) ->
-                            console.log d
+                            me.notify d
                 when "calendar"
                     me.openDialog("CalendarDialog", {
                             title: "Calendar"
                     })
                         .then (d) ->
-                            console.log d
+                            me.notify d
                 when "colorpicker"
                     me.openDialog("ColorPickerDialog")
                         .then (d) ->
-                            console.log d
+                            me.notify d
                 when "info"
                     me.openDialog("InfoDialog", {
                         title: "Info application",
@@ -197,7 +193,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             text: "Do you realy want to delete file ?"
                         })
                         .then (d) ->
-                            console.log d
+                            me.notify d
                 when "selection"
                     me.openDialog("SelectionDialog", {
                             title: "Select data ?",
@@ -208,7 +204,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             ]
                         })
                         .then (d) ->
-                            console.log d
+                            me.notify d.text
                 when "about"
                     me.openDialog("AboutDialog" )
                         .then (d) ->
@@ -220,13 +216,13 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             file: "Untitled".asFileHandle()
                         })
                         .then (f, name) ->
-                            console.log f, name
+                            me.notify f, name
                 else return
                     
 
 
     mnFile: () ->
-        #console.log file
+        #me.notify file
         me = @
         arr = {
             text: "__(File)",
@@ -238,7 +234,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Download)", dataid: "#{@name}-download" },
                 { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
                 { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
-            ], onchildselect: (e) -> console.log "child", e
+            ], onchildselect: (e) -> me.notify "child", e
         }
         return arr
     mnEdit: () ->
@@ -251,7 +247,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
                 { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
                 { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
-            ], onchildselect: (e) -> console.log "child", e
+            ], onchildselect: (e) -> console.log  "child", e
         }
 
     menu: () ->

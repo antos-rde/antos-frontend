@@ -5,10 +5,12 @@ class TabContainerTag extends Ant.OS.GUI.BaseTag
         @setopt "selectedTab", undefined
         @setopt "tabbarwidth", undefined
         @setopt "tabbarheight", undefined
+        @setopt "ontabselect", () ->
         me = @
         @refs.bar.set "ontabselect", (e) ->
             data = e.data.item.get "data"
             me.set "selectedTab", data
+            me.get("ontabselect") { data: data, id: me.aid() }
 
     __selectedTab: (v) ->
         return unless v

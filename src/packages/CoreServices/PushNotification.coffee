@@ -72,14 +72,12 @@ class PushNotification extends this.OS.GUI.BaseService
             .css "bottom", "0"
             .hide()
 
-    pushout: (s, o, mfeed) ->
+    pushout: (s, o) ->
         d = {
             text: "[#{s}] #{o.name} (#{o.id}): #{o.data.m}",
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             closable: true }
-        #console.log o.data.s
-        #console.log o.data.e
         @mlist.unshift d
         @notifeed d
 
