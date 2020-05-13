@@ -1,0 +1,55 @@
+afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-file-view{
+    background-color:#272822;
+}
+afx-app-window[data-id = "notepad"] afx-resizer {
+    background-color:#272822;
+    border-right: 1px solid #37373d;
+}
+afx-app-window[data-id = "notepad"] .afx-window-wrapper .treecontainer{
+    padding-top: 10px;
+}
+afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-tree-view{
+    color: white;
+    padding: 0;
+}
+afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-tree-view afx-tree-view-item ul li{
+    padding-left: 10px;
+}
+afx-app-window[data-id = "notepad"] .afx-window-wrapper .afx_tree_item_selected ul{
+    background-color: #116cd6;
+}
+
+afx-app-window[data-id = "notepad"] afx-file-view afx-tree-view .afx-tree-view-item:before{
+    color: white;
+}
+
+afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-hbox[data-id="bottom-hbox"]{
+    color: white;
+    background-color: #007acc;
+}
+
+
+afx-app-window[data-id = "cmd-win"] .afx-window-wrapper{
+    border-radius: 0px;
+    border: 0;
+    /*border: 1px solid #37373d;*/
+    background-color: transparent;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+}
+
+afx-app-window[data-id = "cmd-win"] .afx-window-top{
+    height: 0;
+    border:0;
+}
+afx-app-window[data-id = "cmd-win"] input{
+    border: 1px solid #007acc;
+    border-radius: 0;
+    font-size: 12px;
+    color:#afafaf;
+    background-color:#272822;
+    margin: 3px;
+}
+
+afx-app-window[data-id = "cmd-win"] .afx-window-content{
+    background-color:#272822;
+}

@@ -35,8 +35,6 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             .css("position", 'absolute')
             .css("left", "#{left}px")
             .css("top", "#{top}px")
-            .css("width", "#{(@get "width")}px")
-            .css("height", "#{(@get "height")}px")
             .css("z-index", Ant.OS.GUI.zindex++)
         $(@root).on "mousedown", (e) ->
             return if me.shown
@@ -71,12 +69,29 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 me.observable.trigger "focus", { id: me.aid() }
         @enable_dragging()
         @enable_resize()
-        @resize()
+        @setsize { w: (@get "width"), h: (@get "height") }
         @observable.trigger "rendered", { id: me.aid() }
 
     __minimizable__: (value) ->
         if value then $(@refs["minbt"]).show() else $(@refs["minbt"]).hide()
     
+    __width__: (v) ->
+        return unless v
+        @setsize { w: v, h: @get("height") }
+ 
+    __height__: (v) ->
+        return unless v
+        @setsize { w: @get("width"), h: v }
+
+    setsize: (o) ->
+        return unless o
+        @opts.width = o.w
+        @opts.height = o.h
+        $(@root)
+            .css("width", "#{o.w}px")
+            .css("height", "#{o.h}px")
+        @observable.trigger "resize", { id: @aid(), data: o }
+
     __resizable__: (value) ->
         if value
             $(@refs["maxbt"]).show()
@@ -140,11 +155,8 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 h  = if h < 100 then 100 else h
                 offset.top = e.clientY
                 offset.left = e.clientX
-                $(me.root)
-                    .css("width", "#{w}px")
-                    .css("height", "#{h}px")
                 me.isMaxi = false
-                me.observable.trigger "resize", { id: me.aid(), data: { w: w, h: h } }
+                me.setsize { w: w, h: h }
 
             $(window).on "mouseup", (e) ->
                 $(window).unbind "mousemove", null
@@ -163,21 +175,16 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             w = $(@desktop).width() - 5
             h = $(@desktop).height() - 10
             $(@root)
-                .css("width", "#{w}px")
-                .css("height", "#{h}px")
                 .css("top", "0")
                 .css("left", "0")
-            @observable.trigger 'resize', { id: @aid(), data: { w: w, h: h } }
+            @setsize { w: w, h: h }
             @isMaxi = true
         else
             @isMaxi = false
             $(@root)
-                .css("width", @history.width)
-                .css("height", @history.height)
                 .css("top", @history.top)
                 .css("left", @history.left)
-            @observable.trigger 'resize',
-                { id: @aid(), data: { w: history.width, h: history.height } }
+            @setsize { w: parseInt(@history.width), h: parseInt(@history.height) }
 
     layout: () ->
         [{
