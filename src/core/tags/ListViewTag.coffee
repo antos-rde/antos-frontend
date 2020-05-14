@@ -200,6 +200,14 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @set "selectedItem", e.item
             @set "selectedItems", [e.item]
             e.items = [e.item]
+            #scroll element
+            li = $(e.item).children()[0]
+            offset = $(@refs.container).offset()
+            top = $(@refs.container).scrollTop()
+            if ($(li).offset().top + $(li).height() > $(@refs.container).height() + offset.top)
+                $(@refs.container).scrollTop(top + $(@refs.container).height() - $(li).height())
+            else if ($(li).offset().top < offset.top)
+                $(@refs.container).scrollTop(top - $(@refs.container).height() + $(li).height())
 
         if @get "dropdown"
             @refs.drlabel.set "*", e.item.get "data"

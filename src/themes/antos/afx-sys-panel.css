@@ -68,7 +68,9 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
     border-left: 1px solid #afafaf;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover,
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover{
+    background-color: #cecece;
+}
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected
 {
     background-color: #116cd6;

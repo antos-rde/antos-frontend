@@ -34,7 +34,7 @@ afx-list-view.dropdown > div.list-container > ul{
     box-shadow: 1px 1px 1px #9f9F9F;
     border-radius: 3px;
     max-height: 150px;
-    background-color: white;
+    background-color: transparent;
     border-top-left-radius: 0px;
     z-index: 10;
 }
@@ -45,7 +45,7 @@ afx-list-view.dropdown div.list-container div{
     padding-bottom: 3px;
     border:1px solid #a6a6a6;
     border-radius: 3px;
-    background-color: white;
+    background-color: transparent;
     height: 17px;
 }
 afx-list-view.dropdown div.list-container div > afx-label{

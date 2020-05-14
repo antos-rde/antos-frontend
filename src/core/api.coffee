@@ -29,6 +29,9 @@ class FormatedString
     hash: () ->
         @__().hash()
 
+    match: (t) ->
+        @__().match t
+
     asBase64: () ->
         @__().asBase64()
     

@@ -106,7 +106,7 @@ class BaseFileHandle
                     me.info = d.result
                     me.ready = true
                     resolve(d.result)
-                .catch (e) -> resolve e
+                .catch (e) -> reject e
 
     read: (t) ->
         me = @
