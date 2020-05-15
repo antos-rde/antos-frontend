@@ -60,6 +60,9 @@ class SimpleListItemTag extends ListViewItemTag
         @set "selected", v.selected if v.selected
         @set "closable", v.closable if v.closable
 
+    update: () ->
+        @set "data", @get("data")
+
     itemlayout: () ->
         { el: "afx-label", ref: "label" }
 

@@ -1,36 +1,68 @@
-afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-file-view{
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container
+{
+    border-top: 1px solid #272822;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li.selected,
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container > ul > afx-list-item > li.selected{
+    background-color:#272822;
+    color:white;
+    border: 0;
+    border-radius: 0;
+}
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view afx-list-view i.closable:before {
+    color:afafaf;
+}
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li,
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view  > div.list-container > ul  li{
+    background-color:#333333;
+    color:#afafaf;
+    border-radius: 0;
+    border: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 20px;
+    border-right: 1px solid #272822;
+}
+afx-app-window[data-id = "codepad"] .afx-window-wrapper afx-vbox[data-id = "sidebar"]{
     background-color:#272822;
 }
-afx-app-window[data-id = "notepad"]  div.afx-window-content {
-    background-color:#2d2d2d;
+afx-app-window[data-id = "codepad"]  div.afx-window-content {
+    background-color:#333333;
 }
-afx-app-window[data-id = "notepad"] afx-resizer {
+afx-app-window[data-id = "codepad"] afx-resizer {
     background-color:#272822;
     border-right: 1px solid #37373d;
 }
-afx-app-window[data-id = "notepad"] .afx-window-wrapper .treecontainer{
-    padding-top: 10px;
-}
-afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-tree-view{
+afx-app-window[data-id = "codepad"] .afx-window-wrapper afx-tree-view{
     color: white;
     padding: 0;
 }
-afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-tree-view afx-tree-view-item ul li{
+afx-app-window[data-id = "codepad"] .afx-window-wrapper afx-tree-view afx-tree-view-item ul li{
     padding-left: 10px;
 }
-afx-app-window[data-id = "notepad"] .afx-window-wrapper .afx_tree_item_selected ul{
+afx-app-window[data-id = "codepad"] .afx-window-wrapper .afx_tree_item_selected ul{
     background-color: #116cd6;
 }
 
-afx-app-window[data-id = "notepad"] afx-file-view afx-tree-view .afx-tree-view-item:before{
+afx-app-window[data-id = "codepad"] afx-file-view afx-tree-view .afx-tree-view-item:before{
     color: white;
 }
 
-afx-app-window[data-id = "notepad"] .afx-window-wrapper afx-hbox[data-id="bottom-hbox"]{
+afx-app-window[data-id = "codepad"] .afx-window-wrapper div[data-id="statctn"]{
     color: white;
     background-color: #007acc;
+    padding-right: 10px;
+    padding-top: 5px;
+    font-size: 11px;
 }
 
+afx-app-window[data-id = "codepad"] .afx-window-wrapper div[data-id="statctn"] afx-label {
+    float: right;
+    padding-left: 10px;
+}
 
 afx-app-window[data-id = "cmd-win"] .afx-window-wrapper{
     border-radius: 0px;

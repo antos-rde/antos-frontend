@@ -78,7 +78,7 @@ class PushNotification extends this.OS.GUI.BaseService
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             closable: true }
-        console.log o
+        console.log o.data.e
         @mlist.unshift d
         @notifeed d
 

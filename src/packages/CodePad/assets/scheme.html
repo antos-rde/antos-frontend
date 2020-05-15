@@ -1,19 +1,20 @@
-<afx-app-window apptitle="Code" width="600" height="400" data-id="notepad">
+<afx-app-window apptitle="Code" width="600" height="400" data-id="codepad">
     <afx-vbox>
         <afx-hbox>
-            <afx-file-view data-width = "155" min-width="155" data-id = "fileview" view="tree" status = "false">
-            </afx-file-view>
+            <afx-vbox data-width = "155" min-width="155" data-id = "sidebar">
+                <div data-height="10"></div>
+                <afx-file-view chdir="false" data-id = "fileview" view="tree" status = "false">
+                </afx-file-view>
+            </afx-vbox>
             <afx-resizer data-width = "3" ></afx-resizer>
             <afx-vbox>
-                <afx-tab-bar data-height="25" id = "tabbar"></afx-tab-bar>
+                <afx-tab-bar closable="true" data-height="27" data-id = "tabbar"></afx-tab-bar>
                 <div data-id="datarea"></div>
             </afx-vbox>
         </afx-hbox>
-        <afx-hbox data-height="20" data-id="bottom-hbox">
-            <afx-label data-id="editorstat"></afx-label>
-            <!-- <afx-list-view data-width="160" data-id = "themelist" dropdown = "true" width="135"></afx-list-view>
-            <afx-list-view data-width="125" data-id = "modelist" dropdown = "true" width="100"></afx-list-view>
-             -->
-        </afx-hbox>
+        <div data-height="20" data-id="statctn">
+            <afx-label data-id="langstat" ></afx-label>
+            <afx-label data-id="editorstat" ></afx-label>
+        </div>
     </afx-vbox>
 </afx-app-window>

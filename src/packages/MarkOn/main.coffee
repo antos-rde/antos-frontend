@@ -26,7 +26,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
         @container = @find "mycontainer"
         @previewOn = false
         if @args and @args.length > 0
-            @currfile =  @args[0].asFileHandle()
+            @currfile =  @args[0].path.asFileHandle()
         else
             @currfile = "Untitled".asFileHandle()
         @editormux = false
@@ -165,6 +165,9 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 me.quit()
         , __("Quit"), { text: __("Quit without saving ?") }
 
-MarkOn.dependencies = [ "mde/simplemde.min" ]
+MarkOn.dependencies = [
+    "os://scripts/mde/simplemde.min.js",
+    "os://scripts/mde/simplemde.min.css"
+]
 
 this.OS.register "MarkOn", MarkOn

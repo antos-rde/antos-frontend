@@ -27,7 +27,7 @@ class Files extends this.OS.GUI.BaseApplication
         @navinput = @find "navinput"
         @navbar = @find "nav-bar"
         if @args and @args.length > 0
-            @currdir = @args[0].asFileHandle()
+            @currdir = @args[0].path.asFileHandle()
         else
             @currdir = "home://".asFileHandle()
         @favo = @find "favouri"

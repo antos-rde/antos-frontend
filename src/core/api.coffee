@@ -295,28 +295,31 @@ Ant.OS.API =
     requires: (l) ->
         new Promise (resolve, reject) ->
             if not Ant.OS.API.shared[l]
-                link = l
-                if not l.match /^(https?:\/\/[^\s]+)/g
-                    path = "os://scripts/"
-                    cssFile = "#{path}#{l}.css".asFileHandle()
-                    cssFile.onready()
+                libfp = l.asFileHandle()
+                switch libfp.ext
+                    when "css"
+                        libfp.onready()
+                            .then () ->
+                                $('<link>', {
+                                    rel: 'stylesheet',
+                                    type: 'text/css',
+                                    'href': "#{libfp.getlink()}"
+                                })
+                                .appendTo 'head'
+                                Ant.OS.API.shared[l] = true
+                                console.log "loaded css:", l
+                                Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                            .catch (e) -> reject e
+                    when "js"
+                        Ant.OS.API.script libfp.getlink()
                         .then () ->
-                            $('<link>', {
-                                rel: 'stylesheet',
-                                type: 'text/css',
-                                'href': "#{cssFile.getlink()}"
-                            })
-                            .appendTo 'head'
+                            Ant.OS.API.shared[l] = true
+                            console.log "loaded javascript:", l
+                            Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                            resolve(l)
                         .catch (e) ->
-                    js = "#{path}#{l}.js"
-                    link = js.asFileHandle().getlink()
-                Ant.OS.API.script link
-                    .then () ->
-                        Ant.OS.API.shared[l] = true
-                        console.log "loaded:", l
-                        Ant.OS.announcer.trigger "sharedlibraryloaded", l
-                        resolve(l)
-                    .catch (e) ->
+                            reject e
+                    else
                         reject e
             else
                 console.log l, "Library exist, no need to load"

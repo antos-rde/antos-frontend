@@ -119,9 +119,11 @@ Ant.OS.GUI =
         return Ant.OS.announcer.osinfo __("No application available to open {0}", it.filename) if apps.length is 0
         return Ant.OS.GUI.launch apps[0].app, [it.path] if apps.length is 1
         list = ( { text: e.app, icon: e.icon, iconclass: e.iconclass } for e in apps )
-        Ant.OS.GUI.openDialog "SelectionDialog", ( d ) ->
-            Ant.OS.GUI.launch d.text, [it.path]
-        , __("Open with"), list
+        Ant.OS.GUI.openDialog("SelectionDialog", {
+            title: __("Open with"),
+            data: list
+        }).then ( d ) ->
+            Ant.OS.GUI.launch d.text, [ { path: it.path, type: it.type }]
 
     forceLaunch: (app, args) ->
         console.warn "This method is used for developing only, please use the launch method instead"
@@ -377,6 +379,7 @@ Ant.OS.GUI =
                             return Ant.OS.GUI.openWith it.get("data") if it
                             it = Ant.OS.setting.desktop.path.asFileHandle()
                             it.mime = "dir"
+                            it.type = "dir"
                             Ant.OS.GUI.openWith it
                         when "desktop-refresh"
                             desktop[0].fetch()

@@ -9,6 +9,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @setopt "showhidden", false
         @setopt "fetch", undefined
         @setopt "path", undefined
+        @setopt "chdir", true
         @setopt "view", "list"
         @preventUpdate = false
         @header = [
@@ -150,6 +151,9 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @refs.status.set("text", " ") if @get "status"
 
     fileselect: (e) ->
+        if e.path is @get "path"
+            e.type = "dir"
+            e.mime = "dir"
         if @get "status"
             @refs.status.set "text", __(
                 "Selected: {0} ({1} bytes)",
@@ -161,7 +165,10 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         @observable.trigger "fileselect", evt
 
     filedbclick: (e) ->
-        if e.type is "dir"
+        if e.path is @get "path"
+            e.type = "dir"
+            e.mime = "dir"
+        if e.type is "dir" and @get "chdir"
             @set "path", e.path
         else
             evt  = { id: @aid(), data: e }

@@ -14,6 +14,7 @@
         "text/.*",
         "[^/]*/json.*",
         "[^/]*/.*ml",
-        "[^/]*/javascript"
+        "[^/]*/javascript",
+        "dir"
     ]
 }

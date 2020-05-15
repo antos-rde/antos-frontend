@@ -271,11 +271,13 @@ class SelectionDialog extends BasicDialog
         super.init()
         me = @
         (@find "list").set "data", @data.data if @data and @data.data
-        (@find "btnOk").set "onbtclick", (e) ->
+        fn = (e) ->
             data = (me.find "list").get "selectedItem"
             return me.notify __("Please select an item") unless data
             me.handle(data.get("data")) if me.handle
             me.quit()
+        (@find "list").set "onlistdbclick", fn
+        (@find "btnOk").set "onbtclick", fn
         
         (@find "btnCancel").set "onbtclick", (e) ->
             me.quit()
@@ -384,7 +386,8 @@ class FileDialog extends BasicDialog
         (@find "bt-ok").set "onbtclick", (e) ->
             f = fileview.get "selectedFile"
             return me.notify __("Please select a file/fofler") unless f
-            return me.notify __("Please select {0} only", me.data.type) if me.data and me.data.type and me.data.type isnt f.type
+            if me.data and me.data.type and me.data.type isnt f.type
+                return me.notify __("Please select {0} only", me.data.type)
             if me.data and me.data.mimes
                 #verify the mime
                 m = false

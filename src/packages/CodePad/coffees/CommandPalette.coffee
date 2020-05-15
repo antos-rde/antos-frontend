@@ -17,7 +17,7 @@ class CommandPalette extends this.OS.GUI.BasicDialog
         $(document).on "mousedown", cb
         $(me.find "searchbox").focus()
         @cmdlist = @find("container")
-        @cmdlist.set "data", @data if @data
+        @cmdlist.set "data", (v for v in @data.child) if @data
         $(@cmdlist).click (e) ->
             me.selectCommand()
     
@@ -27,6 +27,10 @@ class CommandPalette extends this.OS.GUI.BasicDialog
 
     search: (e) ->
         switch e.which
+            when 27
+                # escape key
+                @quit()
+                @data.parent.run(@parent) if @data.parent and @data.parent.run
             when 37
                 e.preventDefault()
             when 38
@@ -42,20 +46,20 @@ class CommandPalette extends this.OS.GUI.BasicDialog
                 @selectCommand()
             else
                 text = @searchbox.value
-                @cmdlist.set "data", @data if text.length is 2
+                @cmdlist.set "data", (v for v in @data.child) if text.length is 2
                 return if text.length < 3
                 result = []
                 term = new RegExp text, 'i'
-                result.push v for v in @data when v.text.match term
+                result.push v for v in @data.child when v.text.match term
                 @cmdlist.set "data", result
 
 
     selectCommand: () ->
         el = @cmdlist.get "selectedItem"
         return unless el
-        @quit()
-        @handle { data: { item: el } } if @handle
-
+        result = false
+        result = @handle { data: { item: el } } if @handle
+        return @quit() unless result
 
 CommandPalette.scheme = """
 <afx-app-window data-id = "cmd-win"
