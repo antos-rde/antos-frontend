@@ -307,16 +307,17 @@ Ant.OS.API =
                                 })
                                 .appendTo 'head'
                                 Ant.OS.API.shared[l] = true
-                                console.log "loaded css:", l
+                                console.log "Loaded :", l
                                 Ant.OS.announcer.trigger "sharedlibraryloaded", l
+                                resolve undefined
                             .catch (e) -> reject e
                     when "js"
                         Ant.OS.API.script libfp.getlink()
-                        .then () ->
+                        .then (data) ->
                             Ant.OS.API.shared[l] = true
-                            console.log "loaded javascript:", l
+                            console.log "Loaded :", l
                             Ant.OS.announcer.trigger "sharedlibraryloaded", l
-                            resolve(l)
+                            resolve(data)
                         .catch (e) ->
                             reject e
                     else

@@ -1,38 +1,4 @@
-class CMDMenu
-    constructor: (@text, @shortcut) ->
-        @child = []
-        @parent = undefined
-        @select = (e) ->
-
-    addAction: (v) ->
-        v.parent = @
-        @child.push v
-        @
-
-    addActions: (list) ->
-        @addAction v for v in list
-
-    onchildselect: (f) ->
-        @select = f
-        @
-
-    run: (root) ->
-        me = @
-        root.openDialog(new CommandPalette(), @)
-            .then (d) ->
-                data = d.data.item.get("data")
-                return data.run root if data.run
-                me.select d, root
-
-CMDMenu.fromMenu = (mn) ->
-    m = new CMDMenu mn.text, mn.shortcut
-    m.onchildselect mn.onchildselect
-    for v in mn.child
-        if v.child
-            m.addAction CMDMenu.fromMenu v
-        else
-            m.addAction v
-    m
+Ant = this
 
 class CodePad extends this.OS.GUI.BaseApplication
     constructor: (args) ->
@@ -48,6 +14,7 @@ class CodePad extends this.OS.GUI.BaseApplication
 
     main: () ->
         me = @
+        @extensions = {}
         @fileview = @find("fileview")
         @sidebar = @find("sidebar")
         @tabbar = @find "tabbar"
@@ -74,7 +41,7 @@ class CodePad extends this.OS.GUI.BaseApplication
             enableSnippets: true,
             enableLiveAutocompletion: true,
             highlightActiveLine: true,
-            useWrapMode: true,
+            wrap: true,
             fontSize: "11pt"
         }
         #themes = ace.require "ace/ext/themelist"
@@ -134,6 +101,7 @@ class CodePad extends this.OS.GUI.BaseApplication
         @bindKey "CTRL-S", () -> me.menuAction "save"
         @bindKey "ALT-W", () ->  me.menuAction "saveas"
 
+        @loadExtensionMetaData()
         @initCommandPalete()
         @initSideBar()
         @openFile @currfile
@@ -249,6 +217,52 @@ class CodePad extends this.OS.GUI.BaseApplication
         @spotlight.addAction cmdmode
         @addAction CMDMenu.fromMenu @fileMenu()
     
+    loadExtensionMetaData: () ->
+        me = @
+        "#{@meta().path}/extensions.json"
+            .asFileHandle()
+            .read("json")
+            .then (d) ->
+                for ext in d
+                    if me.extensions[ext.name]
+                        me.extensions[ext.name].child = {}
+                        me.extensions[ext.name].addAction v for v in ext.actions
+                    else
+                        me.extensions[ext.name] = new CMDMenu ext.text
+                        me.extensions[ext.name].name = ext.name
+                        me.extensions[ext.name].addAction v for v in ext.actions
+                        me.spotlight.addAction me.extensions[ext.name]
+                        me.extensions[ext.name].onchildselect (e) ->
+                            me.loadAndRunExtensionAction e.data.item.get "data"
+            .catch (e) ->
+                me.error __("Cannot load extension meta data")
+
+    runExtensionAction: (name, action) ->
+        me = @
+        return @error __("Unable to find extension: {0}", name) unless CodePad.extensions[name]
+        ext = new CodePad.extensions[name](me)
+        return @error __("Unable to find action: {0}", action) unless ext[action]
+        ext.preload()
+            .then () ->
+                ext[action]()
+            .catch (e) ->
+                me.error e.stack
+
+    loadAndRunExtensionAction: (data) ->
+        me = @
+        name = data.parent.name
+        action = data.name
+        #verify if the extension is load
+        if not CodePad.extensions[name]
+            #load the extension
+            path = "#{@meta().path}/extensions/#{name}.js"
+            @_api.requires path
+                .then () -> me.runExtensionAction name, action
+                .catch (e) ->
+                    me.error __("unable to load extension: {}", name)
+        else
+            @runExtensionAction name, action
+
     fileMenu: () ->
         me = @
         {
@@ -348,6 +362,66 @@ class CodePad extends this.OS.GUI.BaseApplication
             }
         ]
         menu
+
+class CodePad.BaseExtension
+
+    constructor: (@app) ->
+
+    preload: () ->
+        dep = ( "#{@basedir()}/#{v}" for v in @dependencies())
+        Ant.OS.API.require dep
+
+    basedir: () ->
+        "#{@app.meta().path}/extensions"
+
+    notify: (m) ->
+        @app.notify m
+    
+    error: (m) ->
+        @app.error m
+
+    dependencies: () ->
+        []
+
+class CMDMenu
+    constructor: (@text, @shortcut) ->
+        @child = []
+        @parent = undefined
+        @select = (e) ->
+
+    addAction: (v) ->
+        v.parent = @
+        @child.push v
+        @
+
+    addActions: (list) ->
+        @addAction v for v in list
+
+    onchildselect: (f) ->
+        @select = f
+        @
+
+    run: (root) ->
+        me = @
+        root.openDialog(new CommandPalette(), @)
+            .then (d) ->
+                data = d.data.item.get("data")
+                return data.run root if data.run
+                me.select d, root
+
+CMDMenu.fromMenu = (mn) ->
+    m = new CMDMenu mn.text, mn.shortcut
+    m.onchildselect mn.onchildselect
+    for v in mn.child
+        if v.child
+            m.addAction CMDMenu.fromMenu v
+        else
+            m.addAction v
+    m
+
+CodePad.CMDMenu = CMDMenu
+
+CodePad.extensions = {}
 
 CodePad.dependencies = [
     "os://scripts/ace/ace.js",

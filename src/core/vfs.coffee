@@ -51,6 +51,10 @@ class BaseFileHandle
         @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
         @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
     
+    setCache: (v) ->
+        @cache = v
+        @
+        
     asFileHandle: () -> @
 
     isRoot: () -> (not @genealogy) or (@genealogy.size is 0)

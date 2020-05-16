@@ -9,11 +9,15 @@ title:
 
 coffee:
 	- mkdir build
+	- [ ! -z "$(module_dir)" ] && [ -d build/$(module_dir) ] && rm -r build/$(module_dir)
+	mkdir -p build/$(module_dir)
 	for f in $(coffee_files); do (cat "$${f}"; echo) >>"build/main.coffee";done
 	coffee --compile build/main.coffee
-	#for f in $(coffee_files); do (coffee -cs < $$f >build/"$$f.js");done
-	#for f in build/*.coffee.js; do (cat "$${f}"; echo) >> build/main.js; done
 	- rm build/*.coffee
+	[ -z "$(module_dir_src)" ] || (for f in $(module_dir_src)/*; do cp -rf "$$f" build/$(module_dir)/; done)
+	[ -z "$(module_dir_src)" ] || (for f in build/$(module_dir)/*.coffee; do coffee --compile "$$f"; done)
+	[ -z "$(module_dir_src)" ] || (rm build/$(module_dir)/*.coffee)
+	
 
 js: coffee
 	for f in $(jsfiles); do (cat "$${f}"; echo) >> build/main.js; done

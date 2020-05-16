@@ -31,7 +31,9 @@ class SubWindow extends this.OS.GUI.BaseModel
     init: () ->
     main: () ->
     meta: () ->
-        @parent.meta()
+        return @parent.meta() if @parent and @parent.meta
+        {}
+        
     show: () ->
         @trigger 'focus'
         ($ @scheme).css "z-index", window._zindex + 2

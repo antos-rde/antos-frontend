@@ -1,0 +1,29 @@
+[
+    {
+        "name": "AntOSDK",
+        "text": "AntOS Software Development Kit",
+        "version": "0.0.1-a",
+        "actions" : [
+            {
+                "text": "__(New Project)",
+                "name": "create"
+            },
+            {
+                "text": "__(New project from current folder)",
+                "name": "init"
+            },
+            {
+                "text": "__(Build and Run)",
+                "name": "build"
+            },
+            {
+                "text": "__(Build release)",
+                "name": "release"
+            },
+            {
+                "text": "__(Build options)",
+                "name": "options"
+            }
+        ]
+    }
+]

@@ -117,9 +117,9 @@ class BaseApplication extends this.OS.GUI.BaseModel
         # implement by subclasses
         # to add menu to application
         []
-    open:->
+    open: () ->
         #implement by subclasses
-    data:->
+    data: ->
         #implement by subclasses
         # to return app data
     

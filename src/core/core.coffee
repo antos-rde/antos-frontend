@@ -34,6 +34,9 @@ Ant.OS or=
     register: (name, x) ->
         if x.type is 3 then Ant.OS.GUI.subwindows[name] = x else Ant.OS.APP[name] = x
     
+    # import proprety from an App
+    
+
     PM:
         pidalloc: 0
         processes: {}

@@ -98,7 +98,16 @@ class BaseModel
         mt = @meta()
         icon = undefined
         icon = "#{mt.path}/#{mt.icon}" if mt.icon
-        Ant.OS.announcer.trigger t, { id: @pid, name: @name, data: { m: m, icon: icon, iconclass: mt.iconclass }, error: e }
+        Ant.OS.announcer.trigger t, {
+            id: @pid,
+            name: @name,
+            data: {
+                m: m,
+                icon: icon,
+                iconclass: mt.iconclass,
+                e: e
+            }
+        }
 
     notify: (m) ->
         @publish "notification", m
@@ -115,7 +124,7 @@ class BaseModel
     throwe: () ->
         @_api.throwe @name
     
-    update:->
+    update: () ->
         @scheme.update() if @scheme
         
     find: (id) -> ($ "[data-id='#{id}']", @scheme)[0] if @scheme
