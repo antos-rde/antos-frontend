@@ -92,6 +92,17 @@ class CodePad extends this.OS.GUI.BaseApplication
             }]
             m.show e
 
+        @fileview.contextmenuHandle = (e, m) =>
+            m.set "items", [
+                { text: "__(New file)", id: "new" },
+                { text: "__(New folder)", id: "newdir" },
+                { text: "__(Rename)", id: "rename" },
+                { text: "__(Delete)", id: "delete" }
+            ]
+            m.set "onmenuselect", (e) =>
+                @ctxFileMenuHandle e
+            m.show e
+
         @bindKey "ALT-N", () =>  @menuAction "new"
         @bindKey "ALT-O", () =>  @menuAction "open"
         @bindKey "ALT-F", () =>  @menuAction "opendir"
@@ -221,7 +232,7 @@ class CodePad extends this.OS.GUI.BaseApplication
             .then (d) =>
                 for ext in d
                     if @extensions[ext.name]
-                        @extensions[ext.name].child = {}
+                        @extensions[ext.name].child = []
                         @extensions[ext.name].addAction v for v in ext.actions
                     else
                         @extensions[ext.name] = new CMDMenu ext.text
@@ -271,6 +282,86 @@ class CodePad extends this.OS.GUI.BaseApplication
                 @menuAction e.data.item.get("data").dataid, r
         }
     
+    ctxFileMenuHandle: (e) ->
+        el = e.data.item
+        return unless el
+        data = el.get("data")
+        return unless data
+        file = @fileview.get "selectedFile"
+        dir = @currdir
+        dir = file.path.asFileHandle() if file and file.type is "dir"
+        dir = file.path.asFileHandle().parent() if file and file.type is "file"
+        
+        switch data.id
+            when "new"
+                return unless dir
+                @openDialog("PromptDialog", {
+                    title: "__(New file)",
+                    label: "__(File name)"
+                })
+                    .then (d) =>
+                        fp = "#{dir.path}/#{d}".asFileHandle()
+                        fp.write("text/plain")
+                            .then (r) =>
+                                return @error __("Fail to create {0}: {1}", d, r.error) if r.error
+                                @fileview.update dir.path
+                    .catch (e) =>
+                        @error __("Fail to create: {0}", e.stack)
+            
+            when "newdir"
+                return unless dir
+                @openDialog("PromptDialog", {
+                    title: "__(New folder)",
+                    label: "__(Folder name)"
+                })
+                    .then (d) =>
+                        dir.mk(d)
+                            .then (r) =>
+                                return @error __("Fail to create {0}: {1}", d, r.error) if r.error
+                                @fileview.update dir.path
+                    .catch (e) =>
+                        @error __("Fail to create: {0}", e.stack)
+
+            when "rename"
+                return unless file
+                @openDialog("PromptDialog", {
+                    title: "__(Rename)",
+                    label: "__(File name)",
+                    value: file.filename
+                })
+                    .then (d) =>
+                        return if d is file.filename
+                        file = file.path.asFileHandle()
+                        dir = file.parent()
+                        file.move "#{dir.path}/#{d}"
+                            .then (r) =>
+                                return @error __("Fail to rename to {0}: {1}", d, r.error) if r.error
+                                @fileview.update dir.path
+                    .catch (e) =>
+                        console.log e
+                        @error __("Fail to rename: {0}", e.stack)
+
+            when "delete"
+                return unless file
+                @openDialog("YesNoDialog", {
+                    title: "__(Delete)",
+                    iconclass: "fa fa-question-circle",
+                    text: __("Do you really want to delete: {0}?", file.filename)
+                })
+                    .then (d) =>
+                        return unless d
+                        file = file.path.asFileHandle()
+                        dir = file.parent()
+                        file.remove()
+                            .then (r) =>
+                                return @error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
+                                @fileview.update dir.path
+                    .catch (e) =>
+                        @error __("Fail to delete: {0}", e.stack)
+            
+            else
+                
+
     save: (file) ->
         file.write("text/plain")
             .then (d) =>
@@ -352,28 +443,6 @@ class CodePad extends this.OS.GUI.BaseApplication
         ]
         menu
 
-class CodePad.BaseExtension
-
-    constructor: (@app) ->
-
-    preload: () ->
-        Ant.OS.API.require @dependencies()
-
-    import: (lib) ->
-        Ant.OS.API.requires lib
-
-    basedir: () ->
-        "#{@app.meta().path}/extensions"
-
-    notify: (m) ->
-        @app.notify m
-    
-    error: (m) ->
-        @app.error m
-
-    dependencies: () ->
-        []
-
 class CMDMenu
     constructor: (@text, @shortcut) ->
         @child = []
@@ -410,8 +479,6 @@ CMDMenu.fromMenu = (mn) ->
     m
 
 CodePad.CMDMenu = CMDMenu
-
-CodePad.extensions = {}
 
 CodePad.dependencies = [
     "os://scripts/ace/ace.js",

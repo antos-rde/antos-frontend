@@ -10,7 +10,7 @@ class Ant.OS.GUI.BaseTag
         @root.get = (k) => @get k
         @root.aid = () => @aid()
         @root.calibrate = () => @calibrate()
-        @root.sync = () => @sync()
+        @root.sync = (d) => @sync(d)
         @mounted = false
         @root.setup = () => @setup()
         @refs = {}
@@ -67,9 +67,9 @@ class Ant.OS.GUI.BaseTag
         return @opts if opt is "*"
         @opts[opt]
 
-    sync: () ->
-        @update()
-        $(@root).children().each () -> @update()
+    sync: (d) ->
+        @update(d)
+        $(@root).children().each () -> @update(d)
         @root
 
     setup: () ->
@@ -116,9 +116,9 @@ Element.prototype.mount = () ->
     $(@).children().each () -> @mount()
     @
 
-Element.prototype.update = () ->
-    return @sync() if @sync
-    $(@).children().each () -> @update()
+Element.prototype.update = (d) ->
+    return @sync(d) if @sync
+    $(@).children().each () -> @update(d)
     @
 
 Element.prototype.uify = (observable) ->

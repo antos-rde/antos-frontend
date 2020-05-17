@@ -21,5 +21,28 @@
                 "name": "release"
             }
         ]
+    },
+    {
+        "name": "ExtensionMaker",
+        "text": "CodePad Extension",
+        "version": "0.0.1-a",
+        "actions" : [
+            {
+                "text": "__(New Extension)",
+                "name": "create"
+            },
+            {
+                "text": "__(Build and Run)",
+                "name": "buildnrun"
+            },
+            {
+                "text": "__(Build release)",
+                "name": "release"
+            },
+            {
+                "text": "__(Install extension)",
+                "name": "install"
+            }
+        ]
     }
 ]

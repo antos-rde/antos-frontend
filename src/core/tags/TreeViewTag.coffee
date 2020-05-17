@@ -12,10 +12,16 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         @setopt "selected", false
         @setopt "treepath", @aid()
     
+    update: (p) ->
+        return unless p
+        return unless p is @get("treepath")
+        @set "open", true
+
     __data__: (v) ->
         return unless v
         @set "nodes", v.nodes if v.nodes
         @set "open", v.open
+        @set "treepath", v.path if v.path
 
     __selected__: (v) ->
         $(@refs.wrapper).removeClass()
@@ -152,7 +158,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @setopt "fetch", undefined
         @setopt "treepath", @aid()
         @indexcounter = 0
-    
+
     __selectedItem: (v) ->
         return unless v
         @get("selectedItem").set "selected", false if @get("selectedItem")
@@ -176,6 +182,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
     __data__: (v) ->
         return unless v
         $(@root).empty()
+        @set "treepath", v.path if v.path
         el = $("<#{@get "itemtag"}>").appendTo @root
         el[0].uify undefined
         el[0].set "treeroot", if @is_root() then @ else @get "treeroot"

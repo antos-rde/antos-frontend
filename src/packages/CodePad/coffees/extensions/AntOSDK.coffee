@@ -25,7 +25,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
                 @mktpl dir.parent().path, dir.basename
     
     buildnrun: () ->
-        @metadata().then (meta) =>
+        @metadata("project.json").then (meta) =>
             @build(meta).then () =>
                 @run(meta).catch (e) => @error.toString()
             .catch (e) =>
@@ -33,9 +33,9 @@ class App.extensions.AntOSDK extends App.BaseExtension
         .catch (e) => @error e.toString()
 
     release: () ->
-        @metadata().then (meta) =>
+        @metadata("project.json").then (meta) =>
             @build(meta).then () =>
-                @mkar(meta)
+                @mkar("#{meta.root}/build/debug", "#{meta.root}/build/release/#{meta.name}.zip")
                     .then () ->
                     .catch (e) => @error.toString()
             .catch (e) =>
@@ -46,7 +46,6 @@ class App.extensions.AntOSDK extends App.BaseExtension
     # private functions
     mktpl: (path, name, flag) ->
         rpath = "#{path}/#{name}"
-        console.log rpath
         dirs = [
             "#{rpath}/build",
             "#{rpath}/build/release",
@@ -58,11 +57,11 @@ class App.extensions.AntOSDK extends App.BaseExtension
         ]
         dirs.unshift rpath if flag
         files = [
-            ["main.tpl", "#{rpath}/coffees/main.coffee"],
-            ["package.tpl", "#{rpath}/package.json"],
-            ["project.tpl", "#{rpath}/project.json"],
-            ["README.tpl", "#{rpath}/README.md"],
-            ["scheme.tpl", "#{rpath}/assets/scheme.html"]
+            ["templates/sdk-main.tpl", "#{rpath}/coffees/main.coffee"],
+            ["templates/sdk-package.tpl", "#{rpath}/package.json"],
+            ["templates/sdk-project.tpl", "#{rpath}/project.json"],
+            ["templates/sdk-README.tpl", "#{rpath}/README.md"],
+            ["templates/sdk-scheme.tpl", "#{rpath}/assets/scheme.html"]
         ]
         @mkdirAll dirs
             .then () =>
@@ -73,48 +72,6 @@ class App.extensions.AntOSDK extends App.BaseExtension
                         @app.openFile "#{rpath}/README.md".asFileHandle()
                     .catch (e) => @error e.stack
             .catch (e) => @error e.stack
-    
-    mkdirAll: (list) ->
-        new Promise (resolve, reject) =>
-            return resolve() if list.length is 0
-            path = (list.splice 0, 1)[0].asFileHandle()
-            console.log path.parent().path, path.basename
-            path.parent().mk path.basename
-                .then (d) =>
-                    @mkdirAll list
-                        .then () -> resolve()
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
-    
-    mkfileAll: (list, path, name) ->
-        new Promise (resolve, reject) =>
-            return resolve() if list.length is 0
-            item = (list.splice 0, 1)[0]
-            "#{@basedir()}/AntOSDK/templates/#{item[0]}"
-                .asFileHandle()
-                .read()
-                .then (data) =>
-                    file = item[1].asFileHandle()
-                        .setCache(data.format name, "#{path}/#{name}")
-                        .write "text/plain"
-                        .then () =>
-                            @mkfileAll list, path, name
-                                .then () -> resolve()
-                                .catch (e) -> reject e
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
-
-    metadata: () ->
-        new Promise (resolve, reject) =>
-            if not @app.currdir
-                return reject @app._api.throwe __("Project folder is not found")
-            "#{@app.currdir.path}/project.json"
-                .asFileHandle()
-                .read("json")
-                .then (data) ->
-                    resolve data
-                .catch (e) =>
-                    reject @app._api.throwe __("Unable to read project meta-data")
 
     verify: (list) ->
         new Promise (resolve, reject) =>
@@ -133,7 +90,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
 
     compile: (meta) ->
         new Promise (resolve, reject) =>
-            @import("#{@basedir()}/AntOSDK/coffeescript.js").then () =>
+            @import("#{@basedir()}/coffeescript.js").then () =>
                 list = ("#{meta.root}/#{v}" for v in meta.coffees)
                 @verify((f for f in list)).then () =>
                     @cat(list).then (code) =>
@@ -193,65 +150,3 @@ class App.extensions.AntOSDK extends App.BaseExtension
                 @app.systemsetting.system.packages[meta.name] = v
                 @notify __("Running {0}...", meta.name)
                 @app._gui.forceLaunch meta.name
-
-    cat: (list, data) ->
-        new Promise (resolve, reject) =>
-            return resolve data if list.length is 0
-            file = (list.splice 0, 1)[0].asFileHandle()
-            file
-                .read()
-                .then (text) =>
-                    data = data + "\n" + text
-                    @cat list, data
-                        .then (d) -> resolve d
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
-    
-    copy: (files, to) ->
-        new Promise (resolve, reject) =>
-            return resolve() if files.length is 0
-            file = (files.splice 0, 1)[0].asFileHandle()
-            tof = "#{to}/#{file.basename}".asFileHandle()
-            file.read("binary")
-                .then (data) =>
-                    tof.setCache(new Blob [data], { type: file.info.mime })
-                        .write(file.info.mime)
-                        .then (d) =>
-                            @copy files, to
-                                .then () -> resolve()
-                                .catch (e) -> reject e
-                .catch (e) -> reject e
-
-    mkar: (meta) ->
-        @notify __("Preparing for release")
-        new Promise (r, e) =>
-            @import("os://scripts/jszip.min.js").then () ->
-                "#{meta.root}/build/debug".asFileHandle()
-                .read().then (d) ->
-                    return e d.error if d.error
-                    r d.result
-                .catch (ex) -> e ex
-            .catch (ex) -> e ex
-        .then (files) =>
-            new Promise (r, e) =>
-                zip = new JSZip()
-                fn = (list) =>
-                    return r zip if list.length is 0
-                    f = (list.splice 0, 1)[0].path.asFileHandle()
-                    return fn list if f.type is "dir"
-                    f.read("binary").then (d) =>
-                        zip.file f.basename, d, { binary: true }
-                        @notify __("add {0} to zip", f.basename)
-                        fn list
-                    .catch (ex) -> e ex
-                fn files
-        .then (zip) =>
-            zip.generateAsync({ type: "base64" }).then (data) =>
-                "#{meta.root}/build/release/#{meta.name}.zip"
-                    .asFileHandle()
-                    .setCache('data:application/zip;base64,' + data)
-                    .write("base64").then (r) =>
-                        return @error __("Cannot save the zip file: {0}", r.error) if r.error
-                        @notify __("Package is generated in release folder")
-                    .catch (e) => @error e.toString()
-        .catch (e) => @error e.toString()

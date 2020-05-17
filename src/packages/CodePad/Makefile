@@ -1,4 +1,4 @@
-coffee_files =  coffees/CommandPalette.coffee coffees/main.coffee
+coffee_files =  coffees/CommandPalette.coffee coffees/main.coffee coffees/BaseExtension.coffee
 
 module_dir = extensions
 module_dir_src = coffees/extensions

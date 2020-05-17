@@ -255,7 +255,8 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
             @b64(t)
                 .then (r) =>
                     Ant.OS.API.handle.write @path, r
-                        .then (result) -> resolve result
+                        .then (result) ->
+                            resolve result
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
