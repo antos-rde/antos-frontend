@@ -6,15 +6,14 @@ class TabBarTag extends Ant.OS.GUI.BaseTag
         @setopt "ontabclose", (e) ->
         @setopt "items", []
         @setopt "selected", -1
-        me = @
-        @root.push = (e) ->
-            e.closable = me.get "closable"
-            me.refs.list.push e
-        @root.remove = (e) -> me.refs.list.remove e
-        @root.unshift = (e) -> me.refs.list.unshift e
-        @refs.list.set "onlistselect", (e) ->
-                me.get("ontabselect") e
-                me.observable.trigger "tabselect", e
+        @root.push = (e) =>
+            e.closable = @get "closable"
+            @refs.list.push e
+        @root.remove = (e) => @refs.list.remove e
+        @root.unshift = (e) => @refs.list.unshift e
+        @refs.list.set "onlistselect", (e) =>
+                @get("ontabselect") e
+                @observable.trigger "tabselect", e
 
     __items__: (v) ->
         i.closable = @get "closable" for i in v
@@ -24,11 +23,10 @@ class TabBarTag extends Ant.OS.GUI.BaseTag
         @refs.list.set "selected", v
 
     mount: () ->
-        me  = @
         $(@refs.list).css "height", "100%"
-        @refs.list.set "onitemclose", (e) ->
-            e.id = me.aid()
-            me.get("ontabclose") e
+        @refs.list.set "onitemclose", (e) =>
+            e.id = @aid()
+            @get("ontabclose") e
 
     layout: () ->
         [{

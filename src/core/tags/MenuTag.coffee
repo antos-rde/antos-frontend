@@ -33,7 +33,6 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
             ]
         }]
     __children__: (v) ->
-        me = @
         $(@refs.container).removeClass("afx_submenu")
         return $(@refs.submenu).hide() unless v and v.length > 0
         $(@refs.container).addClass("afx_submenu")
@@ -41,15 +40,14 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
             .show()
             .attr("style", "")
         @refs.submenu.set "parent", @
-        @refs.submenu.set "root", me.get("root")
+        @refs.submenu.set "root", @get("root")
         @refs.submenu.set "items", v
         if @is_root()
-            $(@refs.container).mouseleave (e) ->
-                $(me.refs.submenu).attr("style", "")
+            $(@refs.container).mouseleave (e) =>
+                $(@refs.submenu).attr("style", "")
 
     mount: () ->
-        me = @
-        $(@refs.entry).click (e) -> me.select e
+        $(@refs.entry).click (e) => @select e
 
     submenuoff: () ->
         p = @get "parent"
@@ -57,7 +55,6 @@ class MenuEntryTag extends Ant.OS.GUI.BaseTag
         p.submenuoff()
 
     select: (e) ->
-        me = @
         e.item = @root
         evt = { id: @aid(), data: e }
         e.preventDefault()
@@ -134,7 +131,6 @@ class SimpleMenuEntryTag extends MenuEntryTag
 
     mount: () ->
         super.mount()
-        me = @
         @refs.switch.set "enable", false
 
     select: (e) ->
@@ -156,19 +152,18 @@ class SimpleMenuEntryTag extends MenuEntryTag
 class MenuTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
-        me = @
         @setopt "context", false
         @setopt "parent", undefined
         @setopt "root", undefined
         @setopt "contentag", "afx-menu-entry"
-        @setopt "onmenuitemselect", (e) -> me.handleselect e
+        @setopt "onmenuitemselect", (e) => @handleselect e
         @setopt "onmenuselect", (e) ->
         @setopt "items", []
-        @root.show = (e) ->
-            me.showctxmenu e
-        @root.push = (e) -> me.push e
-        @root.remove = (e) -> me.remove e
-        @root.unshift = (e) -> me.unshift e
+        @root.show = (e) =>
+            @showctxmenu e
+        @root.push = (e) => @push e
+        @root.remove = (e) => @remove e
+        @root.unshift = (e) => @unshift e
 
     handleselect: (e) ->
         $(@root).hide() if @isctxmenu()
@@ -190,12 +185,11 @@ class MenuTag extends Ant.OS.GUI.BaseTag
         return @get("root") is undefined
 
     mount: () ->
-        me = @
         $(@refs.container).css "display", "contents"
-        return unless me.isctxmenu()
-        $(@refs.wrapper).mouseleave (e) ->
-            return unless me.is_root()
-            $(me.root).hide()
+        return unless @isctxmenu()
+        $(@refs.wrapper).mouseleave (e) =>
+            return unless @is_root()
+            $(@root).hide()
 
     __context__: (v) ->
         $(@refs.wrapper).removeClass("context")

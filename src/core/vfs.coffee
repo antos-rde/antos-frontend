@@ -75,20 +75,19 @@ class BaseFileHandle
 
     b64: (t) ->
         # t is object or mime type
-        me = @
-        new Promise (resolve, reject) ->
+        new Promise (resolve, reject) =>
             m = if t is "object" then "text/plain" else t
-            return resolve "" unless me.cache
-            if t is "object" or typeof me.cache is "string"
+            return resolve "" unless @cache
+            if t is "object" or typeof @cache is "string"
                 if t is "object"
-                    b64 = (JSON.stringify me.cache).asBase64()
+                    b64 = (JSON.stringify @cache).asBase64()
                 else
-                    b64 = me.cache.asBase64()
+                    b64 = @cache.asBase64()
                 b64 = "data:#{m};base64,#{b64}"
                 resolve(b64)
             else
                 reader = new FileReader()
-                reader.readAsDataURL(me.cache)
+                reader.readAsDataURL(@cache)
                 reader.onload =  () ->
                     resolve reader.result
                 reader.onerror = (e) ->
@@ -101,23 +100,21 @@ class BaseFileHandle
 
     onready: () ->
         # read meta data
-        me = @
-        new Promise (resolve, reject) ->
-            return resolve(me.info) if me.ready
-            me.meta()
-                .then (d) ->
+        new Promise (resolve, reject) =>
+            return resolve(@info) if @ready
+            @meta()
+                .then (d) =>
                     return reject d if d.errors
-                    me.info = d.result
-                    me.ready = true
+                    @info = d.result
+                    @ready = true
                     resolve(d.result)
                 .catch (e) -> reject e
 
     read: (t) ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._rd(t)
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_rd(t)
                         .then (d) ->
                             # Ant.OS.announcer.ostrigger "VFS", { m: "read", file: me }
                             resolve d
@@ -125,94 +122,86 @@ class BaseFileHandle
                 .catch (e) -> reject e
 
     write: (t) ->
-        me = @
-        new Promise (resolve, reject) ->
-            me._wr(t)
-                .then (r) ->
-                    Ant.OS.announcer.ostrigger "VFS", { m: "write", file: me }
+        new Promise (resolve, reject) =>
+            @_wr(t)
+                .then (r) =>
+                    Ant.OS.announcer.ostrigger "VFS", { m: "write", file: @ }
                     resolve r
                 .catch (e) -> reject e
     
     mk: (d) ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._mk(d)
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "mk", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_mk(d)
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "mk", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
     
     remove: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._rm()
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "remove", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_rm()
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "remove", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
     upload: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._up()
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "upload", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_up()
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "upload", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
         
     publish: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._pub()
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "publish", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_pub()
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "publish", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
     download: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._down()
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "download", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_down()
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "download", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
     move: (d) ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._mv(d)
-                        .then (data) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_mv(d)
+                        .then (data) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: @ }
                             resolve data
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
     execute: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            me.onready()
-                .then (r) ->
-                    me._exec()
-                        .then (d) ->
-                            Ant.OS.announcer.ostrigger "VFS", { m: "execute", file: me }
+        new Promise (resolve, reject) =>
+            @onready()
+                .then (r) =>
+                    @_exec()
+                        .then (d) =>
+                            Ant.OS.announcer.ostrigger "VFS", { m: "execute", file: @ }
                             resolve d
                         .catch (e) -> reject e
                 .catch (e) -> reject e
@@ -220,9 +209,8 @@ class BaseFileHandle
     getlink: () -> @path
 
     unsupported: (t) ->
-        me = @
-        new Promise (resolve, reject) ->
-            reject { error: __("Action {0} is unsupported on: {1}", t, me.path) }
+        new Promise (resolve, reject) =>
+            reject { error: __("Action {0} is unsupported on: {1}", t, @path) }
     # actions must be implemented by subclasses
 
     _rd: (t) ->     @unsupported "read"
@@ -251,6 +239,10 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
 
     _rd: (t) ->
         # t: binary, text, any type
+        if not @info
+            return new Promise (resolve, reject) =>
+                reject Ant.OS.API.throwe __(
+                    "file meta-data not found: {0}", @path)
         return Ant.OS.API.handle.scandir @path if @info.type is "dir"
         #read the file
         return Ant.OS.API.handle.fileblob @path if t is "binary"
@@ -258,21 +250,23 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
 
     _wr: (t) ->
         # t is base64 or undefined
-        return Ant.OS.API.handle.write me.path, me.cache if t is "base64"
-        me = @
-        new Promise (resolve, reject) ->
-            me.b64(t)
-                .then (r) ->
-                    Ant.OS.API.handle.write me.path, r
+        return Ant.OS.API.handle.write @path, @cache if t is "base64"
+        new Promise (resolve, reject) =>
+            @b64(t)
+                .then (r) =>
+                    Ant.OS.API.handle.write @path, r
                         .then (result) -> resolve result
                         .catch (e) -> reject e
                 .catch (e) -> reject e
 
     _mk: (d) ->
-        me = @
+        if not @info
+            return new Promise (resolve, reject) =>
+                reject Ant.OS.API.throwe __(
+                    "file meta-data not found: {0}", @path)
         if @info.type is "file"
-            return new Promise (resolve, reject) ->
-                reject Ant.OS.API.throwe __("{0} is not a directory", me.path)
+            return new Promise (resolve, reject) =>
+                reject Ant.OS.API.throwe __("{0} is not a directory", @path)
         Ant.OS.API.handle.mkdir "#{@path}/#{d}"
 
     _rm: () ->
@@ -283,21 +277,19 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
 
 
     _up: () ->
-        me = @
         if @info.type isnt "dir"
-            return new Promise (resolve, reject) ->
-                reject Ant.OS.API.throwe __("{0} is not a file", me.path)
+            return new Promise (resolve, reject) =>
+                reject Ant.OS.API.throwe __("{0} is not a file", @path)
         Ant.OS.API.handle.upload @path
 
     _down: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            if me.info.type is "dir"
-                return Ant.OS.API.throwe __("{0} is not a file", me.path)
-            Ant.OS.API.handle.fileblob(me.path)
-                .then (d) ->
+        new Promise (resolve, reject) =>
+            if @info.type is "dir"
+                return Ant.OS.API.throwe __("{0} is not a file", @path)
+            Ant.OS.API.handle.fileblob(@path)
+                .then (d) =>
                     blob = new Blob [d], { type: "octet/stream" }
-                    Ant.OS.API.saveblob me.basename, blob
+                    Ant.OS.API.saveblob @basename, blob
                     resolve()
                 .catch (e) ->
                     reject e
@@ -315,10 +307,9 @@ class ApplicationHandle extends Ant.OS.API.VFS.BaseFileHandle
         @ready = true
     
     _rd: (t) ->
-        me = @
-        new Promise (resolve, reject) ->
-            return resolve { result: me.info } if me.info
-            return reject Ant.OS.API.throwe(__("Application meta data isnt found")) unless me.isRoot()
+        new Promise (resolve, reject) =>
+            return resolve { result: @info } if @info
+            return reject Ant.OS.API.throwe(__("Application meta data isnt found")) unless @isRoot()
             resolve { result: ( v for k, v of Ant.OS.setting.system.packages ) }
 
 
@@ -336,9 +327,8 @@ class BufferFileHandle extends Ant.OS.API.VFS.BaseFileHandle
             type: "file"
     
     _rd: (t) ->
-        me = @
-        new Promise (resolve, reject) ->
-            resolve { result: me.cache }
+        new Promise (resolve, reject) =>
+            resolve { result: @cache }
 
     _wr: (d, t) ->
         @cache = d
@@ -347,10 +337,9 @@ class BufferFileHandle extends Ant.OS.API.VFS.BaseFileHandle
             resolve { result: true }
 
     _down: () ->
-        me = @
-        new Promise (resolve,  reject) ->
-            blob = new Blob [me.cache], { type: "octet/stream" }
-            Ant.OS.API.saveblob me.basename, blob
+        new Promise (resolve,  reject) =>
+            blob = new Blob [@cache], { type: "octet/stream" }
+            Ant.OS.API.saveblob @basename, blob
             resolve()
 
     onchange: (f) ->
@@ -390,18 +379,16 @@ class SharedFileHandle extends Ant.OS.API.VFS.BaseFileHandle
         Ant.OS.API.handle.sharefile @basename, false
 
     _down: () ->
-        me = @
-        new Promise (resolve, reject) ->
-            if me.info.type is "dir"
-                return reject Ant.OS.API.throwe __("{0} is not a file", me.path)
-            Ant.OS.API.handle.fileblob me.path
-                .then (data) ->
+        new Promise (resolve, reject) =>
+            if @info.type is "dir"
+                return reject Ant.OS.API.throwe __("{0} is not a file", @path)
+            Ant.OS.API.handle.fileblob @path
+                .then (data) =>
                     blob = new Blob [data], { type: "octet/stream" }
-                    Ant.OS.API.saveblob me.basename, blob
+                    Ant.OS.API.saveblob @basename, blob
                     resolve()
                 .catch (e) -> reject e
     _pub: () ->
-        me = @
-        return new Promise (resolve, reject) -> resolve { result: me.basename }
+        return new Promise (resolve, reject) => resolve { result: @basename }
 
 Ant.OS.API.VFS.register "^shared$", SharedFileHandle

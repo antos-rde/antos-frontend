@@ -4,9 +4,8 @@ class AppDockTag extends Ant.OS.GUI.BaseTag
         @setopt "onappselect", (e) ->
         @setopt "items", []
         @setopt "selectedApp", undefined
-        me = @
-        @root.newapp = (a) -> me.addApp a
-        @root.removeapp = (a) -> me.removeApp a
+        @root.newapp = (a) => @addApp a
+        @root.removeapp = (a) => @removeApp a
 
     __selectedApp__: (v) ->
         el = undefined
@@ -26,9 +25,8 @@ class AppDockTag extends Ant.OS.GUI.BaseTag
         el[0].set "*", item
         el.attr "tooltip", "cr:#{item.app.title()}"
         item.domel = el[0]
-        me = @
-        el[0].set "onbtclick", (e) ->
-            e.id = me.aid()
+        el[0].set "onbtclick", (e) =>
+            e.id = @aid()
             e.data.app = item
             item.app.show()
         @set "selectedApp", item.app
@@ -47,9 +45,8 @@ class AppDockTag extends Ant.OS.GUI.BaseTag
             $($(@root).children()[i]).remove()
 
     mount: () ->
-        me = @
-        @root.contextmenuHandle = (e, m) ->
-            return if e.target is me.root
+        @root.contextmenuHandle = (e, m) =>
+            return if e.target is @root
             bt = $(e.target).closest "afx-button"
             app = bt[0].get "app"
             m.set "items", [

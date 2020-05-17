@@ -19,21 +19,20 @@
 class LocaleHandle extends SettingHandle
     constructor: (scheme, parent) ->
         super(scheme, parent)
-        me = @
         @lglist = @find "lglist"
         @localelist = undefined
-        @lglist.set "onlistselect", (e) ->
-            me.parent._api.setLocale e.data.item.get("data").text
+        @lglist.set "onlistselect", (e) =>
+            @parent._api.setLocale e.data.item.get("data").text
         if not @localelist
             path = "os://resources/languages"
             path.asFileHandle().read()
-            .then (d) ->
-                return me.parent.error __("Cannot fetch system locales: {0}", d.error) if d.derror
+            .then (d) =>
+                return @parent.error __("Cannot fetch system locales: {0}", d.error) if d.derror
                 for v in d.result
                     v.text = v.filename.replace /\.json$/g, ""
-                    v.selected = v.text is me.parent.systemsetting.system.locale
-                me.localelist = d.result
-                me.lglist.set "data", me.localelist
-            .catch (e) -> me.parent.error e.stack
+                    v.selected = v.text is @parent.systemsetting.system.locale
+                @localelist = d.result
+                @lglist.set "data", @localelist
+            .catch (e) => @parent.error e.stack
         else
-            me.lglist.set "data", me.localelist
+            @lglist.set "data", @localelist

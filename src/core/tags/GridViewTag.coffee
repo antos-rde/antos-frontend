@@ -26,12 +26,11 @@ class GridCellPrototype extends Ant.OS.GUI.BaseTag
         @set "data", @get("data")
 
     mount: () ->
-        me = @
         $(@root).css "display", "block"
-        $(@root).click (e) ->
-            me.cellseleck e, false
-        $(@root).dblclick (e) ->
-            me.cellseleck e, true
+        $(@root).click (e) =>
+            @cellseleck e, false
+        $(@root).dblclick (e) =>
+            @cellseleck e, true
     
 
     cellseleck: (e, flag) ->
@@ -73,10 +72,9 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         @setopt "onrowselect", (e) ->
         @setopt "oncelldbclick", (e) ->
         @setopt "multiselect", false
-        me = @
-        @root.push = (r) -> me.push r, false
-        @root.unshift = (r) -> me.unshift r
-        @root.remove = (r) -> me.remove r
+        @root.push = (r) => @push r, false
+        @root.unshift = (r) => @unshift r
+        @root.remove = (r) => @remove r
 
     __header__: (v) ->
         return $(@refs.header).hide() if not v or v.length is 0
@@ -89,7 +87,6 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         @calibrate()
 
     __rows__: (rows) ->
-        me = @
         $(@refs.grid).empty()
         for row in rows
             @push row, false
@@ -108,7 +105,6 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
 
 
     push: (row, flag) ->
-        me = @
         rowel = $("<afx-grid-row>")
             .css "display", "contents"
         rowel[0].uify undefined
@@ -119,8 +115,8 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
             el = $("<#{@get("cellitem")}>").appendTo rowel
             cell.domel = el[0]
             el[0].uify undefined
-            el[0].set "oncellselect", (e) -> me.cellselect e, false
-            el[0].set "oncelldbclick", (e) -> me.cellselect e, true
+            el[0].set "oncellselect", (e) => @cellselect e, false
+            el[0].set "oncelldbclick", (e) => @cellselect e, true
             el[0].set "data", cell
         if flag
             $(@refs.grid).prepend rowel[0]
@@ -208,13 +204,12 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         $(@refs.header).css "grid-template-columns", template
 
     mount: () ->
-        me = @
         $(@root)
             .css "overflow", "hidden"
             
         $(@refs.grid).css "display", "grid"
         $(@refs.header).css "display", "grid"
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         $(@refs.container)
             .css "width", "100%"
             .css "overflow-x", "hidden"

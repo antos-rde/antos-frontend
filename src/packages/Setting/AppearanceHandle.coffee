@@ -19,53 +19,52 @@
 class AppearanceHandle extends SettingHandle
     constructor:(scheme, parent) ->
         super(scheme, parent)
-        me = @
         @wplist = @find "wplist"
         @wpreview = @find "wp-preview"
         @wpsize = @find "wpsize"
         @wprepeat = @find "wprepeat"
         @themelist = @find "theme-list"
         @syswp = undefined
-        @wplist.set "onlistselect", (e) ->
+        @wplist.set "onlistselect", (e) =>
             data = e.data.item.get("data")
-            $(me.wpreview)
+            $(@wpreview)
                 .css("background-image", "url(#{data.path.asFileHandle().getlink()})" )
                 .css("background-size", "cover")
-            me.parent.systemsetting.appearance.wp.url = data.path
-            me.parent._gui.wallpaper()
+            @parent.systemsetting.appearance.wp.url = data.path
+            @parent._gui.wallpaper()
 
         @wplist.set "buttons", [
             {
-                text: "+", onbtclick: (e) ->
-                    me.parent.openDialog("FileDialog", {
+                text: "+", onbtclick: (e) =>
+                    @parent.openDialog("FileDialog", {
                         title: __("Select image file"),
                         mimes: ["image/.*"]
-                    }).then (d) ->
-                        me.parent.systemsetting.appearance.wps.push d.file.path
-                        me.wplist.set "data", me.getwplist()
+                    }).then (d) =>
+                        @parent.systemsetting.appearance.wps.push d.file.path
+                        @wplist.set "data", @getwplist()
             }
         ]
         
-        @wpsize.set "onlistselect", (e) ->
-            me.parent.systemsetting.appearance.wp.size = e.data.item.get("data").text
-            me.parent._gui.wallpaper()
+        @wpsize.set "onlistselect", (e) =>
+            @parent.systemsetting.appearance.wp.size = e.data.item.get("data").text
+            @parent._gui.wallpaper()
 
         sizes = [
-            { text: "cover", selected: me.parent.systemsetting.appearance.wp.size is "cover" },
-            { text: "auto", selected: me.parent.systemsetting.appearance.wp.size is "auto" },
-            { text: "contain", selected: me.parent.systemsetting.appearance.wp.size is "contain" }
+            { text: "cover", selected: @parent.systemsetting.appearance.wp.size is "cover" },
+            { text: "auto", selected: @parent.systemsetting.appearance.wp.size is "auto" },
+            { text: "contain", selected: @parent.systemsetting.appearance.wp.size is "contain" }
         ]
         @wpsize.set "data", sizes
         
         repeats = [
-            { text: "repeat", selected: me.parent.systemsetting.appearance.wp.repeat is "repeat" },
-            { text: "repeat-x", selected: me.parent.systemsetting.appearance.wp.repeat is "repeat-x" },
-            { text: "repeat-y", selected: me.parent.systemsetting.appearance.wp.repeat is "repeat-y" },
-            { text: "no-repeat", selected: me.parent.systemsetting.appearance.wp.repeat is "no-repeat" }
+            { text: "repeat", selected: @parent.systemsetting.appearance.wp.repeat is "repeat" },
+            { text: "repeat-x", selected: @parent.systemsetting.appearance.wp.repeat is "repeat-x" },
+            { text: "repeat-y", selected: @parent.systemsetting.appearance.wp.repeat is "repeat-y" },
+            { text: "no-repeat", selected: @parent.systemsetting.appearance.wp.repeat is "no-repeat" }
         ]
-        @wprepeat.set "onlistselect", (e) ->
-            me.parent.systemsetting.appearance.wp.repeat = e.data.item.get("data").text
-            me.parent._gui.wallpaper()
+        @wprepeat.set "onlistselect", (e) =>
+            @parent.systemsetting.appearance.wp.repeat = e.data.item.get("data").text
+            @parent._gui.wallpaper()
         @wprepeat.set "data", repeats
 
         @themelist.set "data" , [{ text: "antos", selected: true }]
@@ -73,17 +72,17 @@ class AppearanceHandle extends SettingHandle
         if not @syswp
             path = "os://resources/themes/system/wp"
             path.asFileHandle().read()
-                .then (d) ->
-                    return me.parent.error __("Cannot read wallpaper list from {0}", path) if d.error
+                .then (d) =>
+                    return @parent.error __("Cannot read wallpaper list from {0}", path) if d.error
                     for v in d.result
                         v.text = v.filename
                         v.iconclass = "fa fa-file-image-o"
-                    me.syswp = d.result
-                    me.wplist.set "data", me.getwplist()
-                .catch (e) -> me.parent.error e.stack
+                    @syswp = d.result
+                    @wplist.set "data", @getwplist()
+                .catch (e) => @parent.error e.stack
         else
             
-            me.wplist.set "data", me.getwplist()
+            @wplist.set "data", @getwplist()
     
     getwplist: () ->
         list = []

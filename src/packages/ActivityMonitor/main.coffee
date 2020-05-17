@@ -21,12 +21,11 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
     constructor: (args) ->
         super "ActivityMonitor", args
     main: () ->
-        me = @
         @scheme.set "apptitle", "Activity Monitor"
         @grid = @find "mygrid"
-        @on "btclick", (e) ->
+        @on "btclick", (e) =>
             return unless e.id == "btkill"
-            item = me.grid.get "selectedRow"
+            item = @grid.get "selectedRow"
             return unless item
             data = item.get("data")[0]
             app = _PM.appByPid data.text
@@ -57,17 +56,16 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         @monitor()
     
     monitor: () ->
-        me = @
         #get all current running process
-        me.gdata.alive = []
+        @gdata.alive = []
         now = (new Date).getTime()
-        $.each _PM.processes, (i, d) ->
-            $.each d , (j, a) ->
-                if me.gdata.processes[a.pid] #update it
-                    me.gdata.processes[a.pid][3].text = now - a.birth
-                    me.gdata.processes[a.pid][3].domel.update()
+        $.each _PM.processes, (i, d) =>
+            $.each d , (j, a) =>
+                if @gdata.processes[a.pid] #update it
+                    @gdata.processes[a.pid][3].text = now - a.birth
+                    @gdata.processes[a.pid][3].domel.update()
                 else #add it
-                    me.gdata.processes[a.pid] = [
+                    @gdata.processes[a.pid] = [
                         { text: a.pid },
                         {
                             icon: if _APP[a.name].type == 1 then _APP[a.name].meta.icon else a.icon,
@@ -81,16 +79,16 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
                             text: now - a.birth
                         }
                     ]
-                    me.grid.push me.gdata.processes[a.pid]
-                me.gdata.alive.push a.pid
+                    @grid.push @gdata.processes[a.pid]
+                @gdata.alive.push a.pid
         
-        $.each @gdata.processes, (i, e) ->
-            if ($.inArray (Number i), me.gdata.alive) < 0
-                me.grid.remove me.gdata.processes[i].domel
-                me.gdata.processes[i] = undefined
-                delete me.gdata.processes[i]
+        $.each @gdata.processes, (i, e) =>
+            if ($.inArray (Number i), @gdata.alive) < 0
+                @grid.remove @gdata.processes[i].domel
+                @gdata.processes[i] = undefined
+                delete @gdata.processes[i]
 
-        @timer = setTimeout (() -> me.monitor()), 500
+        @timer = setTimeout (() => @monitor()), 500
 
     cleanup: (e) ->
         clearTimeout @timer if @timer

@@ -31,12 +31,11 @@ class ButtonTag extends Ant.OS.GUI.BaseTag
         $(@button).addClass "selected" if v
 
     mount: () ->
-        me = @
-        @root.trigger = () ->
-            ($me.refs.button).trigger "click"
+        @root.trigger = () =>
+            $(@refs.button).trigger "click"
 
-        $(@refs.button).click (e) ->
-            me.btclickhd e
+        $(@refs.button).click (e) =>
+            @btclickhd e
     
     btclickhd: (e) ->
         hd = @get "onbtclick"

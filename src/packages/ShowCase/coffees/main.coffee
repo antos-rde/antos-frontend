@@ -4,17 +4,16 @@ class ShowCase extends this.OS.GUI.BaseApplication
         super "ShowCase", args
     
     main: () ->
-        me = @
         
         bt = @find 'bttest'
-        bt.set "onbtclick", (e) ->
-            me.notify "btclicked"
+        bt.set "onbtclick", (e) =>
+            @notify "btclicked"
         
-        @observable.on "btclick", (e) ->
-            me.notify "button clicked"
+        @observable.on "btclick", (e) =>
+            @notify "button clicked"
 
-        @observable.on "menuselect", (e) ->
-            me.notify e.id
+        @observable.on "menuselect", (e) =>
+            @notify e.id
 
         list = @find 'list'
 
@@ -27,28 +26,28 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 5" }
         ]
         list.unshift { text: "shifted el" }
-        list.set "onlistselect", (e) -> me.notify(e.data.items)
+        list.set "onlistselect", (e) => @notify(e.data.items)
 
         sw = @find 'switch'
-        sw.set "onchange", (e) ->
-            me.notify e.data
+        sw.set "onchange", (e) =>
+            @notify e.data
         
         spin = @find 'spin'
-        spin.set "onchange", (e) ->
-            me.notify e.data
+        spin.set "onchange", (e) =>
+            @notify e.data
 
         menu = @find 'menu'
         menu.set "items", @menu()
 
-        list.contextmenuHandle = (e, m) ->
-            m.set "items", me.menu()
+        list.contextmenuHandle = (e, m) =>
+            m.set "items", @menu()
             m.show e
         
         grid = @find 'grid'
-        grid.set "oncelldbclick", (e) ->
-            me.notify  "on dbclick", e
-        grid.set "onrowselect", (e) ->
-            me.notify  "on rowselect", e.data.items
+        grid.set "oncelldbclick", (e) =>
+            @notify  "on dbclick", e
+        grid.set "onrowselect", (e) =>
+            @notify  "on rowselect", e.data.items
         
         @observable.on "cellselect", (e) ->
             console.log  "observable", e
@@ -99,30 +98,30 @@ class ShowCase extends this.OS.GUI.BaseApplication
 
         tree = @find 'tree'
         tree.set "data", tdata
-        tree.set "ontreeselect", (e) ->
-            me.notify e.data.item.get "treepath"
-        tree.set "ontreedbclick", (e) ->
-            me.notify "treedbclick", e
-        @observable.on "treedbclick", (e) ->
-            me.notify "observable treedbclick", e
+        tree.set "ontreeselect", (e) =>
+            @notify e.data.item.get "treepath"
+        tree.set "ontreedbclick", (e) =>
+            @notify "treedbclick", e
+        @observable.on "treedbclick", (e) =>
+            @notify "observable treedbclick", e
         
         slider = @find 'slider'
-        slider.set "onchange", (v) ->
-            me.notify v
+        slider.set "onchange", (v) =>
+            @notify v
 
         cal = @find 'cal'
-        cal.set "ondateselect", (e) ->
-            me.notify e
+        cal.set "ondateselect", (e) =>
+            @notify e
         
         pk = @find 'cpk'
-        pk.set "oncolorselect", (e) ->
-            me.notify e
-        pk.set "oncolorselect", (e) ->
-            me.notify e
+        pk.set "oncolorselect", (e) =>
+            @notify e
+        pk.set "oncolorselect", (e) =>
+            @notify e
 
         fileview = @find 'fileview'
-        fileview.set "fetch", (path) ->
-            new Promise (resolve, reject) ->
+        fileview.set "fetch", (path) =>
+            new Promise (resolve, reject) =>
                 dir = path.asFileHandle()
                 dir.read().then (d) ->
                     p = dir.parent().asFileHandle()
@@ -139,8 +138,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "list" },
             { text: "tree" }
         ]
-        viewoption.set "onlistselect", (e) ->
-            me.notify e.data.item.get("data").text
+        viewoption.set "onlistselect", (e) =>
+            @notify e.data.item.get("data").text
             fileview.set "view", e.data.item.get("data").text
 
         dllist = @find "dialoglist"
@@ -157,30 +156,30 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "File dialog", id: "file" }
         ]
 
-        btrun.set "onbtclick", (e) ->
+        btrun.set "onbtclick", (e) =>
             item = dllist.get "selectedItem"
             return unless item
             switch item.get("data").id
                 when "prompt"
-                    me.openDialog("PromptDialog", {
+                    @openDialog("PromptDialog", {
                             title: "Prompt review",
                             value: "txt data",
                             label: "enter value"
                         })
-                        .then (d) ->
-                            me.notify d
+                        .then (d) =>
+                            @notify d
                 when "calendar"
-                    me.openDialog("CalendarDialog", {
+                    @openDialog("CalendarDialog", {
                             title: "Calendar"
                     })
-                        .then (d) ->
-                            me.notify d
+                        .then (d) =>
+                            @notify d
                 when "colorpicker"
-                    me.openDialog("ColorPickerDialog")
-                        .then (d) ->
-                            me.notify d
+                    @openDialog("ColorPickerDialog")
+                        .then (d) =>
+                            @notify d
                 when "info"
-                    me.openDialog("InfoDialog", {
+                    @openDialog("InfoDialog", {
                         title: "Info application",
                         name: "Show case",
                         date: "10/12/2014",
@@ -188,14 +187,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     })
                         .then (d) ->
                 when "yesno"
-                    me.openDialog("YesNoDialog", {
+                    @openDialog("YesNoDialog", {
                             title: "Question ?",
                             text: "Do you realy want to delete file ?"
                         })
-                        .then (d) ->
-                            me.notify d
+                        .then (d) =>
+                            @notify d
                 when "selection"
-                    me.openDialog("SelectionDialog", {
+                    @openDialog("SelectionDialog", {
                             title: "Select data ?",
                             data: [
                                 { text: "Option 1" },
@@ -203,27 +202,26 @@ class ShowCase extends this.OS.GUI.BaseApplication
                                 { text: "Option 3", iconclass: "fa fa-camera-retro fa-lg" }
                             ]
                         })
-                        .then (d) ->
-                            me.notify d.text
+                        .then (d) =>
+                            @notify d.text
                 when "about"
-                    me.openDialog("AboutDialog" )
-                        .then (d) ->
+                    @openDialog("AboutDialog" )
+                        .then (d) =>
                 when "file"
-                    me.openDialog("FileDialog", {
+                    @openDialog("FileDialog", {
                             title: "Select file ?",
                             #root: "home:///",
                             mimes: ["text/*", "dir"],
                             file: "Untitled".asFileHandle()
                         })
-                        .then (f, name) ->
-                            me.notify f, name
+                        .then (f, name) =>
+                            @notify f, name
                 else return
                     
 
 
     mnFile: () ->
-        #me.notify file
-        me = @
+        #@notify file
         arr = {
             text: "__(File)",
             child: [
@@ -234,11 +232,11 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Download)", dataid: "#{@name}-download" },
                 { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
                 { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
-            ], onchildselect: (e) -> me.notify "child", e
+            ], onchildselect: (e) => @notify "child", e
         }
         return arr
     mnEdit: () ->
-        me = @
+
         {
             text: "__(Edit)",
             child: [
@@ -247,11 +245,10 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
                 { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
                 { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
-            ], onchildselect: (e) -> console.log  "child", e
+            ], onchildselect: (e) => console.log  "child", e
         }
 
     menu: () ->
-        me = @
         menu = [
             @mnFile(),
             @mnEdit(),
@@ -268,7 +265,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         { text: "__(Tree view)", radio:true, checked: false, dataid: "#{@name}-tree", type: 'tree' }
                      ], onchildselect: (e) -> console.log "child", e
                     },
-                ], onchildselect: (e) -> console.log "child", e
+                ], onchildselect: (e) => console.log "child", e
             },
         ]
         menu

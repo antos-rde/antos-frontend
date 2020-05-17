@@ -16,12 +16,11 @@ class SliderTag extends Ant.OS.GUI.BaseTag
 
     __dragable__: (v) ->
         if v
-            me = @
             $(@root)
-                .mouseover () ->
-                    $(me.refs.point).show()
-                .mouseout () ->
-                    $(me.refs.point).hide()
+                .mouseover () =>
+                    $(@refs.point).show()
+                .mouseout () =>
+                    $(@refs.point).hide()
         else
             $(@refs.point).hide()
             $(@root)
@@ -29,21 +28,20 @@ class SliderTag extends Ant.OS.GUI.BaseTag
                 .ubbind("mouseout")
     
     mount: () ->
-        me = @
         @enable_dragging()
         $(@refs.point).css "position", "absolute"
         $(@refs.point).hide()
-        @observable.on "resize", (e) ->
-            me.calibrate()
-        $(@refs.container).click (e) ->
-            offset = $(me.refs.container).offset()
+        @observable.on "resize", (e) =>
+            @calibrate()
+        $(@refs.container).click (e) =>
+            offset = $(@refs.container).offset()
             left = e.clientX  - offset.left
-            maxw = $(me.refs.container).width()
-            me.set "value", left * me.get("max") / maxw
-            me.calibrate()
-            evt = { id: me.aid(), data: me.get("value") }
-            me.get("onchange") evt
-            me.get("onchanging") evt
+            maxw = $(@refs.container).width()
+            @set "value", left * @get("max") / maxw
+            @calibrate()
+            evt = { id: @aid(), data: @get("value") }
+            @get("onchange") evt
+            @get("onchanging") evt
         @calibrate()
 
     calibrate: () ->
@@ -61,24 +59,23 @@ class SliderTag extends Ant.OS.GUI.BaseTag
                 .css "top", top + "px"
 
     enable_dragging: () ->
-        me = @
         $(@refs.point)
             .css "user-select", "none"
             .css "cursor", "default"
-        $(@refs.point).on "mousedown", (e) ->
+        $(@refs.point).on "mousedown", (e) =>
             e.preventDefault()
-            offset = $(me.refs.container).offset()
-            $(window).on "mousemove", (e) ->
+            offset = $(@refs.container).offset()
+            $(window).on "mousemove", (e) =>
                 left = e.clientX  - offset.left
                 left = if left < 0 then 0 else left
-                maxw = $(me.refs.container).width()
+                maxw = $(@refs.container).width()
                 left = if left > maxw then maxw else left
-                me.set "value", left * me.get("max") / maxw
-                me.calibrate()
-                me.get("onchanging") { id: me.aid(), data: me.get("value") }
+                @set "value", left * @get("max") / maxw
+                @calibrate()
+                @get("onchanging") { id: @aid(), data: @get("value") }
 
-            $(window).on "mouseup", (e) ->
-                me.get("onchange") { id: me.aid(), data: me.get("value") }
+            $(window).on "mouseup", (e) =>
+                @get("onchange") { id: @aid(), data: @get("value") }
                 $(window).unbind("mousemove", null)
                 $(window).unbind("mouseup", null)
 

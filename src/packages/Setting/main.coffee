@@ -28,7 +28,6 @@ class Setting extends this.OS.GUI.BaseApplication
         super "Setting", args
     
     main: () ->
-        me = @
         @container = @find "container"
 
         new AppearanceHandle @find("appearance"), @
@@ -36,12 +35,12 @@ class Setting extends this.OS.GUI.BaseApplication
         new LocaleHandle @find("locale"), @
         new StartupHandle @find("startup"), @
 
-        (@find "btnsave").set "onbtclick", (e) ->
-            me._api.setting()
-                .then (d) ->
-                    return me.error __("Cannot save system setting: {0}", d.error) if d.error
-                    me.notify __("System setting saved")
-                .catch (e) ->
-                    me.error __("Cannot save system setting: {0}", e.stack)
+        (@find "btnsave").set "onbtclick", (e) =>
+            @_api.setting()
+                .then (d) =>
+                    return @error __("Cannot save system setting: {0}", d.error) if d.error
+                    @notify __("System setting saved")
+                .catch (e) =>
+                    @error __("Cannot save system setting: {0}", e.stack)
 Setting.singleton = true
 this.OS.register "Setting", Setting

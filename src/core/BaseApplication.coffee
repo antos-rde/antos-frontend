@@ -26,28 +26,26 @@ class BaseApplication extends this.OS.GUI.BaseModel
             CTRL: {}
             SHIFT: {}
             META: {}
-        me = @
     init: ->
-        me = @
         @off "*"
-        @on "exit", () -> me.quit()
+        @on "exit", () => @quit()
         # first register some base event to the app
-        @on "focus", () ->
-            me.sysdock.set "selectedApp", me
-            me.appmenu.pid = me.pid
-            me.appmenu.set "items", (me.baseMenu() || [])
-            me.appmenu.set "onmenuselect", (d) ->
-                me.trigger("menuselect", d)
-            me.dialog.show() if me.dialog
-        @on "hide", () ->
-            me.sysdock.set "selectedApp", null
-            me.appmenu.set "items", []
-            me.dialog.hide() if me.dialog
-        @on "menuselect", (d) ->
+        @on "focus", () =>
+            @sysdock.set "selectedApp", @
+            @appmenu.pid = @pid
+            @appmenu.set "items", (@baseMenu() || [])
+            @appmenu.set "onmenuselect", (d) =>
+                @trigger("menuselect", d)
+            @dialog.show() if @dialog
+        @on "hide", () =>
+            @sysdock.set "selectedApp", null
+            @appmenu.set "items", []
+            @dialog.hide() if @dialog
+        @on "menuselect", (d) =>
             switch d.data.item.get("data").dataid
-                when "#{me.name}-about" then me.openDialog "AboutDialog", ()->
-                when  "#{me.name}-exit" then me.trigger "exit"
-        @on "apptitlechange", () -> me.sysdock.update()
+                when "#{@name}-about" then @openDialog "AboutDialog"
+                when  "#{@name}-exit" then @trigger "exit"
+        @on "apptitlechange", () => @sysdock.update()
         @loadScheme()
 
     loadScheme: () ->

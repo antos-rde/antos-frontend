@@ -6,11 +6,10 @@ class TabContainerTag extends Ant.OS.GUI.BaseTag
         @setopt "tabbarwidth", undefined
         @setopt "tabbarheight", undefined
         @setopt "ontabselect", () ->
-        me = @
-        @refs.bar.set "ontabselect", (e) ->
+        @refs.bar.set "ontabselect", (e) =>
             data = e.data.item.get "data"
-            me.set "selectedTab", data
-            me.get("ontabselect") { data: data, id: me.aid() }
+            @set "selectedTab", data
+            @get("ontabselect") { data: data, id: @aid() }
 
     __selectedTab: (v) ->
         return unless v
@@ -34,19 +33,18 @@ class TabContainerTag extends Ant.OS.GUI.BaseTag
         @set "tabsize", @get("tabsize")
 
     mount: () ->
-        me = @
-        $(@children).each () ->
+        $(@children).each (i, e) =>
             item = {}
-            item.text = $(@).attr "tabname" if $(@).attr "tabname"
-            item.icon = $(@).attr "icon" if $(@).attr "icon"
-            item.iconclass = $(@).attr "iconclass" if $(@).attr "iconclass"
-            item.container = @
-            $(@)
+            item.text = $(e).attr "tabname" if $(e).attr "tabname"
+            item.icon = $(e).attr "icon" if $(e).attr "icon"
+            item.iconclass = $(e).attr "iconclass" if $(e).attr "iconclass"
+            item.container = e
+            $(e)
                 .css "width", "100%"
                 .css "height", "100%"
-            el = me.refs.bar.push item
+            el = @refs.bar.push item
             el.set "selected", true
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         @calibrate()
 
     calibrate: () ->

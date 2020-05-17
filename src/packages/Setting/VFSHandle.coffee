@@ -21,28 +21,27 @@ class VFSSettingDialog extends this.OS.GUI.BasicDialog
         super "VFSSettingDialog", VFSSettingDialog.scheme
     
     init: () ->
-        me = @
-        $(@find("txtPath")).click (e) ->
-            me.openDialog("FileDialog", {
+        $(@find("txtPath")).click (e) =>
+            @openDialog("FileDialog", {
                 title: "__(Select a directory)",
                 mimes: ["dir"],
                 hidden: true
             })
-            .then (d) ->
-                (me.find "txtPath").value = d.file.path
+            .then (d) =>
+                (@find "txtPath").value = d.file.path
 
-        @find("btnOk").set "onbtclick", (e) ->
+        @find("btnOk").set "onbtclick", (e) =>
             data = {
-                path: (me.find "txtPath").value,
-                name: (me.find "txtName").value
+                path: (@find "txtPath").value,
+                name: (@find "txtName").value
             }
-            return me.error __("Please enter mount point name") unless data.name and data.name isnt ""
-            return me .error __("Please select a directory") unless data.path and data.path isnt ""
-            me.handle(data) if me.handle
-            me.quit()
+            return @error __("Please enter mount point name") unless data.name and data.name isnt ""
+            return @error __("Please select a directory") unless data.path and data.path isnt ""
+            @handle(data) if @handle
+            @quit()
         
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
         return unless @data
         (@find "txtName").value = @data.text if @data.text
@@ -76,75 +75,73 @@ VFSSettingDialog.scheme = """
 class VFSHandle extends SettingHandle
     constructor: (scheme, parent) ->
         super(scheme, parent)
-        me = @
         @mplist = @find "mplist"
         @dpath = @find "dpath"
         @ppath = @find "ppath"
         @mplist.set "buttons", [
             {
                 text: "+",
-                onbtclick: (e) ->
-                    me.parent.openDialog(new VFSSettingDialog(), {
+                onbtclick: (e) =>
+                    @parent.openDialog(new VFSSettingDialog(), {
                         title: "__(Add mount point)"
                     })
-                    .then (d) ->
-                        me.parent.systemsetting.VFS.mountpoints.push {
+                    .then (d) =>
+                        @parent.systemsetting.VFS.mountpoints.push {
                             text: d.name, path: d.path, iconclass: "fa fa-folder", type: "fs"
                         }
-                        me.refresh()
+                        @refresh()
             },
             {
                 text: "-",
-                onbtclick: (e) ->
-                    item = me.mplist.get "selectedItem"
+                onbtclick: (e) =>
+                    item = @mplist.get "selectedItem"
                     return unless item
                     selidx = $(item).index()
-                    me.parent.openDialog("YesNoDialog", {
+                    @parent.openDialog("YesNoDialog", {
                         title: "__(Remove)",
                         text: __("Remove: {0}?", item.get("data").text)
-                    }).then (d) ->
+                    }).then (d) =>
                         return unless d
-                        me.parent.systemsetting.VFS.mountpoints.splice selidx, 1
-                        me.refresh()
+                        @parent.systemsetting.VFS.mountpoints.splice selidx, 1
+                        @refresh()
             },
             {
                 text: "",
                 iconclass: "fa fa-pencil",
-                onbtclick: (e) ->
-                    sel = me.mplist.get "selectedItem"
+                onbtclick: (e) =>
+                    sel = @mplist.get "selectedItem"
                     return unless sel
-                    me.parent.openDialog(new VFSSettingDialog(), {
+                    @parent.openDialog(new VFSSettingDialog(), {
                         title: "__(Edit mount point)",
                         text: sel.get("data").text,
                         path: sel.get("data").path
-                    }).then (d) ->
+                    }).then (d) =>
                         sel.get("data").text = d.name
                         sel.get("data").path = d.path
-                        me.refresh()
+                        @refresh()
             }
         ]
-        (@find "btndpath").set 'onbtclick', (e) ->
-            me.parent.openDialog("FileDialog", {
+        (@find "btndpath").set 'onbtclick', (e) =>
+            @parent.openDialog("FileDialog", {
                 title: "__(Select a directory)",
                 mimes: ["dir"],
                 hidden: true
-            }).then (d) ->
-                me.parent.systemsetting.desktop.path = d.file.path
-                me.parent._gui.refreshDesktop()
-                me.refresh()
+            }).then (d) =>
+                @parent.systemsetting.desktop.path = d.file.path
+                @parent._gui.refreshDesktop()
+                @refresh()
         
-        (@find "btnppath").set 'onbtclick', (e) ->
-            me.parent.openDialog("FileDialog", {
+        (@find "btnppath").set 'onbtclick', (e) =>
+            @parent.openDialog("FileDialog", {
                 title: "__(Select a directory)",
                 mimes: ["dir"],
                 hidden: true
-            }).then (d) ->
-                me.parent.systemsetting.system.pkgpaths.user = d.file.path
-                me.refresh()
-        me.refresh()
+            }).then (d) =>
+                @parent.systemsetting.system.pkgpaths.user = d.file.path
+                @refresh()
+        @refresh()
 
     refresh: () ->
-        me = @
         @mplist.set "data", @parent.systemsetting.VFS.mountpoints
         @dpath.set "text", @parent.systemsetting.desktop.path
         @ppath.set "text", @parent.systemsetting.system.pkgpaths.user

@@ -19,52 +19,51 @@
 class StartupHandle extends SettingHandle
     constructor: (scheme, parent) ->
         super(scheme, parent)
-        me = @
         @srvlist = @find "srvlist"
         @applist = @find "applist"
         @srvlist.set "buttons", [
             {
-                text: "+", onbtclick: (e) ->
+                text: "+", onbtclick: (e) =>
                     services = []
-                    for k, v of me.parent.systemsetting.system.packages
+                    for k, v of @parent.systemsetting.system.packages
                         if v.services
                             srvs = ({ text: "#{k}/#{x}", iconclass: "fa fa-tasks" } for x in v.services)
                             services = services.concat srvs
-                    me.parent.openDialog("SelectionDialog", {
+                    @parent.openDialog("SelectionDialog", {
                         title: "__(Add service)",
                         data: services
-                    }).then (d) ->
-                       me.parent.systemsetting.system.startup.services.push d.text
-                       me.refresh()
+                    }).then (d) =>
+                       @parent.systemsetting.system.startup.services.push d.text
+                       @refresh()
             },
             {
-                text: "-", onbtclick: (e) ->
-                    item = me.srvlist.get "selectedItem"
+                text: "-", onbtclick: (e) =>
+                    item = @srvlist.get "selectedItem"
                     return unless item
                     selidx = $(item).index()
-                    me.parent.systemsetting.system.startup.services.splice selidx, 1
-                    me.refresh()
+                    @parent.systemsetting.system.startup.services.splice selidx, 1
+                    @refresh()
             }
         ]
 
         @applist.set "buttons", [
             {
-                text: "+", onbtclick: (e) ->
-                    apps = ( { text: k, iconclass: v.iconclass } for k, v of  me.parent.systemsetting.system.packages )
-                    me.parent.openDialog("SelectionDialog", {
+                text: "+", onbtclick: (e) =>
+                    apps = ( { text: k, iconclass: v.iconclass } for k, v of  @parent.systemsetting.system.packages )
+                    @parent.openDialog("SelectionDialog", {
                         title: "__(Add application)",
                         data: apps
-                    }).then (d) ->
-                       me.parent.systemsetting.system.startup.apps.push d.text
-                       me.refresh()
+                    }).then (d) =>
+                       @parent.systemsetting.system.startup.apps.push d.text
+                       @refresh()
             },
             {
-                text: "-", onbtclick: (e) ->
-                    item = me.applist.get "selectedItem"
+                text: "-", onbtclick: (e) =>
+                    item = @applist.get "selectedItem"
                     return unless item
                     selidx = $(item).index()
-                    me.parent.systemsetting.system.startup.apps.splice selidx, 1
-                    me.refresh()
+                    @parent.systemsetting.system.startup.apps.splice selidx, 1
+                    @refresh()
             }
         ]
         @refresh()
@@ -72,30 +71,3 @@ class StartupHandle extends SettingHandle
     refresh: () ->
         @srvlist.set "data", ( { text:v } for v in @parent.systemsetting.system.startup.services )
         @applist.set "data", ( { text:v } for v in @parent.systemsetting.system.startup.apps )
-        
-
-    mkdialog: () ->
-        return @parent._gui.mkdialog {
-            name: "StartupDialog",
-            layout: {
-                tags: [
-                    { tag: "afx-list-view" }
-                ],
-                width: 250,
-                height: 200,
-                resizable: false,
-                buttons: [
-                    {
-                        label: "__(Ok)", onclick: (d) ->
-                            sel = (d.find "content0").get "selected"
-                            return d.error __("Please select an entry") unless sel
-                            d.handler(sel.text) if d.handler
-                            d.quit()
-                    },
-                    { label: "__(Cancel)", onclick: (d) -> d.quit() }
-                ],
-                filldata: (dia) ->
-
-                    (dia.find "content0").set "items", dia.data if dia.data
-            }
-        }

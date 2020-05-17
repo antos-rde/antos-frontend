@@ -7,24 +7,23 @@ class NSpinnerTag extends Ant.OS.GUI.BaseTag
         @setopt "step", 1
     
     mount: () ->
-        me = @
         $(@refs.holder).attr "type", "text"
-        $(@refs.incr).click (e) ->
-            me.set "value", (me.get("value") + me.get("step") )
+        $(@refs.incr).click (e) =>
+            @set "value", (@get("value") + @get("step") )
 
-         $(@refs.decr).click (e) ->
-            me.set "value", (me.get("value") - me.get("step") )
+         $(@refs.decr).click (e) =>
+            @set "value", (@get("value") - @get("step") )
         
-        # @observable.on "calibrate", () -> me.calibrate()
-        @observable.on "resize", () -> me.calibrate()
+        # @observable.on "calibrate", () -> @calibrate()
+        @observable.on "resize", () => @calibrate()
 
-        $(@refs.holder).on 'keyup', (e) ->
+        $(@refs.holder).on 'keyup', (e) =>
             if e.keyCode is 13
-                val = me.refs.holder.value
+                val = @refs.holder.value
                 if not isNaN(val)
                     val = parseInt(val)
-                    val = me.value if val < 0
-                    me.set "value", val
+                    val = @value if val < 0
+                    @set "value", val
         @calibrate()
 
     calibrate: () ->

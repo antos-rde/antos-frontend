@@ -28,16 +28,15 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         @draggable()
 
     draggable: () ->
-        me = @
         $(@root).css "user-select", "none"
-        $(@root).on "mousedown", (e) ->
+        $(@root).on "mousedown", (e) =>
                 e.preventDefault()
-                $(window).on "mousemove", (evt) ->
-                    return unless me.resizable_el
-                    if me.dir is "hz"
-                        me.horizontalResize evt
-                    else if me.dir is "ve"
-                        me.verticalResize evt
+                $(window).on "mousemove", (evt) =>
+                    return unless @resizable_el
+                    if @dir is "hz"
+                        @horizontalResize evt
+                    else if @dir is "ve"
+                        @verticalResize evt
 
                 $(window).on "mouseup", (evt) ->
                     $(window).unbind "mousemove", null

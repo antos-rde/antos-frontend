@@ -3,17 +3,16 @@ Ant.OS.GUI.zindex = 10
 class Ant.OS.GUI.BaseTag
     constructor: (@root,  @observable) ->
         @opts = {}
-        me = @
         @observable = new Ant.OS.API.Announcer() unless @observable
         # export to rootnode
         @root.observable = @observable
-        @root.set = (k, v) -> me.set k, v
-        @root.get = (k) -> me.get k
-        @root.aid = () -> me.aid()
-        @root.calibrate = () -> me.calibrate()
-        @root.sync = () -> me.sync()
+        @root.set = (k, v) => @set k, v
+        @root.get = (k) => @get k
+        @root.aid = () => @aid()
+        @root.calibrate = () => @calibrate()
+        @root.sync = () => @sync()
         @mounted = false
-        @root.setup = () -> me.setup()
+        @root.setup = () => @setup()
         @refs = {}
         @setopt "data-id", (Math.floor(Math.random() * 100000) + 1).toString()
         @setopt "tooltip", undefined
@@ -28,7 +27,7 @@ class Ant.OS.GUI.BaseTag
             $(v).detach().appendTo @refs.yield for v in @children
         else
             @children = []
-        $(@root).children().each () -> @.mkui me.observable
+        $(@root).children().each (i, e) => e.mkui @observable
 
     __: (k, v) ->
             @set k, v if v

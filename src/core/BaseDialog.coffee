@@ -74,16 +74,15 @@ class PromptDialog extends BasicDialog
     
     init: () ->
         super.init()
-        me = @
         @find("lbl").set "text", @data.label if @data and @data.label
         $(@find "txtInput").val @data.value if @data and @data.value
 
-        (@find "btnOk").set "onbtclick", (e) ->
-            me.handle($(me.find "txtInput").val()) if me.handle
-            me.quit()
+        (@find "btnOk").set "onbtclick", (e) =>
+            @handle($(@find "txtInput").val()) if @handle
+            @quit()
         
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 
 PromptDialog.scheme = """
@@ -115,15 +114,14 @@ class CalendarDialog extends BasicDialog
     
     init: () ->
         super.init()
-        me = @
-        (@find "btnOk").set "onbtclick", (e) ->
-            date = (me.find "cal").get "selectedDate"
-            return me.notify __("Please select a day") unless date
-            me.handle(date) if me.handle
-            me.quit()
+        (@find "btnOk").set "onbtclick", (e) =>
+            date = (@find "cal").get "selectedDate"
+            return @notify __("Please select a day") unless date
+            @handle(date) if @handle
+            @quit()
         
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 CalendarDialog.scheme = """
 <afx-app-window  width='300' height='230' apptitle = "Calendar" >
@@ -155,15 +153,14 @@ class ColorPickerDialog extends BasicDialog
     
     init: () ->
         super.init()
-        me = @
-        (@find "btnOk").set "onbtclick", (e) ->
-            color = (me.find "cpicker").get "selectedColor"
-            return me.notify __("Please select color") unless color
-            me.handle(color) if me.handle
-            me.quit()
+        (@find "btnOk").set "onbtclick", (e) =>
+            color = (@find "cpicker").get "selectedColor"
+            return @notify __("Please select color") unless color
+            @handle(color) if @handle
+            @quit()
         
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 ColorPickerDialog.scheme = """
 <afx-app-window  width='320' height='250' apptitle = "Color picker" >
@@ -195,14 +192,13 @@ class InfoDialog extends BasicDialog
         
     init: () ->
         super.init()
-        me = @
         rows = []
         delete @data.title if @data and @data.title
         rows.push [ { text: k }, { text: v } ] for k, v of @data
         (@find "grid").set "header", [ { text: __("Name"), width: 70 }, { text: __("Value") } ]
         (@find "grid").set "rows", rows
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 InfoDialog.scheme = """
 <afx-app-window  width='250' height='300' apptitle = "Info" >
@@ -234,14 +230,13 @@ class YesNoDialog extends BasicDialog
 
     init: () ->
         super.init()
-        me = @
         @find("lbl").set "*", @data if @data
-        (@find "btnYes").set "onbtclick", (e) ->
-            me.handle(true) if me.handle
-            me.quit()
-        (@find "btnNo").set "onbtclick", (e) ->
-            me.handle(false) if me.handle
-            me.quit()
+        (@find "btnYes").set "onbtclick", (e) =>
+            @handle(true) if @handle
+            @quit()
+        (@find "btnNo").set "onbtclick", (e) =>
+            @handle(false) if @handle
+            @quit()
 
 YesNoDialog.scheme = """
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
@@ -271,18 +266,17 @@ class SelectionDialog extends BasicDialog
     
     init: () ->
         super.init()
-        me = @
         (@find "list").set "data", @data.data if @data and @data.data
-        fn = (e) ->
-            data = (me.find "list").get "selectedItem"
-            return me.notify __("Please select an item") unless data
-            me.handle(data.get("data")) if me.handle
-            me.quit()
+        fn = (e) =>
+            data = (@find "list").get "selectedItem"
+            return @notify __("Please select an item") unless data
+            @handle(data.get("data")) if @handle
+            @quit()
         (@find "list").set "onlistdbclick", fn
         (@find "btnOk").set "onbtclick", fn
         
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 SelectionDialog.scheme = """
 <afx-app-window  width='250' height='300' apptitle = "Selection">
@@ -312,7 +306,6 @@ class AboutDialog extends BasicDialog
 
     init: () ->
         mt = @meta()
-        me = @
         @scheme.set "apptitle", __("About: {0}", mt.name)
         (@find "mylabel").set "*", {
             icon: mt.icon,
@@ -326,8 +319,8 @@ class AboutDialog extends BasicDialog
         rows.push [ { text: k }, { text: v } ] for k, v of mt.info
         (@find "mygrid").set "header", [ { text: "", width: 100 }, { text: "" } ]
         (@find "mygrid").set "rows", rows
-        (@find "btnCancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btnCancel").set "onbtclick", (e) =>
+            @quit()
 
 AboutDialog.scheme = """
 <afx-app-window data-id = 'about-window'  width='300' height='200'>
@@ -338,7 +331,11 @@ AboutDialog.scheme = """
             </h3>
             <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
         </div>
-        <afx-grid-view data-id = 'mygrid'></afx-grid-view>
+        <afx-hbox>
+            <div data-width="10"></div>
+            <afx-grid-view data-id = 'mygrid'></afx-grid-view>
+        </afx-hbox>
+        
         <afx-hbox data-height="30">
             <div />
             <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" />
@@ -358,7 +355,6 @@ class FileDialog extends BasicDialog
         fileview = @find "fileview"
         location = @find "location"
         filename = @find "filename"
-        me = @
         fileview.set "fetch", (path) ->
             new Promise (resolve, reject) ->
                 return resolve() unless path
@@ -367,10 +363,10 @@ class FileDialog extends BasicDialog
                         return reject d if d.error
                         resolve d.result
                     .catch (e) -> reject e
-        setroot = (path) ->
-            path.asFileHandle().read().then (d) ->
+        setroot = (path) =>
+            path.asFileHandle().read().then (d) =>
                 if(d.error)
-                    return me.error __("Resource not found: {0}", path)
+                    return @error __("Resource not found: {0}", path)
                 fileview.set "path", path
 
         if not @data or not @data.root
@@ -385,27 +381,27 @@ class FileDialog extends BasicDialog
             setroot @data.root
         fileview.set "onfileselect", (e) ->
             ($ filename).val e.data.filename  if e.data.type is "file"
-        (@find "bt-ok").set "onbtclick", (e) ->
+        (@find "bt-ok").set "onbtclick", (e) =>
             f = fileview.get "selectedFile"
-            return me.notify __("Please select a file/fofler") unless f
-            if me.data and me.data.type and me.data.type isnt f.type
-                return me.notify __("Please select {0} only", me.data.type)
-            if me.data and me.data.mimes
+            return @notify __("Please select a file/fofler") unless f
+            if @data and @data.type and @data.type isnt f.type
+                return @notify __("Please select {0} only", @data.type)
+            if @data and @data.mimes
                 #verify the mime
                 m = false
                 if f.mime
-                    for v in me.data.mimes
+                    for v in @data.mimes
                         if f.mime.match (new RegExp v, "g")
                             m = true
                             break
-                return me.notify __("Only {0} could be selected", me.data.mimes.join(",")) unless m
+                return @notify __("Only {0} could be selected", @data.mimes.join(",")) unless m
             
             name = $(filename).val()
-            me.handle { file: f, name: name } if me.handle
-            me.quit()
+            @handle { file: f, name: name } if @handle
+            @quit()
 
-        (@find "bt-cancel").set "onbtclick", (e) ->
-            me.quit()
+        (@find "bt-cancel").set "onbtclick", (e) =>
+            @quit()
         if @data and @data.file
             ($ filename).css("display", "block").val @data.file.basename or "Untitled"
             @trigger "resize"

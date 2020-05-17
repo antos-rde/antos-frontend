@@ -37,27 +37,26 @@ class PushNotification extends this.OS.GUI.BaseService
             @update()
 
     main: ->
-        me = @
         @mlist = @find "notifylist"
         @mfeed = @find "notifeed"
         @nzone = @find "notifyzone"
         @fzone = @find "feedzone"
-        (@find "btclear").set "onbtclick", (e) -> me.mlist.set "data", []
+        (@find "btclear").set "onbtclick", (e) => @mlist.set "data", []
         #@subscribe "fail", (e) -> console.log e
-        @subscribe "notification", (o) -> me.pushout 'INFO', o
-        @subscribe "fail", (o) -> me.pushout 'FAIL', o
-        @subscribe "error", (o) -> me.pushout 'ERROR', o
-        @subscribe "info", (o) -> me.pushout 'INFO', o
-        @subscribe "VFS", (o) -> me.pushout 'INFO', o
+        @subscribe "notification", (o) => @pushout 'INFO', o
+        @subscribe "fail", (o) => @pushout 'FAIL', o
+        @subscribe "error", (o) => @pushout 'ERROR', o
+        @subscribe "info", (o) => @pushout 'INFO', o
+        #@subscribe "VFS", (o) => @pushout 'INFO', o
 
-        @subscribe "loading", (o) ->
-            me.pending.push o.id
-            me.spin true
+        @subscribe "loading", (o) =>
+            @pending.push o.id
+            @spin true
 
-        @subscribe "loaded", (o) ->
-            i = me.pending.indexOf o.id
-            me.pending.splice i, 1 if i >= 0
-            me.spin false if me.pending.length is 0
+        @subscribe "loaded", (o) =>
+            i = @pending.indexOf o.id
+            @pending.splice i, 1 if i >= 0
+            @spin false if @pending.length is 0
         
         @nzone.set "height", "100%"
         @fzone.set "height", "100%"
@@ -83,25 +82,23 @@ class PushNotification extends this.OS.GUI.BaseService
         @notifeed d
 
     notifeed: (d) ->
-        me = @
         @mfeed.unshift d, true
         ($ @fzone).show()
-        timer = setTimeout () ->
-                me.mfeed.remove d.domel
-                ($ me.fzone).hide() if me.mfeed.get("data").length is 0
+        timer = setTimeout () =>
+                @mfeed.remove d.domel
+                ($ @fzone).hide() if @mfeed.get("data").length is 0
                 clearTimeout timer
         , 3000
 
     awake: (evt) ->
         if  @view then ($ @nzone).hide() else ($ @nzone).show()
         @view = not @view
-        me = @
         if not @cb
-            @cb = (e) ->
-                if not ($ e.target).closest($ me.nzone).length and not ($ e.target).closest(evt.data.item).length
-                    ($ me.nzone).hide()
-                    $(document).unbind "click", me.cb
-                    me.view = not me.view
+            @cb = (e) =>
+                if not ($ e.target).closest($ @nzone).length and not ($ e.target).closest(evt.data.item).length
+                    ($ @nzone).hide()
+                    $(document).unbind "click", @cb
+                    @view = not @view
         if @view
             $(document).on "click", @cb
         else

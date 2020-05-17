@@ -7,9 +7,8 @@ class SwitchTag extends Ant.OS.GUI.BaseTag
         @setopt "onchange", (e) ->
     
     mount: () ->
-        me = @
-        $(@refs.switch).click (e) ->
-            me.onchange(e)
+        $(@refs.switch).click (e) =>
+            @onchange(e)
 
     onchange: (e) ->
         return unless @get "enable"

@@ -23,9 +23,8 @@ class FormatedString
     toString: () ->
         @__()
     __: () ->
-        me = @
-        return @fs.l().replace /{(\d+)}/g, (match, number) ->
-            return if typeof me.values[number] != 'undefined' then me.values[number].__() else match
+        return @fs.l().replace /{(\d+)}/g, (match, number) =>
+            return if typeof @values[number] != 'undefined' then @values[number].__() else match
     hash: () ->
         @__().hash()
 
@@ -321,7 +320,7 @@ Ant.OS.API =
                         .catch (e) ->
                             reject e
                     else
-                        reject e
+                        reject Ant.OS.API.throwe __("Invalid library: {0}", l)
             else
                 console.log l, "Library exist, no need to load"
                 Ant.OS.announcer.trigger "sharedlibraryloaded", l

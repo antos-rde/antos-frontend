@@ -18,13 +18,11 @@
 
 class BaseModel
     constructor: (@name, @args) ->
-        me = @
         @observable = new Announcer()
         @_api = Ant.OS.API
         @_gui = Ant.OS.GUI
         @systemsetting = Ant.OS.setting
-        me = @
-        @on "exit", () -> me.quit()
+        @on "exit", () => @quit()
         @host = @_gui.workspace
         @dialog = undefined
     render: (p) ->
@@ -68,26 +66,25 @@ class BaseModel
         Ant.OS.announcer.on e, f, @
 
     openDialog: (d, data) ->
-        me = @
-        new Promise (resolve, reject) ->
-            if me.dialog
-                me.dialog.show()
+        new Promise (resolve, reject) =>
+            if @dialog
+                @dialog.show()
                 return
             if typeof d is "string"
                 if not Ant.OS.GUI.subwindows[d]
-                    me.error __("Dialog {0} not found", d)
+                    @error __("Dialog {0} not found", d)
                     return
-                me.dialog = new Ant.OS.GUI.subwindows[d]()
+                @dialog = new Ant.OS.GUI.subwindows[d]()
             else
-                me.dialog = d
+                @dialog = d
             #@dialog.observable = riot.observable() unless @dialog
-            me.dialog.parent = me
-            me.dialog.handle = resolve
-            me.dialog.reject = reject
-            me.dialog.pid = me.pid
-            me.dialog.data = data
-            me.dialog.title = data.title if data and data.title
-            me.dialog.init()
+            @dialog.parent = @
+            @dialog.handle = resolve
+            @dialog.reject = reject
+            @dialog.pid = @pid
+            @dialog.data = data
+            @dialog.title = data.title if data and data.title
+            @dialog.init()
 
     ask: (t, m, f) ->
         @._gui.openDialog "YesNoDialog", (d) ->

@@ -3,27 +3,26 @@ class CommandPalette extends this.OS.GUI.BasicDialog
         super "CommandPalete", CommandPalette.scheme
         
     init: () ->
-        me = @
         offset = $(".afx-window-content", @parent.scheme).offset()
         pw = @parent.scheme.get("width") / 5
         @scheme.set "width", 3 * pw
         $(@scheme).offset { top: offset.top - 2, left: offset.left + pw }
-        cb = (e) ->
-            if ($ e.target).closest(me.scheme).length > 0
-                $(me.find "searchbox").focus()
+        cb = (e) =>
+            if ($ e.target).closest(@scheme).length > 0
+                $(@find "searchbox").focus()
             else
                 $(document).unbind "mousedown", cb
-                me.quit()
+                @quit()
         $(document).on "mousedown", cb
-        $(me.find "searchbox").focus()
+        $(@find "searchbox").focus()
         @cmdlist = @find("container")
         @cmdlist.set "data", (v for v in @data.child) if @data
-        $(@cmdlist).click (e) ->
-            me.selectCommand()
+        $(@cmdlist).click (e) =>
+            @selectCommand()
     
         @searchbox = @find "searchbox"
-        ($ @searchbox).keyup (e) ->
-            me.search e
+        ($ @searchbox).keyup (e) =>
+            @search e
 
     search: (e) ->
         switch e.which

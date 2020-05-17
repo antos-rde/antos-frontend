@@ -23,8 +23,7 @@ class TileLayoutTag extends Ant.OS.GUI.BaseTag
         @calibrate()
 
     mount: () ->
-        me = @
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         @calibrate()
 
     calibrate: () ->

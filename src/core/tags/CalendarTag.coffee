@@ -9,11 +9,10 @@ class CalendarTag extends Ant.OS.GUI.BaseTag
         @year = 0
 
     mount: () ->
-        me = @
         $(@root).css "height", "100%"
         $(@refs.grid).css "width", "100%"
-        $(@refs.prev).click (e) -> me.prevmonth()
-        $(@refs.next).click (e) -> me.nextmonth()
+        $(@refs.prev).click (e) => @prevmonth()
+        $(@refs.next).click (e) => @nextmonth()
         @refs.grid.set "header", [
             { text: "__(Sun)" },
             { text: "__(Mon)" },
@@ -23,10 +22,10 @@ class CalendarTag extends Ant.OS.GUI.BaseTag
             { text: "__(Fri)" },
             { text: "__(Sat)" }
         ]
-        @refs.grid.set "oncellselect", (e) ->
-            me.dateselect(e)
+        @refs.grid.set "oncellselect", (e) =>
+            @dateselect(e)
 
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         @calibrate()
         @calendar null
 

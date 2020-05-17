@@ -22,16 +22,15 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         return $(@refs.wrapper).addClass("afx_tree_item_selected") if v
     
     __open__: (v) ->
-        me = @
         return unless @is_folder()
         $(@refs.toggle)
             .removeClass()
         if(v)
             if @get("fetch")
                 @get("fetch")(@root)
-                    .then (d) ->
+                    .then (d) =>
                         return unless d
-                        me.set "nodes", d
+                        @.set "nodes", d
                     .catch (e) -> Ant.OS.announcer.oserror e
             $(@refs.childnodes).show()
         else
@@ -76,7 +75,6 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
 
 
     mount: () ->
-        me = @
         super.mount()
         $(@refs.container)
             .css "padding", 0
@@ -85,20 +83,20 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         $(@refs.itemholder)
             .css "display", "inline-block"
         $(@refs.wrapper)
-            .click (e) ->
-                e.item = me.root
-                me.get("treeroot").itemclick e, false
+            .click (e) =>
+                e.item = @root
+                @get("treeroot").itemclick e, false
         $(@refs.wrapper)
-            .dblclick (e) ->
-                e.item = me.root
-                me.get("treeroot").itemclick e, true
+            .dblclick (e) =>
+                e.item = @root
+                @get("treeroot").itemclick e, true
 
         $(@refs.toggle)
             .css "display", "inline-block"
             .css "width", "15px"
             .addClass "afx-tree-view-item"
-            .click (e) ->
-                me.set "open", not me.get("open")
+            .click (e) =>
+                @set "open", not @get("open")
                 e.preventDefault()
                 e.stopPropagation()
 

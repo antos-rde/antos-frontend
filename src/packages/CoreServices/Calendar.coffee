@@ -23,11 +23,10 @@ class Calendar extends this.OS.GUI.BaseService
         @iconclass = "fa fa-calendar"
     init: ->
         #update time each second
-        me = @
-        @watch 1000, () ->
+        @watch 1000, () =>
             now = new Date
-            me.text = now.toString()
-            me.domel.set "text", me.text
+            @text = now.toString()
+            @domel.set "text", @text
 
 
     awake: (e) ->

@@ -34,7 +34,6 @@ class ColorPickerTag extends Ant.OS.GUI.BaseTag
         @build_palette()
 
     build_palette: () ->
-        me = @
         colorctx = $(@refs.palette).get(0).getContext('2d')
         gradient = colorctx.createLinearGradient(0, 0, $(@refs.palette).width(), 0)
         # fill color
@@ -65,9 +64,9 @@ class ColorPickerTag extends Ant.OS.GUI.BaseTag
             s = "0" + s if s.length is 1
             s
 
-        pick_color = (e) ->
-            $(me.refs.palette).css("cursor", "crosshair")
-            offset = $(me.refs.palette).offset()
+        pick_color = (e) =>
+            $(@refs.palette).css("cursor", "crosshair")
+            offset = $(@refs.palette).offset()
             x = e.pageX - offset.left
             y = e.pageY - offset.top
             color = colorctx.getImageData(x, y, 1, 1)
@@ -80,26 +79,26 @@ class ColorPickerTag extends Ant.OS.GUI.BaseTag
             }
             data
 
-        mouse_move_h = (e) ->
+        mouse_move_h = (e) =>
             data = pick_color(e)
-            $(me.refs.colorval).css("background-color", data.text)
+            $(@refs.colorval).css("background-color", data.text)
         
-        $(me.refs.palette).mouseenter (e) ->
-            $(me.refs.palette).on("mousemove", mouse_move_h)
+        $(@refs.palette).mouseenter (e) =>
+            $(@refs.palette).on("mousemove", mouse_move_h)
     
-        $(me.refs.palette).mouseout (e) ->
-            $(me.refs.palette).unbind("mousemove", mouse_move_h)
-            if me.get "selectedColor"
-                $(me.refs.colorval).css("background-color", me.get("selectedColor").text)
+        $(@refs.palette).mouseout (e) =>
+            $(@refs.palette).unbind("mousemove", mouse_move_h)
+            if @get "selectedColor"
+                $(@refs.colorval).css("background-color", @get("selectedColor").text)
 
-        $(@refs.palette).on "click", (e) ->
+        $(@refs.palette).on "click", (e) =>
             data = pick_color(e)
-            $(me.refs.rgbtext).html(data.text)
-            $(me.refs.hextext).val(data.hex)
-            me.set "selectedColor", data
-            evt =  { id: me.aid(), data: data }
-            me.get("oncolorselect") evt
-            me.observable.trigger "colorselect", data
+            $(@refs.rgbtext).html(data.text)
+            $(@refs.hextext).val(data.hex)
+            @set "selectedColor", data
+            evt =  { id: @aid(), data: data }
+            @get("oncolorselect") evt
+            @observable.trigger "colorselect", data
 
     layout: () ->
         [{

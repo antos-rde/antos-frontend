@@ -1,12 +1,12 @@
 class FloatListTag extends ListViewTag
     constructor: (r, o) ->
         super r, o
-        me = @
+
         @setopt "dir", "horizontal"
-        @root.refresh = () -> me.calibrate()
-        @root.push = (e) -> me.refs.mlist.push(e)
-        @root.unshift = (e) -> me.refs.mlist.unshift(e)
-        @root.remove = (e) -> me.refs.mlist.remove(e)
+        @root.refresh = () => @calibrate()
+        @root.push = (e) => @refs.mlist.push(e)
+        @root.unshift = (e) => @refs.mlist.unshift(e)
+        @root.remove = (e) => @refs.mlist.remove(e)
 
     # disable some uneccessary functions
     __dropdown__: (v) -> @set "dropdown", false if v
@@ -20,7 +20,6 @@ class FloatListTag extends ListViewTag
         @calibrate()
 
     mount: () ->
-        me = @
         $(@refs.container)
             .css "width", "100%"
             .css "height", "100%"
@@ -28,7 +27,7 @@ class FloatListTag extends ListViewTag
             .css "position", "absolute"
             .css "display", "block"
             .css "width", "100%"
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         @root.ready(@root) if @root.ready
 
     push: (v) ->
@@ -37,14 +36,13 @@ class FloatListTag extends ListViewTag
         el
 
     enable_drag: (el) ->
-        me = @
         $(el)
             .css "user-select", "none"
             .css "cursor", "default"
             .css "display", "block"
             .css "position", "absolute"
-            .on "mousedown", (evt) ->
-                globalof = $(me.refs.mlist).offset()
+            .on "mousedown", (evt) =>
+                globalof = $(@refs.mlist).offset()
                 evt.preventDefault()
                 offset = $(el).offset()
                 offset.top = evt.clientY - offset.top
@@ -71,14 +69,14 @@ class FloatListTag extends ListViewTag
             .css "height", "#{$(@refs.container).height()}px"
         gw = $(@refs.mlist).width()
         gh = $(@refs.mlist).height()
-        me = @
-        $(@refs.mlist).children().each (e) ->
-            $(@)
+
+        $(@refs.mlist).children().each (i, e) =>
+            $(e)
                 .css "top", "#{ctop}px"
                 .css "left", "#{cleft}px"
-            w = $(@).width()
-            h = $(@).height()
-            if me.get("dir") is "vertical"
+            w = $(e).width()
+            h = $(e).height()
+            if @get("dir") is "vertical"
                 ctop += h + 20
                 if ctop > gh
                     ctop = 20

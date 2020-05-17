@@ -35,30 +35,28 @@ class Announcer
         @observable[evtName].one.add callback
 
     off: (evtName, callback) ->
-        me = @
-        fn = (evt, cb) ->
-            return unless me.observable[evt]
+        fn = (evt, cb) =>
+            return unless @observable[evt]
             if cb
-                me.observable[evt].one.delete(cb)
-                me.observable[evt].many.delete(cb)
+                @observable[evt].one.delete(cb)
+                @observable[evt].many.delete(cb)
             else
-                delete me.observable[evt] if me.observable[evt]
-        if evtName is "*" then fn k, callback for k, v of me.observable else fn evtName, callback
+                delete @observable[evt] if @observable[evt]
+        if evtName is "*" then fn k, callback for k, v of @observable else fn evtName, callback
    
     trigger: (evtName, data) ->
-        me = @
-        trig = (name, d) ->
+        trig = (name, d) =>
             names = [name, "*"]
             for evt in names
-                continue unless me.observable[evt]
-                me.observable[evt].one.forEach (f) ->
+                continue unless @observable[evt]
+                @observable[evt].one.forEach (f) ->
                     f d
-                me.observable[evt].one = new Set()
-                me.observable[evt].many.forEach (f) ->
+                @observable[evt].one = new Set()
+                @observable[evt].many.forEach (f) ->
                     f d
         
         if evtName is "*"
-            trig k, data for k, v of me.observable when k isnt "*"
+            trig k, data for k, v of @observable when k isnt "*"
         else
             trig evtName, data
 

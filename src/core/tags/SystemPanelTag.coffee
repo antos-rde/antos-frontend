@@ -1,15 +1,14 @@
 class SystemPanelTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
-        me = @
         @setopt "osmenu", {
             text: __("Start"),
             iconclass: "fa fa-eercast"
         }
         @setopt "appmenu", []
         @setopt "systray", []
-        @root.attachservice = (s) -> me.attachservice s
-        @root.detachservice = (s) -> me.detachservice s
+        @root.attachservice = (s) => @attachservice s
+        @root.detachservice = (s) => @detachservice s
         @view = false
 
     __osmenu__: (v) ->
@@ -118,50 +117,49 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
         @refs.overlay.set "height", "#{$(window).height() - $(@refs.panel).height()}px"
 
     mount: () ->
-        me = @
-        @cb = (e) ->
-            if not ($ e.target).closest($ me.refs.overlay).length and not ($ e.target).closest(me.refs.osmenu).length
-                me.toggle false
+        @cb = (e) =>
+            if not ($ e.target).closest($ @refs.overlay).length and not ($ e.target).closest(@refs.osmenu).length
+                @toggle false
             else
-                $(me.refs.search).focus()
+                $(@refs.search).focus()
         $(@refs.appmenu).css("z-index", 1000000)
         $(@refs.systray).css("z-index", 1000000)
         @refs.btscreen.set "*", {
             iconclass: "fa fa-tv",
-            onbtclick: (e) ->
-                me.toggle false
+            onbtclick: (e) =>
+                @toggle false
                 Ant.OS.GUI.toggleFullscreen()
         }
         @refs.btuser.set "*", {
             iconclass: "fa fa-user-circle-o",
-            onbtclick: (e) ->
-                me.toggle false
+            onbtclick: (e) =>
+                @toggle false
                 Ant.OS.GUI.openDialog("InfoDialog", Ant.OS.setting.user)
         }
         @refs.btlogout.set "*", {
             iconclass: "fa fa-power-off",
-            onbtclick: (e) ->
-                me.toggle false
+            onbtclick: (e) =>
+                @toggle false
                 Ant.OS.exit()
         }
-        @refs.osmenu.set "onmenuselect", (e) ->
-            me.toggle true
+        @refs.osmenu.set "onmenuselect", (e) =>
+            @toggle true
         
         ($ @refs.overlay).css "left", 0
             .css "top", "#{$(@refs.panel).height()}px"
             .css "bottom", "0"
             .hide()
-        ($ @refs.search).keyup (e) ->
-            me.search e
+        ($ @refs.search).keyup (e) =>
+            @search e
 
-        $(@refs.applist).click (e) ->
-            me.open()
-        Ant.OS.GUI.bindKey "CTRL- ", (e) ->
-            if me.view is false
-                me.toggle true
+        $(@refs.applist).click (e) =>
+            @open()
+        Ant.OS.GUI.bindKey "CTRL- ", (e) =>
+            if @view is false
+                @toggle true
             else
-                me.toggle false
-            me.view = not me.view
+                @toggle false
+            @view = not @view
         Ant.OS.announcer.trigger("syspanelloaded")
 
 Ant.OS.GUI.define "afx-sys-panel", SystemPanelTag

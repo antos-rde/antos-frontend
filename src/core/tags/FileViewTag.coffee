@@ -33,13 +33,12 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
 
     __path__: (v) ->
         return unless v
-        me = @
         return unless @get "fetch"
         @get("fetch")(v)
-            .then (data) ->
+            .then (data) =>
                 return unless data
-                me.set "data", data
-                me.refs.status.set("text", " ") if me.get "status"
+                @set "data", data
+                @refs.status.set("text", " ") if @get "status"
             .catch (e) ->
                 # this should be handled by the OS
                 Ant.OS.announcer.oserror e
@@ -69,9 +68,8 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
 
     refreshList: () ->
         items = []
-        me = @
-        $.each @get("data"), (i, v) ->
-            return if v.filename[0] is '.' and not me.get("showhidden")
+        $.each @get("data"), (i, v) =>
+            return if v.filename[0] is '.' and not @get("showhidden")
             v.text = v.filename
             v.text = v.text.substring(0, 9) + "..." if v.text.length > 10
             v.iconclass = if v.iconclass then v.iconclass else v.type
@@ -81,9 +79,8 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
 
     refreshGrid: () ->
         rows = []
-        me = @
-        $.each @get("data"), (i, v) ->
-            return if v.filename[0] is '.' and not me.get("showhidden")
+        $.each @get("data"), (i, v) =>
+            return if v.filename[0] is '.' and not @get("showhidden")
             v.text = v.filename
             v.iconclass = if v.iconclass then v.iconclass else v.type
             row = [
@@ -112,8 +109,8 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
     getTreeData: (data) ->
         nodes = []
         me = @
-        $.each data, (i, v) ->
-            return if v.filename[0] is '.' and not me.get("showhidden")
+        $.each data, (i, v) =>
+            return if v.filename[0] is '.' and not @get("showhidden")
             v.name = v.filename
             if v.type is 'dir'
                 v.nodes = []
@@ -176,30 +173,29 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
             @observable.trigger "fileopen", evt
 
     mount: () ->
-        me = @
-        @observable.on "resize", (e) -> me.calibrate()
-        @refs.treeview.set "fetch", (v) ->
-            new Promise (resolve, reject) ->
-                return resolve undefined unless me.get("fetch")
+        @observable.on "resize", (e) => @calibrate()
+        @refs.treeview.set "fetch", (v) =>
+            new Promise (resolve, reject) =>
+                return resolve undefined unless @get("fetch")
                 return resolve undefined unless v.get("data").path
-                me.get("fetch")(v.get("data").path)
-                    .then (d) -> resolve me.getTreeData(d.sort me.sortByType)
+                @get("fetch")(v.get("data").path)
+                    .then (d) => resolve @getTreeData(d.sort @sortByType)
                     .catch (e) -> reject e
         @refs.gridview.set "header", @header
         # even handles
-        @refs.listview.set "onlistselect", (e) ->
-            me.fileselect e.data.item.get("data")
-        @refs.gridview.set "onrowselect", (e) ->
-            me.fileselect $(e.data.item).children()[0].get("data")
-        @refs.treeview.set "ontreeselect", (e) ->
-            me.fileselect e.data.item.get("data")
+        @refs.listview.set "onlistselect", (e) =>
+            @fileselect e.data.item.get("data")
+        @refs.gridview.set "onrowselect", (e) =>
+            @fileselect $(e.data.item).children()[0].get("data")
+        @refs.treeview.set "ontreeselect", (e) =>
+            @fileselect e.data.item.get("data")
         # dblclick
-        @refs.listview.set "onlistdbclick", (e) ->
-            me.filedbclick e.data.item.get("data")
-        @refs.gridview.set "oncelldbclick", (e) ->
-            me.filedbclick e.data.item.get("data")
-        @refs.treeview.set "ontreedbclick", (e) ->
-            me.filedbclick e.data.item.get("data")
+        @refs.listview.set "onlistdbclick", (e) =>
+            @filedbclick e.data.item.get("data")
+        @refs.gridview.set "oncelldbclick", (e) =>
+            @filedbclick e.data.item.get("data")
+        @refs.treeview.set "ontreedbclick", (e) =>
+            @filedbclick e.data.item.get("data")
         @switchView()
 
     layout: () ->

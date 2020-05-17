@@ -24,9 +24,8 @@ class BaseService extends this.OS.GUI.BaseModel
         @text = ""
         @timer = undefined
         @holder = undefined
-        me = @
-        @onmenuselect = (d) ->
-            me.awake d
+        @onmenuselect = (d) =>
+            @awake d
 
     init: ()->
         #implement by user
@@ -42,10 +41,9 @@ class BaseService extends this.OS.GUI.BaseModel
         @holder = h
     
     watch: ( t, f) ->
-        me = @
-        func = () ->
+        func = () =>
             f()
-            me.timer = setTimeout (() -> func()), t
+            @timer = setTimeout (() -> func()), t
         func()
     onexit: (evt) ->
         console.log "clean timer" if @timer

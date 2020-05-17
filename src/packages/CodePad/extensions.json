@@ -14,15 +14,11 @@
             },
             {
                 "text": "__(Build and Run)",
-                "name": "build"
+                "name": "buildnrun"
             },
             {
                 "text": "__(Build release)",
                 "name": "release"
-            },
-            {
-                "text": "__(Build options)",
-                "name": "options"
             }
         ]
     }

@@ -1,7 +1,6 @@
 class ListViewItemTag extends Ant.OS.GUI.BaseTag
     constructor: (r, o) ->
         super r, o
-        me = @
         @setopt "data", {}
         @setopt "oncontextmenu", (e) ->
         @setopt "onclick", (e) ->
@@ -11,6 +10,7 @@ class ListViewItemTag extends Ant.OS.GUI.BaseTag
         @setopt "index", 0
         @setopt "closable", false
         @setopt "selected", false
+
     __closable__: (v) ->
         if v then $(@refs.btcl).show() else $(@refs.btcl).hide()
 
@@ -21,21 +21,20 @@ class ListViewItemTag extends Ant.OS.GUI.BaseTag
         @get("onselect")({ item: @root })
 
     mount: () ->
-        me = @
-        $(@refs.item).contextmenu (e) ->
-            e.item = me.root
-            me.get("oncontextmenu")(e)
+        $(@refs.item).contextmenu (e) =>
+            e.item = @root
+            @get("oncontextmenu")(e)
 
-        $(@refs.item).click (e) ->
-            e.item = me.root
-            me.get("onclick")(e)
+        $(@refs.item).click (e) =>
+            e.item = @root
+            @get("onclick")(e)
 
-        $(@refs.item).dblclick (e) ->
-            e.item = me.root
-            me.get("ondbclick")(e)
-        $(@refs.btcl).click (e) ->
-            e.item = me.root
-            me.get("onclose")(e)
+        $(@refs.item).dblclick (e) =>
+            e.item = @root
+            @get("ondbclick")(e)
+        $(@refs.btcl).click (e) =>
+            e.item = @root
+            @get("onclose")(e)
     layout: () ->
         [{
             el: "li", ref: "item", children: [
@@ -60,6 +59,9 @@ class SimpleListItemTag extends ListViewItemTag
         @set "selected", v.selected if v.selected
         @set "closable", v.closable if v.closable
 
+    __selected: (v) ->
+        @get("data").selected = v
+
     update: () ->
         @set "data", @get("data")
 
@@ -83,13 +85,12 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
-        me = @
-        @root.push = (e) -> me.push e
-        @root.remove = (e) -> me.remove e
-        @root.unshift = (e) -> me.unshift e
-        @root.unselect = () -> me.unselect()
-        @root.selectNext = () -> me.selectNext()
-        @root.selectPrev = () -> me.selectPrev()
+        @root.push = (e) => @push e
+        @root.remove = (e) => @remove e
+        @root.unshift = (e) => @unshift e
+        @root.unselect = () => @unselect()
+        @root.selectNext = () => @selectNext()
+        @root.selectPrev = () => @selectPrev()
 
     multiselect: () ->
         return false if @get "dropdown"
@@ -110,18 +111,17 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
             @get("data").push item if not  @has_data item
             el.appendTo @refs.mlist
         el[0].uify @observable
-        me = @
         el[0]
-            .set "oncontextmenu", (e) ->
-                me.iclick e, true
-            .set "ondbclick", (e) ->
-                me.idbclick e, false
-            .set "onclick", (e) ->
-                me.iclick e, false
-            .set "onselect", (e) ->
-                me.iselect e
-            .set "onclose", (e) ->
-                me.iclose e
+            .set "oncontextmenu", (e) =>
+                @iclick e, true
+            .set "ondbclick", (e) =>
+                @idbclick e, false
+            .set "onclick", (e) =>
+                @iclick e, false
+            .set "onselect", (e) =>
+                @iselect e
+            .set "onclose", (e) =>
+                @iclose e
             .set "data", item
         item.domel = el[0]
         el[0]
@@ -221,9 +221,8 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @observable.trigger "listselect", evt
 
     mount: () ->
-        me = @
         $(@refs.btlist).hide()
-        @observable.on "resize", (e) -> me.calibrate()
+        @observable.on "resize", (e) => @calibrate()
         @calibrate()
 
     iclose: (e) ->
@@ -239,11 +238,10 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         $(@refs.mlist).removeAttr "style"
         $(@refs.container).css "flex", 1
         $(@root).removeClass()
-        me = @
-        drop = (e) ->
-            me.dropoff e
-        show = (e) ->
-            me.showlist e
+        drop = (e) =>
+            @dropoff e
+        show = (e) =>
+            @showlist e
         if v
             $(@root).addClass "dropdown"
             $(@refs.current).show()
