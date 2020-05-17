@@ -56,6 +56,7 @@ class CommandPalette extends this.OS.GUI.BasicDialog
     selectCommand: () ->
         el = @cmdlist.get "selectedItem"
         return unless el
+        el.set "selected", false
         result = false
         result = @handle { data: { item: el } } if @handle
         return @quit() unless result
