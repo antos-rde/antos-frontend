@@ -1,0 +1,25 @@
+afx-nspinner ul li{
+    border: 1px solid #a6a6a6;
+    width: 100%;
+}
+
+afx-nspinner ul li.incr{
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+
+afx-nspinner ul li.decr{
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+afx-nspinner ul li:hover{
+    color:#116cD6;
+}
+afx-nspinner ul li.incr i:before{
+    font-size: 16px;
+}
+afx-nspinner ul li.decr i:before{
+    font-size: 16px;
+}

@@ -41,7 +41,7 @@ class Files extends this.OS.GUI.BaseApplication
                 file.mime = "dir" if file.type is "dir"
                 
                 for v in @_gui.appsByMime file.mime
-                    v.args = [ file.path ]
+                    v.args = [ file ]
                     apps.push v
             m.set "items", [
                 { text: "__(Open with)", dataid: "#{@name}-open", child: apps },
@@ -216,9 +216,8 @@ class Files extends this.OS.GUI.BaseApplication
                         file.path.asFileHandle().move "#{@currdir.path}/#{d}"
                             .then (r) =>
                                 @error __("Fail to rename to {0}: {1}", d, r.error) if r.error
-                    .catch (e) =>
-                        console.log e
-                        @error __("Fail to rename: {0}", e.stack)
+                            .catch (e) =>
+                                @error __("Fail to rename: {0}", file.path), e
             
             when "#{@name}-rm"
                 return unless file
@@ -232,8 +231,8 @@ class Files extends this.OS.GUI.BaseApplication
                         file.path.asFileHandle().remove()
                             .then (r) =>
                                 @error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
-                    .catch (e) =>
-                        @error __("Fail to delete: {0}", e.stack)
+                            .catch (e) =>
+                                @error __("Fail to delete: {0}", file.path), e
             
             when "#{@name}-cut"
                 return unless file
@@ -257,7 +256,7 @@ class Files extends this.OS.GUI.BaseApplication
                             @clipboard = undefined
                             @error __("Fail to paste: {0}", r.error) if r.error
                         .catch (e) =>
-                            @error __("Fail to paste: {0}", e.stack)
+                            @error __("Fail to paste: {0}", @clipboard.file.path), e
                 else
                     @clipboard.file.read("binary")
                         .then  (d) =>
@@ -268,8 +267,10 @@ class Files extends this.OS.GUI.BaseApplication
                                 .then (r) =>
                                     @clipboard = undefined
                                     @error __("Fail to paste: {0}", r.error) if r.error
+                                .catch (e) =>
+                                    @error __("Fail to paste: {0}", @clipboard.file.path), e
                         .catch (e) =>
-                            @error __("Fail to paste: {0}", e.stack)
+                            @error __("Fail to read: {0}", @clipboard.file.path), e
             else
                 @_api.handle.setting()
     
@@ -285,8 +286,8 @@ class Files extends this.OS.GUI.BaseApplication
                         @currdir.mk(d)
                             .then (r) =>
                                 @error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    .catch (e) =>
-                        @error __("Fail to create: {0}", e.stack)
+                            .catch (e) =>
+                                @error __("Fail to create: {0}", d), e
             
             when "#{@name}-mkf"
                 @openDialog("PromptDialog", {
@@ -298,8 +299,8 @@ class Files extends this.OS.GUI.BaseApplication
                         fp.write("text/plain")
                             .then (r) =>
                                 @error __("Fail to create {0}: {1}", d, r.error) if r.error
-                    .catch (e) =>
-                        @error __("Fail to create: {0}", e.stack)
+                            .catch (e) =>
+                                @error __("Fail to create: {0}", fp.path)
             
             when "#{@name}-info"
                 return unless file
@@ -310,7 +311,7 @@ class Files extends this.OS.GUI.BaseApplication
                     .then (r) =>
                         @error __("Fail to upload to {0}: {1}", @currdir.path, r.error) if r.error
                     .catch (e) =>
-                        @error __("Fail to upload: {0}", e.stack)
+                        @error __("Fail to upload: {0}", e.toString()), e
 
             when "#{@name}-share"
                 return unless file and file.type is "file"
@@ -319,13 +320,13 @@ class Files extends this.OS.GUI.BaseApplication
                         return @error __("Cannot share file: {0}", r.error) if r.error
                         return @notify __("Shared url: {0}", r.result)
                     .catch (e) =>
-                        @error __("Fail to publish: {0}", e.stack)
+                        @error __("Fail to publish: {0}", file.path), e
 
             when "#{@name}-download"
                 return unless file.type is "file"
                 file.path.asFileHandle().download()
                     .catch (e) =>
-                        @error __("Fail to download: {0}", e.stack)
+                        @error __("Fail to download: {0}", file.path), e
             else
                 console.log e
 

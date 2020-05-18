@@ -1,4 +1,3 @@
-/*afx-app-window[data-id ='markon-win'] div.CodeMirror-scroll{
-    height: calc(100%) - 50px;
-    background-color: red;
-}*/
+afx-app-window[data-id ='markon-win'] div.editor-toolbar{
+    background-color: white;
+}

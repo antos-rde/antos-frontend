@@ -1,6 +1,6 @@
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container
 {
-    border-top: 1px solid #272822;
+    /*border-top: 1px solid #272822;*/
     overflow: hidden;
     font-size: 12px;
 }

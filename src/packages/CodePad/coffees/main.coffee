@@ -126,7 +126,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                 file.cache = d or ""
                 @newTab file
             .catch (e) =>
-                @error __("Unable to open: {0}", file.path)
+                @error __("Unable to open: {0}", file.path), e
     
     findTabByFile: (file) ->
         lst = @tabbar.get "items"
@@ -242,7 +242,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                         @extensions[ext.name].onchildselect (e) =>
                             @loadAndRunExtensionAction e.data.item.get "data"
             .catch (e) =>
-                @error __("Cannot load extension meta data")
+                @error __("Cannot load extension meta data"), e
 
     runExtensionAction: (name, action) ->
         return @error __("Unable to find extension: {0}", name) unless CodePad.extensions[name]
@@ -252,7 +252,7 @@ class CodePad extends this.OS.GUI.BaseApplication
             .then () ->
                 ext[action]()
             .catch (e) =>
-                @error e.stack
+                @error __("Unable to preload extension"), e
 
     loadAndRunExtensionAction: (data) ->
         name = data.parent.name
@@ -264,7 +264,7 @@ class CodePad extends this.OS.GUI.BaseApplication
             @_api.requires path
                 .then () => @runExtensionAction name, action
                 .catch (e) =>
-                    @error __("unable to load extension: {}", name)
+                    @error __("unable to load extension: {0}", name), e
         else
             @runExtensionAction name, action
 
@@ -306,7 +306,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                                 return @error __("Fail to create {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
                     .catch (e) =>
-                        @error __("Fail to create: {0}", e.stack)
+                        @error __("Fail to create: {0}", e.stack), e
             
             when "newdir"
                 return unless dir
@@ -320,7 +320,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                                 return @error __("Fail to create {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
                     .catch (e) =>
-                        @error __("Fail to create: {0}", e.stack)
+                        @error __("Fail to create: {0}", dir.path), e
 
             when "rename"
                 return unless file
@@ -338,8 +338,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                                 return @error __("Fail to rename to {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
                     .catch (e) =>
-                        console.log e
-                        @error __("Fail to rename: {0}", e.stack)
+                        @error __("Fail to rename: {0}", file.path), e
 
             when "delete"
                 return unless file
@@ -357,7 +356,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                                 return @error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
                                 @fileview.update dir.path
                     .catch (e) =>
-                        @error __("Fail to delete: {0}", e.stack)
+                        @error __("Fail to delete: {0}", file.path), e
             
             else
                 
@@ -370,7 +369,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                 file.text = file.basename
                 @tabbar.update()
                 @scheme.set "apptitle", "#{@currfile.basename}"
-            .catch (e) => @error e.stack
+            .catch (e) => @error __("Unable to save file: {0}", file.path), e
     
     
     saveAs: () ->
@@ -383,8 +382,6 @@ class CodePad extends this.OS.GUI.BaseApplication
                 d = d.parent() if f.file.type is "file"
                 @currfile.setPath "#{d.path}/#{f.name}"
                 @save @currfile
-            .catch (e) =>
-                @error e.stack
 
     menuAction: (dataid, r) ->
         me = @

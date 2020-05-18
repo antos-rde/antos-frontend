@@ -169,8 +169,8 @@ Ant.OS.API =
     # handles are defined in /src/handles
     handle: {}
     shared: {} # shared libraries
-    searchHandle:{}
-    lang:{}
+    searchHandle: {}
+    lang: {}
     #request a user data
     mid: () ->
         return Ant.OS.announcer.getMID()
@@ -182,16 +182,23 @@ Ant.OS.API =
                 type: 'POST',
                 url: p,
                 contentType: 'application/json',
-                data: JSON.stringify d,
+                data: JSON.stringify(d,
+                (k, v) ->
+                    return undefined if k is "domel"
+                    return v
+                , 4),
                 dataType: 'json',
                 success: null
             }
             .done (data) ->
                 Ant.OS.API.loaded q, p, "OK"
                 resolve(data)
-            .fail (e, s) ->
+            .fail (j, s, e) ->
                 Ant.OS.API.loaded q, p, "FAIL"
-                reject(e, s)
+                if e
+                    reject e
+                else
+                    reject(Ant.OS.API.throwe s)
     
     blob: (p) ->
         new Promise (resolve, reject) ->
@@ -232,9 +239,12 @@ Ant.OS.API =
                     Ant.OS.API.loaded q, p, "OK"
                     resolve(data)
                     o.remove()
-                .fail (e, s) ->
+                .fail (j, s, e) ->
                     Ant.OS.API.loaded q, p, "FAIL"
-                    reject(e, s)
+                    if e
+                        reject e
+                    else
+                        reject(Ant.OS.API.throwe s)
                     o.remove()
             o.click()
 
@@ -268,21 +278,15 @@ Ant.OS.API =
                 .done (data) ->
                     Ant.OS.API.loaded q, p, "OK"
                     resolve(data)
-                .fail (e, s) ->
+                .fail (j, s, e) ->
                     Ant.OS.API.loaded q, p, "FAIL"
-                    reject(e, s)
+                    if e
+                        reject e
+                    else
+                        reject(Ant.OS.API.throwe s)
                 
     script: (p) ->
-        new Promise (resolve, reject) ->
-            q = Ant.OS.announcer.getMID()
-            Ant.OS.API.loading q, p
-            $.getScript p
-                .done (data) ->
-                    Ant.OS.API.loaded q, p, "OK"
-                    resolve(data)
-                .fail (e, s) ->
-                    Ant.OS.API.loaded q, p, "FAIL"
-                    reject(e, s)
+            Ant.OS.API.get p, "script"
 
     resource: (r) ->
         path = "resources/#{r}"
@@ -400,7 +404,7 @@ Ant.OS.API =
             Object.defineProperty o, v, {
                 enumerable: true,
                 set: (value) ->
-                    for k,l of @__p
+                    for k, l of @__p
                         @__p[k] = false
                     o.__p[v] = value
                 , get: () ->
@@ -412,7 +416,7 @@ Ant.OS.API =
             configurable: true,
             enumerable: false,
             get: () ->
-                for k,v of o.__p
+                for k, v of o.__p
                     return k if v
         }
         return o

@@ -91,20 +91,25 @@ languages:
 genlang:
 	read -r -p "Enter locale: " LOCAL;\
 		./src/core/languages/gen.sh ./src ./src/core/languages/$$LOCAL.json
-build_themes: antos_themes_build
+build_themes: antos_light antos_dark
 	-rm -rf $(BUILDDIR)/resources/themes/system/*
 	-mkdir -p $(BUILDDIR)/resources/themes/system
 	cp -r src/themes/system/fonts $(BUILDDIR)/resources/themes/system
 	cp -r src/themes/system/wp $(BUILDDIR)/resources/themes/system
 	for f in src/themes/system/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/system/system.css;done
 
-antos_themes_build:
-	@echo "$(BLUE)Building themes name: antos$(NC)"
-	-rm -rf $(BUILDDIR)/resources/themes/antos/*
-	-mkdir -p $(BUILDDIR)/resources/themes/antos
-	for f in src/themes/antos/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos/antos.css;done
-	-mkdir -p $(BUILDDIR)/resources/themes/antos/fonts
-	cp -rf src/themes/antos/fonts/* $(BUILDDIR)/resources/themes/antos/fonts
+antos_light:
+	@echo "$(BLUE)Building themes name: antos-light$(NC)"
+	-rm -rf $(BUILDDIR)/resources/themes/antos_light/*
+	-mkdir -p $(BUILDDIR)/resources/themes/antos_light
+	for f in src/themes/antos_light/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos_light/antos_light.css;done
+
+
+antos_dark:
+	@echo "$(BLUE)Building themes name: antos-dark$(NC)"
+	-rm -rf $(BUILDDIR)/resources/themes/antos_dark/*
+	-mkdir -p $(BUILDDIR)/resources/themes/antos_dark
+	for f in src/themes/antos_dark/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css;done
 
 
 build_packages:
@@ -139,7 +144,8 @@ uglify:
 	# uglify tags
 	# npm install uglifycss -g
 	# uglify the css
-	uglifycss  --output $(BUILDDIR)/resources/themes/antos/antos.css $(BUILDDIR)/resources/themes/antos/antos.css
+	uglifycss  --output $(BUILDDIR)/resources/themes/antos_light/antos_light.css $(BUILDDIR)/resources/themes/antos_light/antos_light.css
+	uglifycss  --output $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css
 	uglifycss  --output $(BUILDDIR)/resources/themes/system/system.css $(BUILDDIR)/resources/themes/system/system.css
 	#uglify each packages
 

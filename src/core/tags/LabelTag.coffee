@@ -5,9 +5,7 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         @setopt "icon", undefined
         @setopt "iconclass", undefined
         @setopt "class", undefined
-        @refs.text = document.createTextNode ""
-        $(@refs.container).append @refs.text
-        @setopt "text", ""
+        @setopt "text", undefined
 
     mount: () ->
 
@@ -37,7 +35,6 @@ class LabelTag extends Ant.OS.GUI.BaseTag
         $(@refs.iclass).removeClass()
         if v
             $(@refs.iclass).addClass v
-            $(@refs.iclass).css "margin-right", "5px"
             $(@refs.iclass).show()
         else
             $(@refs.iclass).hide()
@@ -45,13 +42,18 @@ class LabelTag extends Ant.OS.GUI.BaseTag
 
 
     __text__: (v) ->
-        @refs.text.nodeValue =  v.__() if v
+        if v and v isnt ""
+            $(@refs.text).show()
+            $(@refs.text).html v.__()
+        else
+            $(@refs.text).hide()
 
     layout: () ->
        [{
             el: "span", ref: "container", children: [
                 { el: "i", ref: "iclass" },
-                { el: "i", ref: "i", class: "icon-style" }
+                { el: "i", ref: "i", class: "icon-style" },
+                { el: "i", ref: "text", class: "label-text" }
             ]
         }]
 

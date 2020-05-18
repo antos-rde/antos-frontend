@@ -27,20 +27,20 @@ class App.extensions.AntOSDK extends App.BaseExtension
     buildnrun: () ->
         @metadata("project.json").then (meta) =>
             @build(meta).then () =>
-                @run(meta).catch (e) => @error.toString()
+                @run(meta).catch (e) => @error __("Unable to run project"), e
             .catch (e) =>
-                @error e.toString()
-        .catch (e) => @error e.toString()
+                @error __("Unable to build project"), e
+        .catch (e) => @error __("Unable to read meta-data"), e
 
     release: () ->
         @metadata("project.json").then (meta) =>
             @build(meta).then () =>
                 @mkar("#{meta.root}/build/debug", "#{meta.root}/build/release/#{meta.name}.zip")
                     .then () ->
-                    .catch (e) => @error.toString()
+                    .catch (e) => @error __("Unable to create package archive"), e
             .catch (e) =>
-                @error e.toString()
-        .catch (e) => @error e.toString()
+                @error __("Unable to build project"), e
+        .catch (e) => @error __("Unable to read meta-data"), e
 
 
     # private functions
@@ -70,8 +70,8 @@ class App.extensions.AntOSDK extends App.BaseExtension
                         @app.currdir = rpath.asFileHandle()
                         @app.initSideBar()
                         @app.openFile "#{rpath}/README.md".asFileHandle()
-                    .catch (e) => @error e.stack
-            .catch (e) => @error e.stack
+                    .catch (e) => @error __("Unable to create template files"), e
+            .catch (e) => @error __("Unable to create project directory"), e
 
     verify: (list) ->
         new Promise (resolve, reject) =>
@@ -112,7 +112,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
                             .setCache jsrc
                             .write("text/plain")
                             .then (d) ->
-                                return e d if d.error
+                                return e d.error if d.error
                                 r()
                             .catch (ex) -> e ex
                 .then () =>
@@ -125,7 +125,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
                             .setCache txt
                             .write("text/plain")
                             .then (d) ->
-                                return e d if d.error
+                                return e d.error if d.error
                                 r()
                             .catch (ex) -> e ex
                 .then () =>

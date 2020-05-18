@@ -168,8 +168,8 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                 width: $(@root).css("width"),
                 height: $(@root).css("height")
             }
-            w = $(@desktop).width() - 5
-            h = $(@desktop).height() - 10
+            w = $(@desktop).width()
+            h = $(@desktop).height()
             $(@root)
                 .css("top", "0")
                 .css("left", "0")

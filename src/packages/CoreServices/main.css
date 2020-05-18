@@ -1,5 +1,5 @@
 afx-overlay[data-id = "notifyzone"]{
-    background-color: rgba(215,215,215,0.7);
+    /*opacity: 0.85;*/
     
     overflow-y: auto;
     overflow-x: hidden;
@@ -7,23 +7,22 @@ afx-overlay[data-id = "notifyzone"]{
     margin: 0;
 }
 afx-overlay[data-id = "notifyzone"] afx-button button{
-    width: 250px;
-    background-color: rgba(215,215,215,0.9);
-}
-afx-overlay[data-id = "notifyzone"] afx-button button:active{
-    color:#414339;
+    width: 100%;
+    border-radius: 0;
 }
 afx-list-view[data-id = "notifylist"]
 {
     padding:0;
 }
-afx-list-view[data-id = "notifylist"] li{
-    border:1px solid #a6a6a6;
-    border-radius: 6px;
-    margin-bottom: 2px;
+afx-list-view[data-id = "notifylist"] > div.list-container > ul li{
+    border:1px solid #464646;
+    border-radius: 3px;
+    margin-bottom: 5px;
     -ms-word-break: break-all;
     word-break: break-all;
     word-break: break-word;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 afx-overlay[data-id = "feedzone"]{
@@ -40,12 +39,23 @@ afx-list-view[data-id = "notifeed"]
     margin:0;
 }
 afx-list-view[data-id = "notifeed"] li{
-    box-shadow: 1px 1px 1px #9f9F9F;
-    border:1px solid #a6a6a6;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    border:1px solid #262626;
     border-radius: 6px;
     margin-bottom: 2px;
     z-index: 99999;
     -ms-word-break: break-all;
     word-break: break-all;
     word-break: break-word;
+}
+
+afx-app-window[data-id ='LogDialog'] div[data-id ='container']{
+    overflow: auto;
+}
+
+afx-app-window[data-id ='LogDialog'] pre {
+    padding: 10px;
+}
+afx-app-window[data-id ='LogDialog'] input{
+    height: 100%;
 }

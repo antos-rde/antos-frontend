@@ -5,7 +5,7 @@
 
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of 
+# published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -80,7 +80,7 @@ class BaseFileHandle
             return resolve "" unless @cache
             if t is "object" or typeof @cache is "string"
                 if t is "object"
-                    b64 = (JSON.stringify @cache).asBase64()
+                    b64 = JSON.stringify(@cache, undefined, 4).asBase64()
                 else
                     b64 = @cache.asBase64()
                 b64 = "data:#{m};base64,#{b64}"

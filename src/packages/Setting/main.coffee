@@ -41,6 +41,6 @@ class Setting extends this.OS.GUI.BaseApplication
                     return @error __("Cannot save system setting: {0}", d.error) if d.error
                     @notify __("System setting saved")
                 .catch (e) =>
-                    @error __("Cannot save system setting: {0}", e.stack)
+                    @error __("Cannot save system setting: {0}", e.toString()), e
 Setting.singleton = true
 this.OS.register "Setting", Setting

@@ -48,7 +48,8 @@
         ],
         apps: []
     } if not Ant.OS.setting.system.startup
-
+    if not Ant.OS.setting.system.error_report
+        Ant.OS.setting.system.error_report = "https://os.iohub.dev/report"
     Ant.OS.setting.system.pkgpaths = {
         user: "home://.packages",
         system: "os://packages"
@@ -56,8 +57,18 @@
     Ant.OS.setting.system.locale = "en_GB" unless Ant.OS.setting.system.locale
     Ant.OS.setting.system.menu = {} unless Ant.OS.setting.system.menu
     Ant.OS.setting.system.repositories = [] unless Ant.OS.setting.system.repositories
-    Ant.OS.setting.appearance.theme = "antos" unless Ant.OS.setting.appearance.theme
-
+    Ant.OS.setting.appearance.theme = "antos_dark" unless Ant.OS.setting.appearance.theme
+    if not Ant.OS.setting.appearance.themes
+        Ant.OS.setting.appearance.themes = [
+            {
+                text: "AntOS light",
+                name: "antos_light"
+            },
+             {
+                text: "AntOS dark",
+                name: "antos_dark"
+            }
+        ]
     Ant.OS.setting.VFS.gdrive = {
         CLIENT_ID: ""
         API_KEY: ""

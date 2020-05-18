@@ -1,0 +1,53 @@
+afx-app-window div.afx-window-wrapper{
+    border:1px solid #262626;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    border-radius: 0px;
+    background-color:#363636;
+}
+afx-app-window.unactive > div.afx-window-wrapper{
+    background-color: #464646;
+}
+
+afx-app-window ul.afx-window-top{
+    height: 20px;
+    border-bottom: 1px solid #262626;
+}
+afx-app-window ul.afx-window-top li{
+    margin-left: 3px;
+    margin-top:4px;
+    
+}
+afx-app-window ul.afx-window-top .afx-window-close,.afx-window-minimize,.afx-window-maximize{
+    width: 10px;
+    height: 10px;
+    border-radius: 0;
+}
+afx-app-window ul li.afx-window-close{
+    background-color: #Fc605b;
+     float:left;
+}
+afx-app-window ul li.afx-window-minimize{
+    background-color: #fec041;
+     float:left;
+}
+afx-app-window ul li.afx-window-maximize{
+    background-color: #35cc4b;
+     float:left;
+}
+
+afx-app-window ul li.afx-window-title{
+    margin-top:1px;
+    text-align: center;
+}
+
+afx-app-window div.afx-window-content
+{
+    background-color:#363636;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+afx-app-window.unactive div.afx-window-content
+{
+    background-color:#464646;
+}

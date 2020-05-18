@@ -1,0 +1,58 @@
+afx-menu afx-switch span{
+    width: 20px;
+    height: 16px;
+    font-size: 16px;
+    /*margin-top:5px;*/
+}
+afx-menu span.shortcut{
+   text-align: right;
+}
+afx-menu li:hover > a afx-switch span:before{
+    color:white;
+}
+
+afx-menu afx-menu ul {
+    padding: 0;
+    border:1px solid #a6a6a6;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    /*box-shadow: 2px 2px 2px #cbcbcb;*/
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    background-color: #e7e7e7;
+}
+afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
+    padding:3px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+afx-menu  afx-menu li{
+    min-width: 150px;
+}
+
+afx-menu li:hover  {
+    background-color: #2786F3;
+}
+afx-menu li:hover > a {
+    color: white;
+}
+
+afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before{
+    content: "\f054"; 
+    font-family: "FontAwesome";
+    font-size: 10px;
+    right:5px;
+    color: #414339;
+    position:absolute;
+    top:25%;
+ }
+
+ afx-menu ul.context{
+    border:1px solid #a6a6a6;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    background-color: #e7e7e7;
+ }
+ afx-menu  ul.context li{
+    min-width: 150px;
+ }

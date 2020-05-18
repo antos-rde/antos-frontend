@@ -66,9 +66,15 @@ class AppearanceHandle extends SettingHandle
             @parent.systemsetting.appearance.wp.repeat = e.data.item.get("data").text
             @parent._gui.wallpaper()
         @wprepeat.set "data", repeats
-
-        @themelist.set "data" , [{ text: "antos", selected: true }]
-        
+        currtheme = @parent.systemsetting.appearance.theme
+        v.selected = v.name is currtheme for v in @parent.systemsetting.appearance.themes
+        @themelist.set "data" , @parent.systemsetting.appearance.themes
+        @themelist.set "onlistselect", (e) =>
+            data = e.data.item.get("data") if e and e.data
+            return unless data
+            return if data.name is @parent.systemsetting.appearance.theme
+            @parent.systemsetting.appearance.theme = data.name
+            @parent._gui.loadTheme data.name, true
         if not @syswp
             path = "os://resources/themes/system/wp"
             path.asFileHandle().read()
@@ -79,7 +85,7 @@ class AppearanceHandle extends SettingHandle
                         v.iconclass = "fa fa-file-image-o"
                     @syswp = d.result
                     @wplist.set "data", @getwplist()
-                .catch (e) => @parent.error e.stack
+                .catch (e) => @parent.error __("Unable to read: {0}", path), e
         else
             
             @wplist.set "data", @getwplist()

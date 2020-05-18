@@ -21,7 +21,6 @@ class MarkOn extends this.OS.GUI.BaseApplication
         super "MarkOn", args
     
     main: () ->
-        me = @
         markarea = @find "markarea"
         @container = @find "mycontainer"
         @previewOn = false
@@ -42,8 +41,8 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 {
                     name: "preview",
                     className: "fa fa-eye no-disable",
-                    action: (e) ->
-                        me.previewOn = !me.previewOn
+                    action: (e) =>
+                        @previewOn = !@previewOn
                         SimpleMDE.togglePreview e
                         #if(self.previewOn) toggle the highlight
                         #{
@@ -59,16 +58,16 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 }
             ]
         
-        @editor.codemirror.on "change", () ->
-            return if me.editormux
-            if me.currfile.dirty is false
-                me.currfile.dirty = true
-                me.scheme.set "apptitle", "#{me.currfile.basename}*"
-        @on "hboxchange", (e) -> me.resizeContent()
-        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
-        @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
-        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
-        @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
+        @editor.codemirror.on "change", () =>
+            return if @editormux
+            if @currfile.dirty is false
+                @currfile.dirty = true
+                @scheme.set "apptitle", "#{@currfile.basename}*"
+        @on "hboxchange", (e) => @resizeContent()
+        @bindKey "ALT-N", () => @actionFile "#{@name}-New"
+        @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
+        @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
+        @bindKey "ALT-W", () => @actionFile "#{@name}-Saveas"
         @resizeContent()
         @open @currfile
 
@@ -83,30 +82,27 @@ class MarkOn extends this.OS.GUI.BaseApplication
     open: (file) ->
         #find table
         return if file.path is "Untitled"
-        me = @
         file.dirty = false
         file.read()
-            .then (d) ->
-                me.currfile = file
-                me.editormux = true
-                me.editor.value d
-                me.scheme.set "apptitle", "#{me.currfile.basename}"
-                me.editormux = false
-            .catch (e) -> me.error e.stack
+            .then (d) =>
+                @currfile = file
+                @editormux = true
+                @editor.value d
+                @scheme.set "apptitle", "#{@currfile.basename}"
+                @editormux = false
+            .catch (e) => @error __("Unable to open: {0}", file.path), e
             
 
     save: (file) ->
-        me = @
         file.write("text/plain")
-            .then (d) ->
-                return me.error __("Error saving file {0}: {1}", file.basename, d.error) if d.error
+            .then (d) =>
+                return @error __("Error saving file {0}: {1}", file.basename, d.error) if d.error
                 file.dirty = false
                 file.text = file.basename
-                me.scheme.set "apptitle", "#{me.currfile.basename}"
-            .catch (e) -> me.error e.stack
+                @scheme.set "apptitle", "#{@currfile.basename}"
+            .catch (e) => @error __("Unable to save file: {0}", file.path), e
     
     menu: () ->
-        me = @
         menu = [{
                 text: "__(File)",
                 child: [
@@ -115,33 +111,29 @@ class MarkOn extends this.OS.GUI.BaseApplication
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
-                onchildselect: (e) -> me.actionFile e.data.item.get("data").dataid
+                onchildselect: (e) => @actionFile e.data.item.get("data").dataid
             }]
         menu
     
     actionFile: (e) ->
-        me = @
-        saveas = () ->
-            me.openDialog("FileDialog", {
+        saveas = () =>
+            @openDialog("FileDialog", {
                 title: __("Save as"),
-                file: me.currfile
+                file: @currfile
             })
-            .then (f) ->
+            .then (f) =>
                 d = f.file.path.asFileHandle()
                 d = d.parent() if f.file.type is "file"
-                me.currfile.setPath "#{d.path}/#{f.name}"
-                console.log me.currfile
-                me.save me.currfile
-            .catch (e) ->
-                me.error e.stack
+                @currfile.setPath "#{d.path}/#{f.name}"
+                @save @currfile
 
         switch e
             when "#{@name}-Open"
                 @openDialog("FileDialog", {
                     title: __("Open file")
                 })
-                .then (f) ->
-                    me.open f.file.path.asFileHandle()
+                .then (f) =>
+                    @open f.file.path.asFileHandle()
 
             when "#{@name}-Save"
                 @currfile.cache = @editor.value()
@@ -157,12 +149,11 @@ class MarkOn extends this.OS.GUI.BaseApplication
     
     cleanup: (evt) ->
         return unless @currfile.dirty
-        me = @
         evt.preventDefault()
-        @.openDialog "YesNoDialog", (d) ->
+        @.openDialog "YesNoDialog", (d) =>
             if d
-                me.currfile.dirty = false
-                me.quit()
+                @currfile.dirty = false
+                @quit()
         , __("Quit"), { text: __("Quit without saving ?") }
 
 MarkOn.dependencies = [

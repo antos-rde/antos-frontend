@@ -33,6 +33,6 @@ class LocaleHandle extends SettingHandle
                     v.selected = v.text is @parent.systemsetting.system.locale
                 @localelist = d.result
                 @lglist.set "data", @localelist
-            .catch (e) => @parent.error e.stack
+            .catch (e) => @parent.error __("Unable to read: {0}", path), e
         else
             @lglist.set "data", @localelist

@@ -50,36 +50,37 @@ class CodePad.BaseExtension
 
     mkar: (src, dest) ->
         @notify __("Preparing for release")
-        new Promise (r, e) =>
-            @import("os://scripts/jszip.min.js").then () ->
-                src.asFileHandle()
-                .read().then (d) ->
-                    return e d.error if d.error
-                    r d.result
-                .catch (ex) -> e ex
-            .catch (ex) -> e ex
-        .then (files) =>
+        new Promise (resolve, reject) =>
             new Promise (r, e) =>
-                zip = new JSZip()
-                fn = (list) =>
-                    return r zip if list.length is 0
-                    f = (list.splice 0, 1)[0].path.asFileHandle()
-                    return fn list if f.type is "dir"
-                    f.read("binary").then (d) =>
-                        zip.file f.basename, d, { binary: true }
-                        @notify __("add {0} to zip", f.basename)
-                        fn list
+                @import("os://scripts/jszip.min.js").then () ->
+                    src.asFileHandle()
+                    .read().then (d) ->
+                        return e d.error if d.error
+                        r d.result
                     .catch (ex) -> e ex
-                fn files
-        .then (zip) =>
-            zip.generateAsync({ type: "base64" }).then (data) =>
-                dest.asFileHandle()
-                .setCache('data:application/zip;base64,' + data)
-                .write("base64").then (r) =>
-                    return @error __("Cannot save the zip file: {0}", r.error) if r.error
-                    @notify __("Package is generated in release folder")
-                .catch (e) => @error e.toString()
-        .catch (e) => @error e.toString()
+                .catch (ex) -> e ex
+            .then (files) =>
+                new Promise (r, e) =>
+                    zip = new JSZip()
+                    fn = (list) =>
+                        return r zip if list.length is 0
+                        f = (list.splice 0, 1)[0].path.asFileHandle()
+                        return fn list if f.type is "dir"
+                        f.read("binary").then (d) =>
+                            zip.file f.basename, d, { binary: true }
+                            @notify __("add {0} to zip", f.basename)
+                            fn list
+                        .catch (ex) -> e ex
+                    fn files
+            .then (zip) =>
+                zip.generateAsync({ type: "base64" }).then (data) =>
+                    dest.asFileHandle()
+                    .setCache('data:application/zip;base64,' + data)
+                    .write("base64").then (r) =>
+                        return reject r.error if r.error
+                        @notify __("Package is generated in release folder")
+                    .catch (e) -> reject e
+            .catch (e) -> reject e
     
     mkdirAll: (list) ->
         new Promise (resolve, reject) =>

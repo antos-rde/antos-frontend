@@ -8,7 +8,6 @@ afx-app-window[data-id="am-window"] afx-grid-view afx-grid-row afx-grid-cell{
 
 
 afx-app-window[data-id="am-window"] afx-grid-view .grid_row_header afx-grid-cell{
-    background-color: #dfdfdf;
     border: 1px solid #a6a6a6;
     padding: 5px;
 }

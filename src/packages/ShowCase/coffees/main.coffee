@@ -120,8 +120,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
             @notify e
 
         fileview = @find 'fileview'
-        fileview.set "fetch", (path) =>
-            new Promise (resolve, reject) =>
+        fileview.set "fetch", (path) ->
+            new Promise (resolve, reject) ->
                 dir = path.asFileHandle()
                 dir.read().then (d) ->
                     p = dir.parent().asFileHandle()

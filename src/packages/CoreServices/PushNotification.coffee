@@ -15,6 +15,74 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
+Ant = this
+class LogDialog extends this.OS.GUI.BasicDialog
+    constructor: () ->
+        super "LogDialog", LogDialog.scheme
+
+    init: () ->
+        @loglist = @find "loglist"
+        @logdetail = @find "logdetail"
+        @loglist.set "data", @data.logs if @data and @data.logs
+        $(@find("txturi")).val Ant.OS.setting.system.error_report
+        @loglist.set "onlistselect", (e) =>
+            data = e.data.item.get("data") if e and e.data
+            return unless data
+            stacktrace = "None"
+            stacktrace = data.error.stack if data.error
+            $(@logdetail).text LogDialog.template.format(
+                data.text,
+                data.type,
+                data.time,
+                data.name,
+                data.id,
+               stacktrace
+            )
+        @find("btnreport").set "onbtclick", (e) =>
+            uri = $(@find("txturi")).val()
+            return if uri is ""
+            el = @loglist.get "selectedItem"
+            return unless el
+            data = el.get("data")
+            return unless data
+            Ant.OS.API.post uri, data
+                .then (d) =>
+                    @notify __("Error reported")
+                .catch (e) =>
+                    @notify __("Unable to report error: {0}", e.toString())
+
+LogDialog.template = """
+{0}
+Log type: {1}
+Log time: {2}
+Process: {3} ({4})
+detail:
+
+{5}
+"""
+LogDialog.scheme = """
+<afx-app-window data-id="LogDialog"  width='500' height='350' apptitle = "__(System error log)" >
+    <afx-hbox>
+        <afx-list-view data-id = "loglist" data-width="200"> </afx-list-view>
+        <afx-resizer data-width = "2" />
+        <afx-vbox>
+            <div data-height="10" />
+            <div data-id = "container">
+                <pre><code data-id="logdetail"></code></pre>
+            </div>
+            <div data-height="10" />
+            <afx-hbox  style="text-align:right;" data-height = "27">
+                <div data-width="5" />
+                <input type = "text" data-id = "txturi" />
+                <afx-button data-width ="80" text = "__(Report)"
+                    iconclass = "fa fa-bug" data-id = "btnreport" />
+                <div data-width="10" />
+            </afx-hbox>
+            <div data-height="10" />
+        </afx-vbox>
+    </afx-hbox>
+</afx-app-window>
+"""
 
 class PushNotification extends this.OS.GUI.BaseService
     constructor: (args) ->
@@ -22,6 +90,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @iconclass = "fa fa-bars"
         @cb = undefined
         @pending = []
+        @logs = []
     init: ->
         @view = false
         @_gui.htmlToScheme PushNotification.scheme, @, @host
@@ -29,11 +98,9 @@ class PushNotification extends this.OS.GUI.BaseService
     spin: (b) ->
         if b and @iconclass is "fa fa-bars"
             @iconclass = "fa fa-spinner fa-spin"
-            @color = "#f90e00"
             @update()
         else if not b and @iconclass is "fa fa-spinner fa-spin"
             @iconclass = "fa fa-bars"
-            @color = "#414339"
             @update()
 
     main: ->
@@ -42,12 +109,12 @@ class PushNotification extends this.OS.GUI.BaseService
         @nzone = @find "notifyzone"
         @fzone = @find "feedzone"
         (@find "btclear").set "onbtclick", (e) => @mlist.set "data", []
-        #@subscribe "fail", (e) -> console.log e
+        (@find "bterrlog").set "onbtclick", (e) => @showLogReport()
         @subscribe "notification", (o) => @pushout 'INFO', o
         @subscribe "fail", (o) => @pushout 'FAIL', o
         @subscribe "error", (o) => @pushout 'ERROR', o
         @subscribe "info", (o) => @pushout 'INFO', o
-        #@subscribe "VFS", (o) => @pushout 'INFO', o
+        
 
         @subscribe "loading", (o) =>
             @pending.push o.id
@@ -62,7 +129,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @fzone.set "height", "100%"
 
         ($ @nzone).css "right", 0
-            .css "top", "-3px"
+            .css "top", "0"
             .css "bottom", "0"
             .hide()
         ($ @fzone)
@@ -71,13 +138,32 @@ class PushNotification extends this.OS.GUI.BaseService
             .css "bottom", "0"
             .hide()
 
+    showLogReport: () ->
+        @openDialog(new LogDialog(), {
+            logs: @logs
+        })
+
+    addLog: (s, o) ->
+        logtime = new Date()
+        @logs.push {
+            type: s,
+            name: o.name,
+            text: "#{logtime}: #{o.data.m}",
+            id: o.id,
+            icon: o.data.icon,
+            iconclass: o.data.iconclass,
+            error: o.data.e,
+            time: logtime
+        }
+
     pushout: (s, o) ->
         d = {
             text: "[#{s}] #{o.name} (#{o.id}): #{o.data.m}",
             icon: o.data.icon,
             iconclass: o.data.iconclass,
-            closable: true }
-        console.log o.data.e
+            closable: true
+        }
+        @addLog s, o unless s is "INFO"
         @mlist.unshift d
         @notifeed d
 
@@ -109,7 +195,10 @@ class PushNotification extends this.OS.GUI.BaseService
 PushNotification.scheme = """
 <div>
     <afx-overlay data-id = "notifyzone" width = "250px">
-        <afx-button text = "__(Clear all)" data-id = "btclear" data-height="30"></afx-button>
+        <afx-hbox data-height="30">
+            <afx-button text = "__(Clear all)" data-id = "btclear" ></afx-button>
+            <afx-button iconclass = "fa fa-bug" data-id = "bterrlog" data-width = "25"></afx-button>
+        </afx-hbox>
         <afx-list-view data-id="notifylist"></afx-list-view>
     </afx-overlay>
     <afx-overlay data-id = "feedzone" width = "250">

@@ -18,10 +18,10 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
     buildnrun: () ->
         @metadata("extension.json").then (meta) =>
             @build(meta).then () =>
-                @run(meta).catch (e) => @error.toString()
+                @run(meta).catch (e) => @error __("Unable to run extension"), e
             .catch (e) =>
-                @error e.toString()
-        .catch (e) => @error e.toString()
+                @error __("Unable to build extension"), e
+        .catch (e) => @error __("Unable to read meta-data"), e
 
     release: () ->
         @metadata("extension.json").then (meta) =>
@@ -29,10 +29,10 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                 @mkar("#{meta.root}/build/debug",
                     "#{meta.root}/build/release/#{meta.meta.name}.zip")
                     .then () ->
-                    .catch (e) => @error.toString()
+                    .catch (e) => @error __("Unable to create archive"), e
             .catch (e) =>
-                @error e.toString()
-        .catch (e) => @error e.toString()
+                @error __("Unable to build extension"), e
+        .catch (e) => @error __("Unable to read meta-data"), e
 
     install: () ->
         @app.openDialog("FileDialog", {
@@ -43,7 +43,7 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                 .then () =>
                     @notify __("Extension installed")
                     @app.loadExtensionMetaData()
-                .catch (e) => @error e.stack
+                .catch (e) => @error __("Unable to install extension"), e
     # private functions
     mktpl: (path, name) ->
         rpath = "#{path}/#{name}"
@@ -64,8 +64,8 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                         @app.currdir = rpath.asFileHandle()
                         @app.initSideBar()
                         @app.openFile "#{rpath}/#{name}.coffee".asFileHandle()
-                    .catch (e) => @error e.stack
-            .catch (e) => @error e.stack
+                    .catch (e) => @error __("Unable to create extension template"), e
+            .catch (e) => @error __("Unable to create extension directories"), e
 
 
     verify: (list) ->
@@ -107,7 +107,7 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                             .setCache jsrc
                             .write("text/plain")
                             .then (d) ->
-                                return e d if d.error
+                                return e d.error if d.error
                                 r()
                             .catch (ex) -> e ex
                 .then () ->
@@ -127,22 +127,24 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
             .catch (e) -> reject e
 
     run: (meta) ->
-        path = "#{meta.root}/build/debug/#{meta.meta.name}.js"
-        delete @app._api.shared[path] if @app._api.shared[path]
-        @app._api.requires path
-            .then () =>
-                if @app.extensions[meta.meta.name]
-                    @app.extensions[meta.meta.name].child = []
-                    @app.extensions[meta.meta.name].addAction v for v in meta.meta.actions
-                else
-                    @app.extensions[meta.meta.name] = new App.CMDMenu meta.meta.text
-                    @app.extensions[meta.meta.name].name = meta.meta.name
-                    @app.extensions[meta.meta.name].addAction v for v in meta.meta.actions
-                    @app.spotlight.addAction @app.extensions[meta.meta.name]
-                    @app.extensions[meta.meta.name].onchildselect (e) =>
-                        @app.loadAndRunExtensionAction e.data.item.get "data"
-                @app.spotlight.run @app
-            .catch (e) => @error e.toString()
+        new Promise (resolve, reject) =>
+            path = "#{meta.root}/build/debug/#{meta.meta.name}.js"
+            delete @app._api.shared[path] if @app._api.shared[path]
+            @app._api.requires path
+                .then () =>
+                    if @app.extensions[meta.meta.name]
+                        @app.extensions[meta.meta.name].child = []
+                        @app.extensions[meta.meta.name].addAction v for v in meta.meta.actions
+                    else
+                        @app.extensions[meta.meta.name] = new App.CMDMenu meta.meta.text
+                        @app.extensions[meta.meta.name].name = meta.meta.name
+                        @app.extensions[meta.meta.name].addAction v for v in meta.meta.actions
+                        @app.spotlight.addAction @app.extensions[meta.meta.name]
+                        @app.extensions[meta.meta.name].onchildselect (e) =>
+                            @app.loadAndRunExtensionAction e.data.item.get "data"
+                    @app.spotlight.run @app
+                    resolve()
+                .catch (e) -> reject e
     
 
     installExtension: (files, zip) ->
