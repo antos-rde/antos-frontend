@@ -52,7 +52,7 @@ coffees= 	src/core/core.coffee \
 
 
 
-packages = CoreServices ActivityMonitor Files Setting ShowCase MarkOn CodePad# Files  MarketPlace Preview NotePad wTerm
+packages = CoreServices Files Setting CodePad
 
 main: initd build_coffees build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
