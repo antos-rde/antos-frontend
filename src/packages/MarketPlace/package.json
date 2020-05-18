@@ -1,7 +1,7 @@
 {
     "app":"MarketPlace",
     "name":"Application store",
-    "description":"Application store and repository management",
+    "description":"Application store",
     "info":{
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
@@ -9,5 +9,6 @@
     "version":"0.0.1-a",
     "category":"System",
     "iconclass":"fa fa-adn",
-    "mimes":["none"]
+    "mimes":["none"],
+    "locales": {}
 }

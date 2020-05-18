@@ -1,17 +1,9 @@
-afx-app-window[data-id ='marketplace-win'] afx-resizer{
-    background-color: transparent;
-    border-left: 1px solid #cbcbcb;
-}
-afx-app-window[data-id ='marketplace-win'] afx-list-view[data-id='applist']{
-    background-color: #f6F6F6;
-    padding:0;
-}
+
 afx-app-window[data-id="marketplace-win"] afx-list-view[data-id='repo'] div.list-container{
     z-index: 10;
 }
 
 afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] {
-    color: #414339;
     overflow-y: auto;
 }
 afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] afx-hbox {
@@ -21,7 +13,6 @@ afx-app-window[data-id="marketplace-win"] div[data-id='appname'] {
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-    color: #414339;
 }
 
 afx-app-window[data-id="marketplace-win"] div[data-id='appname']:before {
@@ -30,7 +21,6 @@ afx-app-window[data-id="marketplace-win"] div[data-id='appname']:before {
     font-size: 25px;
     font-style: normal;
     margin-right: 10px;
-    color: #414339;
 }
 afx-app-window[data-id="marketplace-win"] p[data-id='app-desc'] {
     text-align: justify;
@@ -46,6 +36,23 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
     padding-left:10px;
     display: table;
     margin: 0;
+}
+afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] {
+    border-bottom: 1px solid #afafaf;
+}
+afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] input{
+    border: 0;
+    background-color: transparent;
+}
+afx-app-window[data-id="marketplace-win"] div[data-id="searchicon"]:before{
+    content: "\f002";
+    display: block;
+    background-color:transparent;
+    color:#afafaf;
+    font-family: "FontAwesome";
+    padding-top: 3px;
+    padding-left:3px;
+    /* font-size: 25px; */
 }
 afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] li{
     padding:0;

@@ -208,14 +208,14 @@ Ant.OS.API =
             r.responseType = "arraybuffer"
             r.onload = (e) ->
                 if @status is 200 and @readyState is 4
-                    resolve @response
                     Ant.OS.API.loaded q, p, "OK"
+                    resolve @response
                 else
-                    reject e, @
                     Ant.OS.API.loaded q, p, "FAIL"
+                    reject Ant.OS.API.throwe __("Unable to get blob: {0}", p)
             Ant.OS.API.loading q, p
             r.send()
-
+        
     upload: (p, d) ->
         new Promise (resolve, reject) ->
             q = Ant.OS.announcer.getMID()

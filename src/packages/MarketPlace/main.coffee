@@ -16,25 +16,27 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-self = this
 class MarketPlace extends this.OS.GUI.BaseApplication
     constructor: (args) ->
         super "MarketPlace", args
     
     main: () ->
-        me = @
         @installdir = @systemsetting.system.pkgpaths.user
         # test repository
+        @apps_meta = []
         @repo = @find "repo"
-        @repo.set "onlistselect", (e) ->
-            return unless e.data
-            me.fetchApps e.data.url
-        @repo.set "items", @systemsetting.system.repositories
+        @repo.set "onlistselect", (e) =>
+            data = e.data.item.get("data")
+            return unless data
+            @fetchApps data
+        
+        @refreshRepoList()
         
         @applist = @find "applist"
-        @applist.set "onlistselect", (e) ->
-            return unless e.data
-            me.appDetail e.data
+        @applist.set "onlistselect", (e) =>
+            data = e.data.item.get("data")
+            @appDetail data
+
         @container =  @find "container"
         @appname = @find "appname"
         @appdesc = @find "app-desc"
@@ -42,39 +44,105 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         @btinstall = @find "bt-install"
         @btremove = @find "bt-remove"
         @btexec = @find "bt-exec"
-        ($ @container ).css "visibility", "hidden"
-        @btexec.set "onbtclick", (e) ->
-            app = me.applist.get "selected"
-            return unless app
-            me._gui.launch app.className if app.className
-        @btinstall.set "onbtclick", (e) ->
-            return me.update() if me.btinstall.get "dirty"
-            me.install()
-        @btremove.set "onbtclick", (e) ->
-            me.uninstall()
-        @bindKey "CTRL-R", () ->
-            me.openDialog new RepositoryDialog()
-    fetchApps: (url) ->
-        me = @
-        @_api.get url, ( d ) ->
-            for v in d
-                v.text = v.name
-                v.iconclass = "fa fa-adn"
-            me.applist.set "items", d
-        , (e, s) ->
-            me.error __("Fail to fetch packages list from: {0}", url)
+        @searchbox = @find "searchbox"
+        ($ @container).css "visibility", "hidden"
+        @btexec.set "onbtclick", (e) =>
+            el = @applist.get "selectedItem"
+            return unless el
+            app = el.get("data")
+            @_gui.launch app.className if app.className
+
+        @btinstall.set "onbtclick", (e) =>
+            if @btinstall.get "dirty"
+                return @update()
+                    .then () => @notify __("Package updated")
+                    .catch (e) => @error e.toString(), e
+            @remoteInstall()
+                .then () => @notify __("Package installed")
+                .catch (e) => @error e.toString(), e
+
+        @btremove.set "onbtclick", (e) =>
+            @uninstall()
+                .then () => @notify __("Packaged uninstalled")
+                .catch (e) => @error e.toString(), e
+
+        @bindKey "CTRL-R", () =>
+            @menuOptionsHandle "repos"
+        
+        $(@searchbox).keyup (e) => @search e
+
+    refreshRepoList: () ->
+        list = (v for v in @systemsetting.system.repositories)
+        list.unshift {
+            text: "Installed"
+        }
+        @repo.set "data", list
+
+    search: (e) ->
+        switch e.which
+            when 37
+                e.preventDefault()
+            when 38
+                @applist.selectPrev()
+                e.preventDefault()
+            when 39
+                e.preventDefault()
+            when 40
+                @applist.selectNext()
+                e.preventDefault()
+            when 13
+                e.preventDefault()
+            else
+                text = @searchbox.value
+                @applist.set "data", (v for v in @apps_meta) if text.length is 2
+                return if text.length < 3
+                result = []
+                term = new RegExp text, 'i'
+                result.push v for v in @apps_meta when v.text.match term
+                @applist.set "data", result
+
+
+    fetchApps: (data) ->
+        if not data.url
+            pkgcache = @systemsetting.system.packages
+            list = []
+            for k, v of pkgcache
+                list.push {
+                    className: v.app,
+                    name: v.name,
+                    text: v.name,
+                    icon: v.icon,
+                    iconclass: v.iconclass,
+                    category: v.category,
+                    author: v.info.author,
+                    version: v.version,
+                    description: "#{v.path}/REAME.md"
+                }
+            @apps_meta = list
+            @applist.set "data", list
+            return
+        
+        @_api.get data.url
+            .then ( d ) =>
+                for v in d
+                    v.text = v.name
+                    v.iconclass = "fa fa-adn"
+                @apps_meta = d
+                @applist.set "data", d
+            .catch (e) ->
+                @error __("Fail to fetch packages list from: {0}", data.url), e
 
     appDetail: (d) ->
-        me = @
         ($ @container).css "visibility", "visible"
         ( $ @appname ).html d.name
         (@find "vstat").set "text", ""
         if d.description
-            d.description.asFileHandler().read (text) ->
+            d.description.asFileHandle().read().then (text) =>
                 converter = new showdown.Converter()
-                ($ me.appdesc).html converter.makeHtml text
+                ($ @appdesc).html(converter.makeHtml text)
+            .catch (e) => @notify __("Unable to read package description")
         else
-            ($ me.appdesc).empty()
+            ($ @appdesc).empty()
         pkgcache = @systemsetting.system.packages
         @btinstall.set "text", "__(Install)"
         @btinstall.set "dirty", false
@@ -89,7 +157,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     @btinstall.set "dirty", true
                     @btinstall.set "text", "__(Update)"
                     ($ @btinstall).show()
-                    (@find "vstat").set "text", __("Your application version is older ({0} < {1})", vs, ovs)
+                    (@find "vstat").set "text",
+                        __("Your application version is older ({0} < {1})", vs, ovs)
             ($ @btremove).show()
             ($ @btexec).show()
         else
@@ -98,111 +167,185 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             ($ @btexec).hide()
       
         ($ @appdetail).empty()
-        for k, v of d when k isnt "name" and k isnt "description"
-            ($ @appdetail).append $("<li>").append(($ "<span class= 'info-header'>").html k).append $("<span>").html v
+        for k, v of d when k isnt "name" and k isnt "description" and k isnt "domel"
+            ($ @appdetail).append(
+                $("<li>")
+                    .append(($ "<span class= 'info-header'>").html k)
+                    .append $("<span>").html v
+            )
     
     menu: () ->
-        me = @
         return [
-            { text: "__(Options)", child: [
-                { text: "__(Repositories)", shortcut: "C-R" }
-            ] , onmenuselect: (e) ->
-                me.openDialog new RepositoryDialog()
+            {
+                text: "__(Options)", child: [
+                    { text: "__(Repositories)", shortcut: "C-R", id: "repos" },
+                    { text: "__(Install from zip)", shortcut: "C-I", id: "install" }
+                ] , onchildselect: (e) =>
+                    @menuOptionsHandle e.data.item.get("data").id
             }
         ]
     
-    install: (f) ->
-        me = @
-        app = @applist.get "selected"
+    menuOptionsHandle: (id) ->
+        switch id
+            when "repos"
+                @openDialog new RepositoryDialog(), {
+                    title: __("Repositories"),
+                    data: @systemsetting.system.repositories
+                }
+            when "install"
+                @localInstall().then () =>
+                    @notify __("Package installed")
+                .catch (e) => @error __("Unable to install package"), e
+            else
+
+    remoteInstall: () ->
+        el = @applist.get "selectedItem"
+        return unless el
+        app = el.get "data"
         return unless app
         # get blob file
-        @_api.blob app.download, (data) ->
-            JSZip.loadAsync(data).then (zip) ->
-                pth = "#{me.installdir}/#{app.className}"
-                dir = [pth]
-                files = []
-                for name, file of zip.files
-                    if file.dir
-                        dir.push(pth + "/" + name)
-                    else
-                        files.push name
-                idx = files.indexOf "package.json"
-                return me.error __("Invalid package: Meta data file not found") if idx < 0
-                # create all directory
-                me.mkdirs app.className, dir, () ->
-                    me.installFile app.className, zip, files, () ->
-                        zip.file("package.json").async("string").then (d) ->
-                            v = JSON.parse d
+        new Promise (resolve, reject) =>
+            @_api.blob app.download
+            .then (data) =>
+                @install data, app
+                    .then () -> resolve()
+                    .catch (e) -> reject(e)
+            .catch (e) -> reject e
+
+    localInstall: () ->
+        new Promise (resolve, reject) =>
+            @openDialog("FileDialog", {
+                title: "__(Select package archive)",
+                mimes: [".*/zip"]
+            }).then (d) =>
+                d.file.path.asFileHandle().read("binary").then (data) =>
+                    @install data
+                        .then (n) =>
+                            @repo.unselect()
+                            @repo.set "selected", 0
+                            apps = (v.className for v in @applist.get("data"))
+                            idx = apps.indexOf n
+                            if idx >= 0
+                                @applist.set "selected", idx
+                            resolve()
+                        .catch (e) -> reject(e)
+                    .catch (e) -> reject e
+                .catch (e) -> reject e
+
+    install: (data, meta) ->
+        new Promise (resolve, reject) =>
+            JSZip.loadAsync(data).then (zip) =>
+                zip.file("package.json").async("string").then (d) =>
+                    v = JSON.parse d
+                    pth = "#{@installdir}/#{v.app}"
+                    dir = [pth]
+                    files = []
+                    for name, file of zip.files
+                        if file.dir
+                            dir.push(pth + "/" + name)
+                        else
+                            files.push name
+                    # create all directory
+                    @mkdirs(dir).then () =>
+                        @installFile(v.app, zip, files).then () =>
+                            app_meta = {
+                                className: v.app,
+                                name: v.name,
+                                text: v.name,
+                                icon: v.icon,
+                                iconclass: v.iconclass,
+                                category: v.category,
+                                author: v.info.author,
+                                version: v.version,
+                                description: if meta then meta.description else undefined,
+                                download: if meta then meta.download else undefined
+                            }
                             v.text = v.name
-                            v.filename = app.className
+                            v.filename = v.app
                             v.type = "app"
                             v.mime = "antos/app"
                             v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
                             v.path = pth
-                            me.systemsetting.system.packages[app.className] = v
-                            me.notify __("Application installed")
-                            me._gui.refreshSystemMenu()
-                            me.appDetail app
-                        .catch (err) ->
-                            me.error __("Error reading package meta data: {0}", err)
-                   
-        , (err, s) ->
-            return me.error __("Cannot down load the app {0}", err) if err
-    uninstall: (f) ->
-        me = @
-        sel = @applist.get "selected"
-        name = sel.className
-        return unless sel
-        app = @systemsetting.system.packages[sel.className]
-        return unless app
-        @openDialog "YesNoDialog",
-            (d) ->
+                            @systemsetting.system.packages[v.app] = v
+                            @notify __("Application installed")
+                            @appDetail app_meta
+                            resolve(v.name)
+                        .catch (e) -> reject e
+                    .catch (e) -> reject e
+                .catch (err) -> reject err
+            .catch (e) -> reject e
+
+    uninstall: () ->
+        new Promise (resolve, reject) =>
+            el = @applist.get "selectedItem"
+            return unless el
+            sel = el.get "data"
+            return unless sel
+            name = sel.className
+            app = @systemsetting.system.packages[sel.className]
+            return unless app
+            @openDialog("YesNoDialog", {
+                title: __("Uninstall") ,
+                text: __("Uninstall: {0}?", app.name)
+            }).then (d) =>
                 return unless d
-                app.path.asFileHandler().remove (r) ->
-                    return me.error __("Cannot uninstall package: {0}", r.error) if r.error
-                    me.notify __("Package uninstalled")
-                    delete me.systemsetting.system.packages[name]
-                    me._gui.unloadApp name
-                    me._gui.refreshSystemMenu()
-                    me.appDetail sel
-                    f() if f
-        , __("Uninstall") ,
-        { text: __("Uninstall: {0}?", app.name) }
+                app.path.asFileHandle().remove().then (r) =>
+                    if r.error
+                        return reject @_api.throwe __("Cannot uninstall package: {0}", r.error)
+                    @notify __("Package uninstalled")
+                    delete @systemsetting.system.packages[name]
+                    @_gui.unloadApp name
+                    if sel.download
+                        @appDetail sel
+                    else
+                        @applist.remove el
+                        ($ @container).css "visibility", "hidden"
+                    resolve()
+                .catch (e) -> reject e
+            .catch (e) -> reject e
     
     update: () ->
-        me = @
-        new Promise (r, e) ->
-            me.uninstall () ->
-                r()
-        .then () ->
-            me.install()
+        new Promise (resolve, reject) =>
+            @uninstall().then () =>
+                @remoteInstall()
+                    .then () -> resolve()
+                    .catch (e) -> reject e
+            .catch (e) -> reject e
 
-    mkdirs: (n, list, f) ->
-        me = @
-        if list.length is 0
-            f() if f
-            return
-        dir = (list.splice 0, 1)[0].asFileHandler()
-        path = dir.parent()
-        dname = dir.basename
-        path.asFileHandler().mk dname, (r) ->
-            return me.mkdirs n, list, f if r.result
-            me.error __("Cannot create {0}", "#{path}/#{dir}")
+    mkdirs: (list) ->
+        new Promise (resolve, reject) =>
+            return resolve() if list.length is 0
+            dir = (list.splice 0, 1)[0].asFileHandle()
+            path = dir.parent()
+            dname = dir.basename
+            path.asFileHandle().mk dname
+                .then (r) =>
+                    return reject(@_api.throwe __("Cannot create {0}", "#{path}/#{dir}")) if r.error
+                    @mkdirs list
+                        .then () -> resolve()
+                        .catch (e) -> reject e
+                .catch (e) -> reject e
 
-    installFile: (n, zip, files, f) ->
-        me = @
-        if files.length is 0
-            f() if f
-            return
-        file = (files.splice 0, 1)[0]
-        path = "#{me.installdir}/#{n}/#{file}"
-        zip.file(file).async("uint8array").then (d) ->
-            fp = path.asFileHandler()
-            fp.cache = new Blob [d], { type: "octet/stream" }
-            fp.write "text/plain", (r) ->
-                return me.installFile n, zip, files, f if r.result
-                me.error __("Cannot install {0}", path)
+    installFile: (n, zip, files) ->
+        new Promise (resolve, reject) =>
+            return resolve() if files.length is 0
+            file = (files.splice 0, 1)[0]
+            path = "#{@installdir}/#{n}/#{file}"
+            zip.file(file).async("uint8array").then (d) =>
+                fp = path.asFileHandle()
+                fp.cache = new Blob [d], { type: "octet/stream" }
+                fp.write "text/plain"
+                .then (r) =>
+                    return reject @_api.throwe(__("Cannot install {0}", path)) if r.error
+                    @installFile n, zip, files
+                        .then () -> resolve()
+                        .catch (e) -> reject()
+                .catch (e) -> reject e
+            .catch (e) -> reject e
 
-MarketPlace.dependencies = [ "jszip.min", "showdown.min" ]
+MarketPlace.dependencies = [
+    "os://scripts/jszip.min.js",
+    "os://scripts/showdown.min.js"
+]
 MarketPlace.singleton = true
 this.OS.register "MarketPlace", MarketPlace

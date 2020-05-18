@@ -16,78 +16,67 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class RepositoryDialog extends this.OS.GUI.BaseDialog
+class RepositoryDialog extends this.OS.GUI.subwindows.SelectionDialog
     constructor: () ->
-        super "RepositoryDialog"
-
-    init: () ->
-        @_gui.htmlToScheme RepositoryDialog.scheme, @, @host
-        #@render "#{@meta().path}/repositorydia.html"
-
+        super()
     main: () ->
-        me = @
-        @list = @find "repo-list"
-        @list.set "onlistdbclick", (e) ->
-            selidx = me.list.get "selidx"
-            return unless  selidx >= 0
-            sel = me.systemsetting.system.repositories[selidx]
-            me.openDialog "PromptDialog", (e) ->
-                m = e.match /\[([^\]]*)\]\s*(.*)/
-                return me.error "Wrong format: it should be [name] url" if not m or m.length isnt 3
-                sel.name = m[1]
-                sel.text = sel.name
-                sel.url = m[2]
-                me.refreshList()
-            , __("Edit repository"), { label: __("Format : [name] url"), value: "[#{e.data.text}] #{e.data.url}" }
-        
+        @list = @find "list"
+        $((@find "btnOk")).hide()
         @list.set "buttons", [
             {
                 text: "+",
-                onbtclick: () ->
-                    me.openDialog "PromptDialog", (e) ->
-                        m = e.match /\[([^\]]*)\]\s*(.*)/
-                        return me.error __("Wrong format: it should be [name] url") if not m or m.length isnt 3
-                        me.systemsetting.system.repositories.push {
-                            name: m[1],
+                onbtclick: () =>
+                    @openDialog("PromptDialog", {
+                        title: __("Add repository"),
+                        label: __("Format : [name] url")
+                    }).then (e) =>
+                        m = e.match /\[([^\]]*)\]\s*(.+)/
+                        if not m or m.length isnt 3
+                            return @error __("Wrong format: it should be [name] url")
+                        repo = {
                             url: m[2],
-                            text: m[1],
-                            i: me.systemsetting.system.repositories.length
+                            text: m[1]
                         }
-                        me.refreshList()
-                    , __("Add repository"), { label: __("Format : [name] url") }
+                        @systemsetting.system.repositories.push repo
+                        @list.push repo
             },
             {
                 text: "-",
-                onbtclick: () ->
-                    selidx = me.list.get "selidx"
+                onbtclick: () =>
+                    el = @list.get "selectedItem"
+                    return unless el
+                    selidx = $(el).index()
                     return unless  selidx >= 0
-                    me.systemsetting.system.repositories.splice selidx, selidx
-                    me.refreshList()
+                    @systemsetting.system.repositories.splice selidx, selidx
+                    @list.remove el
+            },
+            {
+                iconclass: "fa fa-pencil",
+                onbtclick: () => @editRepo()
             }
 
         ]
 
-        (@find "btquit").set "onbtclick", (e) -> me.quit()
-        @refreshList()
-    refreshList: () ->
-        ls = ({
-            text: v.name,
-            iconclass: "fa fa-link",
-            url: v.url,
-            complex: true,
-            detail: [{ text: v.url }]
-        } for v in @systemsetting.system.repositories)
-        @list.set "items", ls
+    editRepo: () ->
+        el = @list.get "selectedItem"
+        return unless el
+        selidx = $(el).index()
+        return unless  selidx >= 0
+        data = el.get "data"
+        sel = @systemsetting.system.repositories[selidx]
+        @openDialog("PromptDialog", {
+            title: __("Edit repository"),
+            label: __("Format : [name] url"),
+            value: "[#{data.text}] #{data.url}"
+        }).then (e) =>
+            m = e.match /\[([^\]]*)\]\s*(.+)/
+            if not m or m.length isnt 3
+                return @error __("Wrong format: it should be [name] url")
+            data.text = m[1]
+            data.url = m[2]
+            @list.update()
+            @list.unselect()
+
     onexit: (e) ->
-        @parent.repo.set "items", @systemsetting.system.repositories
-        @parent.dialog = undefined if @parent
-RepositoryDialog.scheme = """
-<afx-app-window data-id = "repository-dialog-win" apptitle="__(Repositories)" width="250" height="250">
-        <afx-vbox >
-            <afx-list-view data-id="repo-list"></afx-list-view>
-            <div style = "text-align:right; padding:5px" data-height="30" >
-                <afx-button data-id = "btquit" text = "__(Cancel)"></afx-button>
-            </div>
-        </afx-vbox>
-    </afx-app-window>
-"""
+        @parent.refreshRepoList()
+        super.onexit e

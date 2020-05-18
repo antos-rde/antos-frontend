@@ -1,7 +1,7 @@
 {
     "app":"{0}",
     "name":"{0}",
-    "description":"",
+    "description":"{0}",
     "info":{
         "author": "",
         "email": ""

@@ -290,7 +290,7 @@ SelectionDialog.scheme = """
                 <afx-hbox data-height="30">
                     <div />
                     <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancels)" data-width = "50" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
                 </afx-hbox>
             </afx-vbox>
             <div data-width = "10" />

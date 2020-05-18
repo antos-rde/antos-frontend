@@ -101,14 +101,12 @@ afx-file-view afx-tree-view .afx-tree-view-item:before{
     content: "\f016"; 
     font-family: "FontAwesome";
     font-size: 16px;
-    color: #414339;
     font-style: normal;
     font-weight: normal;
 }
 
 afx-file-view afx-tree-view div.afx_tree_item_selected, afx-file-view afx-tree-view div.afx_tree_item_selected:hover{
     background-color: transparent;
-    color:#414339;
 }
 
 afx-file-view afx-tree-view li.itemname{

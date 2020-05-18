@@ -29,7 +29,7 @@ afx-list-view > div.list-container > ul > afx-list-item > li.selected{
 }
 
 afx-list-view.dropdown > div.list-container > ul{
-    border:1px solid #a6a6a6;
+    border:1px solid #262626;
     box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
     border-radius: 3px;
     max-height: 150px;
@@ -42,7 +42,7 @@ afx-list-view.dropdown div.list-container div{
     color: white;
     padding-top:3px;
     padding-bottom: 3px;
-    border:1px solid #a6a6a6;
+    border:1px solid #262626;
     border-radius: 3px;
     background-color: transparent;
     height: 17px;
@@ -55,14 +55,12 @@ afx-list-view.dropdown div.list-container div:before {
     font-family: "FontAwesome";
     font-size: 11px;
     font-style: normal;
-    color: #414339;
     position: absolute;
     top:25%;
     right: 5px;
  }
 afx-list-view.dropdown > div.list-container > ul  li:hover{
-    background-color: #dcdcdc;
-    color: #414339;
+    background-color: #464646;
 }
 afx-list-view ul.complex-content{
     padding: 0;

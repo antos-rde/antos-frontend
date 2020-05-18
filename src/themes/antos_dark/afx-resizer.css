@@ -1,3 +1,4 @@
 afx-resizer {
-    background-color: #868686;
+    background-color: transparent;
+    border-left: 1px solid #262626;
 }
