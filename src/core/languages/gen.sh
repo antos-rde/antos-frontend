@@ -20,7 +20,7 @@
 ord() {
   LC_CTYPE=C printf '%d' "'$1"
 }
-grep --include=\*.{coffee} -roh "$1" -e '__("[^"]*"' | while read -r line ; do 
+grep --include=\*.coffee -roh "$1" -e '__("[^"]*"' | while read -r line ; do 
     SUBSTRING=$(echo $line| cut -d'"' -f 2)
     if  test -f "$2"   && [ ! -z "$(grep -F "\"$SUBSTRING\":" "$2")" ]
     then

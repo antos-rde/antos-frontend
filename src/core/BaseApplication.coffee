@@ -46,6 +46,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
                 when "#{@name}-about" then @openDialog "AboutDialog"
                 when  "#{@name}-exit" then @trigger "exit"
         @on "apptitlechange", () => @sysdock.update()
+        @updateLocale @systemsetting.system.locale
         @loadScheme()
 
     loadScheme: () ->
@@ -60,6 +61,13 @@ class BaseApplication extends this.OS.GUI.BaseModel
         c = arr[1].toUpperCase()
         return unless @keycomb[fnk]
         @keycomb[fnk][c] = f
+
+    updateLocale: (name) ->
+        meta = @meta()
+        return unless meta and meta.locales
+        return unless meta.locales[name]
+        for k, v of meta.locales[name]
+            @_api.lang[k] = v
 
     shortcut: (fnk, c, e) ->
         return true unless @keycomb[fnk]

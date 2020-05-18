@@ -9,5 +9,6 @@
     "version":"0.0.1-a",
     "category":"Other",
     "iconclass":"fa fa-adn",
-    "mimes":["none"]
+    "mimes":["none"],
+    "locale": {}
 }
