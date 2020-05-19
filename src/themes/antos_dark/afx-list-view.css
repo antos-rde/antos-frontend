@@ -6,7 +6,7 @@ afx-list-view  > div.list-container > ul  li{
     background-color: #363636;
 }
 afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li{
-    background-color:#464646;
+    background-color:#3b3b3b;
 }
 afx-list-view  i.closable{
     width: 16px;

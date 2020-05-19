@@ -21,7 +21,7 @@ afx-tree-view div.afx_tree_item_selected:hover{
 afx-tree-view .afx_folder_item{
     font-weight: bold;
 }
-
+/*
 afx-tree-view .afx_tree_item_odd{
     background-color: #464646;
-}
+}*/

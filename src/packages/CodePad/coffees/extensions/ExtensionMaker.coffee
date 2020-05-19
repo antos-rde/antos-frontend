@@ -107,7 +107,6 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                             .setCache jsrc
                             .write("text/plain")
                             .then (d) ->
-                                return e d.error if d.error
                                 r()
                             .catch (ex) -> e ex
                 .then () ->
@@ -117,7 +116,6 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                         .setCache meta.meta
                         .write("object")
                         .then (data) ->
-                            return e data.error if data.error
                             r data
                         .catch (ex) -> e ex
                 .then () =>

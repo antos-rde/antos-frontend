@@ -77,7 +77,6 @@ class CodePad.BaseExtension
                     dest.asFileHandle()
                     .setCache('data:application/zip;base64,' + data)
                     .write("base64").then (r) =>
-                        return reject r.error if r.error
                         @notify __("Package is generated in release folder")
                     .catch (e) -> reject e
             .catch (e) -> reject e

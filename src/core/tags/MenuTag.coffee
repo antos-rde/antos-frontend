@@ -208,7 +208,9 @@ class MenuTag extends Ant.OS.GUI.BaseTag
         $(item).remove()
 
     push: (item, flag) ->
-        el = $("<#{@get("contentag")}>")
+        tag = @get "contentag"
+        tag = item.tag if item.tag
+        el = $("<#{tag}>")
         if flag
             $(@refs.container).prepend el[0]
             @get("items").unshift item

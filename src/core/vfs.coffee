@@ -104,7 +104,7 @@ class BaseFileHandle
             return resolve(@info) if @ready
             @meta()
                 .then (d) =>
-                    return reject d if d.errors
+                    return reject Ant.OS.API.throwe d.error if d.errors
                     @info = d.result
                     @ready = true
                     resolve(d.result)
@@ -190,7 +190,7 @@ class BaseFileHandle
                 .then (r) =>
                     @_mv(d)
                         .then (data) =>
-                            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: @ }
+                            Ant.OS.announcer.ostrigger "VFS", { m: "move", file: d.asFileHandle() }
                             resolve data
                         .catch (e) -> reject e
                 .catch (e) -> reject e
@@ -210,7 +210,7 @@ class BaseFileHandle
 
     unsupported: (t) ->
         new Promise (resolve, reject) =>
-            reject { error: __("Action {0} is unsupported on: {1}", t, @path) }
+            reject Ant.OS.API.throwe __("Action {0} is unsupported on: {1}", t, @path)
     # actions must be implemented by subclasses
 
     _rd: (t) ->     @unsupported "read"
@@ -232,7 +232,13 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
         super path
 
     meta: () ->
-        Ant.OS.API.handle.fileinfo @path
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.fileinfo @path
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
+
     
     getlink: () ->
         Ant.OS.API.handle.get + "/" + @path
@@ -250,38 +256,62 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
 
     _wr: (t) ->
         # t is base64 or undefined
-        return Ant.OS.API.handle.write @path, @cache if t is "base64"
         new Promise (resolve, reject) =>
-            @b64(t)
-                .then (r) =>
-                    Ant.OS.API.handle.write @path, r
-                        .then (result) ->
-                            resolve result
-                        .catch (e) -> reject e
+            if t is "base64"
+                Ant.OS.API.handle.write(@path, @cache).then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
                 .catch (e) -> reject e
+            else
+                @b64(t)
+                    .then (r) =>
+                        Ant.OS.API.handle.write @path, r
+                            .then (result) ->
+                                return reject Ant.OS.API.throwe result.error if result.error
+                                resolve result
+                            .catch (e) -> reject e
+                    .catch (e) -> reject e
 
     _mk: (d) ->
-        if not @info
-            return new Promise (resolve, reject) =>
-                reject Ant.OS.API.throwe __(
+        new Promise (resolve, reject) =>
+            if not @info
+                return reject Ant.OS.API.throwe __(
                     "file meta-data not found: {0}", @path)
-        if @info.type is "file"
-            return new Promise (resolve, reject) =>
-                reject Ant.OS.API.throwe __("{0} is not a directory", @path)
-        Ant.OS.API.handle.mkdir "#{@path}/#{d}"
+            if @info.type is "file"
+                return  reject Ant.OS.API.throwe __("{0} is not a directory", @path)
+            Ant.OS.API.handle.mkdir "#{@path}/#{d}"
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
 
     _rm: () ->
-        Ant.OS.API.handle.delete @path
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.delete @path
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
+
 
     _mv: (d) ->
-        Ant.OS.API.handle.move @path, d
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.move @path, d
+            .then (d) ->
+                return reject Ant.OS.API.throwe d.error if d.error
+                resolve d
+            .catch (e) -> reject e
 
 
     _up: () ->
-        if @info.type isnt "dir"
-            return new Promise (resolve, reject) =>
-                reject Ant.OS.API.throwe __("{0} is not a file", @path)
-        Ant.OS.API.handle.upload @path
+        new Promise (resolve, reject) =>
+            if @info.type isnt "dir"
+                return reject Ant.OS.API.throwe __("{0} is not a file", @path)
+            Ant.OS.API.handle.upload @path
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
 
     _down: () ->
         new Promise (resolve, reject) =>
@@ -296,7 +326,12 @@ class RemoteFileHandle extends Ant.OS.API.VFS.BaseFileHandle
                     reject e
 
     _pub: () ->
-        Ant.OS.API.handle.sharefile @path, true
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.sharefile @path, true
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
 
 Ant.OS.API.VFS.register "^(home|desktop|os|Untitled)$", RemoteFileHandle
 
@@ -374,10 +409,20 @@ class SharedFileHandle extends Ant.OS.API.VFS.BaseFileHandle
         Ant.OS.API.handle.readfile @path, if t then t else "text"
     
     _wr: (d, t) ->
-        Ant.OS.API.handle.write @path, d
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.write @path, d
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
 
     _rm: () ->
-        Ant.OS.API.handle.sharefile @basename, false
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.sharefile @basename, false
+                .then (d) ->
+                    return reject Ant.OS.API.throwe d.error if d.error
+                    resolve d
+                .catch (e) -> reject e
 
     _down: () ->
         new Promise (resolve, reject) =>

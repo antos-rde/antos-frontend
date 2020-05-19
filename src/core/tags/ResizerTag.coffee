@@ -13,12 +13,14 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         if tagname is "AFX-HBOX"
             @dir = "hz"
             $(@root).css "cursor", "col-resize"
+            $(@root).addClass "horizontal"
             if @resizable_el
                 att = $(@resizable_el).attr "min-width"
                 @minsize = parseInt(att) if att
         else if tagname is "AFX-VBOX"
             @dir = "ve"
             $(@root).css "cursor", "row-resize"
+            $(@root).addClass "vertical"
             if @resizable_el
                 att = $(@resizable_el).attr "min-height"
                 @minsize = parseInt(att) if att

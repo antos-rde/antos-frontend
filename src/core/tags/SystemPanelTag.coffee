@@ -3,7 +3,7 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
         super r, o
         @setopt "osmenu", {
             text: __("Start"),
-            iconclass: "fa fa-eercast"
+            iconclass: "fa fa-circle"
         }
         @setopt "appmenu", []
         @setopt "systray", []

@@ -112,7 +112,9 @@ class GridViewTag extends Ant.OS.GUI.BaseTag
         row.domel = rowel[0]
 
         for cell in row
-            el = $("<#{@get("cellitem")}>").appendTo rowel
+            tag = @get "cellitem"
+            tag = cell.tag if cell.tag
+            el = $("<#{tag}>").appendTo rowel
             cell.domel = el[0]
             el[0].uify undefined
             el[0].set "oncellselect", (e) => @cellselect e, false

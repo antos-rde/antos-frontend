@@ -62,11 +62,11 @@ body
 
 #login_form{
     width:300px;
-    height: 200px;
+    height: 180px;
     display: block;
-    border:1px solid #a6a6a6;
+    border:1px solid #262626;
     border-radius: 6px;
-    box-shadow: 1px 1px 1px #9f9F9F;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
     position: absolute;
     margin: auto;
     top:0;
@@ -76,14 +76,14 @@ body
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
     text-align: center;
-    background-color: white;
-    color: #414339;
+    background-color: #363636;
+    color: white;
 } 
 
 #login_form p{
     display: inline-block;
-    background-color:#dfdfdf;
-    border-bottom: 1px solid #a6a6a6;
+    /* background-color:#dfdfdf; */
+    border-bottom: 1px solid #262626;
     padding:10px;
     width: calc(100% - 20px);
     border-top-left-radius: 6px;
@@ -100,24 +100,25 @@ body
     box-sizing: border-box;
     font-size: 13px;
     padding: 5px;
-    border: 1px solid #a6a6a6;
-    background-color: white;
-    color: #414339;
+    color: white;
+    border: 1px solid #262626;
+    background-color: #464646;
 }
 #login_form button{
     margin-top:10px;
     width: 250px;
     height: 30px;
-    background-color: #2786F3;
+    background-color: #464646;
+    border: 1px solid #262626;
     color: white;
-    border: 1px solid #dedede;
     border-radius: 6px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
     padding:5px;
+    outline: none;
 }
 #login_error{
     padding:3px;
-    color:red;
+    color:chocolate;
     font-weight: normal;
 }

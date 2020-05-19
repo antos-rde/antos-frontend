@@ -109,11 +109,19 @@ class CodePad extends this.OS.GUI.BaseApplication
         @bindKey "CTRL-S", () => @menuAction "save"
         @bindKey "ALT-W", () =>  @menuAction "saveas"
 
+        @fileview.set "ondragndrop", (e) =>
+            src = e.data.from.get("data").path.asFileHandle()
+            des = e.data.to.get("data").path
+            src.move "#{des}/#{src.basename}"
+                .then (d) ->
+                    e.data.to.update des
+                    e.data.from.get("parent").update src.parent().path
+                .catch (e) => @error __("Unable to move file/folder"), e
+
         @loadExtensionMetaData()
         @initCommandPalete()
         @initSideBar()
         @openFile @currfile
-    
 
     openFile: (file) ->
         #find tab
@@ -303,10 +311,9 @@ class CodePad extends this.OS.GUI.BaseApplication
                         fp = "#{dir.path}/#{d}".asFileHandle()
                         fp.write("text/plain")
                             .then (r) =>
-                                return @error __("Fail to create {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
-                    .catch (e) =>
-                        @error __("Fail to create: {0}", e.stack), e
+                            .catch (e) =>
+                                @error __("Fail to create: {0}", e.stack), e
             
             when "newdir"
                 return unless dir
@@ -317,10 +324,9 @@ class CodePad extends this.OS.GUI.BaseApplication
                     .then (d) =>
                         dir.mk(d)
                             .then (r) =>
-                                return @error __("Fail to create {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
-                    .catch (e) =>
-                        @error __("Fail to create: {0}", dir.path), e
+                            .catch (e) =>
+                                @error __("Fail to create: {0}", dir.path), e
 
             when "rename"
                 return unless file
@@ -335,10 +341,9 @@ class CodePad extends this.OS.GUI.BaseApplication
                         dir = file.parent()
                         file.move "#{dir.path}/#{d}"
                             .then (r) =>
-                                return @error __("Fail to rename to {0}: {1}", d, r.error) if r.error
                                 @fileview.update dir.path
-                    .catch (e) =>
-                        @error __("Fail to rename: {0}", file.path), e
+                            .catch (e) =>
+                                @error __("Fail to rename: {0}", file.path), e
 
             when "delete"
                 return unless file
@@ -353,10 +358,9 @@ class CodePad extends this.OS.GUI.BaseApplication
                         dir = file.parent()
                         file.remove()
                             .then (r) =>
-                                return @error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
                                 @fileview.update dir.path
-                    .catch (e) =>
-                        @error __("Fail to delete: {0}", file.path), e
+                            .catch (e) =>
+                                @error __("Fail to delete: {0}", file.path), e
             
             else
                 
@@ -364,7 +368,6 @@ class CodePad extends this.OS.GUI.BaseApplication
     save: (file) ->
         file.write("text/plain")
             .then (d) =>
-                return @error __("Error saving file {0}: {1}", file.basename, d.error) if d.error
                 file.dirty = false
                 file.text = file.basename
                 @tabbar.update()

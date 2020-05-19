@@ -3,6 +3,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
         super r, o
         @setopt "onfileselect", ()->
         @setopt "onfileopen", () ->
+        @setopt "ondragndrop", () ->
         @setopt "selectedFile", undefined
         @setopt "data", []
         @setopt "status", true
@@ -41,12 +42,15 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                 @refs.status.set("text", " ") if @get "status"
             .catch (e) ->
                 # this should be handled by the OS
-                Ant.OS.announcer.oserror e
+                Ant.OS.announcer.oserror e.toString(), e
     
     __data__: (v) ->
         return unless v
         @refreshData()
     
+    __ondragndrop__: (v) ->
+        @refs.treeview.set "ondragndrop", v
+
     sortByType: (a, b) ->
         if a.type < b.type
             -1
@@ -182,6 +186,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                     .then (d) => resolve @getTreeData(d.sort @sortByType)
                     .catch (e) -> reject e
         @refs.gridview.set "header", @header
+        @refs.treeview.set "dragndrop", true
         # even handles
         @refs.listview.set "onlistselect", (e) =>
             @fileselect e.data.item.get("data")

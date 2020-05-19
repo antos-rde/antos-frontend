@@ -81,6 +81,7 @@ class Files extends this.OS.GUI.BaseApplication
                     @currdir = dir
                     ($ @navinput).val dir.path
                     resolve d.result
+                .catch (e) -> reject e
         
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
@@ -214,8 +215,6 @@ class Files extends this.OS.GUI.BaseApplication
                     .then (d) =>
                         return if d is file.filename
                         file.path.asFileHandle().move "#{@currdir.path}/#{d}"
-                            .then (r) =>
-                                @error __("Fail to rename to {0}: {1}", d, r.error) if r.error
                             .catch (e) =>
                                 @error __("Fail to rename: {0}", file.path), e
             
@@ -229,8 +228,6 @@ class Files extends this.OS.GUI.BaseApplication
                     .then (d) =>
                         return unless d
                         file.path.asFileHandle().remove()
-                            .then (r) =>
-                                @error __("Fail to delete {0}: {1}", file.filename, r.error) if r.error
                             .catch (e) =>
                                 @error __("Fail to delete: {0}", file.path), e
             
@@ -254,7 +251,6 @@ class Files extends this.OS.GUI.BaseApplication
                     @clipboard.file.move "#{@currdir.path}/#{@clipboard.file.basename}"
                         .then (r) =>
                             @clipboard = undefined
-                            @error __("Fail to paste: {0}", r.error) if r.error
                         .catch (e) =>
                             @error __("Fail to paste: {0}", @clipboard.file.path), e
                 else
@@ -266,7 +262,6 @@ class Files extends this.OS.GUI.BaseApplication
                             fp.write(@clipboard.file.info.mime)
                                 .then (r) =>
                                     @clipboard = undefined
-                                    @error __("Fail to paste: {0}", r.error) if r.error
                                 .catch (e) =>
                                     @error __("Fail to paste: {0}", @clipboard.file.path), e
                         .catch (e) =>
@@ -284,8 +279,6 @@ class Files extends this.OS.GUI.BaseApplication
                 })
                     .then (d) =>
                         @currdir.mk(d)
-                            .then (r) =>
-                                @error __("Fail to create {0}: {1}", d, r.error) if r.error
                             .catch (e) =>
                                 @error __("Fail to create: {0}", d), e
             
@@ -297,8 +290,6 @@ class Files extends this.OS.GUI.BaseApplication
                     .then (d) =>
                         fp = "#{@currdir.path}/#{d}".asFileHandle()
                         fp.write("text/plain")
-                            .then (r) =>
-                                @error __("Fail to create {0}: {1}", d, r.error) if r.error
                             .catch (e) =>
                                 @error __("Fail to create: {0}", fp.path)
             
@@ -308,8 +299,6 @@ class Files extends this.OS.GUI.BaseApplication
             
             when "#{@name}-upload"
                 @currdir.upload()
-                    .then (r) =>
-                        @error __("Fail to upload to {0}: {1}", @currdir.path, r.error) if r.error
                     .catch (e) =>
                         @error __("Fail to upload: {0}", e.toString()), e
 
@@ -317,8 +306,7 @@ class Files extends this.OS.GUI.BaseApplication
                 return unless file and file.type is "file"
                 file.path.asFileHandle().publish()
                     .then (r) =>
-                        return @error __("Cannot share file: {0}", r.error) if r.error
-                        return @notify __("Shared url: {0}", r.result)
+                        @notify __("Shared url: {0}", r.result)
                     .catch (e) =>
                         @error __("Fail to publish: {0}", file.path), e
 

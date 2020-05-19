@@ -103,7 +103,9 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @get("data").includes v
 
     push: (item, flag) ->
-        el = $("<#{@get "itemtag"}>")
+        tag = @get "itemtag"
+        tag = item.tag if item.tag
+        el = $("<#{tag}>")
         if flag
             @get("data").unshift item if not  @has_data item
             $(@refs.mlist).prepend el[0]

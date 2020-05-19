@@ -1,6 +1,6 @@
 afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
 {
-    background-color: #464646;
+    background-color: #3b3b3b;
 }
 
 afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell

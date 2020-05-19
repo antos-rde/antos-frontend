@@ -9,6 +9,7 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         @setopt "fetch", undefined
         @setopt "open", true
         @setopt "itemindex", 0
+        @setopt "parent", undefined
         @setopt "selected", false
         @setopt "treepath", @aid()
     
@@ -37,7 +38,10 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
                     .then (d) =>
                         return unless d
                         @.set "nodes", d
-                    .catch (e) -> Ant.OS.announcer.oserror e
+                    .catch (e) ->
+                        Ant.OS.announcer.oserror e.toString(), e
+            else
+                @.set "nodes", @__("nodes")
             $(@refs.childnodes).show()
         else
             $(@refs.childnodes).hide()
@@ -71,9 +75,10 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
         for v in nodes
             el = $("<afx-tree-view>").appendTo @refs.childnodes
             el[0].uify undefined
-            el[0].set "treeroot", @get("treeroot")
+            el[0].set "treeroot", root
             el[0].set "indent", (@get("indent") + 1)
             root.indexcounter++
+            el[0].set "parent", @get("parent")
             el[0].set "itemindex", root.indexcounter
             el[0].set "treepath", "#{@get("treepath")}/#{el[0].aid()}"
             el[0].set "fetch", @get("fetch")
@@ -154,15 +159,19 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @setopt "itemindex", 0
         @setopt "ontreeselect", () ->
         @setopt "ontreedbclick", () ->
+        @setopt "ondragndrop", () ->
         @setopt "selectedItem", undefined
         @setopt "fetch", undefined
+        @setopt "dragndrop", false
         @setopt "treepath", @aid()
+        @root.is_left = () => @is_left()
         @indexcounter = 0
 
     __selectedItem: (v) ->
         return unless v
         @get("selectedItem").set "selected", false if @get("selectedItem")
         v.set "selected", true
+
 
     itemclick: (e, flag) ->
         return unless e and e.item
@@ -179,11 +188,18 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
     is_root: () ->
         return @get("treeroot") is undefined
 
+    is_left: () ->
+        data = @get "data"
+        return true unless data
+        return if data.nodes then false else true
+
     __data__: (v) ->
         return unless v
         $(@root).empty()
         @set "treepath", v.path if v.path
-        el = $("<#{@get "itemtag"}>").appendTo @root
+        tag = @get "itemtag"
+        tag = v.tag if v.tag
+        el = $("<#{tag}>").appendTo @root
         el[0].uify undefined
         el[0].set "treeroot", if @is_root() then @ else @get "treeroot"
         el[0].set "indent", @get("indent")
@@ -191,7 +207,52 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         el[0].set "treepath", @get("treepath")
         el[0].set "open", @get("open")
         el[0].set "fetch", @get("fetch")
+        el[0].set "parent", @root
         el[0].set "data", v
+        if @is_root()
+            $(@root).off "mousedown", @treemousedown
+            $(@root).on "mousedown", @treemousedown if @get("dragndrop")
+
+    mount: () ->
+        @dnd = {}
+        @treemousedown = (e) =>
+            el = $(e.target).closest("afx-tree-view")
+            return if el.length is 0
+            el = el[0]
+            return if el is @root
+            e.source = el
+            @dnd.from = el
+            @dnd.to = undefined
+            $(window).on "mouseup", @treemouseup
+            $(window).on "mousemove", @treemousemove
+        
+        @treemouseup = (e) =>
+            $(window).off "mouseup", @treemouseup
+            $(window).off "mousemove", @treemousemove
+            ($ "#systooltip").hide()
+            el = $(e.target).closest("afx-tree-view")
+            return if el.length is 0
+            el = el[0]
+            el = el.get("parent") if el.is_left()
+            return if el is @dnd.from or el is @dnd.from.get("parent")
+            @dnd.to = el
+            @__("ondragndrop") { id: @aid(), data: @dnd }
+            @dnd = {}
+
+        @treemousemove = (e) =>
+            return unless e
+            return unless @dnd.from
+            data = @dnd.from.get("data")
+            $label = $("#systooltip")
+            top = e.clientY + 5
+            left = e.clientX + 5
+            $label.show()
+            $label[0].set "text", data.name
+            $label[0].set "icon", data.icon if data.icon
+            $label[0].set "iconclass", data.iconclass if data.iconclass
+            $label
+                .css "top", top + "px"
+                .css "left", left + "px"
 
 Ant.OS.GUI.define "afx-tree-view", TreeViewTag
 Ant.OS.GUI.define "afx-tree-view-item-proto", TreeViewItemPrototype

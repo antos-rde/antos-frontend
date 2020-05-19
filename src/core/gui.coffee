@@ -117,7 +117,7 @@ Ant.OS.GUI =
         return Ant.OS.announcer.osinfo __("Application {0} is not executable", it.text) if it.type is "app"
         apps = Ant.OS.GUI.appsByMime ( if it.type is "dir" then "dir" else it.mime )
         return Ant.OS.announcer.osinfo __("No application available to open {0}", it.filename) if apps.length is 0
-        return Ant.OS.GUI.launch apps[0].app, [it.path] if apps.length is 1
+        return Ant.OS.GUI.launch apps[0].app, [it] if apps.length is 1
         list = ( { text: e.app, icon: e.icon, iconclass: e.iconclass } for e in apps )
         Ant.OS.GUI.openDialog("SelectionDialog", {
             title: __("Open with"),
@@ -360,7 +360,11 @@ Ant.OS.GUI =
             #     desktop[0].set "selected", -1
 
             desktop.on "click", (e) ->
-                return unless e.target.tagName.toUpperCase() is "UL"
+                el = $(e.target).parent()
+                return unless el.length > 0
+                el = el.parent()
+                return unless el.length > 0
+                return unless el[0] is desktop[0]
                 desktop[0].unselect()
                 ($ "#sysdock").get(0).set "selectedApp", null
         
@@ -418,6 +422,8 @@ Ant.OS.GUI =
                     ($ "#login_error").html "Login: server error"
         ($ "#txtpass").keyup (e) ->
             ($ "#btlogin").click() if e.which is 13
+        ($ "#txtuser").keyup (e) ->
+            ($ "#btlogin").click() if e.which is 13
     
     startAntOS: (conf) ->
         # clean up things
@@ -471,7 +477,7 @@ Ant.OS.GUI.schemes.ws = """
 
 Ant.OS.GUI.schemes.login = """
 <div id = "login_form">
-    <p>Welcome to AntOS, please identify</p>
+    <p>Welcome to AntOS, please login</p>
     <input id = "txtuser" type = "text" value = "demo" />
     <input id = "txtpass" type = "password" value = "demo" />
     <button id = "btlogin">Login</button>

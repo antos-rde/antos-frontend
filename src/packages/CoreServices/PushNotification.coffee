@@ -155,6 +155,7 @@ class PushNotification extends this.OS.GUI.BaseService
             error: o.data.e,
             time: logtime
         }
+        @dialog.loglist.set "data", @dialog.data.logs if @dialog
 
     pushout: (s, o) ->
         d = {
