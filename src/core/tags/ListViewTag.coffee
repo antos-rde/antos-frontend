@@ -21,6 +21,7 @@ class ListViewItemTag extends Ant.OS.GUI.BaseTag
         @get("onselect")({ item: @root })
 
     mount: () ->
+        $(@refs.item).attr "dataref", "afx-list-item"
         $(@refs.item).contextmenu (e) =>
             e.item = @root
             @get("oncontextmenu")(e)
@@ -73,6 +74,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         super r, o
         @setopt "onlistselect", () ->
         @setopt "onlistdbclick", () ->
+        @setopt "ondragndrop", () ->
         @setopt "onitemclose", () -> true
         @setopt "buttons", []
         @setopt "data", []
@@ -82,6 +84,7 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @setopt "selectedItem", undefined
         @setopt "selectedItems", []
         @setopt "selected", -1
+        @setopt "dragndrop", false
         $(@root)
             .css "display", "flex"
             .css "flex-direction", "column"
@@ -173,6 +176,9 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         $( @refs.mlist).empty()
         for item in data
             @push item, false
+        $(@refs.container).off "mousedown", @onmousedown
+        if @__("dragndrop") and not @__("dropdown")
+            $(@refs.container).on "mousedown", @onmousedown
 
 
     unselect: () ->
@@ -223,6 +229,41 @@ class ListViewTag extends Ant.OS.GUI.BaseTag
         @observable.trigger "listselect", evt
 
     mount: () ->
+        @dnd = {}
+        @onmousedown = (e) =>
+            el = $(e.target).closest("li[dataref='afx-list-item']")
+            return if el.length is 0
+            el = el.parent()[0]
+            @dnd.from = el
+            @dnd.to = undefined
+            $(window).on "mouseup", @onmouseup
+            $(window).on "mousemove", @onmousemove
+        
+        @onmouseup = (e) =>
+            $(window).off "mouseup", @onmouseup
+            $(window).off "mousemove", @onmousemove
+            ($ "#systooltip").hide()
+            el = $(e.target).closest("li[dataref='afx-list-item']")
+            return if el.length is 0
+            el = el.parent()[0]
+            return if el is @dnd.from
+            @dnd.to = el
+            @__("ondragndrop") { id: @aid(), data: @dnd }
+            @dnd = {}
+
+        @onmousemove = (e) =>
+            return unless e
+            return unless @dnd.from
+            data = @dnd.from.get("data")
+            $label = $("#systooltip")
+            top = e.clientY + 5
+            left = e.clientX + 5
+            $label.show()
+            $label[0].set "*", data
+            $label
+                .css "top", top + "px"
+                .css "left", left + "px"
+
         $(@refs.btlist).hide()
         @observable.on "resize", (e) => @calibrate()
         @calibrate()

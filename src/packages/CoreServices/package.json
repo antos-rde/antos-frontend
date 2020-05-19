@@ -1,7 +1,8 @@
 {
     "app":null,
+    "className": "CoreServices",
     "services": [ "Calendar", "PushNotification" ],
-    "name":"CoreServices",
+    "name": "Core services",
     "description":"This is the core services",
     "info":{
         "author": "Xuan Sang LE",

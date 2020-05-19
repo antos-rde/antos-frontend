@@ -50,6 +50,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
     
     __ondragndrop__: (v) ->
         @refs.treeview.set "ondragndrop", v
+        @refs.listview.set "ondragndrop", v
 
     sortByType: (a, b) ->
         if a.type < b.type
@@ -187,6 +188,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                     .catch (e) -> reject e
         @refs.gridview.set "header", @header
         @refs.treeview.set "dragndrop", true
+        @refs.listview.set "dragndrop", true
         # even handles
         @refs.listview.set "onlistselect", (e) =>
             @fileselect e.data.item.get("data")

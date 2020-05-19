@@ -54,7 +54,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
 
         @btinstall.set "onbtclick", (e) =>
             if @btinstall.get "dirty"
-                return @update()
+                return @updatePackage()
                     .then () => @notify __("Package updated")
                     .catch (e) => @error e.toString(), e
             @remoteInstall()
@@ -108,7 +108,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             list = []
             for k, v of pkgcache
                 list.push {
-                    className: v.app,
+                    className: if v.app then v.app else v.className,
                     name: v.name,
                     text: v.name,
                     icon: v.icon,
@@ -293,6 +293,11 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     if r.error
                         return reject @_api.throwe __("Cannot uninstall package: {0}", r.error)
                     @notify __("Package uninstalled")
+                    # stop all the services if any
+                    if app.services
+                        for srv in app.services
+                            @_gui.unloadApp srv
+                            
                     delete @systemsetting.system.packages[name]
                     @_gui.unloadApp name
                     if sel.download
@@ -304,7 +309,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                 .catch (e) -> reject e
             .catch (e) -> reject e
     
-    update: () ->
+    updatePackage: () ->
         new Promise (resolve, reject) =>
             @uninstall().then () =>
                 @remoteInstall()

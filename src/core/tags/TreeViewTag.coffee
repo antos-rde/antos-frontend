@@ -220,7 +220,6 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
             return if el.length is 0
             el = el[0]
             return if el is @root
-            e.source = el
             @dnd.from = el
             @dnd.to = undefined
             $(window).on "mouseup", @treemouseup

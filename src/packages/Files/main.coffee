@@ -83,6 +83,19 @@ class Files extends this.OS.GUI.BaseApplication
                     resolve d.result
                 .catch (e) -> reject e
         
+        @view.set "ondragndrop", (e) =>
+            return unless e
+            src = e.data.from.get("data")
+            des = e.data.to.get("data")
+            return if des.type is "file"
+            file = src.path.asFileHandle()
+            file.move "#{des.path}/#{file.basename}"
+                .then () =>
+                    @view.set "path", @view.get("path")
+                    @view.update file.parent().path
+                    @view.update des.path
+                .catch (e) => @error __("Unable to move: {0} -> {1}", src.path, des.path), e
+
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
