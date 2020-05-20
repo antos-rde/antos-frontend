@@ -47,9 +47,6 @@ class App.extensions.AntOSDK extends App.BaseExtension
     mktpl: (path, name, flag) ->
         rpath = "#{path}/#{name}"
         dirs = [
-            "#{rpath}/build",
-            "#{rpath}/build/release",
-            "#{rpath}/build/debug",
             "#{rpath}/javascripts",
             "#{rpath}/css",
             "#{rpath}/coffees",
@@ -102,33 +99,40 @@ class App.extensions.AntOSDK extends App.BaseExtension
             .catch (e) -> reject e
     
     build: (meta) ->
+        dirs = [
+            "#{meta.root}/build",
+            "#{meta.root}/build/debug",
+            "#{meta.root}/build/release"
+        ]
         new Promise (resolve, reject) =>
-            @compile(meta).then (src) =>
-                @cat ("#{meta.root}/#{v}" for v in meta.javascripts), src
-                .then (jsrc) ->
-                    new Promise (r, e) ->
-                        "#{meta.root}/build/debug/main.js"
-                            .asFileHandle()
-                            .setCache jsrc
-                            .write("text/plain")
-                            .then (d) ->
-                                r()
-                            .catch (ex) -> e ex
-                .then () =>
-                    new Promise (r, e) =>
-                        @cat ("#{meta.root}/#{v}" for v in meta.css), ""
-                        .then (txt) ->
-                            return r() if txt is ""
-                            "#{meta.root}/build/debug/main.css"
-                            .asFileHandle()
-                            .setCache txt
-                            .write("text/plain")
-                            .then (d) ->
-                                r()
-                            .catch (ex) -> e ex
-                .then () =>
-                    @copy ("#{meta.root}/#{v}" for v in meta.copies), "#{meta.root}/build/debug"
-                .then () -> resolve()
+            @mkdirAll(dirs).then =>
+                @compile(meta).then (src) =>
+                    @cat ("#{meta.root}/#{v}" for v in meta.javascripts), src
+                    .then (jsrc) ->
+                        new Promise (r, e) ->
+                            "#{meta.root}/build/debug/main.js"
+                                .asFileHandle()
+                                .setCache jsrc
+                                .write("text/plain")
+                                .then (d) ->
+                                    r()
+                                .catch (ex) -> e ex
+                    .then () =>
+                        new Promise (r, e) =>
+                            @cat ("#{meta.root}/#{v}" for v in meta.css), ""
+                            .then (txt) ->
+                                return r() if txt is ""
+                                "#{meta.root}/build/debug/main.css"
+                                .asFileHandle()
+                                .setCache txt
+                                .write("text/plain")
+                                .then (d) ->
+                                    r()
+                                .catch (ex) -> e ex
+                    .then () =>
+                        @copy ("#{meta.root}/#{v}" for v in meta.copies), "#{meta.root}/build/debug"
+                    .then () -> resolve()
+                    .catch (e) -> reject e
                 .catch (e) -> reject e
             .catch (e) -> reject e
 

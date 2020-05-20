@@ -113,7 +113,7 @@ class BaseModel
         @publish "warning", m
 
     error: (m, e) ->
-        @publish "error", m, if e then e else (@_api.throwe @name)
+        @publish "error", m, if e then e else (@_api.throwe m)
         
     fail: (m) ->
         @publish "fail", m

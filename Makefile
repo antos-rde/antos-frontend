@@ -49,7 +49,7 @@ coffees= 	src/core/core.coffee \
 			src/core/tags/SystemPanelTag.coffee \
         	src/antos.coffee
  
-packages = CoreServices Files Setting CodePad MarketPlace
+packages = Syslog Files Setting CodePad MarketPlace
 
 main: initd build_coffees build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/

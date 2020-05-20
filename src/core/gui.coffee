@@ -53,11 +53,19 @@ Ant.OS.GUI =
             .attr "href", path
 
     pushServices: (srvs) ->
-        return unless srvs.length > 0
-        Ant.OS.announcer.observable.one "srvroutineready", () ->
-            srvs.splice 0, 1
-            Ant.OS.GUI.pushServices srvs
-        Ant.OS.GUI.pushService srvs[0]
+        new Promise (resolve, reject) ->
+            return resolve() unless srvs.length > 0
+            srv = srvs.splice(0, 1)[0]
+            Ant.OS.GUI.pushService srv
+                .then (d) ->
+                    Ant.OS.GUI.pushServices srvs
+                        .then () -> resolve()
+                        .catch (e) -> reject e
+                .catch (e) ->
+                    Ant.OS.announcer.osfail __("Unable to load: {0}", srv), e
+                    Ant.OS.GUI.pushServices srvs
+                        .then () -> resolve()
+                        .catch (e) -> reject e
     
     openDialog: (d, data) ->
         new Promise (resolve, reject) ->
@@ -76,16 +84,23 @@ Ant.OS.GUI =
             Ant.OS.GUI.dialog.init()
 
     pushService: (ph) ->
-        arr = ph.split "/"
-        srv = arr[1]
-        app = arr[0]
-        return Ant.OS.PM.createProcess srv, Ant.OS.APP[srv] if Ant.OS.APP[srv]
-        Ant.OS.GUI.loadApp app
-            .then (a) ->
-                return Ant.OS.PM.createProcess srv, Ant.OS.APP[srv] if Ant.OS.APP[srv]
-            .catch (e) ->
-                Ant.OS.announcer.trigger "srvroutineready", srv
-                Ant.OS.announcer.osfail __("Cannot read service script: {0}", srv), e
+        new Promise (resolve, reject) ->
+            arr = ph.split "/"
+            srv = arr[1]
+            app = arr[0]
+            if Ant.OS.APP[srv]
+                Ant.OS.PM.createProcess srv, Ant.OS.APP[srv]
+                    .then (d) -> resolve d
+                    .catch (e) -> reject e
+            else
+                Ant.OS.GUI.loadApp app
+                    .then (a) ->
+                        if not Ant.OS.APP[srv]
+                            return reject Ant.OS.API.throwe __("Service not found: {0}", ph)
+                        Ant.OS.PM.createProcess srv, Ant.OS.APP[srv]
+                            .then (d) -> resolve d
+                            .catch (e) -> reject e
+                    .catch (e) -> reject e
 
     appsByMime: (mime) ->
         metas = ( v for k, v of Ant.OS.setting.system.packages when v and v.app )
@@ -165,12 +180,18 @@ Ant.OS.GUI =
         if not Ant.OS.APP[app]
             # first load it
             Ant.OS.GUI.loadApp(app).then (a) ->
+                console.log "apploaded"
                 Ant.OS.PM.createProcess a, Ant.OS.APP[a], args
+            .catch (e) ->
+                console.log  e
+                Ant.OS.announcer.osfail __("Unable to launch: {0}", app), e
         else
             # now launch it
             if Ant.OS.APP[app]
                 Ant.OS.PM.createProcess app, Ant.OS.APP[app], args
-
+                    .catch (e)->
+                        console.log e
+                        Ant.OS.announcer.osfail __("Unable to launch: {0}", app), e
     dock: (app, meta) ->
         # dock an application to a dock
         # create a data object
@@ -473,6 +494,7 @@ Ant.OS.GUI.schemes.ws = """
 </div>
 <afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>
+<textarea id="clipboard"></textarea>
 """
 
 Ant.OS.GUI.schemes.login = """

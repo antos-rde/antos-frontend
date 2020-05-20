@@ -67,3 +67,11 @@ input {
     font-family: "Ubuntu";
     font-size: 13px;
 }
+
+textarea {
+    color: white;
+    background-color: #464646;
+    outline: none;
+    border: 1px solid #262626;
+    box-sizing: border-box;
+}

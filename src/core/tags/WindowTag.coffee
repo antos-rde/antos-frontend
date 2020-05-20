@@ -100,7 +100,7 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
             $(@refs["grip"]).hide()
 
     __apptitle__: (value) ->
-        $(@refs["dragger"]).text value.__() if value
+        @refs["txtTitle"].set "text", value if value
 
     enable_dragging: () ->
         $(@refs["dragger"])
@@ -190,7 +190,9 @@ class WindowTag extends  Ant.OS.GUI.BaseTag
                         { el: "li", class: "afx-window-close", ref: "closebt" },
                         { el: "li", class: "afx-window-minimize", ref: "minbt" },
                         { el: "li", class: "afx-window-maximize", ref: "maxbt" },
-                        { el: "li", class: "afx-window-title", ref: "dragger" }
+                        { el: "li", class: "afx-window-title", ref: "dragger", children: [{
+                            el: "afx-label", ref: "txtTitle"
+                        }] }
                     ]
                 },
                 { el: "div", class: "afx-clear" },

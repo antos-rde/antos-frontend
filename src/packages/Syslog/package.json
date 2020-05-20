@@ -1,9 +1,9 @@
 {
-    "app":null,
-    "className": "CoreServices",
+    "app":"Syslog",
+    "pkgname": "Syslog",
     "services": [ "Calendar", "PushNotification" ],
-    "name": "Core services",
-    "description":"This is the core services",
+    "name": "System log",
+    "description":"Core services and system log",
     "info":{
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com",
@@ -12,5 +12,6 @@
     },
     "version":"0.0.1-a",
     "category":"System",
-    "mimes":["*"]
+    "iconclass": "fa fa-bug",
+    "mimes":[]
 }

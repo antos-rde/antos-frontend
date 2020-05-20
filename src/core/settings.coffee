@@ -43,8 +43,8 @@
     Ant.OS.setting.system = conf.system if conf.system
     Ant.OS.setting.system.startup = {
         services: [
-            "CoreServices/PushNotification",
-            "CoreServices/Calendar"
+            "Syslog/PushNotification",
+            "Syslog/Calendar"
         ],
         apps: []
     } if not Ant.OS.setting.system.startup

@@ -14,8 +14,8 @@ class CodePad.BaseExtension
     notify: (m) ->
         @app.notify m
     
-    error: (m) ->
-        @app.error m
+    error: (m, e) ->
+        @app.error m, e
 
     dependencies: () ->
         []
@@ -87,6 +87,7 @@ class CodePad.BaseExtension
             path = (list.splice 0, 1)[0].asFileHandle()
             path.parent().mk path.basename
                 .then (d) =>
+                    @app.trigger "filechange", { file: path.parent(), type: "dir" }
                     @mkdirAll list
                         .then () -> resolve()
                         .catch (e) -> reject e
@@ -101,9 +102,11 @@ class CodePad.BaseExtension
                 .read()
                 .then (data) =>
                     file = item[1].asFileHandle()
+                    file
                         .setCache(data.format name, "#{path}/#{name}")
                         .write "text/plain"
                         .then () =>
+                            @app.trigger "filechange", { file: file, type: "file" }
                             @mkfileAll list, path, name
                                 .then () -> resolve()
                                 .catch (e) -> reject e

@@ -27,6 +27,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                 dir.read().then (d) ->
                     return reject d.error if d.error
                     resolve d.result
+                .catch (e) -> reject e
         @setup()
 
     setup: () ->
@@ -38,6 +39,8 @@ class CodePad extends this.OS.GUI.BaseApplication
             enableSnippets: true,
             enableLiveAutocompletion: true,
             highlightActiveLine: true,
+            highlightSelectedWord: true,
+            behavioursEnabled: true,
             wrap: true,
             fontSize: "11pt"
         }
@@ -72,11 +75,13 @@ class CodePad extends this.OS.GUI.BaseApplication
                 @editor.focus()
             return false
         @fileview.set "onfileopen", (e) =>
+            return unless e.data and e.data.path
             return if e.data.type is "dir"
             @openFile e.data.path.asFileHandle()
 
         @fileview.set "onfileselect", (e) =>
-            return unless e.data or e.data.type is "dir"
+            return unless e.data and e.data.path
+            return if e.data.type is "dir"
             i = @findTabByFile e.data.path.asFileHandle()
             return @tabbar.set "selected", i if i isnt -1
 
@@ -117,6 +122,12 @@ class CodePad extends this.OS.GUI.BaseApplication
                     e.data.to.update des
                     e.data.from.get("parent").update src.parent().path
                 .catch (e) => @error __("Unable to move file/folder"), e
+
+        @on "filechange", (data) =>
+            path = data.file.path
+            path = data.file.parent().path if data.type is "file"
+            @fileview.update path
+
 
         @loadExtensionMetaData()
         @initCommandPalete()
@@ -178,16 +189,17 @@ class CodePad extends this.OS.GUI.BaseApplication
                 m = @modes.getModeForPath(file.path)
                 file.langmode = { caption: m.caption, mode: m.mode }
             else
-                file.langmode = { caption: "Text", mode: "ace/mode/text" }
+                file.langmode   = { caption: "Text", mode: "ace/mode/text" }
         @editormux = true
+        @editor.getSession().setUndoManager new ace.UndoManager()
         @editor.setValue file.cache, -1
-        @editor.session.setMode file.langmode.mode
-        @editor.session.setUndoManager file.um
+        @editor.getSession().setMode file.langmode.mode
         if file.cursor
             @editor.renderer.scrollCursorIntoView {
                 row: file.cursor.row, column: file.cursor.column
             }, 0.5
             @editor.selection.moveTo file.cursor.row, file.cursor.column
+        @editor.getSession().setUndoManager file.um
         @updateStatus()
         @editor.focus()
 
@@ -423,7 +435,7 @@ class CodePad extends this.OS.GUI.BaseApplication
         evt.preventDefault()
         @.openDialog("YesNoDialog", {
             title: "__(Quit)",
-            text: __("Ignore all {0} unsaved files ?", dirties.length)
+            text: __("Ignore all unsaved files: {0} ?", (v.filename() for v in dirties).join ", " )
         }).then (d) =>
             if d
                 v.dirty = false for v in dirties

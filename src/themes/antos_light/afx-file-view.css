@@ -10,7 +10,6 @@ afx-file-view afx-list-view > div.list-container > ul  li{
     height: 60px;
     background-color: transparent;
     text-align: center;
-    padding:3px;
     margin-right: 5px;
     margin-bottom: 5px;
 }
@@ -26,9 +25,8 @@ afx-file-view afx-list-view i.dir:before{
     font-style: normal;
 }
 afx-file-view afx-list-view i{
-    width: 32px;
-    height: 32px;
-    margin-left: 19px;
+    width: 100%;
+    margin-left: 3px;
 }
 
 
@@ -40,8 +38,11 @@ afx-file-view afx-list-view i.file:before{
     font-style: normal;
     font-weight: normal;
 }
-
-afx-file-view afx-list-view > div.list-container > ul > afx-list-item > li.selected, afx-file-view afx-list-view div.list-container > ul  li.selected  i:before {
+afx-file-view afx-list-view > div.list-container > ul > afx-list-item > li.selected
+{
+    background-color: transparent;
+}
+afx-file-view afx-list-view div.list-container > ul  li.selected  i.label-text {
     background-color: #116cd6;
     color:white;
     border-radius: 6px;

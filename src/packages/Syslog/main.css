@@ -49,13 +49,38 @@ afx-list-view[data-id = "notifeed"] li{
     word-break: break-word;
 }
 
-afx-app-window[data-id ='LogDialog'] div[data-id ='container']{
+afx-app-window[data-id ='Syslog'] div[data-id ='container']{
     overflow: auto;
 }
 
-afx-app-window[data-id ='LogDialog'] pre {
-    padding: 10px;
+afx-app-window[data-id ='Syslog'] .afx-bug-list-item-error {
+    display: block;
+
 }
-afx-app-window[data-id ='LogDialog'] input{
+
+afx-app-window[data-id ='Syslog'] .afx-bug-list-item-error i::before {
+    color: chocolate;
+}
+afx-app-window[data-id ='Syslog'] .afx-bug-list-item-time{
+    display: block;
+    padding-left: 10px;
+}
+afx-app-window[data-id ='Syslog'] .afx-bug-list-item-time i.label-text{
+    font-size: 10px;
+    font-style: italic;
+}
+
+afx-app-window[data-id ='Syslog'] afx-bug-list-item li.selected {
+    background-color: #116cd6;
+    color: white;
+}
+
+afx-app-window[data-id ='Syslog'] pre {
+    padding: 10px;
+    margin:0;
+    user-select: text;
+    cursor: text;
+}
+afx-app-window[data-id ='Syslog'] input{
     height: 100%;
 }

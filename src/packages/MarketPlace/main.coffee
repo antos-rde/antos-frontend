@@ -50,7 +50,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             el = @applist.get "selectedItem"
             return unless el
             app = el.get("data")
-            @_gui.launch app.className if app.className
+            @_gui.launch app.pkgname if app.pkgname
 
         @btinstall.set "onbtclick", (e) =>
             if @btinstall.get "dirty"
@@ -108,7 +108,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             list = []
             for k, v of pkgcache
                 list.push {
-                    className: if v.app then v.app else v.className,
+                    pkgname: if v.pkgname then v.pkgname else v.app,
                     name: v.name,
                     text: v.name,
                     icon: v.icon,
@@ -140,14 +140,16 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             d.description.asFileHandle().read().then (text) =>
                 converter = new showdown.Converter()
                 ($ @appdesc).html(converter.makeHtml text)
-            .catch (e) => @notify __("Unable to read package description")
+            .catch (e) =>
+                @notify __("Unable to read package description")
+                ($ @appdesc).empty()
         else
             ($ @appdesc).empty()
         pkgcache = @systemsetting.system.packages
         @btinstall.set "text", "__(Install)"
         @btinstall.set "dirty", false
-        if pkgcache[d.className]
-            vs = pkgcache[d.className].version
+        if pkgcache[d.pkgname]
+            vs = pkgcache[d.pkgname].version
             ovs = d.version
             ($ @btinstall).hide()
             if vs and ovs
@@ -223,7 +225,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                         .then (n) =>
                             @repo.unselect()
                             @repo.set "selected", 0
-                            apps = (v.className for v in @applist.get("data"))
+                            apps = (v.pkgname for v in @applist.get("data"))
                             idx = apps.indexOf n
                             if idx >= 0
                                 @applist.set "selected", idx
@@ -249,7 +251,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     @mkdirs(dir).then () =>
                         @installFile(v.app, zip, files).then () =>
                             app_meta = {
-                                className: v.app,
+                                pkgname: v.app,
                                 name: v.name,
                                 text: v.name,
                                 icon: v.icon,
@@ -281,8 +283,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             return unless el
             sel = el.get "data"
             return unless sel
-            name = sel.className
-            app = @systemsetting.system.packages[sel.className]
+            name = sel.pkgname
+            app = @systemsetting.system.packages[sel.pkgname]
             return unless app
             @openDialog("YesNoDialog", {
                 title: __("Uninstall") ,

@@ -41,32 +41,32 @@ Ant.OS or=
         pidalloc: 0
         processes: {}
         createProcess: (app, cls, args) ->
-            f = () ->
-                #if it is single ton
-                # and a process is existing
-                # just return it
-                if cls.singleton and Ant.OS.PM.processes[app] and Ant.OS.PM.processes[app].length == 1
-                    Ant.OS.PM.processes[app][0].show()
+            new Promise (resolve, reject) ->
+                f = () ->
+                    #if it is single ton
+                    # and a process is existing
+                    # just return it
+                    if cls.singleton and Ant.OS.PM.processes[app] and Ant.OS.PM.processes[app].length == 1
+                        obj = Ant.OS.PM.processes[app][0]
+                        obj.show()
+                    else
+                        Ant.OS.PM.processes[app] = [] if not Ant.OS.PM.processes[app]
+                        obj = new cls(args)
+                        obj.birth = (new Date).getTime()
+                        Ant.OS.PM.pidalloc++
+                        obj.pid = Ant.OS.PM.pidalloc
+                        Ant.OS.PM.processes[app].push obj
+                        if cls.type is 1 then Ant.OS.GUI.dock obj, cls.meta else Ant.OS.GUI.attachservice obj
+                    obj
+                if cls.dependencies
+                    libs = (v for v in cls.dependencies)
+                    Ant.OS.API.require libs
+                        .then () ->
+                            resolve f()
+                        .catch (e) ->
+                            reject e
                 else
-                    Ant.OS.PM.processes[app] = [] if not Ant.OS.PM.processes[app]
-                    obj = new cls(args)
-                    obj.birth = (new Date).getTime()
-                    Ant.OS.PM.pidalloc++
-                    obj.pid = Ant.OS.PM.pidalloc
-                    Ant.OS.PM.processes[app].push obj
-                    if cls.type is 1 then Ant.OS.GUI.dock obj, cls.meta else Ant.OS.GUI.attachservice obj
-                if cls.type is 2
-                    Ant.OS.announcer.trigger "srvroutineready", app
-            if cls.dependencies
-                libs = (v for v in cls.dependencies)
-                Ant.OS.API.require libs
-                    .then () ->
-                        console.log "launch the app"
-                        f()
-                    .catch (e) ->
-                        Ant.OS.announcer.oserror __("Unable to load libraries"), e
-            else
-                f()
+                    resolve f()
         appByPid: (pid) ->
             app = undefined
             find = (l) ->

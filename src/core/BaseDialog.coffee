@@ -36,7 +36,7 @@ class SubWindow extends this.OS.GUI.BaseModel
         
     show: () ->
         @trigger 'focus'
-        ($ @scheme).css "z-index", window._zindex + 2
+        ($ @scheme).css "z-index", Ant.OS.GUI.zindex + 2
     hide: () ->
         @trigger 'hide'
 
@@ -56,10 +56,14 @@ this.OS.GUI.BaseDialog = BaseDialog
 class BasicDialog extends BaseDialog
     constructor: ( name, target) ->
         super name
-        if typeof target is "string"
-            Ant.OS.GUI.htmlToScheme target, @, @host
-        else # a file handle
-            @render target.path
+        if target
+            if typeof target is "string"
+                Ant.OS.GUI.htmlToScheme target, @, @host
+            else # a file handle
+                @render target.path
+        else if Ant.OS.GUI.subwindows[name] and Ant.OS.GUI.subwindows[name].scheme
+            scheme = Ant.OS.GUI.subwindows[name].scheme
+            Ant.OS.GUI.htmlToScheme scheme, @, @host
     
     init: () ->
         @scheme.set "apptitle", @data.title if @data and @data.title
@@ -70,19 +74,27 @@ this.OS.GUI.BasicDialog = BasicDialog
 
 class PromptDialog extends BasicDialog
     constructor: () ->
-        super "PromptDialog", PromptDialog.scheme
+        super "PromptDialog"
     
     init: () ->
         super.init()
+        $input = $(@find "txtInput")
         @find("lbl").set "text", @data.label if @data and @data.label
-        $(@find "txtInput").val @data.value if @data and @data.value
+        $input.val @data.value if @data and @data.value
 
         (@find "btnOk").set "onbtclick", (e) =>
-            @handle($(@find "txtInput").val()) if @handle
+            @handle($input.val()) if @handle
             @quit()
         
         (@find "btnCancel").set "onbtclick", (e) =>
             @quit()
+
+        $input.keyup (e) =>
+            return unless e.which is 13
+            @handle($input.val()) if @handle
+            @quit()
+    
+        $input.focus()
 
 
 PromptDialog.scheme = """
@@ -110,7 +122,7 @@ this.OS.register "PromptDialog", PromptDialog
 
 class CalendarDialog extends BasicDialog
     constructor: () ->
-        super "CalendarDialog", CalendarDialog.scheme
+        super "CalendarDialog"
     
     init: () ->
         super.init()
@@ -149,7 +161,7 @@ this.OS.register "CalendarDialog", CalendarDialog
 
 class ColorPickerDialog extends BasicDialog
     constructor: () ->
-        super "ColorPickerDialog", ColorPickerDialog.scheme
+        super "ColorPickerDialog"
     
     init: () ->
         super.init()
@@ -188,7 +200,7 @@ this.OS.register "ColorPickerDialog", ColorPickerDialog
 
 class InfoDialog extends BasicDialog
     constructor: () ->
-        super "InfoDialog", InfoDialog.scheme
+        super "InfoDialog"
         
     init: () ->
         super.init()
@@ -226,7 +238,7 @@ this.OS.register "InfoDialog", InfoDialog
 
 class YesNoDialog extends BasicDialog
     constructor: () ->
-        super "YesNoDialog", YesNoDialog.scheme
+        super "YesNoDialog"
 
     init: () ->
         super.init()
@@ -262,7 +274,7 @@ this.OS.register "YesNoDialog", YesNoDialog
 
 class SelectionDialog extends BasicDialog
     constructor: () ->
-        super "SelectionDialog", SelectionDialog.scheme
+        super "SelectionDialog"
     
     init: () ->
         super.init()
@@ -302,8 +314,7 @@ this.OS.register "SelectionDialog", SelectionDialog
 
 class AboutDialog extends BasicDialog
     constructor: () ->
-        super "AboutDialog", AboutDialog.scheme
-
+        super "AboutDialog"
     init: () ->
         mt = @meta()
         @scheme.set "apptitle", __("About: {0}", mt.name)
@@ -348,7 +359,7 @@ this.OS.register "AboutDialog", AboutDialog
 
 class FileDialog extends BasicDialog
     constructor: () ->
-        super "FileDialog", FileDialog.scheme
+        super "FileDialog"
     
     init: () ->
         super.init()

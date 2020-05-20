@@ -5,7 +5,7 @@
 
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of 
+# published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,74 +15,6 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
-Ant = this
-class LogDialog extends this.OS.GUI.BasicDialog
-    constructor: () ->
-        super "LogDialog", LogDialog.scheme
-
-    init: () ->
-        @loglist = @find "loglist"
-        @logdetail = @find "logdetail"
-        @loglist.set "data", @data.logs if @data and @data.logs
-        $(@find("txturi")).val Ant.OS.setting.system.error_report
-        @loglist.set "onlistselect", (e) =>
-            data = e.data.item.get("data") if e and e.data
-            return unless data
-            stacktrace = "None"
-            stacktrace = data.error.stack if data.error
-            $(@logdetail).text LogDialog.template.format(
-                data.text,
-                data.type,
-                data.time,
-                data.name,
-                data.id,
-               stacktrace
-            )
-        @find("btnreport").set "onbtclick", (e) =>
-            uri = $(@find("txturi")).val()
-            return if uri is ""
-            el = @loglist.get "selectedItem"
-            return unless el
-            data = el.get("data")
-            return unless data
-            Ant.OS.API.post uri, data
-                .then (d) =>
-                    @notify __("Error reported")
-                .catch (e) =>
-                    @notify __("Unable to report error: {0}", e.toString())
-
-LogDialog.template = """
-{0}
-Log type: {1}
-Log time: {2}
-Process: {3} ({4})
-detail:
-
-{5}
-"""
-LogDialog.scheme = """
-<afx-app-window data-id="LogDialog"  width='500' height='350' apptitle = "__(System error log)" >
-    <afx-hbox>
-        <afx-list-view data-id = "loglist" data-width="200"> </afx-list-view>
-        <afx-resizer data-width = "2" />
-        <afx-vbox>
-            <div data-height="10" />
-            <div data-id = "container">
-                <pre><code data-id="logdetail"></code></pre>
-            </div>
-            <div data-height="10" />
-            <afx-hbox  style="text-align:right;" data-height = "27">
-                <div data-width="5" />
-                <input type = "text" data-id = "txturi" />
-                <afx-button data-width ="80" text = "__(Report)"
-                    iconclass = "fa fa-bug" data-id = "btnreport" />
-                <div data-width="10" />
-            </afx-hbox>
-            <div data-height="10" />
-        </afx-vbox>
-    </afx-hbox>
-</afx-app-window>
-"""
 
 class PushNotification extends this.OS.GUI.BaseService
     constructor: (args) ->
@@ -91,6 +23,7 @@ class PushNotification extends this.OS.GUI.BaseService
         @cb = undefined
         @pending = []
         @logs = []
+        @logmon = undefined
     init: ->
         @view = false
         @_gui.htmlToScheme PushNotification.scheme, @, @host
@@ -139,23 +72,26 @@ class PushNotification extends this.OS.GUI.BaseService
             .hide()
 
     showLogReport: () ->
-        @openDialog(new LogDialog(), {
-            logs: @logs
-        })
+        @_gui.launch "Syslog"
 
     addLog: (s, o) ->
         logtime = new Date()
-        @logs.push {
+        log = {
             type: s,
             name: o.name,
-            text: "#{logtime}: #{o.data.m}",
+            text: "#{o.data.m}",
             id: o.id,
             icon: o.data.icon,
             iconclass: o.data.iconclass,
             error: o.data.e,
-            time: logtime
+            time: logtime,
+            closable: true,
+            tag: "afx-bug-list-item"
         }
-        @dialog.loglist.set "data", @dialog.data.logs if @dialog
+        if @logmon
+            @logmon.addLog log
+        else
+            @logs.push log
 
     pushout: (s, o) ->
         d = {

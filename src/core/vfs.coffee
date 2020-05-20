@@ -51,6 +51,10 @@ class BaseFileHandle
         @basename = @genealogy[@genealogy.length - 1] unless @isRoot()
         @ext = @basename.split( "." ).pop() unless @basename.lastIndexOf(".") is 0 or @basename.indexOf( "." ) is -1
     
+    filename: () ->
+        return "Untitled" unless @basename
+        @basename
+
     setCache: (v) ->
         @cache = v
         @

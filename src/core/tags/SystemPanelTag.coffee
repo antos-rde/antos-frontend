@@ -32,6 +32,7 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
         @toggle false
         # launch the app or open the file
         Ant.OS.GUI.openWith data
+        @refs.applist.unselect()
     
     search: (e) ->
         switch e.which

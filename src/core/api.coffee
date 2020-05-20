@@ -391,6 +391,17 @@ Ant.OS.API =
             err = e
         return "" if not err
         return err
+    
+    setClipboard: (v) ->
+        $el = $("#clipboard")
+        $el.val v
+        $el[0].select()
+        $el[0].setSelectionRange(0, 99999)
+        document.execCommand("copy")
+
+    getClipboard: () ->
+        $("#clipboard").val()
+
 # utilities functioncs
     switcher: () ->
         o = {}

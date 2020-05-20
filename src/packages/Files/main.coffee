@@ -36,15 +36,22 @@ class Files extends this.OS.GUI.BaseApplication
 
         @view.contextmenuHandle = (e, m) =>
             file = @view.get "selectedFile"
+            return unless file
             apps = []
-            if file and file.mime
-                file.mime = "dir" if file.type is "dir"
+            file.mime = "dir" if file.type is "dir"
                 
-                for v in @_gui.appsByMime file.mime
-                    v.args = [ file ]
-                    apps.push v
+            for v in @_gui.appsByMime file.mime
+                v.args = [ file ]
+                apps.push v
             m.set "items", [
-                { text: "__(Open with)", dataid: "#{@name}-open", child: apps },
+                {
+                    text: "__(Open with)",
+                    child: apps,
+                    onchildselect: (e) =>
+                        return unless e
+                        it = e.data.item.get("data")
+                        @_gui.launch it.app, [file]
+                },
                 @mnFile(),
                 @mnEdit()
             ]
@@ -83,33 +90,50 @@ class Files extends this.OS.GUI.BaseApplication
                     resolve d.result
                 .catch (e) -> reject e
         
+        @vfs_event_flag = true
         @view.set "ondragndrop", (e) =>
             return unless e
             src = e.data.from.get("data")
             des = e.data.to.get("data")
             return if des.type is "file"
             file = src.path.asFileHandle()
+            # disable the vfs event on
+            # we update it manually
+            @vfs_event_flag = false
             file.move "#{des.path}/#{file.basename}"
                 .then () =>
-                    @view.set "path", @view.get("path")
-                    @view.update file.parent().path
-                    @view.update des.path
-                .catch (e) => @error __("Unable to move: {0} -> {1}", src.path, des.path), e
+                    if @view.get("view") is "icon"
+                        @view.set "path", @view.get("path")
+                    else
+                        @view.update file.parent().path
+                        @view.update des.path
+                    #reenable the vfs event
+                    @vfs_event_flag = true
+                .catch (e) =>
+                    # reenable the vfs event
+                    @vfs_event_flag = true
+                    @error __("Unable to move: {0} -> {1}", src.path, des.path), e
 
+        # application setting
         @setting.sidebar = true if @setting.sidebar is undefined
         @setting.nav = true if @setting.nav is undefined
         @setting.showhidden = false if @setting.showhidden is undefined
         @applyAllSetting()
 
+        # VFS mount point and event
         mntpoints = @systemsetting.VFS.mountpoints
         el.selected = false for el, i in mntpoints
         @favo.set "data", mntpoints
         #@favo.set "selected", -1
         @view.set "view", @setting.view if @setting.view
         @subscribe "VFS", (d) =>
+            return unless @vfs_event_flag
             return if  ["read", "publish", "download"].includes d.data.m
-            if d.data.file.hash() is @currdir.hash() or d.data.file.parent().hash() is @currdir.hash()
+            if (d.data.file.hash() is @currdir.hash() or
+                    d.data.file.parent().hash() is @currdir.hash())
                 @view.set "path", @currdir
+        
+        # bind keyboard shortcut
         @bindKey "CTRL-F", () => @actionFile "#{@name}-mkf"
         @bindKey "CTRL-D", () => @actionFile "#{@name}-mkdir"
         @bindKey "CTRL-U", () => @actionFile "#{@name}-upload"
