@@ -122,14 +122,14 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             @applist.set "data", list
             return
         
-        @_api.get data.url
+        @_api.get data.url, "json"
             .then ( d ) =>
                 for v in d
                     v.text = v.name
                     v.iconclass = "fa fa-adn"
                 @apps_meta = d
                 @applist.set "data", d
-            .catch (e) ->
+            .catch (e) =>
                 @error __("Fail to fetch packages list from: {0}", data.url), e
 
     appDetail: (d) ->
