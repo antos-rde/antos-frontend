@@ -58,7 +58,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     .then () => @notify __("Package updated")
                     .catch (e) => @error e.toString(), e
             @remoteInstall()
-                .then () => @notify __("Package installed")
+                .then (n) => @notify __("Package installed: {0}", n)
                 .catch (e) => @error e.toString(), e
 
         @btremove.set "onbtclick", (e) =>
@@ -195,8 +195,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     data: @systemsetting.system.repositories
                 }
             when "install"
-                @localInstall().then () =>
-                    @notify __("Package installed")
+                @localInstall().then (n) =>
+                    @notify __("Package installed: {0}", n)
                 .catch (e) => @error __("Unable to install package"), e
             else
 
@@ -210,7 +210,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             @_api.blob app.download
             .then (data) =>
                 @install data, app
-                    .then () -> resolve()
+                    .then (n) -> resolve(n)
                     .catch (e) -> reject(e)
             .catch (e) -> reject e
 
@@ -229,7 +229,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                             idx = apps.indexOf n
                             if idx >= 0
                                 @applist.set "selected", idx
-                            resolve()
+                            resolve(n)
                         .catch (e) -> reject(e)
                     .catch (e) -> reject e
                 .catch (e) -> reject e
@@ -269,7 +269,6 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                             v.iconclass = "fa fa-adn" unless v.iconclass or v.icon
                             v.path = pth
                             @systemsetting.system.packages[v.app] = v
-                            @notify __("Application installed")
                             @appDetail app_meta
                             resolve(v.name)
                         .catch (e) -> reject e
