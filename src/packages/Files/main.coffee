@@ -41,8 +41,13 @@ class Files extends this.OS.GUI.BaseApplication
             file.mime = "dir" if file.type is "dir"
                 
             for v in @_gui.appsByMime file.mime
-                v.args = [ file ]
-                apps.push v
+                apps.push {
+                    text: v.text,
+                    app: v.app,
+                    icon: v.icon,
+                    iconclass: v.iconclass
+                }
+                
             m.set "items", [
                 {
                     text: "__(Open with)",
