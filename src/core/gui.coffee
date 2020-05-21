@@ -180,17 +180,14 @@ Ant.OS.GUI =
         if not Ant.OS.APP[app]
             # first load it
             Ant.OS.GUI.loadApp(app).then (a) ->
-                console.log "apploaded"
                 Ant.OS.PM.createProcess a, Ant.OS.APP[a], args
             .catch (e) ->
-                console.log  e
                 Ant.OS.announcer.osfail __("Unable to launch: {0}", app), e
         else
             # now launch it
             if Ant.OS.APP[app]
                 Ant.OS.PM.createProcess app, Ant.OS.APP[app], args
-                    .catch (e)->
-                        console.log e
+                    .catch (e) ->
                         Ant.OS.announcer.osfail __("Unable to launch: {0}", app), e
     dock: (app, meta) ->
         # dock an application to a dock

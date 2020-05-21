@@ -1,6 +1,6 @@
 Ant = this
 
-class BugListItemTag extends Ant.OS.GUI.tag["afx-list-item-proto"]
+class BugListItemTag extends this.OS.GUI.tag["afx-list-item-proto"]
     constructor: (r, o) ->
         super r, o
     
@@ -25,7 +25,7 @@ class BugListItemTag extends Ant.OS.GUI.tag["afx-list-item-proto"]
         ] }
         
 
-Ant.OS.GUI.define "afx-bug-list-item", BugListItemTag
+this.OS.GUI.define "afx-bug-list-item", BugListItemTag
 
 class Syslog extends this.OS.GUI.BaseApplication
     constructor: (args) ->

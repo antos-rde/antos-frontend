@@ -54,6 +54,17 @@ class BaseApplication extends this.OS.GUI.BaseModel
         path = "#{@meta().path}/scheme.html"
         @.render path
 
+    load: (promise) ->
+        q = @_api.mid()
+        new Promise (resolve, reject) =>
+            @_api.loading q, @name
+            promise.then () =>
+                @_api.loaded q, @name, "OK"
+                resolve()
+            .catch (e) =>
+                @_api.loaded q, @name, "FAIL"
+                reject e
+
     bindKey: (k, f) ->
         arr = k.split "-"
         return unless arr.length is 2

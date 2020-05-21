@@ -32,9 +32,11 @@ class PushNotification extends this.OS.GUI.BaseService
         if b and @iconclass is "fa fa-bars"
             @iconclass = "fa fa-spinner fa-spin"
             @update()
+            $(@_gui.workspace).css "cursor", "wait"
         else if not b and @iconclass is "fa fa-spinner fa-spin"
             @iconclass = "fa fa-bars"
             @update()
+            $(@_gui.workspace).css "cursor", "auto"
 
     main: ->
         @mlist = @find "notifylist"
@@ -51,14 +53,12 @@ class PushNotification extends this.OS.GUI.BaseService
 
         @subscribe "loading", (o) =>
             @pending.push o.id
-            $(@_gui.workspace).css "cursor", "wait"
             @spin true
 
         @subscribe "loaded", (o) =>
             i = @pending.indexOf o.id
             @pending.splice i, 1 if i >= 0
             @spin false if @pending.length is 0
-            $(@_gui.workspace).css "cursor", "auto"
         
         @nzone.set "height", "100%"
         @fzone.set "height", "100%"
