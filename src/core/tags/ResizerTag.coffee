@@ -52,7 +52,7 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         w = Math.round(e.clientX - offset.left)
         w = @minsize if w < @minsize
         $(@resizable_el).attr "data-width", w.toString()
-        @observable.trigger "resize", { id: @resizable_el.aid(), data: w }
+        @observable.trigger "resize", { id: @aid(), data: { w: w } }
 
 
     verticalResize: (e) ->
@@ -61,7 +61,7 @@ class ResizerTag extends Ant.OS.GUI.BaseTag
         h = Math.round(e.clientY - offset.top)
         h = @minsize if h < @minsize
         $(@resizable_el).attr "data-height", h.toString()
-        @observable.trigger "resize", { id: @resizable_el.aid(), data: h }
+        @observable.trigger "resize", { id: @aid(), data: { w: w } }
 
     layout: () ->
         []

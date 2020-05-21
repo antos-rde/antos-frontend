@@ -73,10 +73,13 @@ Ant.OS.API.handle =
     apigateway: (d, ws) ->
         if ws
             new Promise (resolve, reject) ->
-                path = "#{Ant.OS.API.HOST}/system/apigateway?ws=1"
-                proto = if window.location.protocol is "https:" then "wss://" else "ws://"
-                socket = new WebSocket proto + path
-                resolve(socket)
+                try
+                    path = "#{Ant.OS.API.HOST}/system/apigateway?ws=1"
+                    proto = if window.location.protocol is "https:" then "wss://" else "ws://"
+                    socket = new WebSocket proto + path
+                    resolve(socket)
+                catch e
+                    reject e
         else
             path = "#{Ant.OS.API.REST}/system/apigateway?ws=0"
             Ant.OS.API.post path, d

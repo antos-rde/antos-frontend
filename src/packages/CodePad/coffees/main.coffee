@@ -42,7 +42,8 @@ class CodePad extends this.OS.GUI.BaseApplication
             highlightSelectedWord: true,
             behavioursEnabled: true,
             wrap: true,
-            fontSize: "11pt"
+            fontSize: "11pt",
+            showInvisibles: true
         }
         #themes = ace.require "ace/ext/themelist"
         @editor.setTheme "ace/theme/monokai"

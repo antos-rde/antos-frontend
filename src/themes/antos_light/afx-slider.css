@@ -11,9 +11,9 @@ afx-slider div.progress {
 }
 
 afx-slider div.dragpoint {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     border:1px solid #6b6b6b;
-    border-radius: 20px;
+    border-radius: 15px;
     background-color:#e6e6e6;
 }

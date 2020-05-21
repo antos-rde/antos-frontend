@@ -86,10 +86,8 @@ class BaseModel
             @dialog.title = data.title if data and data.title
             @dialog.init()
 
-    ask: (t, m, f) ->
-        @._gui.openDialog "YesNoDialog", (d) ->
-            f() if d
-        , t, { text: m }
+    ask: (data) ->
+        @._gui.openDialog("YesNoDialog", data)
     
     publish: (t, m, e) ->
         mt = @meta()
