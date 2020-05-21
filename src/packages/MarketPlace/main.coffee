@@ -122,7 +122,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             @applist.set "data", list
             return
         
-        @_api.get data.url, "json"
+        @_api.get (data.url + "?_=" + (new Date().getTime())) , "json"
             .then ( d ) =>
                 for v in d
                     v.text = v.name
@@ -207,7 +207,7 @@ class MarketPlace extends this.OS.GUI.BaseApplication
         return unless app
         # get blob file
         new Promise (resolve, reject) =>
-            @_api.blob app.download
+            @_api.blob app.download + "?_=" + (new Date().getTime())
             .then (data) =>
                 @install data, app
                     .then (n) -> resolve(n)
