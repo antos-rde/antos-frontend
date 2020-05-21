@@ -36,6 +36,10 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
     
     search: (e) ->
         switch e.which
+            when 27
+                # escape key
+                @toggle false
+
             when 37
                 e.preventDefault()
             when 38
@@ -103,6 +107,7 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
         @refs.applist.set "data", list
 
     toggle: (flag) ->
+        @view = flag
         if flag
             @refreshAppList()
             $(@refs.overlay).show()
@@ -160,7 +165,6 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
                 @toggle true
             else
                 @toggle false
-            @view = not @view
         Ant.OS.announcer.trigger("syspanelloaded")
 
 Ant.OS.GUI.define "afx-sys-panel", SystemPanelTag
