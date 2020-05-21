@@ -120,6 +120,48 @@ PromptDialog.scheme = """
 """
 this.OS.register "PromptDialog", PromptDialog
 
+class TextDialog extends this.OS.GUI.BasicDialog
+    constructor: () ->
+        super "TextDialog", TextDialog.scheme
+    
+    init: () ->
+        super.init()
+        $input = $(@find "txtInput")
+        $input.val @data.value if @data and @data.value
+
+        @find("btnOk").set "onbtclick", (e) =>
+            value = $input.val()
+            return unless value and value isnt ""
+            @handle value if @handle
+            @quit()
+        
+        @find("btnCancel").set "onbtclick", (e) =>
+            @quit()
+        
+        $input.focus()
+
+TextDialog.scheme = """
+<afx-app-window data-id = "TextDialog" width='400' height='300'>
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <textarea data-id= "txtInput" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                </afx-hbox>
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
+this.OS.register "TextDialog", TextDialog
+
 class CalendarDialog extends BasicDialog
     constructor: () ->
         super "CalendarDialog"

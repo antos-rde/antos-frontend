@@ -400,7 +400,13 @@ Ant.OS.API =
         document.execCommand("copy")
 
     getClipboard: () ->
-        $("#clipboard").val()
+        new Promise (resolve, reject) ->
+            $el = $("#clipboard")
+            return resolve $el.val() unless navigator.clipboard
+            navigator.clipboard.readText().then (d) ->
+                resolve d
+            .catch (e) -> reject e
+
 
 # utilities functioncs
     switcher: () ->
