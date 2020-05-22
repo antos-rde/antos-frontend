@@ -78,23 +78,23 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                     CoffeeScript.nodes data
                     @verify list
                         .then () -> resolve()
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
                 catch ex
-                    reject ex
-            .catch (e) -> reject e
+                    reject __e ex
+            .catch (e) -> reject __e e
 
     compile: (meta) ->
         new Promise (resolve, reject) =>
-            @import("#{@basedir()}/coffeescript.js").then () =>
+            @import(["#{@basedir()}/coffeescript.js"]).then () =>
                 list = ("#{meta.root}/#{v}" for v in meta.coffees)
                 @verify((f for f in list)).then () =>
                     @cat(list).then (code) =>
                         jsrc = CoffeeScript.compile code
                         @notify __("Compiled successful")
                         resolve jsrc
-                    .catch (e) -> reject e
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
     
     build: (meta) ->
         new Promise (resolve, reject) =>
@@ -108,7 +108,7 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                             .write("text/plain")
                             .then (d) ->
                                 r()
-                            .catch (ex) -> e ex
+                            .catch (ex) -> e __e ex
                 .then () ->
                     new Promise (r, e) ->
                         "#{meta.root}/build/debug/extension.json"
@@ -117,12 +117,12 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                         .write("object")
                         .then (data) ->
                             r data
-                        .catch (ex) -> e ex
+                        .catch (ex) -> e __e ex
                 .then () =>
                     @copy ("#{meta.root}/#{v}" for v in meta.copies), "#{meta.root}/build/debug"
                 .then () -> resolve()
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     run: (meta) ->
         new Promise (resolve, reject) =>
@@ -142,7 +142,7 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                             @app.loadAndRunExtensionAction e.data.item.get "data"
                     @app.spotlight.run @app
                     resolve()
-                .catch (e) -> reject e
+                .catch (e) -> reject __e e
     
 
     installExtension: (files, zip) ->
@@ -155,8 +155,8 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                 meta = JSON.parse(new TextDecoder("utf-8").decode(d))
                 @installFiles files, zip, meta
                     .then () -> resolve()
-                    .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     installFiles: (files, zip, meta) ->
         return @installMeta(meta) if files.length is 0
@@ -170,9 +170,9 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                         return reject r.error if r.error
                         @installFiles files, zip, meta
                             .then () -> resolve()
-                            .catch (e) -> reject e
-                    .catch (e) -> reject e
-            .catch (e) -> reject e
+                            .catch (e) -> reject __e e
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     installMeta: (meta) ->
         new Promise (resolve, reject) =>
@@ -185,12 +185,12 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                 file.setCache data
                 .write("object")
                     .then () -> resolve()
-                    .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     installZip: (path) ->
         new Promise (resolve, reject) =>
-            @import("os://scripts/jszip.min.js").then () =>
+            @import(["os://scripts/jszip.min.js"]).then () =>
                 path.asFileHandle().read("binary").then (data) =>
                     JSZip.loadAsync(data).then (zip) =>
                         pth = @basedir()
@@ -206,12 +206,12 @@ class App.extensions.ExtensionMaker extends App.BaseExtension
                                 .then () =>
                                     @installExtension files, zip
                                         .then () -> resolve()
-                                        .catch(e) -> reject(e)
-                                .catch (e) -> reject e
+                                        .catch(e) -> reject(__e e)
+                                .catch (e) -> reject __e e
                         else
                             @installExtension files, zip
                                 .then () -> resolve()
-                                .catch (e) -> reject(e)
-                    .catch (e) -> reject e
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                                .catch (e) -> reject(__e e)
+                    .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e

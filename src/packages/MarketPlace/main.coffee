@@ -211,8 +211,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
             .then (data) =>
                 @install data, app
                     .then (n) -> resolve(n)
-                    .catch (e) -> reject(e)
-            .catch (e) -> reject e
+                    .catch (e) -> reject(__e e)
+            .catch (e) -> reject __e e
 
     localInstall: () ->
         new Promise (resolve, reject) =>
@@ -230,9 +230,9 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                             if idx >= 0
                                 @applist.set "selected", idx
                             resolve(n)
-                        .catch (e) -> reject(e)
-                    .catch (e) -> reject e
-                .catch (e) -> reject e
+                        .catch (e) -> reject(__e e)
+                    .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
 
     install: (data, meta) ->
         new Promise (resolve, reject) =>
@@ -271,10 +271,10 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                             @systemsetting.system.packages[v.app] = v
                             @appDetail app_meta
                             resolve(v.name)
-                        .catch (e) -> reject e
-                    .catch (e) -> reject e
-                .catch (err) -> reject err
-            .catch (e) -> reject e
+                        .catch (e) -> reject __e e
+                    .catch (e) -> reject __e e
+                .catch (err) -> reject __e err
+            .catch (e) -> reject __e e
 
     uninstall: () ->
         new Promise (resolve, reject) =>
@@ -307,16 +307,16 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                         @applist.remove el
                         ($ @container).css "visibility", "hidden"
                     resolve()
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
     
     updatePackage: () ->
         new Promise (resolve, reject) =>
             @uninstall().then () =>
                 @remoteInstall()
                     .then () -> resolve()
-                    .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     mkdirs: (list) ->
         new Promise (resolve, reject) =>
@@ -329,8 +329,8 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     return reject(@_api.throwe __("Cannot create {0}", "#{path}/#{dir}")) if r.error
                     @mkdirs list
                         .then () -> resolve()
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
+                        .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
 
     installFile: (n, zip, files) ->
         new Promise (resolve, reject) =>
@@ -345,9 +345,9 @@ class MarketPlace extends this.OS.GUI.BaseApplication
                     return reject @_api.throwe(__("Cannot install {0}", path)) if r.error
                     @installFile n, zip, files
                         .then () -> resolve()
-                        .catch (e) -> reject()
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                        .catch (e) -> reject( __e e)
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
 MarketPlace.dependencies = [
     "os://scripts/jszip.min.js",

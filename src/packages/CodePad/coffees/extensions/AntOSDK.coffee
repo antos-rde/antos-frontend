@@ -26,7 +26,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
     
     buildnrun: () ->
         @metadata("project.json").then (meta) =>
-            @build(meta).then () =>
+            @build(meta, true).then () =>
                 @run(meta).catch (e) => @error __("Unable to run project"), e
             .catch (e) =>
                 @error __("Unable to build project"), e
@@ -34,7 +34,7 @@ class App.extensions.AntOSDK extends App.BaseExtension
 
     release: () ->
         @metadata("project.json").then (meta) =>
-            @build(meta).then () =>
+            @build(meta, false).then () =>
                 @mkar("#{meta.root}/build/debug", "#{meta.root}/build/release/#{meta.name}.zip")
                     .then () ->
                     .catch (e) => @error __("Unable to create package archive"), e
@@ -80,25 +80,28 @@ class App.extensions.AntOSDK extends App.BaseExtension
                     CoffeeScript.nodes data
                     @verify list
                         .then () -> resolve()
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
                 catch ex
-                    reject ex
-            .catch (e) -> reject e
+                    reject __e ex
+            .catch (e) -> reject __e e
 
     compile: (meta) ->
         new Promise (resolve, reject) =>
-            @import("#{@basedir()}/coffeescript.js").then () =>
+            @import([
+                "#{@basedir()}/coffeescript.js",
+                "#{@basedir()}/terser.min.js"
+            ]).then () =>
                 list = ("#{meta.root}/#{v}" for v in meta.coffees)
                 @verify((f for f in list)).then () =>
                     @cat(list).then (code) =>
                         jsrc = CoffeeScript.compile code
                         @notify __("Compiled successful")
                         resolve jsrc
-                    .catch (e) -> reject e
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
     
-    build: (meta) ->
+    build: (meta, debug) ->
         dirs = [
             "#{meta.root}/build",
             "#{meta.root}/build/debug",
@@ -110,13 +113,32 @@ class App.extensions.AntOSDK extends App.BaseExtension
                     @cat ("#{meta.root}/#{v}" for v in meta.javascripts), src
                     .then (jsrc) ->
                         new Promise (r, e) ->
+                            code = jsrc
+                            if not debug
+                                options = {
+                                    toplevel: true,
+                                    compress: {
+                                        passes: 3,
+                                        #pure_getters: true,
+                                        #unsafe: true,
+                                    },
+                                    mangle: true,
+                                    output: {
+                                        #beautify: true,
+                                    },
+                                }
+                                result = Terser.minify(jsrc, options)
+                                if result.error
+                                    @notify __("Unable to minify code: {0}", result.error)
+                                else
+                                    code = result.code
                             "#{meta.root}/build/debug/main.js"
                                 .asFileHandle()
-                                .setCache jsrc
+                                .setCache code
                                 .write("text/plain")
                                 .then (d) ->
                                     r()
-                                .catch (ex) -> e ex
+                                .catch (ex) -> e __e ex
                     .then () =>
                         new Promise (r, e) =>
                             @cat ("#{meta.root}/#{v}" for v in meta.css), ""
@@ -128,13 +150,13 @@ class App.extensions.AntOSDK extends App.BaseExtension
                                 .write("text/plain")
                                 .then (d) ->
                                     r()
-                                .catch (ex) -> e ex
+                                .catch (ex) -> e __e ex
                     .then () =>
                         @copy ("#{meta.root}/#{v}" for v in meta.copies), "#{meta.root}/build/debug"
                     .then () -> resolve()
-                    .catch (e) -> reject e
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                    .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     run: (meta) ->
         "#{meta.root}/build/debug/package.json"

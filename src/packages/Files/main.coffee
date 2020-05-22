@@ -93,7 +93,7 @@ class Files extends this.OS.GUI.BaseApplication
                     @currdir = dir
                     ($ @navinput).val dir.path
                     resolve d.result
-                .catch (e) -> reject e
+                .catch (e) -> reject __e e
         
         @vfs_event_flag = true
         @view.set "ondragndrop", (e) =>

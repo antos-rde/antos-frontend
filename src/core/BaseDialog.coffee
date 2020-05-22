@@ -415,7 +415,7 @@ class FileDialog extends BasicDialog
                     .then (d) ->
                         return reject d if d.error
                         resolve d.result
-                    .catch (e) -> reject e
+                    .catch (e) -> reject __e e
         setroot = (path) =>
             path.asFileHandle().read().then (d) =>
                 if(d.error)

@@ -128,16 +128,15 @@ package:
 pkgar:
 	read -r -p "Enter package name: " PKG;\
 	echo $$PKG | make package &&\
-	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
+	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  terser $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
 	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
 	cd $(BUILDDIR)/packages/$$PKG && zip -r "$$PKG.zip" ./ ; \
 	cd ../../ && (test -d repo/$$PKG || mkdir repo/$$PKG) && mv packages/$$PKG/"$$PKG.zip" repo/$$PKG && touch repo/$$PKG/$$PKG.md && rm -r packages/$$PKG
 
 uglify:
-	# uglify antos.js
-	# npm install uglify-es -g
-	# npm install uglify-js -g
-	uglifyjs $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
+	# sudo npm install terser -g
+	# 
+	terser $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
 	# uglify tags
 	# npm install uglifycss -g
 	# uglify the css
@@ -148,7 +147,7 @@ uglify:
 
 	for d in $(packages); do\
 		echo "Uglifying $$d";\
-		test -f $(BUILDDIR)/packages/$$d/main.js  &&  uglifyjs $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
+		test -f $(BUILDDIR)/packages/$$d/main.js  &&  terser $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
 		test -f $(BUILDDIR)/packages/$$d/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
 	done
 

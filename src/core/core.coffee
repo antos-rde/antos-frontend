@@ -64,7 +64,7 @@ Ant.OS or=
                         .then () ->
                             resolve f()
                         .catch (e) ->
-                            reject e
+                            reject __e e
                 else
                     resolve f()
         appByPid: (pid) ->

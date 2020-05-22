@@ -79,7 +79,7 @@ Ant.OS.API.handle =
                     socket = new WebSocket proto + path
                     resolve(socket)
                 catch e
-                    reject e
+                    reject __e e
         else
             path = "#{Ant.OS.API.REST}/system/apigateway?ws=0"
             Ant.OS.API.post path, d

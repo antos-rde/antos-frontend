@@ -5,8 +5,8 @@ class CodePad.BaseExtension
     preload: () ->
         Ant.OS.API.require @dependencies()
 
-    import: (lib) ->
-        Ant.OS.API.requires lib
+    import: (libs) ->
+        Ant.OS.API.require libs
 
     basedir: () ->
         "#{@app.meta().path}/extensions"
@@ -30,56 +30,96 @@ class CodePad.BaseExtension
                     data = data + "\n" + text
                     @cat list, data
                         .then (d) -> resolve d
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
+                        .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
     
     copy: (files, to) ->
         new Promise (resolve, reject) =>
             return resolve() if files.length is 0
             file = (files.splice 0, 1)[0].asFileHandle()
             tof = "#{to}/#{file.basename}".asFileHandle()
-            file.read("binary")
-                .then (data) =>
-                    tof.setCache(new Blob [data], { type: file.info.mime })
-                        .write(file.info.mime)
-                        .then (d) =>
-                            @copy files, to
-                                .then () -> resolve()
-                                .catch (e) -> reject e
-                .catch (e) -> reject e
+            file.onready().then (meta) =>
+                if meta.type is "dir"
+                    # copy directory
+                    desdir = to.asFileHandle()
+                    desdir.mk(file.basename).then () =>
+                        # read the dir content
+                        file.read().then (data) =>
+                            list = (v.path for v in data.result)
+                            @copy list, "#{desdir.path}/#{file.basename}"
+                                .then () =>
+                                    @copy files, to
+                                        .then () -> resolve()
+                                        .catch (e) -> reject __e e
+                                .catch (e) ->
+                                    reject __e e
+                        .catch (e) -> reject __e e
+                    .catch (e) ->
+                        reject __e e
+                else
+                    # copy file
+                    file.read("binary")
+                        .then (data) =>
+                            tof.setCache(new Blob [data], { type: file.info.mime })
+                                .write(file.info.mime)
+                                .then (d) =>
+                                    @copy files, to
+                                        .then () -> resolve()
+                                        .catch (e) -> reject __e e
+                        .catch (e) -> reject __e e
+            .catch (e) ->
+                reject __e e
+
+    aradd: (list, zip, base) ->
+        new Promise (resolve, reject) =>
+            return resolve(zip) if list.length is 0
+            path = (list.splice 0, 1)[0]
+            file = path.asFileHandle()
+            file.onready().then (meta) =>
+                if meta.type is "dir"
+                    file.read().then (d) =>
+                        l = (v.path for v in d.result)
+                        @aradd l, zip, "#{base}#{file.basename}/"
+                            .then () =>
+                                @aradd list, zip, base
+                                    .then () -> resolve(zip)
+                                    .catch (e) -> reject __e e
+                            .catch (e) -> reject __e e
+                    .catch (e) -> reject __e e
+                else
+                    file.read("binary").then (d) =>
+                        zpath = "#{base}#{file.basename}".replace(/^\/+|\/+$/g, '')
+                        zip.file zpath, d, { binary: true }
+                        @aradd list, zip, base
+                            .then () -> resolve(zip)
+                            .catch (e) -> reject __e e
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
 
     mkar: (src, dest) ->
         @notify __("Preparing for release")
         new Promise (resolve, reject) =>
             new Promise (r, e) =>
-                @import("os://scripts/jszip.min.js").then () ->
+                @import(["os://scripts/jszip.min.js"]).then () ->
                     src.asFileHandle()
                     .read().then (d) ->
-                        return e d.error if d.error
                         r d.result
-                    .catch (ex) -> e ex
-                .catch (ex) -> e ex
+                    .catch (ex) -> e __e ex
+                .catch (ex) -> e __e ex
             .then (files) =>
                 new Promise (r, e) =>
                     zip = new JSZip()
-                    fn = (list) =>
-                        return r zip if list.length is 0
-                        f = (list.splice 0, 1)[0].path.asFileHandle()
-                        return fn list if f.type is "dir"
-                        f.read("binary").then (d) =>
-                            zip.file f.basename, d, { binary: true }
-                            @notify __("add {0} to zip", f.basename)
-                            fn list
-                        .catch (ex) -> e ex
-                    fn files
+                    @aradd (v.path for v in files), zip, "/"
+                        .then (z) -> r(z)
+                        .catch (ex) -> e __e ex
             .then (zip) =>
                 zip.generateAsync({ type: "base64" }).then (data) =>
                     dest.asFileHandle()
                     .setCache('data:application/zip;base64,' + data)
                     .write("base64").then (r) =>
-                        @notify __("Package is generated in release folder")
-                    .catch (e) -> reject e
-            .catch (e) -> reject e
+                        @notify __("Archive is generated at: {0}", dest)
+                    .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
     
     mkdirAll: (list) ->
         new Promise (resolve, reject) =>
@@ -90,8 +130,8 @@ class CodePad.BaseExtension
                     @app.trigger "filechange", { file: path.parent(), type: "dir" }
                     @mkdirAll list
                         .then () -> resolve()
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
+                        .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
     
     mkfileAll: (list, path, name) ->
         new Promise (resolve, reject) =>
@@ -109,9 +149,9 @@ class CodePad.BaseExtension
                             @app.trigger "filechange", { file: file, type: "file" }
                             @mkfileAll list, path, name
                                 .then () -> resolve()
-                                .catch (e) -> reject e
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
+                                .catch (e) -> reject __e e
+                        .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
 
     metadata: (file) ->
         new Promise (resolve, reject) =>

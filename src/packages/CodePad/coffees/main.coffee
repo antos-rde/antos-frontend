@@ -27,7 +27,7 @@ class CodePad extends this.OS.GUI.BaseApplication
                 dir.read().then (d) ->
                     return reject d.error if d.error
                     resolve d.result
-                .catch (e) -> reject e
+                .catch (e) -> reject __e e
         @setup()
 
     setup: () ->

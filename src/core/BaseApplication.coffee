@@ -63,7 +63,7 @@ class BaseApplication extends this.OS.GUI.BaseModel
                 resolve()
             .catch (e) =>
                 @_api.loaded q, @name, "FAIL"
-                reject e
+                reject __e e
 
     bindKey: (k, f) ->
         arr = k.split "-"

@@ -60,12 +60,12 @@ Ant.OS.GUI =
                 .then (d) ->
                     Ant.OS.GUI.pushServices srvs
                         .then () -> resolve()
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
                 .catch (e) ->
                     Ant.OS.announcer.osfail __("Unable to load: {0}", srv), e
                     Ant.OS.GUI.pushServices srvs
                         .then () -> resolve()
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
     
     openDialog: (d, data) ->
         new Promise (resolve, reject) ->
@@ -91,7 +91,7 @@ Ant.OS.GUI =
             if Ant.OS.APP[srv]
                 Ant.OS.PM.createProcess srv, Ant.OS.APP[srv]
                     .then (d) -> resolve d
-                    .catch (e) -> reject e
+                    .catch (e) -> reject __e e
             else
                 Ant.OS.GUI.loadApp app
                     .then (a) ->
@@ -99,8 +99,8 @@ Ant.OS.GUI =
                             return reject Ant.OS.API.throwe __("Service not found: {0}", ph)
                         Ant.OS.PM.createProcess srv, Ant.OS.APP[srv]
                             .then (d) -> resolve d
-                            .catch (e) -> reject e
-                    .catch (e) -> reject e
+                            .catch (e) -> reject __e e
+                    .catch (e) -> reject __e e
 
     appsByMime: (mime) ->
         metas = ( v for k, v of Ant.OS.setting.system.packages when v and v.app )
@@ -173,9 +173,9 @@ Ant.OS.GUI =
                                     Ant.OS.APP[app].style = el[0] if Ant.OS.APP[app]
                                     resolve app
                                 .catch (e) -> resolve app
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
                     #ok app
-                .catch (e) -> reject e
+                .catch (e) -> reject __e e
     launch: (app, args) ->
         if not Ant.OS.APP[app]
             # first load it
@@ -358,8 +358,9 @@ Ant.OS.GUI =
                     name = file.basename
                     file.parent().asFileHandle().mk(name).then (r) ->
                         ex = Ant.OS.API.throwe "OS.VFS"
-                        if r.error then Ant.OS.announcer.osfail d.error, ex, d.error else fn()
-            
+                    .catch (e) ->
+                        Ant.OS.announcer.osfail e.toString(), e
+
         desktop[0].ready = (e) ->
             e.observable = Ant.OS.announcer
             window.onresize = () ->

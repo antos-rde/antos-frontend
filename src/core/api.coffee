@@ -163,6 +163,13 @@ Date.prototype.toString = () ->
 Date.prototype.timestamp = () ->
     return @getTime() / 1000 | 0
 
+# chaning error
+Ant.__e = (e) ->
+    reason = new Error(e.toString())
+    reason.stack += "\nCaused By:\n" + e.stack
+    return reason
+
+
 Ant.OS.API =
     # the handle object could be a any remote or local handle to
     # fetch user data, used by the API to make requests
@@ -196,7 +203,7 @@ Ant.OS.API =
             .fail (j, s, e) ->
                 Ant.OS.API.loaded q, p, "FAIL"
                 if e
-                    reject e
+                    reject __e e
                 else
                     reject(Ant.OS.API.throwe s)
     
@@ -242,7 +249,7 @@ Ant.OS.API =
                 .fail (j, s, e) ->
                     Ant.OS.API.loaded q, p, "FAIL"
                     if e
-                        reject e
+                        reject __e e
                     else
                         reject(Ant.OS.API.throwe s)
                     o.remove()
@@ -281,7 +288,7 @@ Ant.OS.API =
                 .fail (j, s, e) ->
                     Ant.OS.API.loaded q, p, "FAIL"
                     if e
-                        reject e
+                        reject __e e
                     else
                         reject(Ant.OS.API.throwe s)
                 
@@ -313,7 +320,7 @@ Ant.OS.API =
                                 console.log "Loaded :", l
                                 Ant.OS.announcer.trigger "sharedlibraryloaded", l
                                 resolve undefined
-                            .catch (e) -> reject e
+                            .catch (e) -> reject __e e
                     when "js"
                         Ant.OS.API.script libfp.getlink()
                         .then (data) ->
@@ -322,7 +329,7 @@ Ant.OS.API =
                             Ant.OS.announcer.trigger "sharedlibraryloaded", l
                             resolve(data)
                         .catch (e) ->
-                            reject e
+                            reject __e e
                     else
                         reject Ant.OS.API.throwe __("Invalid library: {0}", l)
             else
@@ -336,10 +343,10 @@ Ant.OS.API =
             Ant.OS.announcer.observable.one "sharedlibraryloaded", (l) ->
                 libs.splice 0, 1
                 Ant.OS.API.require libs
-                    .catch (e) -> reject e
+                    .catch (e) -> reject __e e
                     .then (r) -> resolve(r)
             Ant.OS.API.requires libs[0]
-                .catch (e) -> reject e
+                .catch (e) -> reject __e e
 
     packages:
         fetch: () ->
@@ -381,7 +388,7 @@ Ant.OS.API =
                     Ant.OS.announcer.trigger "systemlocalechange", name
                     resolve d
                 .catch (e) ->
-                    reject e
+                    reject __e e
 
     throwe: (n) ->
         err = undefined
@@ -405,7 +412,7 @@ Ant.OS.API =
             return resolve $el.val() unless navigator.clipboard
             navigator.clipboard.readText().then (d) ->
                 resolve d
-            .catch (e) -> reject e
+            .catch (e) -> reject __e e
 
 
 # utilities functioncs

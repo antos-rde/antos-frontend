@@ -185,7 +185,7 @@ class FileViewTag extends Ant.OS.GUI.BaseTag
                 return resolve undefined unless v.get("data").path
                 @get("fetch")(v.get("data").path)
                     .then (d) => resolve @getTreeData(d.sort @sortByType)
-                    .catch (e) -> reject e
+                    .catch (e) -> reject __e e
         @refs.gridview.set "header", @header
         @refs.treeview.set "dragndrop", true
         @refs.listview.set "dragndrop", true
