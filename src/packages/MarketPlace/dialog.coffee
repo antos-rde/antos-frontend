@@ -19,7 +19,9 @@
 class RepositoryDialog extends this.OS.GUI.subwindows.SelectionDialog
     constructor: () ->
         super()
+        
     main: () ->
+        super.main()
         @list = @find "list"
         $((@find "btnOk")).hide()
         @list.set "buttons", [

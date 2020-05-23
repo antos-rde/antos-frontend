@@ -104,6 +104,13 @@ class SystemPanelTag extends Ant.OS.GUI.BaseTag
         list = []
         list.push v for k, v of Ant.OS.setting.system.packages when (v and v.app)
         list.push v for k, v of Ant.OS.setting.system.menu
+        list.sort (a, b) ->
+            if a.text < b.text
+                -1
+            else if  a.text > b.text
+                1
+            else
+                0
         @refs.applist.set "data", list
 
     toggle: (flag) ->

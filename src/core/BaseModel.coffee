@@ -25,6 +25,7 @@ class BaseModel
         @on "exit", () => @quit()
         @host = @_gui.workspace
         @dialog = undefined
+    
     render: (p) ->
         Ant.OS.GUI.loadScheme p, @, @host
 

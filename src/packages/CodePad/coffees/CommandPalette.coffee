@@ -2,7 +2,8 @@ class CommandPalette extends this.OS.GUI.BasicDialog
     constructor: () ->
         super "CommandPalete", CommandPalette.scheme
         
-    init: () ->
+    main: () ->
+        super.main()
         offset = $(".afx-window-content", @parent.scheme).offset()
         pw = @parent.scheme.get("width") / 5
         @scheme.set "width", 3 * pw

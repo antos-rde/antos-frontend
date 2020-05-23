@@ -47,13 +47,13 @@ class Ant.OS.GUI.BaseTag
                 value = v
         @set name, value
     
-    set: (opt, value) ->
+    set: (opt, value, flag) ->
         if opt is "*"
             @set k, v for k, v of value
         else
-            @["__#{opt}"](value) if @["__#{opt}"]
+            @["__#{opt}"](value) if @["__#{opt}"] and not flag
             @opts[opt] = value
-            @["__#{opt}__"](value) if @["__#{opt}__"]
+            @["__#{opt}__"](value) if @["__#{opt}__"] and not flag
         @
     
     aid: () ->

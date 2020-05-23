@@ -15,18 +15,31 @@ class TreeViewItemPrototype extends Ant.OS.GUI.BaseTag
     
     update: (p) ->
         return unless p
-        return unless p is @get("treepath")
-        @set "open", true
+        switch p
+            when "expand"
+                @set "open", true
+            when "collapse"
+                @set "open", false
+            else
+                return unless p is @get("treepath")
+                @set "open", true
 
     __data__: (v) ->
         return unless v
         @set "nodes", v.nodes if v.nodes
         @set "open", v.open
         @set "treepath", v.path if v.path
+        @set "selected", v.selected
 
     __selected__: (v) ->
+        return unless @opts.data
         $(@refs.wrapper).removeClass()
-        return $(@refs.wrapper).addClass("afx_tree_item_selected") if v
+        @opts.data.selected = v
+        if v
+            @get("treeroot").unselect()
+            # set selectedItem but not trigger the update
+            @get("treeroot").set "selectedItem", @root, true
+            return $(@refs.wrapper).addClass("afx_tree_item_selected")
     
     __open__: (v) ->
         return unless @is_folder()
@@ -164,14 +177,28 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
         @setopt "fetch", undefined
         @setopt "dragndrop", false
         @setopt "treepath", @aid()
-        @root.is_left = () => @is_left()
+        @root.is_leaf = () => @is_leaf()
+        @root.expandAll = () => @expandAll()
+        @root.collapseAll = () => @collapseAll()
+        @root.unselect = () => @unselect()
         @indexcounter = 0
+
+
+    unselect: () ->
+        @get("selectedItem").set "selected", false if @get("selectedItem")
 
     __selectedItem: (v) ->
         return unless v
-        @get("selectedItem").set "selected", false if @get("selectedItem")
+        return if v is @get("selectedItem")
         v.set "selected", true
 
+    expandAll: () ->
+        return if @is_leaf()
+        @root.update "expand"
+
+    collapseAll: () ->
+        return if @is_leaf()
+        @root.update "collapse"
 
     itemclick: (e, flag) ->
         return unless e and e.item
@@ -188,7 +215,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
     is_root: () ->
         return @get("treeroot") is undefined
 
-    is_left: () ->
+    is_leaf: () ->
         data = @get "data"
         return true unless data
         return if data.nodes then false else true
@@ -232,7 +259,7 @@ class TreeViewTag extends Ant.OS.GUI.BaseTag
             el = $(e.target).closest("afx-tree-view")
             return if el.length is 0
             el = el[0]
-            el = el.get("parent") if el.is_left()
+            el = el.get("parent") if el.is_leaf()
             return if el is @dnd.from or el is @dnd.from.get("parent")
             @dnd.to = el
             @__("ondragndrop") { id: @aid(), data: @dnd }

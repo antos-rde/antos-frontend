@@ -20,7 +20,8 @@ class VFSSettingDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
         super "VFSSettingDialog", VFSSettingDialog.scheme
     
-    init: () ->
+    main: () ->
+        super.main()
         $(@find("txtPath")).click (e) =>
             @openDialog("FileDialog", {
                 title: "__(Select a directory)",

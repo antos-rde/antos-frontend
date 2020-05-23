@@ -210,13 +210,14 @@ class MenuTag extends Ant.OS.GUI.BaseTag
     push: (item, flag) ->
         tag = @get "contentag"
         tag = item.tag if item.tag
+        items = @get "items"
         el = $("<#{tag}>")
         if flag
             $(@refs.container).prepend el[0]
-            @get("items").unshift item
+            @get("items").unshift item if not items.includes item
         else
             el.appendTo @refs.container
-            @get("items").push item
+            @get("items").push item if not items.includes item
         el[0].uify undefined
         el[0].set "parent", @get("parent")
         el[0].set "root", if @get("parent") then @get("parent").get("root") else @

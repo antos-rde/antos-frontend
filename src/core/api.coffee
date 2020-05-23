@@ -362,8 +362,8 @@ Ant.OS.API =
     setting: (f) ->
         Ant.OS.API.handle.setting f
 
-    apigateway: (d, ws, c) ->
-        return Ant.OS.API.handle.apigateway d, ws, c
+    apigateway: (d, ws) ->
+        return Ant.OS.API.handle.apigateway d, ws
 
     search: (text) ->
         r = []

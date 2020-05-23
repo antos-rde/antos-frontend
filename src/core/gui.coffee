@@ -422,9 +422,6 @@ Ant.OS.GUI =
             
     refreshDesktop: () ->
         ($ Ant.OS.GUI.workspace)[0].fetch()
-    
-    mkdialog: (conf) ->
-        return new Ant.OS.GUI.BasicDialog conf.name, conf.layout
         
     login: () ->
         scheme = $.parseHTML Ant.OS.GUI.schemes.login

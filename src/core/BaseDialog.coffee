@@ -54,18 +54,21 @@ class BaseDialog extends SubWindow
 this.OS.GUI.BaseDialog = BaseDialog
 
 class BasicDialog extends BaseDialog
-    constructor: ( name, target) ->
+    constructor: ( name, @markup) ->
         super name
-        if target
-            if typeof target is "string"
-                Ant.OS.GUI.htmlToScheme target, @, @host
-            else # a file handle
-                @render target.path
-        else if Ant.OS.GUI.subwindows[name] and Ant.OS.GUI.subwindows[name].scheme
-            scheme = Ant.OS.GUI.subwindows[name].scheme
-            Ant.OS.GUI.htmlToScheme scheme, @, @host
+        
     
     init: () ->
+        if @markup
+            if typeof @markup is "string"
+                Ant.OS.GUI.htmlToScheme @markup, @, @host
+            else # a file handle
+                @render @markup.path
+        else if Ant.OS.GUI.subwindows[@name] and Ant.OS.GUI.subwindows[@name].scheme
+            scheme = Ant.OS.GUI.subwindows[@name].scheme
+            Ant.OS.GUI.htmlToScheme scheme, @, @host
+
+    main: () ->
         @scheme.set "apptitle", @data.title if @data and @data.title
         @scheme.set "resizable", false
         @scheme.set "minimizable", false
@@ -76,8 +79,8 @@ class PromptDialog extends BasicDialog
     constructor: () ->
         super "PromptDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         $input = $(@find "txtInput")
         @find("lbl").set "text", @data.label if @data and @data.label
         $input.val @data.value if @data and @data.value
@@ -122,10 +125,10 @@ this.OS.register "PromptDialog", PromptDialog
 
 class TextDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "TextDialog", TextDialog.scheme
+        super "TextDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         $input = $(@find "txtInput")
         $input.val @data.value if @data and @data.value
 
@@ -166,8 +169,8 @@ class CalendarDialog extends BasicDialog
     constructor: () ->
         super "CalendarDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         (@find "btnOk").set "onbtclick", (e) =>
             date = (@find "cal").get "selectedDate"
             return @notify __("Please select a day") unless date
@@ -205,8 +208,8 @@ class ColorPickerDialog extends BasicDialog
     constructor: () ->
         super "ColorPickerDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         (@find "btnOk").set "onbtclick", (e) =>
             color = (@find "cpicker").get "selectedColor"
             return @notify __("Please select color") unless color
@@ -244,8 +247,8 @@ class InfoDialog extends BasicDialog
     constructor: () ->
         super "InfoDialog"
         
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         rows = []
         delete @data.title if @data and @data.title
         rows.push [ { text: k }, { text: v } ] for k, v of @data
@@ -282,8 +285,8 @@ class YesNoDialog extends BasicDialog
     constructor: () ->
         super "YesNoDialog"
 
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         @find("lbl").set "*", @data if @data
         (@find "btnYes").set "onbtclick", (e) =>
             @handle(true) if @handle
@@ -318,8 +321,8 @@ class SelectionDialog extends BasicDialog
     constructor: () ->
         super "SelectionDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         (@find "list").set "data", @data.data if @data and @data.data
         fn = (e) =>
             data = (@find "list").get "selectedItem"
@@ -357,7 +360,8 @@ this.OS.register "SelectionDialog", SelectionDialog
 class AboutDialog extends BasicDialog
     constructor: () ->
         super "AboutDialog"
-    init: () ->
+    main: () ->
+        super.main()
         mt = @meta()
         @scheme.set "apptitle", __("About: {0}", mt.name)
         (@find "mylabel").set "*", {
@@ -403,8 +407,8 @@ class FileDialog extends BasicDialog
     constructor: () ->
         super "FileDialog"
     
-    init: () ->
-        super.init()
+    main: () ->
+        super.main()
         fileview = @find "fileview"
         location = @find "location"
         filename = @find "filename"

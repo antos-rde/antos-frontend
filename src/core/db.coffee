@@ -20,22 +20,41 @@ class DB
     constructor: (@table) ->
 
     save: (d) ->
-        Ant.OS.API.handle.dbquery "save", { table: @table, data: d }
+        return new Promise (resolve, reject) =>
+            Ant.OS.API.handle.dbquery "save", { table: @table, data: d }
+                .then (r) ->
+                    return reject(Ant.OS.API.throwe(r.error)) if r.error
+                    resolve(r.result)
+                .catch (e) -> reject __e e
 
     delete: (c) ->
-        rq = { table: @table }
-        return new Promise (resolve, reject) ->
+        return new Promise (resolve, reject) =>
+            rq = { table: @table }
             reject(Ant.OS.API.throwe("OS.DB: unkown condition")) unless c and c isnt ""
-        if isNaN c
-            rq.cond = c
-        else
-            rq.id = c
-        Ant.OS.API.handle.dbquery "delete", rq
+            if isNaN c
+                rq.cond = c
+            else
+                rq.id = c
+            Ant.OS.API.handle.dbquery "delete", rq
+                .then (r) ->
+                    return reject(Ant.OS.API.throwe(r.error)) if r.error
+                    resolve(r.result)
+                .catch (e) -> reject __e e
 
     get: (id) ->
-        Ant.OS.API.handle.dbquery "get", { table: @table, id: id }
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.dbquery "get", { table: @table, id: id }
+                .then (r) ->
+                    return reject(Ant.OS.API.throwe(r.error)) if r.error
+                    resolve(r.result)
+                .catch (e) -> reject __e e
 
     find: (cond) ->
-        Ant.OS.API.handle.dbquery "select", { table: @table, cond: cond }
+        new Promise (resolve, reject) =>
+            Ant.OS.API.handle.dbquery "select", { table: @table, cond: cond }
+                .then (r) ->
+                    return reject(Ant.OS.API.throwe(r.error)) if r.error
+                    resolve(r.result)
+                .catch (e) -> reject __e e
 
 Ant.OS.API.DB = DB
