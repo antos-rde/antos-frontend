@@ -12,7 +12,6 @@ endif
 
 
 coffees= 	src/core/core.coffee \
-        	src/core/api.coffee \
 			src/core/settings.coffee \
         	src/core/handles/RemoteHandle.coffee \
 			src/core/Announcerment.coffee \
