@@ -11,63 +11,62 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 
-coffees= 	src/core/core.coffee \
-			src/core/settings.coffee \
-        	src/core/handles/RemoteHandle.coffee \
-			src/core/Announcerment.coffee \
-        	src/core/vfs.coffee \
-			src/core/vfs/GoogleDriveHandle.coffee \
-			src/core/db.coffee \
-			src/core/gui.coffee \
-			src/core/BaseModel.coffee \
-			src/core/BaseApplication.coffee \
-			src/core/BaseService.coffee \
-			src/core/BaseEvent.coffee \
-			src/core/BaseDialog.coffee \
-			src/core/tags/tag.coffee \
-			src/core/tags/WindowTag.coffee \
-			src/core/tags/TileLayoutTags.coffee \
-			src/core/tags/ResizerTag.coffee \
-			src/core/tags/LabelTag.coffee \
-			src/core/tags/ButtonTag.coffee \
-			src/core/tags/ListViewTag.coffee \
-			src/core/tags/SwitchTag.coffee \
-			src/core/tags/NSpinnerTag.coffee \
-			src/core/tags/MenuTag.coffee \
-			src/core/tags/GridViewTag.coffee \
-			src/core/tags/TabBarTag.coffee \
-			src/core/tags/TabContainerTag.coffee \
-			src/core/tags/TreeViewTag.coffee \
-			src/core/tags/SliderTag.coffee \
-			src/core/tags/FloatListTag.coffee \
-			src/core/tags/CalendarTag.coffee \
-			src/core/tags/ColorPickerTag.coffee \
-			src/core/tags/FileViewTag.coffee \
-			src/core/tags/OverlayTag.coffee \
-			src/core/tags/AppDockTag.coffee \
-			src/core/tags/SystemPanelTag.coffee \
-        	src/antos.coffee
+javascripts= 	src/core/core.js \
+				src/core/settings.js \
+				src/core/handles/RemoteHandle.js \
+				src/core/Announcerment.js \
+				src/core/vfs.js \
+				src/core/vfs/GoogleDriveHandle.js \
+				src/core/db.js \
+				src/core/gui.js \
+				src/core/BaseModel.js \
+				src/core/BaseApplication.js \
+				src/core/BaseService.js \
+				src/core/BaseEvent.js \
+				src/core/BaseDialog.js \
+				src/core/tags/tag.js \
+				src/core/tags/WindowTag.js \
+				src/core/tags/TileLayoutTags.js \
+				src/core/tags/ResizerTag.js \
+				src/core/tags/LabelTag.js \
+				src/core/tags/ButtonTag.js \
+				src/core/tags/ListViewTag.js \
+				src/core/tags/SwitchTag.js \
+				src/core/tags/NSpinnerTag.js \
+				src/core/tags/MenuTag.js \
+				src/core/tags/GridViewTag.js \
+				src/core/tags/TabBarTag.js \
+				src/core/tags/TabContainerTag.js \
+				src/core/tags/TreeViewTag.js \
+				src/core/tags/SliderTag.js \
+				src/core/tags/FloatListTag.js \
+				src/core/tags/CalendarTag.js \
+				src/core/tags/ColorPickerTag.js \
+				src/core/tags/FileViewTag.js \
+				src/core/tags/OverlayTag.js \
+				src/core/tags/AppDockTag.js \
+				src/core/tags/SystemPanelTag.js \
+				src/antos.js
  
 packages = Syslog Files Setting CodePad MarketPlace
 
-main: initd build_coffees build_themes libs  build_packages languages
+main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
 
 initd:
 	- mkdir -p $(BUILDDIR)
 
-lite: build_coffees build_themes build_packages
+lite: build_javascripts build_themes build_packages
 #%.js: %.coffee
 #		coffee --compile $< 
 
-build_coffees:
-	@echo "$(BLUE)Building coffee files$(NC)"
+build_javascripts:
+	@echo "$(BLUE)Bundling javascript files$(NC)"
 	- mkdir $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
-	- rm $(BUILDDIR)/scripts/antos.coffee
-	for f in $(coffees); do (cat "$${f}"; echo) >> $(BUILDDIR)/scripts/antos.coffee; done
-	coffee --compile $(BUILDDIR)/scripts/antos.coffee
-	- rm $(BUILDDIR)/scripts/antos.coffee
+	echo "(function() {" > $(BUILDDIR)/scripts/antos.js
+	for f in $(javascripts); do (cat "$${f}"; echo) >> $(BUILDDIR)/scripts/antos.js; done
+	echo "}).call(this);" >> $(BUILDDIR)/scripts/antos.js
 
 
 libs:

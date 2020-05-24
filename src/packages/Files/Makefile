@@ -1,6 +1,6 @@
-coffee_files = main.coffee
+module_files = main.js
 
-jsfiles =
+libfiles =
 
 cssfiles = main.css
 

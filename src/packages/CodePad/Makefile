@@ -1,13 +1,10 @@
-coffee_files =  coffees/CommandPalette.coffee coffees/main.coffee coffees/BaseExtension.coffee
+module_files =  CommandPalette.js main.js BaseExtension.js
 
-module_dir = extensions
-module_dir_src = coffees/extensions
-
-jsfiles =
+libfiles =
 
 cssfiles =  css/main.css
 
-copyfiles = assets/scheme.html package.json extensions.json
+copyfiles = assets/scheme.html package.json extensions.json extensions
 
 
 PKG_NAME=CodePad

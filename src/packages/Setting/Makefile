@@ -1,6 +1,6 @@
-coffee_files = main.coffee AppearanceHandle.coffee VFSHandle.coffee LocaleHandle.coffee StartupHandle.coffee
+module_files = main.js AppearanceHandle.js VFSHandle.js LocaleHandle.js StartupHandle.js
 
-jsfiles = 
+libfiles = 
 
 cssfiles = main.css
 

@@ -1,6 +1,6 @@
-coffee_files = Calendar.coffee PushNotification.coffee Syslog.coffee
+module_files = Calendar.js PushNotification.js Syslog.js
 
-jsfiles =
+libfiles =
 
 cssfiles = main.css
 
