@@ -95,6 +95,13 @@ test("Test button tag behavior", () =>{
     bt.onbtclick = cb
     $("button",bt).trigger("click");
     expect(cb).toBeCalledTimes(1);
+    const data = {
+        text: "name",
+        onbtclick: jest.fn()
+    };
+    bt.set(data);
+    $("button",bt).trigger("click");
+    expect(data.onbtclick).toBeCalledTimes(1);
 });
  
  // Label test

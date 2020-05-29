@@ -60,7 +60,6 @@ namespace OS {
                 }
 
                 protected mount() {
-                    this._onbtclick = (e) => {};
                     $(this.refs.button).click((e) => {
                         const evt: TagEventType = {
                             id: this.aid,
@@ -76,6 +75,7 @@ namespace OS {
                 protected init(): void {
                     this.enable = true;
                     this.toggle = false;
+                    this._onbtclick = (e) => {};
                 }
                 protected calibrate(): void {}
                 reload(d?: any): void {}

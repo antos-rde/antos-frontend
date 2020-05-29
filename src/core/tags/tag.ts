@@ -57,7 +57,10 @@ namespace OS {
             set(v: GenericObject<any>) {
                 for (let k in v) {
                     let descriptor = this.descriptor_of(k);
-                    if (descriptor && descriptor.set) this[k] = v[k];
+                    if (descriptor && descriptor.set) 
+                    {
+                        this[k] = v[k];
+                    }
                 }
             }
 

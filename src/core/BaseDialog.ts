@@ -35,7 +35,7 @@ namespace OS {
          */
         export abstract class SubWindow extends BaseModel {
             modal: false;
-            parent: BaseModel;
+            parent: BaseModel | typeof GUI;
 
             /**
              *Creates an instance of SubWindow.
@@ -91,8 +91,9 @@ namespace OS {
              * @memberof SubWindow
              */
             meta(): API.PackageMetaType {
-                if (this.parent && this.parent.meta) {
-                    return this.parent.meta();
+                const p = this.parent as BaseModel;
+                if (p && p.meta) {
+                    return p.meta();
                 }
             }
 

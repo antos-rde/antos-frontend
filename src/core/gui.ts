@@ -165,7 +165,7 @@ namespace OS {
                     dialog = d as GUI.BaseDialog;
                 }
 
-                dialog.parent = undefined;
+                dialog.parent = GUI;
                 dialog.handle = resolve;
                 dialog.pid = -1;
                 dialog.data = data;
