@@ -17,7 +17,18 @@ A demo of the web desktop is available at my page  [https://os.lxsang.me](https:
 
 ## AntOS applications
 [https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
- 
+
+## Dependencies
+
+- npm install @types/jquery
+- typescript
+- sudo npm install terser -g (optional)
+- uglifycss (optional)
+- jest, tes-jest (typescript test) (optional)
+ - npm install  @types/jest
+ -
+
+
 ## Build
 
 Note that this is only the client API, to make it work for your application, you need to implement all the system calls in core/handlers/RemoteHandler.coffee using a server side scripting language (e.g. PHP). I'm planning to release an API documentation which describes what need to be sent and what will be returned for each system call in near future (i'm kind of very busy right now :) ).

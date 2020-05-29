@@ -9,9 +9,7 @@ title:
 
 module:
 	- mkdir build
-	echo "(function() {" > "build/main.js"
-	for f in $(module_files); do (cat "$${f}"; echo) >>"build/main.js";done
-	echo "}).call(this);" >> "build/main.js"
+	for f in $(module_files); do (cat "../../../dist/packages/$(PKG_NAME)/$${f}"; echo) >>"build/main.js";done
 
 js: module
 	for f in $(libfiles); do (cat "$${f}"; echo) >> build/main.js; done

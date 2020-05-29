@@ -11,44 +11,44 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 
-javascripts= 	src/core/core.js \
-				src/core/settings.js \
-				src/core/handles/RemoteHandle.js \
-				src/core/Announcerment.js \
-				src/core/vfs.js \
-				src/core/vfs/GoogleDriveHandle.js \
-				src/core/db.js \
-				src/core/gui.js \
-				src/core/BaseModel.js \
-				src/core/BaseApplication.js \
-				src/core/BaseService.js \
-				src/core/BaseEvent.js \
-				src/core/BaseDialog.js \
-				src/core/tags/tag.js \
-				src/core/tags/WindowTag.js \
-				src/core/tags/TileLayoutTags.js \
-				src/core/tags/ResizerTag.js \
-				src/core/tags/LabelTag.js \
-				src/core/tags/ButtonTag.js \
-				src/core/tags/ListViewTag.js \
-				src/core/tags/SwitchTag.js \
-				src/core/tags/NSpinnerTag.js \
-				src/core/tags/MenuTag.js \
-				src/core/tags/GridViewTag.js \
-				src/core/tags/TabBarTag.js \
-				src/core/tags/TabContainerTag.js \
-				src/core/tags/TreeViewTag.js \
-				src/core/tags/SliderTag.js \
-				src/core/tags/FloatListTag.js \
-				src/core/tags/CalendarTag.js \
-				src/core/tags/ColorPickerTag.js \
-				src/core/tags/FileViewTag.js \
-				src/core/tags/OverlayTag.js \
-				src/core/tags/AppDockTag.js \
-				src/core/tags/SystemPanelTag.js \
-				src/antos.js
+javascripts= 	dist/core/core.js \
+				dist/core/settings.js \
+				dist/core/handles/RemoteHandle.js \
+				dist/core/Announcerment.js \
+				dist/core/vfs.js \
+				dist/core/db.js \
+				dist/core/BaseModel.js \
+				dist/core/BaseApplication.js \
+				dist/core/BaseService.js \
+				dist/core/BaseEvent.js \
+				dist/core/BaseDialog.js \
+				dist/core/tags/tag.js \
+				dist/core/tags/WindowTag.js \
+				dist/core/tags/TileLayoutTags.js \
+				dist/core/tags/ResizerTag.js \
+				dist/core/tags/LabelTag.js \
+				dist/core/tags/ButtonTag.js \
+				dist/core/tags/ListViewTag.js \
+				dist/core/tags/SwitchTag.js \
+				dist/core/tags/NSpinnerTag.js \
+				dist/core/tags/MenuTag.js \
+				dist/core/tags/GridViewTag.js \
+				dist/core/tags/TabBarTag.js \
+				dist/core/tags/TabContainerTag.js \
+				dist/core/tags/TreeViewTag.js \
+				dist/core/tags/SliderTag.js \
+				dist/core/tags/FloatListTag.js \
+				dist/core/tags/CalendarTag.js \
+				dist/core/tags/ColorPickerTag.js \
+				dist/core/tags/FileViewTag.js \
+				dist/core/tags/OverlayTag.js \
+				dist/core/tags/AppDockTag.js \
+				dist/core/tags/SystemPanelTag.js \
+				dist/core/gui.js \
+				dist/core/pm.js \
+				dist/bootstrap.js
  
-packages = Syslog Files Setting CodePad MarketPlace
+packages = Syslog #Files Setting CodePad MarketPlace
 
 main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
@@ -61,14 +61,19 @@ lite: build_javascripts build_themes build_packages
 #		coffee --compile $< 
 
 build_javascripts:
+	-rm -rf dist
+	tsc
 	@echo "$(BLUE)Bundling javascript files$(NC)"
 	- mkdir $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
-	echo "(function() {" > $(BUILDDIR)/scripts/antos.js
-	for f in $(javascripts); do (cat "$${f}"; echo) >> $(BUILDDIR)/scripts/antos.js; done
-	echo "}).call(this);" >> $(BUILDDIR)/scripts/antos.js
-
-
+	#echo "(function() {" > $(BUILDDIR)/scripts/antos.js
+	for f in $(javascripts); do \
+		(cat "$${f}"; echo) >> dist/antos.js;\
+		rm "$${f}";\
+	done
+	cp dist/antos.js $(BUILDDIR)/scripts/
+	echo "if(exports){ exports.__esModule = true;exports.OS = OS; }" >> dist/antos.js
+	rm -r dist/core
 libs:
 	@echo "$(BLUE)Copy lib files$(NC)"
 	cp -rf src/libs/* $(BUILDDIR)/scripts/

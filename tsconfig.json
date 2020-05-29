@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "skipLibCheck": true,
+        "lib": [
+            "es6", "dom",  "es2017"
+        ],
+        "outDir": "dist"
+    },
+    "include": ["src/**/*.ts"]
+}
