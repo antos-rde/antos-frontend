@@ -219,7 +219,6 @@ namespace OS {
                     };
                     e.preventDefault();
                     if (this.is_root() && this.has_nodes()) {
-                        console.log("show submenu");
                         $(this.refs.submenu).show();
                     } else {
                         this.submenuoff();
@@ -393,15 +392,15 @@ namespace OS {
                  * @returns {void}
                  * @memberof SimpleMenuEntryTag
                  */
-                reset_radio(): void {
+                protected reset_radio(): void {
                     if (!this.has_nodes()) {
                         return;
                     }
                     for (let v of this.nodes) {
-                        if (!v.domel.get("radio")) {
-                            return;
+                        if (!v.domel.radio) {
+                            continue;
                         }
-                        v.domel.set("checked", false);
+                        v.domel.checked = false;
                     }
                 }
 

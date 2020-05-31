@@ -171,7 +171,9 @@ namespace OS {
                 get cellitem(): string {
                     return $(this).attr("cellitem");
                 }
-
+                get header(): GenericObject<any>[] {
+                    return this._header;
+                }
                 set header(v: GenericObject<any>[]) {
                     this._header = v;
                     if (!v || v.length === 0) {
@@ -237,14 +239,23 @@ namespace OS {
                 }
 
                 push(row: GenericObject<any>[], flag: boolean): void {
+                    
                     const rowel = $("<afx-grid-row>").css(
                         "display",
                         "contents"
                     );
                     if (flag) {
                         $(this.refs.grid).prepend(rowel[0]);
+                        if(!this.rows.includes(row))
+                        {
+                            this.rows.unshift(row);
+                        }
                     } else {
                         rowel.appendTo(this.refs.grid);
+                        if(!this.rows.includes(row))
+                        {
+                            this.rows.push(row);
+                        }
                     }
                     
                     const el = rowel[0] as GridRowTag;
@@ -320,12 +331,13 @@ namespace OS {
                             return;
                         }
                         $(this.selectedRow).removeClass();
-                        this._selectedRow = row;
                         this._selectedRows = [row];
                         evt.data.item = row;
                         evt.data.items = [row];
                         $(row).removeClass().addClass("afx-grid-row-selected");
+                        this._selectedRows = [row];
                     }
+                    this._selectedRow = row;
                     this._onrowselect(evt);
                     return this.observable.trigger("rowselect", evt);
                 }

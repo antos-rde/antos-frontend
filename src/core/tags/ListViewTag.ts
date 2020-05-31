@@ -654,7 +654,6 @@ namespace OS {
                     let tag = this.itemtag;
                     if (item.tag) tag = item.tag;
                     const el = $(`<${tag}>`);
-                    el.appendTo(this.refs.mlist);
                     if (flag) {
                         if (!this.has_data(item)) {
                             this.data.unshift(item);
@@ -664,6 +663,7 @@ namespace OS {
                         if (!this.has_data(item)) {
                             this.data.push(item);
                         }
+                        el.appendTo(this.refs.mlist);
                     }
                     el[0].uify(this.observable);
                     const element = el[0] as ListViewItemTag;
