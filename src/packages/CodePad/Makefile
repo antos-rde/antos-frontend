@@ -1,10 +1,16 @@
-module_files =  CommandPalette.js main.js BaseExtension.js
+module_files =  main.js BaseExtension.js
 
 libfiles =
 
 cssfiles =  css/main.css
 
-copyfiles = assets/scheme.html package.json extensions.json extensions
+copyfiles = assets/scheme.html \
+		package.json \
+		extensions.json \
+		libs \
+		templates \
+		$(DIST)/AntOSDK.js \
+		$(DIST)/ExtensionMaker.js
 
 
 PKG_NAME=CodePad

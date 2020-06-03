@@ -497,7 +497,7 @@ namespace OS {
                         return;
                     }
                     $(this.refs.btlist).empty();
-                    for (let item of Array.from(v)) {
+                    for (let item of v) {
                         $(this.refs.btlist).show();
                         const bt = $("<afx-button>").appendTo(this.refs.btlist);
                         (bt[0] as ButtonTag).set(item);
@@ -524,7 +524,7 @@ namespace OS {
                     this._selectedItem = undefined;
                     this._selectedItems = [];
                     $(this.refs.mlist).empty();
-                    for (let item of Array.from(data)) {
+                    for (let item of data) {
                         this.push(item, false);
                     }
                     $(this.refs.container).off("mousedown", this._onmousedown);
@@ -791,7 +791,7 @@ namespace OS {
                  * @memberof ListViewTag
                  */
                 private idbclick(e: TagEventType) {
-                    const evt = { id: this.aid, data: e };
+                    const evt = { id: this.aid, data: { item: e.data } };
                     this._onlistdbclick(evt);
                     return this.observable.trigger("listdbclick", evt);
                 }
@@ -943,7 +943,7 @@ namespace OS {
                     if (!e.data) {
                         return;
                     }
-                    const evt = { id: this.aid, data: e };
+                    const evt = { id: this.aid, data: {item: e.data} };
                     const r = this._onitemclose(evt);
                     if (!r) {
                         return;

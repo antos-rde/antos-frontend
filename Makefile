@@ -48,7 +48,7 @@ javascripts= 	dist/core/core.js \
 				dist/core/pm.js \
 				dist/bootstrap.js
  
-packages = Syslog #Files Setting CodePad MarketPlace
+packages = Syslog CodePad#Files Setting  MarketPlace
 
 main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/

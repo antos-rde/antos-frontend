@@ -1,7 +1,7 @@
 
 BLUE=\033[1;34m
 NC=\033[0m
-
+DIST=../../../dist/packages/$(PKG_NAME)
 main: title clean js css copy
 
 title:
@@ -9,7 +9,7 @@ title:
 
 module:
 	- mkdir build
-	for f in $(module_files); do (cat "../../../dist/packages/$(PKG_NAME)/$${f}"; echo) >>"build/main.js";done
+	for f in $(module_files); do (cat "$(DIST)/$${f}"; echo) >>"build/main.js";done
 
 js: module
 	for f in $(libfiles); do (cat "$${f}"; echo) >> build/main.js; done

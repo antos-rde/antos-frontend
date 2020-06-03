@@ -356,12 +356,13 @@ namespace OS {
                 private refreshTree(): void {
                     //@treeview.root.set("selectedItem", null)
                     const tdata: TreeViewDataType = {
-                        name: this.path,
+                        text: this.path,
                         path: this.path,
                         open: true,
-                        nodes: this.getTreeData(this.data),
+                        nodes: this.getTreeData(this.data)
                     };
                     (this.refs.treeview as TreeViewTag).data = tdata;
+                   // (this.refs.treeview as TreeViewTag).expandAll();
                 }
 
                 /**
@@ -381,7 +382,7 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return undefined;
                         }
-                        v.name = v.filename;
+                        v.text = v.filename;
                         if (v.type === "dir") {
                             v.nodes = [];
                             v.open = false;
@@ -500,13 +501,13 @@ namespace OS {
                     const tree = this.refs.treeview as TreeViewTag;
                     tree.fetch = (v) => {
                         return new Promise((resolve, reject) => {
-                            if (!this.fetch) {
+                            if (!this._fetch) {
                                 return resolve(undefined);
                             }
                             if (!v.data.path) {
                                 return resolve(undefined);
                             }
-                            return this.fetch(v.data.path)
+                            return this._fetch(v.data.path)
                                 .then((d: API.FileInfoType[]) =>
                                     resolve(
                                         this.getTreeData(
@@ -524,25 +525,25 @@ namespace OS {
                     list.dragndrop = true;
                     // even handles
                     list.onlistselect = (e) => {
-                        this.fileselect(e.data.item.get("data"));
+                        this.fileselect(e.data.item.data);
                     };
                     grid.onrowselect = (e) => {
                         this.fileselect(
-                            $(e.data.item).children()[0].get("data")
+                            $(e.data.item).children()[0].data
                         );
                     };
                     tree.ontreeselect = (e) => {
-                        this.fileselect(e.data.item.get("data"));
+                        this.fileselect(e.data.item.data);
                     };
                     // dblclick
                     list.onlistdbclick = (e) => {
-                        this.filedbclick(e.data.item.get("data"));
+                        this.filedbclick(e.data.item.data);
                     };
                     grid.oncelldbclick = (e) => {
-                        this.filedbclick(e.data.item.get("data"));
+                        this.filedbclick(e.data.item.data);
                     };
                     tree.ontreedbclick = (e) => {
-                        this.filedbclick(e.data.item.get("data"));
+                        this.filedbclick(e.data.item.data);
                     };
                     this.switchView();
                 }

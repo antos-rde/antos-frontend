@@ -89,6 +89,7 @@ namespace OS {
                         this.treepath = v.path;
                     }
                     this.selected = v.selected;
+                    v.domel = this;
                     this.ondatachange();
                 }
 
@@ -171,6 +172,15 @@ namespace OS {
                     $(this.refs.toggle).addClass("afx-tree-view-folder-close");
                 }
 
+                /**
+                 *
+                 *
+                 * @type {boolean}
+                 * @memberof TreeViewItemPrototype
+                 */
+                get open(): boolean {
+                    return this.hasattr("open");
+                }
                 /**
                  *
                  *
@@ -264,7 +274,7 @@ namespace OS {
                         id: this.aid,
                         data: { item: this, dblclick: false },
                     };
-                    this.indent = 0;
+                    this._indent = 0;
                 }
                 /**
                  *
@@ -602,7 +612,7 @@ namespace OS {
                     if (e.data.item === this.selectedItem && !e.data.dblclick) {
                         return;
                     }
-                    this.selectedItem = e.data.item;
+                    this._selectedItem = e.data.item;
                     const evt = { id: this.aid, data: e.data };
                     if (e.data.dblclick) {
                         this._ontreedbclick(evt);
@@ -666,7 +676,7 @@ namespace OS {
                     }
                     let tag = this.itemtag;
                     if (v.tag) {
-                        ({ tag } = v);
+                        tag = v.tag;
                     }
                     const el = $(`<${tag}>`).appendTo(this);
                     el[0].uify(this.observable);

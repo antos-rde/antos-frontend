@@ -472,8 +472,16 @@ test("Test gridview setter/getter", () => {
     expect(grid.selectedCell).toBe(cell.domel);
     expect(grid.selectedRow).toBe(row.domel);
     expect(grid.selectedRows.length).toBe(2);
-    const toprow: any = [{ text: "text -3" }, { text: "text -2" }, { text: "text -1" }];
-    const botrow: any = [{ text: "text 10" }, { text: "text 11" }, { text: "text 12" }];
+    const toprow: any = [
+        { text: "text -3" },
+        { text: "text -2" },
+        { text: "text -1" },
+    ];
+    const botrow: any = [
+        { text: "text 10" },
+        { text: "text 11" },
+        { text: "text 12" },
+    ];
     grid.unshift(toprow);
     grid.push(botrow);
     expect(grid.rows.length).toBe(5);
@@ -515,16 +523,229 @@ test("Test gridview behavior", () => {
 });
 
 // Treeview
-test("Treeview item setter/getter", ()=>{
-
-});
-test("Treeview item behavior", ()=>{
-
+test("Treeview item setter/getter", () => {
+    const item = new OS.GUI.tag.SimpleTreeViewItem();
+    item.uify();
+    const tdata = get_treedata();
+    item.data = tdata;
+    expect(item.data).toBe(tdata);
+    expect(item.nodes).toBe(tdata.nodes);
+    expect(item.open).toBe(false);
+    expect(item.indent).toBe(0);
+    expect(item.treepath).toBe(item.aid.toString());
+    expect(item.parent).toBeUndefined();
+    item.update("expand");
+    expect(item.open).toBe(true);
+    const child = item.nodes[2].domel;
+    expect(child.data).toBe(item.nodes[2]);
+    expect(child.indent).toBe(1);
+    expect(child.open).toBe(true);
+    const childtree = $(child).closest("afx-tree-view")[0];
+    expect(childtree).toBeDefined();
+    expect(child.treepath).toBe(`${item.aid}/${childtree.aid}`);
+    expect(child.parent).toBe(childtree);
+    child.selected = true;
+    expect(child.selected).toBe(true);
 });
 // Treeview
-test("Treeview setter/getter", ()=>{
+test("Treeview setter/getter", () => {
+    const item = new OS.GUI.tag.TreeViewTag();
+    item.uify();
+    const tdata = get_treedata();
+    item.data = tdata;
+    item.expandAll();
+    expect(item.selectedItem).toBeUndefined();
+    expect(item.data).toBe(tdata);
+    expect(item.treeroot).toBeUndefined();
+    expect(item.treepath).toBe(item.aid.toString());
+    expect(item.indent).toBe(0);
+    expect(item.dragndrop).toBe(false);
+    expect(item.itemtag).toBe("afx-tree-view-item");
+    const child = item.data.nodes[2].domel;
+    expect(child).toBeDefined();
+    const childtree = $(child).closest("afx-tree-view")[0];
+    expect(child.treeroot).toBe(item);
+    expect(childtree.is_leaf()).toBe(false);
+});
+test("Treeview behavior", () => {
+    const item = new OS.GUI.tag.TreeViewTag();
+    item.uify();
+    const tdata = get_treedata();
+    item.data = tdata;
+    item.expandAll();
+    const child = item.data.nodes[2].domel;
+    const cb = jest.fn();
+    item.ontreeselect = cb;
+    item.ontreedbclick = cb;
+
+    $(">div", child).trigger("click");
+    expect(cb).toBeCalledTimes(1);
+    expect(item.selectedItem).toBe(child);
+    const anotherchild = item.data.nodes[1].domel;
+    anotherchild.selected = true;
+    expect(cb).toBeCalledTimes(2);
+    expect(item.selectedItem).toBe(anotherchild);
+    expect(child.selected).toBe(false);
+    $(">div", child).trigger("dblclick");
+    expect(cb).toBeCalledTimes(3);
+    expect(item.selectedItem).toBe(child);
+});
+
+// Calendar tag
+test("Calendar tag setter/getter", () => {
+    const item = new OS.GUI.tag.CalendarTag();
+    item.uify();
+    const now = {
+        d: new Date().getDate(),
+        m: new Date().getMonth(),
+        y: new Date().getFullYear(),
+    };
+    expect(item.selectedDate).toStrictEqual(new Date(now.y, now.m, now.d));
+});
+
+test("Calendar tag behavior", () => {
+    const item = new OS.GUI.tag.CalendarTag();
+    const cb = jest.fn();
+    item.ondateselect = cb;
+    item.uify();
+    expect(cb).toBeCalledTimes(1);
+});
+
+// File view tag
+
+function get_files_data() {
+    return JSON.parse(`\
+    [{
+		"permissions": " (755)",
+		"type": "dir",
+		"mtime": "2017-07-23T22:53:10",
+		"size": 102,
+		"path": "home:////desktop",
+		"ctime": "2017-07-23T22:53:10",
+		"filename": "desktop",
+		"perm": {
+			"owner": {
+				"write": true,
+				"read": true,
+				"exec": true
+			},
+			"group": {
+				"write": false,
+				"read": true,
+				"exec": true
+			},
+			"other": {
+				"write": false,
+				"read": true,
+				"exec": true
+			}
+		},
+		"mime": "",
+		"uid": 501,
+		"gid": 20
+	},
+	{
+		"permissions": " (644)",
+		"type": "file",
+		"mtime": "2017-07-30T00:55:34",
+		"size": 2821,
+		"path": "home:////settings.json",
+		"ctime": "2017-07-30T00:55:34",
+		"filename": "settings.json",
+		"perm": {
+			"owner": {
+				"write": true,
+				"read": true,
+				"exec": false
+			},
+			"group": {
+				"write": false,
+				"read": true,
+				"exec": false
+			},
+			"other": {
+				"write": false,
+				"read": true,
+				"exec": false
+			}
+		},
+		"mime": "application/json",
+		"uid": 501,
+		"gid": 20
+	},
+	{
+		"permissions": " (644)",
+		"type": "file",
+		"mtime": "2017-07-11T20:30:51",
+		"size": 575,
+		"path": "home:////helloworld.xml",
+		"ctime": "2017-07-11T20:30:51",
+		"filename": "helloworld.xml",
+		"perm": {
+			"owner": {
+				"write": true,
+				"read": true,
+				"exec": false
+			},
+			"group": {
+				"write": false,
+				"read": true,
+				"exec": false
+			},
+			"other": {
+				"write": false,
+				"read": true,
+				"exec": false
+			}
+		},
+		"mime": "application/xml",
+		"uid": 501,
+		"gid": 20
+	}
+]`);
+}
+test("File view setter/getter", () => {
+    const fileview = new OS.GUI.tag.FileViewTag();
+    fileview.uify();
+    expect(fileview.data.length).toBe(0);
+    expect(fileview.status).toBe(true);
+    expect(fileview.view).toBe("list");
+    expect(fileview.showhidden).toBe(false);
+    expect(fileview.chdir).toBe(true);
+    fileview.status = false;
+    expect(fileview.status).toBe(false);
+    fileview.view = "icon";
+    expect(fileview.view).toBe("icon");
+    fileview.showhidden = true;
+    expect(fileview.showhidden).toBe(true);
+    fileview.chdir = false;
+    expect(fileview.chdir).toBe(false);
+    expect(fileview.selectedFile).toBeUndefined();
+    fileview.path = "home://";
+    expect(fileview.path).toBe("home://");
+    const data = get_files_data();
+    fileview.data = data;
+    expect(fileview.data).toBe(data);
 
 });
-test("Treeview behavior", ()=>{
 
+test("File view behavior", () => {
+    const fileview = new OS.GUI.tag.FileViewTag();
+    fileview.uify();
+    fileview.view = "icon";
+    const cb = jest.fn();
+    fileview.onfileselect = cb;
+    fileview.onfileopen = cb;
+    const data = get_files_data();
+    data[2].selected = true;
+    fileview.data = data;
+    expect(cb).toBeCalledTimes(1);
+    const el = fileview.selectedFile;
+    expect(el).toBe(data[2]);
+    $("li", el.domel).trigger("dblclick");
+    expect(cb).toBeCalledTimes(2);
+    /* fileview.view = "tree";
+    fileview.update("expand");
+    const treeitem = fileview.data[0].domel;
+    expect(treeitem.tagName).toBe("AFX-TREE-VIEW-ITEM"); */
 });

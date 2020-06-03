@@ -149,7 +149,7 @@ namespace OS {
                 }
             }
 
-            class HBoxTag extends TileLayoutTag {
+            export class HBoxTag extends TileLayoutTag {
                 constructor() {
                     super();
                 }
@@ -162,7 +162,7 @@ namespace OS {
                 }
             }
 
-            class VBoxTag extends TileLayoutTag {
+            export class VBoxTag extends TileLayoutTag {
                 constructor() {
                     super();
                     

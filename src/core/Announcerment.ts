@@ -157,7 +157,7 @@ namespace OS {
             trigger(evtName: string, data: any): void {
                 const trig = (name: string, d: any) => {
                     const names = [name, "*"];
-                    for (let evt of Array.from(names)) {
+                    for (let evt of names) {
                         if (!this.observable[evt]) {
                             continue;
                         }
@@ -272,7 +272,7 @@ namespace OS {
             ) {
                 return;
             }
-            for (let i of Array.from(announcer.listeners[app.pid])) {
+            for (let i of announcer.listeners[app.pid]) {
                 announcer.observable.off(i.e, i.f);
             }
             delete announcer.listeners[app.pid];

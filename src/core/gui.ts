@@ -44,7 +44,7 @@ namespace OS {
          * @interface BasicItemType
          */
         export interface BasicItemType {
-            text: string;
+            text: string | FormatedString;
             children?: BasicItemType[];
             nodes?: BasicItemType[];
             [propName: string]: any;
@@ -190,7 +190,7 @@ namespace OS {
             }
             let m: API.PackageMetaType;
             const mimes: Array<string[]> = [];
-            for (m of Array.from(metas)) {
+            for (m of metas) {
                 if (m) {
                     mimes.push(m.mimes);
                 }
@@ -275,7 +275,7 @@ namespace OS {
             if (apps.length === 1) {
                 return launch(apps[0].app, [it]);
             }
-            const list = Array.from(apps).map((e) => ({
+            const list = apps.map((e) => ({
                 text: e.app,
                 icon: e.icon,
                 iconclass: e.iconclass,
@@ -1041,17 +1041,16 @@ namespace OS {
                         pushServices(
                             (() => {
                                 const result = [];
-                                for (let v of Array.from(
+                                for (let v of 
                                     setting.system.startup.services
-                                )) {
+                                ) {
                                     result.push(v);
                                 }
                                 return result;
                             })()
                         );
-                        return Array.from(
-                            setting.system.startup.apps
-                        ).map((a) => launch(a, []));
+                        return 
+                            setting.system.startup.apps.map((a) => launch(a, []));
                     });
                 }
             });

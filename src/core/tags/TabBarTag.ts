@@ -16,7 +16,6 @@ namespace OS {
              * @extends {AFXTag}
              */
             export class TabBarTag extends AFXTag {
-                private _items: GenericObject<any>[];
                 private _selected: number;
                 private _ontabclose: (e: TagEventType) => boolean;
                 private _ontabselect: TagEventCallback;
@@ -29,7 +28,6 @@ namespace OS {
                     super();
                     this._ontabclose = (e) => true;
                     this._ontabselect = (e) => {};
-                    this._items = [];
                 }
 
                 /**
@@ -108,7 +106,6 @@ namespace OS {
                  * @memberof TabBarTag
                  */
                 set items(v: GenericObject<any>[]) {
-                    this._items = v;
                     for (let i of v) {
                         i.closable = this.closable;
                     }
@@ -122,7 +119,7 @@ namespace OS {
                  * @memberof TabBarTag
                  */
                 get items(): GenericObject<any>[] {
-                    return this._items;
+                    return (this.refs.list as ListViewTag).data;
                 }
 
                 /**

@@ -378,7 +378,8 @@ namespace OS {
 
     Object.defineProperty(Object.prototype, "__", {
         value() {
-            return this.toString();
+            if(this)
+                return this.toString();
         },
         enumerable: false,
         writable: true,

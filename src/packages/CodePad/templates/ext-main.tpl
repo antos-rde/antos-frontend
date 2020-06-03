@@ -1,5 +1,5 @@
 # import the CodePad application module
-App = this.OS.APP.CodePad
+App = this.OS.application.CodePad
 
 # define the extension
 class App.extensions.{0} extends App.BaseExtension

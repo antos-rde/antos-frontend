@@ -181,7 +181,7 @@ namespace OS {
                         return;
                     }
                     $(this.refs.header).empty();
-                    for (let item of Array.from(v)) {
+                    for (let item of v) {
                         const el = $(`<${this.headeritem}>`).appendTo(
                             this.refs.header
                         );
@@ -263,7 +263,7 @@ namespace OS {
                     el.data = row;
                     row.domel = rowel[0];
 
-                    for (let cell of Array.from(row)) {
+                    for (let cell of row) {
                         let tag = this.cellitem;
                         if (cell.tag) {
                             ({ tag } = cell);

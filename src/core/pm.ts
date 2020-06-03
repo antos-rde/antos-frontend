@@ -57,7 +57,7 @@ namespace OS {
                     return obj;
                 };
                 if (metaclass.dependencies) {
-                    const libs = Array.from(metaclass.dependencies);
+                    const libs = metaclass.dependencies;
                     return API.require(libs)
                         .then(() => resolve(f()))
                         .catch((e: Error) => reject(__e(e)));
@@ -77,7 +77,7 @@ namespace OS {
         export function appByPid(pid: number): BaseModel {
             let app = undefined;
             const find = function (l: Array<any>) {
-                for (let a of Array.from(l)) {
+                for (let a of l) {
                     if (a.pid === pid) {
                         return a;
                     }
@@ -130,7 +130,7 @@ namespace OS {
             if (!PM.processes[app]) {
                 return;
             }
-            Array.from(PM.processes[app]).map((a) => a.quit(force));
+            PM.processes[app].map((a) => a.quit(force));
         }
     }
 }

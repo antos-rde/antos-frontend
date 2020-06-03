@@ -1,4 +1,4 @@
-class {0} extends this.OS.GUI.BaseApplication
+class {0} extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "{0}", args
     

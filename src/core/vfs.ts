@@ -134,7 +134,6 @@ namespace OS {
                 basename: string;
                 info: FileInfoType;
                 ext: string;
-
                 /**
                  *Creates an instance of BaseFileHandle.
                  * @param {string} path
@@ -708,7 +707,7 @@ namespace OS {
              * @class RemoteFileHandle
              * @extends {BaseFileHandle}
              */
-            class RemoteFileHandle extends BaseFileHandle {
+            export class RemoteFileHandle extends BaseFileHandle {
                 constructor(path: string) {
                     super(path);
                 }
@@ -1021,7 +1020,7 @@ namespace OS {
              * @class ApplicationHandle
              * @extends {BaseFileHandle}
              */
-            class ApplicationHandle extends BaseFileHandle {
+            export class ApplicationHandle extends BaseFileHandle {
 
                 /**
                  *Creates an instance of ApplicationHandle.
@@ -1099,7 +1098,7 @@ namespace OS {
              * @class BufferFileHandle
              * @extends {BaseFileHandle}
              */
-            class BufferFileHandle extends BaseFileHandle {
+            export class BufferFileHandle extends BaseFileHandle {
                 constructor(path: string, mime: string, data: any) {
                     super(path);
                     if (data) {
@@ -1188,7 +1187,7 @@ namespace OS {
              * @class URLFileHandle
              * @extends {BaseFileHandle}
              */
-            class URLFileHandle extends BaseFileHandle {
+            export class URLFileHandle extends BaseFileHandle {
                 constructor(path: string) {
                     super(path);
                     this.ready = true;
@@ -1228,7 +1227,7 @@ namespace OS {
              * @class SharedFileHandle
              * @extends {API.VFS.BaseFileHandle}
              */
-            class SharedFileHandle extends API.VFS.BaseFileHandle {
+            export class SharedFileHandle extends API.VFS.BaseFileHandle {
                 constructor(path: string) {
                     super(path);
                     if (this.isRoot()) {

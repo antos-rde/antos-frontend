@@ -211,6 +211,10 @@ namespace OS {
                         this.host
                     );
                 }
+                else
+                {
+                    this.error(__("Unable to find dialog scheme"));
+                }
             }
 
             /**
@@ -846,7 +850,7 @@ namespace OS {
                             if (!e || !e.data.item) {
                                 return;
                             }
-                            setroot(e.data.item.get("data").path);
+                            setroot(e.data.item.data.path);
                         };
                         location.data = this.systemsetting.VFS.mountpoints.filter(
                             (i) => i.type !== "app"
@@ -884,7 +888,7 @@ namespace OS {
                             //verify the mime
                             let m = false;
                             if (f.mime) {
-                                for (let v of Array.from(this.data.mimes)) {
+                                for (let v of this.data.mimes) {
                                     if (
                                         f.mime.match(
                                             new RegExp(v as string, "g")

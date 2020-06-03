@@ -311,7 +311,7 @@ namespace OS {
                     v1.complex = true;
                     ar.push(v1);
                 } else if (v.mimes) {
-                    for (let m of Array.from(v.mimes)) {
+                    for (let m of v.mimes) {
                         if (t.match(new RegExp(m, "g"))) {
                             v1 = {};
                             for (k1 in v) {

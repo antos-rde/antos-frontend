@@ -169,7 +169,7 @@ namespace OS {
                     $(dom).attr("tooltip", tag.tooltip.__());
                 }
                 if (tag.children) {
-                    for (let v of Array.from(tag.children)) {
+                    for (let v of tag.children) {
                         $(this.mkui(v)).appendTo(dom);
                     }
                 }
