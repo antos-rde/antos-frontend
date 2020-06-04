@@ -8,6 +8,7 @@
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            export type ListItemEventData = TagEventDataType<ListViewItemTag>
             /**
              *
              *
@@ -18,11 +19,11 @@ namespace OS {
              */
             export abstract class ListViewItemTag extends AFXTag {
                 private _data: GenericObject<any>;
-                private _onselect: TagEventCallback;
-                private _onctxmenu: TagEventCallback;
-                private _onclick: TagEventCallback;
-                private _ondbclick: TagEventCallback;
-                private _onclose: TagEventCallback;
+                private _onselect: TagEventCallback<ListItemEventData>;
+                private _onctxmenu: TagEventCallback<ListItemEventData>;
+                private _onclick: TagEventCallback<ListItemEventData>;
+                private _ondbclick: TagEventCallback<ListItemEventData>;
+                private _onclose: TagEventCallback<ListItemEventData>;
 
                 /**
                  *Creates an instance of ListViewItemTag.
@@ -56,7 +57,7 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onitemselect(v: TagEventCallback) {
+                set onitemselect(v: TagEventCallback<ListViewItemTag>) {
                     this._onselect = v;
                 }
 
@@ -83,7 +84,7 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onctxmenu(v: TagEventCallback) {
+                set onctxmenu(v: TagEventCallback<ListViewItemTag>) {
                     this._onctxmenu = v;
                 }
 
@@ -92,7 +93,7 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onitemclick(v: TagEventCallback) {
+                set onitemclick(v: TagEventCallback<ListViewItemTag>) {
                     this._onclick = v;
                 }
 
@@ -101,7 +102,7 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onitemdbclick(v: TagEventCallback) {
+                set onitemdbclick(v: TagEventCallback<ListViewItemTag>) {
                     this._ondbclick = v;
                 }
 
@@ -110,7 +111,7 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onitemclose(v: TagEventCallback) {
+                set onitemclose(v: TagEventCallback<ListViewItemTag>) {
                     this._onclose = v;
                 }
 
@@ -283,10 +284,10 @@ namespace OS {
              * @extends {AFXTag}
              */
             export class ListViewTag extends AFXTag {
-                private _onlistselect: TagEventCallback;
-                private _onlistdbclick: TagEventCallback;
-                private _ondragndrop: TagEventCallback;
-                private _onitemclose: (e: TagEventType) => boolean;
+                private _onlistselect: TagEventCallback<ListItemEventData>;
+                private _onlistdbclick: TagEventCallback<ListItemEventData>;
+                private _ondragndrop: TagEventCallback<DnDEventDataType<ListViewItemTag>>;
+                private _onitemclose: (e: TagEventType<ListItemEventData>) => boolean;
                 private _onmousedown: (e: JQuery.MouseEventBase) => void;
                 private _onmouseup: (e: JQuery.MouseEventBase) => void;
                 private _onmousemove: (e: JQuery.MouseEventBase) => void;
@@ -302,9 +303,9 @@ namespace OS {
                 constructor() {
                     super();
                     this._onlistdbclick = this._onlistselect = this._ondragndrop = (
-                        e: TagEventType
+                        e: TagEventType<ListItemEventData>
                     ) => {};
-                    this._onitemclose = (e: TagEventType) => {
+                    this._onitemclose = (e: TagEventType<ListItemEventData>) => {
                         return true;
                     };
                     this._onmousedown = this._onmouseup = this._onmousemove = (
@@ -384,7 +385,7 @@ namespace OS {
                  *
                  * @memberof ListViewTag
                  */
-                set ondragndrop(v: TagEventCallback) {
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<ListViewItemTag>>) {
                     this._ondragndrop = v;
                 }
 
@@ -393,7 +394,7 @@ namespace OS {
                  *
                  * @memberof ListViewTag
                  */
-                set onlistselect(v: TagEventCallback) {
+                set onlistselect(v: TagEventCallback<ListItemEventData>) {
                     this._onlistselect = v;
                 }
 
@@ -402,7 +403,7 @@ namespace OS {
                  *
                  * @memberof ListViewTag
                  */
-                set onlistdbclick(v: TagEventCallback) {
+                set onlistdbclick(v: TagEventCallback<ListItemEventData>) {
                     this._onlistdbclick = v;
                 }
 
@@ -411,7 +412,7 @@ namespace OS {
                  *
                  * @memberof ListViewTag
                  */
-                set onitemclose(v: (e: TagEventType) => boolean) {
+                set onitemclose(v: (e: TagEventType<ListItemEventData>) => boolean) {
                     this._onitemclose = v;
                 }
 
@@ -500,6 +501,7 @@ namespace OS {
                     for (let item of v) {
                         $(this.refs.btlist).show();
                         const bt = $("<afx-button>").appendTo(this.refs.btlist);
+                        bt[0].uify(this.observable);
                         (bt[0] as ButtonTag).set(item);
                     }
                 }
@@ -757,7 +759,7 @@ namespace OS {
                         v.selected = false;
                     }
                     this._selectedItems = [];
-                    return (this._selectedItem = undefined);
+                    this._selectedItem = undefined;
                 }
 
                 /**
@@ -769,7 +771,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                private iclick(e: TagEventType, flag: boolean): void {
+                private iclick(e: TagEventType<ListViewItemTag>, flag: boolean): void {
                     if (!e.data) {
                         return;
                     }
@@ -790,8 +792,8 @@ namespace OS {
                  * @returns
                  * @memberof ListViewTag
                  */
-                private idbclick(e: TagEventType) {
-                    const evt = { id: this.aid, data: { item: e.data } };
+                private idbclick(e: TagEventType<ListViewItemTag>) {
+                    const evt: TagEventType<ListItemEventData> = { id: this.aid, data: { item: e.data } };
                     this._onlistdbclick(evt);
                     return this.observable.trigger("listdbclick", evt);
                 }
@@ -804,7 +806,7 @@ namespace OS {
                  * @returns
                  * @memberof ListViewTag
                  */
-                private iselect(e: TagEventType) {
+                private iselect(e: TagEventType<ListViewItemTag>) {
                     if (!e.data) {
                         return;
                     }
@@ -853,7 +855,6 @@ namespace OS {
                         label.set(e.data.data);
                         $(this.refs.mlist).hide();
                     }
-
                     const evt = { id: this.aid, data: edata };
                     this._onlistselect(evt);
                     return this.observable.trigger("listselect", evt);
@@ -939,7 +940,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                private iclose(e: TagEventType): void {
+                private iclose(e: TagEventType<ListViewItemTag>): void {
                     if (!e.data) {
                         return;
                     }

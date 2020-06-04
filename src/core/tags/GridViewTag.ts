@@ -27,20 +27,20 @@ namespace OS {
                 protected calibrate(): void {}
                 protected reload(d?: any): void {}
             }
-
+            export type CellEventData = TagEventDataType<GridCellPrototype>;
             export abstract class GridCellPrototype extends AFXTag {
-                private _oncellselect: TagEventCallback;
-                private _oncelldbclick: TagEventCallback;
+                private _oncellselect: TagEventCallback<CellEventData>;
+                private _oncelldbclick: TagEventCallback<CellEventData>;
                 private _data: GenericObject<any>;
                 constructor() {
                     super();
                     
                 }
 
-                set oncellselect(v: TagEventCallback) {
+                set oncellselect(v: TagEventCallback<CellEventData>) {
                     this._oncellselect = v;
                 }
-                set oncelldbclick(v: TagEventCallback) {
+                set oncelldbclick(v: TagEventCallback<CellEventData>) {
                     this._oncelldbclick = v;
                 }
                 set data(v: GenericObject<any>) {
@@ -77,7 +77,7 @@ namespace OS {
                 protected mount(): void {
                     $(this).attr("class", "afx-grid-cell");
                     this.oncelldbclick = this.oncellselect = (
-                        e: TagEventType
+                        e: TagEventType<GridCellPrototype>
                     ): void => {};
                     this.selected = false;
                     $(this).css("display", "block");
@@ -91,7 +91,7 @@ namespace OS {
                     });
                 }
 
-                private cellselect(e: TagEventType, flag: boolean): void {
+                private cellselect(e: TagEventType<GridCellPrototype>, flag: boolean): void {
                     const evt = { id: this.aid, data: { item: e.data } };
                     if (!flag) {
                         return this._oncellselect(evt);
@@ -128,9 +128,9 @@ namespace OS {
                 private _selectedRow: GridRowTag;
                 private _selectedRows: GridRowTag[];
                 private _selectedCell: GridCellPrototype;
-                private _oncellselect: TagEventCallback;
-                private _onrowselect: TagEventCallback;
-                private _oncelldbclick: TagEventCallback;
+                private _oncellselect: TagEventCallback<CellEventData>;
+                private _onrowselect: TagEventCallback<CellEventData>;
+                private _oncelldbclick: TagEventCallback<CellEventData>;
                 constructor() {
                     super();
                 }
@@ -143,17 +143,17 @@ namespace OS {
                     this._selectedRow = undefined;
                     this._rows = [];
                     this._oncellselect = this._onrowselect = this._oncelldbclick = (
-                        e: TagEventType
+                        e: TagEventType<CellEventData>
                     ): void => {};
                 }
                 protected reload(d?: any): void {}
-                set oncellselect(v: TagEventCallback) {
+                set oncellselect(v: TagEventCallback<CellEventData>) {
                     this._oncellselect = v;
                 }
-                set onrowselect(v: TagEventCallback) {
+                set onrowselect(v: TagEventCallback<CellEventData>) {
                     this._onrowselect = v;
                 }
-                set oncelldbclick(v: TagEventCallback) {
+                set oncelldbclick(v: TagEventCallback<CellEventData>) {
                     this._oncelldbclick = v;
                 }
                 set headeritem(v: string) {
@@ -282,7 +282,7 @@ namespace OS {
                     this.push(row, true);
                 }
 
-                cellselect(e: TagEventType, flag: boolean): void {
+                cellselect(e: TagEventType<CellEventData>, flag: boolean): void {
                     e.id = this.aid;
                     // return if e.data.item is selectedCell and not flag
                     if (this.selectedCell) {
@@ -300,7 +300,7 @@ namespace OS {
                     }
                 }
 
-                rowselect(e: TagEventType): void {
+                rowselect(e: TagEventType<CellEventData>): void {
                     if (!e.data.item) {
                         return;
                     }
@@ -311,7 +311,7 @@ namespace OS {
                             items: [],
                         },
                     };
-                    const row = $(e.data.item).parent()[0];
+                    const row = $(e.data.item).parent()[0] as any as GridRowTag;
                     if (this.multiselect) {
                         if (this.selectedRows.includes(row)) {
                             this.selectedRows.splice(

@@ -35,7 +35,7 @@ namespace OS {
          */
         export abstract class BaseApplication extends BaseModel {
             setting: GenericObject<any>;
-            keycomb: GUI.ShortcutType;
+            protected keycomb: GUI.ShortcutType;
             sysdock: GUI.tag.AppDockTag;
             appmenu: GUI.tag.MenuTag;
 
@@ -57,6 +57,12 @@ namespace OS {
                     SHIFT: {},
                     META: {},
                 };
+                this.subscribe("appregistry", (m) => {
+                    if (m.name === this.name) {
+                        this.applySetting(m.data.m);
+                    }
+                });
+                
             }
 
             /**
@@ -70,11 +76,10 @@ namespace OS {
                 this.on("exit", () => this.quit(false));
                 // first register some base event to the app
                 this.on("focus", () => {
-                    console.log("focus");
                     this.sysdock.selectedApp = this;
                     this.appmenu.pid = this.pid;
                     this.appmenu.items= this.baseMenu() || [];
-                    this.appmenu.onmenuselect=(d: GUI.TagEventType): void => {
+                    this.appmenu.onmenuselect=(d: GUI.tag.MenuEventData): void => {
                             return this.trigger("menuselect", d);
                         }
                     if (this.dialog) {
@@ -102,26 +107,30 @@ namespace OS {
                 return this.loadScheme();
             }
 
+            
             /**
              *
              *
+             * @protected
              * @returns {void}
              * @memberof BaseApplication
              */
-            loadScheme(): void {
+            protected loadScheme(): void {
                 //now load the scheme
                 const path = `${this.meta().path}/scheme.html`;
                 return this.render(path);
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {Promise<any>} promise
              * @returns {Promise<any>}
              * @memberof BaseApplication
              */
-            load(promise: Promise<any>): Promise<any> {
+            protected load(promise: Promise<any>): Promise<any> {
                 const q = this._api.mid();
                 return new Promise(async (resolve, reject) => {
                     this._api.loading(q, this.name);
@@ -136,15 +145,17 @@ namespace OS {
                 });
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {string} k
              * @param {(e: JQuery.MouseDownEvent) => void} f
              * @returns {void}
              * @memberof BaseApplication
              */
-            bindKey(k: string, f: (e: JQuery.MouseDownEvent) => void): void {
+            protected bindKey(k: string, f: (e: JQuery.MouseDownEvent) => void): void {
                 const arr = k.split("-");
                 if (arr.length !== 2) {
                     return;
@@ -157,14 +168,16 @@ namespace OS {
                 this.keycomb[fnk][c] = f;
             }
 
+            
             /**
              *
              *
+             * @private
              * @param {string} name
              * @returns {void}
              * @memberof BaseApplication
              */
-            updateLocale(name: string): void {
+            protected updateLocale(name: string): void {
                 const meta = this.meta();
                 if (!meta || !meta.locales) {
                     return;
@@ -204,35 +217,41 @@ namespace OS {
                 return false;
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {string} k
              * @memberof BaseApplication
              */
-            applySetting(k: string): void {}
+            protected applySetting(k: string): void {}
 
+            
             /**
              *
              *
+             * @protected
              * @memberof BaseApplication
              */
-            applyAllSetting(): void {
+            protected applyAllSetting(): void {
                 for (let k in this.setting) {
                     const v = this.setting[k];
                     this.applySetting(k);
                 }
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {string} k
              * @param {*} v
              * @returns {void}
              * @memberof BaseApplication
              */
-            registry(k: string, v: any): void {
+            protected registry(k: string, v: any): void {
                 this.setting[k] = v;
                 return this.publish("appregistry", k);
             }
@@ -290,13 +309,15 @@ namespace OS {
                 return (this.scheme as GUI.tag.WindowTag).apptitle;
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {BaseEvent} evt
              * @memberof BaseApplication
              */
-            onexit(evt: BaseEvent): void {
+            protected onexit(evt: BaseEvent): void {
                 this.cleanup(evt);
                 if (!evt.prevent) {
                     if (this.pid === this.appmenu.pid) {
@@ -316,13 +337,15 @@ namespace OS {
                 return application[this.name].meta;
             }
 
+            
             /**
              *
              *
-             * @returns {BasicItemType[]}
+             * @protected
+             * @returns {GUI.BasicItemType[]}
              * @memberof BaseApplication
              */
-            baseMenu(): GUI.BasicItemType[] {
+            protected baseMenu(): GUI.BasicItemType[] {
                 let mn: GUI.BasicItemType[] = [
                     {
                         text: application[this.name].meta.name,
@@ -346,32 +369,29 @@ namespace OS {
             //main program
             // implement by subclasses
 
+            
             /**
              *
              *
-             * @returns {BasicItemType[]}
+             * @protected
+             * @returns {GUI.BasicItemType[]}
              * @memberof BaseApplication
              */
-            menu(): GUI.BasicItemType[] {
+            protected menu(): GUI.BasicItemType[] {
                 // implement by subclasses
                 // to add menu to application
                 return [];
             }
 
+            
             /**
              *
              *
-             * @memberof BaseApplication
-             */
-            open(): void {}
-
-            /**
-             *
-             *
+             * @protected
              * @param {BaseEvent} e
              * @memberof BaseApplication
              */
-            cleanup(e: BaseEvent): void {}
+            protected cleanup(e: BaseEvent): void {}
         }
 
         BaseApplication.type = ModelType.Application;

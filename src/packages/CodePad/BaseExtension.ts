@@ -347,7 +347,7 @@ namespace OS {
                     .parent()
                     .mk(path.basename)
                     .then((d: any) => {
-                        this.app.trigger("filechange", {
+                        this.app.observable.trigger("filechange", {
                             file: path.parent(),
                             type: "dir",
                         });
@@ -414,7 +414,7 @@ namespace OS {
             return new Promise((resolve, reject) => {
                 if (!this.app.currdir) {
                     return reject(
-                        this.app._api.throwe(__("Current folder is not found"))
+                        API.throwe(__("Current folder is not found"))
                     );
                 }
                 `${this.app.currdir.path}/${file}`
@@ -423,7 +423,7 @@ namespace OS {
                     .then((data) => resolve(data))
                     .catch((e) => {
                         return reject(
-                            this.app._api.throwe(__("Unable to read meta-data"))
+                            API.throwe(__("Unable to read meta-data"))
                         );
                     });
             });

@@ -373,9 +373,9 @@ namespace OS {
                         v.iconclass = "fa fa-adn";
                     }
                     this.notify(__("Installing..."));
-                    this.app.systemsetting.system.packages[meta.name] = v;
+                    setting.system.packages[meta.name] = v;
                     this.notify(__("Running {0}...", meta.name));
-                    return this.app._gui.forceLaunch(meta.name, []);
+                    return GUI.forceLaunch(meta.name, []);
                 });
         }
     }

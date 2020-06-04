@@ -38,7 +38,7 @@ namespace OS {
             domel: HTMLElement;
             private timer: number;
             holder: HTMLElement;
-            onmenuselect: (d: OS.GUI.TagEventType) => void;
+            onmenuselect: (d: OS.GUI.TagEventType<GUI.tag.MenuEventData>) => void;
 
             /**
              *Creates an instance of BaseService.
@@ -105,15 +105,17 @@ namespace OS {
                 this.holder = h;
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {number} t
              * @param {() => void} f
              * @returns {number}
              * @memberof BaseService
              */
-            watch(t: number, f: () => void): number {
+            protected watch(t: number, f: () => void): number {
                 var func = () => {
                     f();
                     return (this.timer = setTimeout(() => func(), t));
@@ -121,14 +123,16 @@ namespace OS {
                 return func();
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {BaseEvent} evt
              * @returns
              * @memberof BaseService
              */
-            onexit(evt: BaseEvent) {
+            protected onexit(evt: BaseEvent) {
                 if (this.timer) {
                     console.log("clean timer");
                 }
@@ -162,16 +166,18 @@ namespace OS {
              * @param {GUI.TagEventType} e
              * @memberof BaseService
              */
-            abstract awake(e: GUI.TagEventType): void;
+            abstract awake(e: GUI.TagEventType<GUI.tag.MenuEventData>): void;
             //implement by user to tart the service
+
 
             /**
              *
              *
+             * @protected
              * @param {BaseEvent} evt
              * @memberof BaseService
              */
-            cleanup(evt: BaseEvent) {}
+            protected cleanup(evt: BaseEvent) {}
         }
         //implemeted by user
         BaseService.type = ModelType.Service;

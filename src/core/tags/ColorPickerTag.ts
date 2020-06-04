@@ -29,7 +29,7 @@ namespace OS {
              */
             export class ColorPickerTag extends AFXTag {
                 private _selectedColor: ColorType;
-                private _oncolorselect: TagEventCallback;
+                private _oncolorselect: TagEventCallback<ColorType>;
 
                 /**
                  *Creates an instance of ColorPickerTag.
@@ -73,7 +73,7 @@ namespace OS {
                  *
                  * @memberof ColorPickerTag
                  */
-                set oncolorselect(v: TagEventCallback) {
+                set oncolorselect(v: TagEventCallback<ColorType>) {
                     this._oncolorselect = v;
                 }
 

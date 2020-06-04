@@ -282,11 +282,11 @@ namespace OS {
         private run(meta: GenericObject<any>): Promise<any> {
             return new Promise(async (resolve, reject) => {
                 const path = `${meta.root}/build/debug/${meta.meta.name}.js`;
-                if (this.app._api.shared[path]) {
-                    delete this.app._api.shared[path];
+                if (API.shared[path]) {
+                    delete API.shared[path];
                 }
                 try {
-                    await this.app._api.requires(path);
+                    await API.requires(path);
                     let v: GenericObject<any>;
                     if (this.app.extensions[meta.meta.name]) {
                         this.app.extensions[meta.meta.name].child = [];
@@ -306,9 +306,9 @@ namespace OS {
                             this.app.extensions[meta.meta.name]
                         );
                         this.app.extensions[meta.meta.name].onchildselect(
-                            (e: GUI.TagEventType) => {
+                            (e: GUI.TagEventType<GUI.tag.ListItemEventData>) => {
                                 return this.app.loadAndRunExtensionAction(
-                                    e.data.item.data
+                                    e.data.item.data as any
                                 );
                             }
                         );
@@ -334,7 +334,7 @@ namespace OS {
             return new Promise((resolve, reject) => {
                 const idx = files.indexOf("extension.json");
                 if (idx < 0) {
-                    reject(this.app._api.throwe(__("No meta-data found")));
+                    reject(API.throwe(__("No meta-data found")));
                 }
                 const metafile = files.splice(idx, 1)[0];
                 // read the meta file

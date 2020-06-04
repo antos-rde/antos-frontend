@@ -8,6 +8,7 @@
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            export type MenuEventData = TagEventDataType<MenuEntryTag>;
             /**
              *
              *
@@ -18,8 +19,8 @@ namespace OS {
              */
             export abstract class MenuEntryTag extends AFXTag {
                 private _data: GenericObject<any>;
-                private _onmenuselect: TagEventCallback;
-                private _onchildselect: TagEventCallback;
+                private _onmenuselect: TagEventCallback<MenuEventData>;
+                private _onchildselect: TagEventCallback<MenuEventData>;
                 parent: MenuEntryTag;
                 root: MenuTag;
 
@@ -30,7 +31,7 @@ namespace OS {
                 constructor() {
                     super();
                     this._onmenuselect = this._onchildselect = (
-                        e: TagEventType
+                        e: TagEventType<MenuEventData>
                     ): void => {};
                 }
 
@@ -48,7 +49,7 @@ namespace OS {
                  *
                  * @memberof MenuEntryTag
                  */
-                set onmenuselect(v: TagEventCallback) {
+                set onmenuselect(v: TagEventCallback<MenuEventData>) {
                     this._onmenuselect = v;
                 }
 
@@ -57,7 +58,7 @@ namespace OS {
                  *
                  * @memberof MenuEntryTag
                  */
-                set onchildselect(v: TagEventCallback) {
+                set onchildselect(v: TagEventCallback<MenuEventData>) {
                     this._onchildselect = v;
                 }
 
@@ -67,7 +68,7 @@ namespace OS {
                  * @type {TagEventCallback}
                  * @memberof MenuEntryTag
                  */
-                get onchildselect(): TagEventCallback {
+                get onchildselect(): TagEventCallback<MenuEventData> {
                     return this._onchildselect;
                 }
                 /**
@@ -462,7 +463,7 @@ namespace OS {
                 parent: MenuEntryTag;
                 root: MenuTag;
                 pid: number;
-                private _onmenuselect: TagEventCallback;
+                private _onmenuselect: TagEventCallback<MenuEventData>;
                 private _items: GenericObject<any>[];
 
                 /**
@@ -483,7 +484,7 @@ namespace OS {
                     this.contentag = "afx-menu-entry";
                     this.context = false;
                     this._items = [];
-                    this._onmenuselect = (e: TagEventType): void => {};
+                    this._onmenuselect = (e: TagEventType<MenuEventData>): void => {};
                 }
 
                 /**
@@ -554,7 +555,7 @@ namespace OS {
                  *
                  * @memberof MenuTag
                  */
-                set onmenuselect(v: TagEventCallback) {
+                set onmenuselect(v: TagEventCallback<MenuEventData>) {
                     this._onmenuselect = v;
                 }
 
@@ -584,7 +585,7 @@ namespace OS {
                  * @type {TagEventCallback}
                  * @memberof MenuTag
                  */
-                get onmenuitemselect(): TagEventCallback {
+                get onmenuitemselect(): TagEventCallback<MenuEventData> {
                     return this.handleselect;
                 }
 
@@ -595,7 +596,7 @@ namespace OS {
                  * @param {TagEventType} e
                  * @memberof MenuTag
                  */
-                private handleselect(e: TagEventType): void {
+                private handleselect(e: TagEventType<MenuEventData>): void {
                     if (this.context) {
                         $(this).hide();
                     }

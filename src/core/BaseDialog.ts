@@ -58,7 +58,7 @@ namespace OS {
                 const evt = new BaseEvent("exit", false);
                 this.onexit(evt);
                 if (!evt.prevent) {
-                    delete this.observable;
+                    delete this._observable;
                     if (this.scheme) {
                         $(this.scheme).remove();
                     }
@@ -143,14 +143,16 @@ namespace OS {
                 this.handle = undefined;
             }
 
+            
             /**
              *
              *
+             * @protected
              * @param {BaseEvent} e
              * @returns {void}
              * @memberof BaseDialog
              */
-            onexit(e: BaseEvent): void {
+            protected onexit(e: BaseEvent): void {
                 if (this.parent) {
                     return (this.parent.dialog = undefined);
                 }
@@ -672,7 +674,7 @@ namespace OS {
                     if (this.data && this.data.data) {
                         listview.data = this.data.data;
                     }
-                    const fn = (e: TagEventType) => {
+                    const fn = (e: TagEventType<GUI.tag.ListItemEventData>) => {
                         const data = listview.selectedItem;
                         if (!data) {
                             return this.notify(__("Please select an item"));

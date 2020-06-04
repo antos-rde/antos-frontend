@@ -15,8 +15,8 @@ namespace OS {
             class SliderTag extends AFXTag {
                 private _max: number;
                 private _value: number;
-                private _onchange: TagEventCallback;
-                private _onchanging: TagEventCallback;
+                private _onchange: TagEventCallback<number>;
+                private _onchanging: TagEventCallback<number>;
 
                 /**
                  *Creates an instance of SliderTag.
@@ -53,7 +53,7 @@ namespace OS {
                  *
                  * @memberof SliderTag
                  */
-                set onvaluechange(f: TagEventCallback) {
+                set onvaluechange(f: TagEventCallback<number>) {
                     this._onchange = f;
                 }
 
@@ -62,7 +62,7 @@ namespace OS {
                  *
                  * @memberof SliderTag
                  */
-                set onvaluechanging(f: TagEventCallback) {
+                set onvaluechanging(f: TagEventCallback<number>) {
                     this._onchanging = f;
                 }
 

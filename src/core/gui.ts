@@ -83,7 +83,7 @@ namespace OS {
             }
             $(parent as GenericObject<any>).append(scheme);
             app.scheme = scheme[0] as HTMLElement;
-            app.scheme.uify(app.observable);
+            app.scheme.uify(app.observable, true);
             app.main();
             app.show();
         }
@@ -305,12 +305,14 @@ namespace OS {
             return launch(app, args);
         }
 
+        
         /**
          *
          *
+         * @export
          * @param {string} app
          */
-        function unloadApp(app: string): void {
+        export function unloadApp(app: string): void {
             PM.killAll(app, true);
             if (app[app] && app[app].style) {
                 $(app[app].style).remove();
@@ -522,22 +524,13 @@ namespace OS {
             }
             const dock = $("#sysdock")[0] as tag.AppDockTag;
             app.init();
-            return app.one("rendered", function () {
-                dock.newapp(data);
+            app.observable.one("rendered", function () {
                 app.sysdock = dock;
                 app.appmenu = $(
                     "[data-id = 'appmenu']",
                     "#syspanel"
                 )[0] as tag.MenuTag;
-                app.subscribe("systemlocalechange", function (name) {
-                    app.updateLocale(name);
-                    return app.update();
-                });
-                return app.subscribe("appregistry", function (m) {
-                    if (m.name === app.name) {
-                        return app.applySetting(m.data.m);
-                    }
-                });
+                    dock.newapp(data);
             });
         }
 
@@ -598,7 +591,6 @@ namespace OS {
         export function attachservice(srv: application.BaseService): void {
             ($("#syspanel")[0] as tag.SystemPanelTag).attachservice(srv);
             srv.init();
-            return srv.subscribe("systemlocalechange", (name) => srv.update());
         }
 
         /**
@@ -666,7 +658,7 @@ namespace OS {
          * @export
          * @param {setting.WPSettingType} obj
          */
-        export function wallpaper(obj: setting.WPSettingType): void {
+        export function wallpaper(obj?: setting.WPSettingType): void {
             if (obj) {
                 setting.appearance.wp = obj;
             }
@@ -851,11 +843,11 @@ namespace OS {
                     return e.calibrate();
                 };
 
-                desktop.onlistselect = function (d: TagEventType) {
+                desktop.onlistselect = function (d: TagEventType<tag.ListItemEventData>) {
                     ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
                 };
 
-                desktop.onlistdbclick = function (d: TagEventType) {
+                desktop.onlistdbclick = function (d: TagEventType<tag.ListItemEventData>) {
                     ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
                     const it = desktop.selectedItem;
                     return openWith(it.data as AppArgumentsType);
@@ -900,7 +892,7 @@ namespace OS {
                         })()
                     );
                     m.items = menu;
-                    m.onmenuselect = function (evt: TagEventType) {
+                    m.onmenuselect = function (evt: TagEventType<tag.MenuEventData>) {
                         if(!evt.data || !evt.data.item) return;
                         const item = evt.data.item.data;
                         switch (item.dataid) {
@@ -1048,9 +1040,11 @@ namespace OS {
                                 }
                                 return result;
                             })()
-                        );
-                        return 
-                            setting.system.startup.apps.map((a) => launch(a, []));
+                        ).then(function(){
+                            setting.system.startup.apps.map((a) => {
+                                launch(a, []);
+                            });
+                        })
                     });
                 }
             });

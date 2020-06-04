@@ -34,16 +34,16 @@ namespace OS {
         [propName: string]: any;
     }
     /**
-         *
-         *
-         * @export
-         * @enum {number}
-         */
-        export enum ModelType {
-            Application,
-            Service,
-            SubWindow
-        };
+     *
+     *
+     * @export
+     * @enum {number}
+     */
+    export enum ModelType {
+        Application,
+        Service,
+        SubWindow,
+    }
     /**
      *
      *
@@ -89,14 +89,14 @@ namespace OS {
     export abstract class BaseModel {
         name: string;
         args: AppArgumentsType[];
-        observable: API.Announcer;
-        _api: typeof API;
-        _gui: typeof GUI;
+        protected _observable: API.Announcer;
+        protected _api: typeof API;
+        protected _gui: typeof GUI;
         dialog: GUI.BaseDialog;
-        host: string;
+        protected host: string;
         pid: number;
         scheme: HTMLElement;
-        systemsetting: typeof setting;
+        protected systemsetting: typeof setting;
         birth: number;
         static type: ModelType;
         static singleton: boolean;
@@ -113,23 +113,40 @@ namespace OS {
         constructor(name: string, args: AppArgumentsType[]) {
             this.name = name;
             this.args = args;
-            this.observable = new API.Announcer();
+            this._observable = new API.Announcer();
             this._api = API;
             this._gui = GUI;
             this.systemsetting = setting;
             this.on("exit", () => this.quit(false));
             this.host = this._gui.workspace;
             this.dialog = undefined;
+            this.subscribe("systemlocalechange", (name) => {
+                this.updateLocale(name);
+                return this.update();
+            });
         }
 
+        get observable(): API.Announcer
+        {
+            return this._observable;
+        }
         /**
          *
          *
+         * @protected
+         * @param {string} name
+         * @memberof BaseModel
+         */
+        protected updateLocale(name: string) {}
+        /**
+         *
+         *
+         * @protected
          * @param {string} p
          * @returns {void}
          * @memberof BaseModel
          */
-        render(p: string): void {
+        protected render(p: string): void {
             return GUI.loadScheme(p, this, this.host);
         }
 
@@ -145,7 +162,7 @@ namespace OS {
             this.onexit(evt);
             if (!evt.prevent) {
                 this.observable.off("*");
-                delete this.observable;
+                delete this._observable;
                 if (this.dialog) {
                     this.dialog.quit();
                 }
@@ -177,25 +194,27 @@ namespace OS {
         }
 
         // call a server side script
+
         /**
          *
          *
+         * @protected
          * @param {GenericObject<any>} cmd
          * @returns {Promise<any>}
          * @memberof BaseModel
          */
-        call(cmd: GenericObject<any>): Promise<any> {
+        protected call(cmd: GenericObject<any>): Promise<any> {
             return this._api.apigateway(cmd, false);
         }
 
-        // get a stream
         /**
          *
          *
+         * @protected
          * @returns {Promise<WebSocket>}
          * @memberof BaseModel
          */
-        stream(): Promise<WebSocket> {
+        protected stream(): Promise<WebSocket> {
             return this._api.apigateway(null, true) as Promise<WebSocket>;
         }
 
@@ -232,58 +251,68 @@ namespace OS {
         abstract hide(): void;
 
         //implement by sub class
+
         /**
          *
          *
+         * @protected
          * @abstract
          * @param {BaseEvent} e
          * @memberof BaseModel
          */
-        abstract onexit(e: BaseEvent): void;
+        protected abstract onexit(e: BaseEvent): void;
         //implement by subclass
 
+        
         /**
          *
          *
+         * @protected
          * @param {string} e
          * @param {(d: any) => void} f
          * @returns {void}
          * @memberof BaseModel
          */
-        one(e: string, f: (d: any) => void): void {
+        protected one(e: string, f: (d: any) => void): void {
             return this.observable.one(e, f);
         }
 
+        
         /**
          *
          *
+         * @protected
          * @param {string} e
          * @param {(d: any) => void} f
          * @returns {void}
          * @memberof BaseModel
          */
-        on(e: string, f: (d: any) => void): void {
+        protected on(e: string, f: (d: any) => void): void {
             return this.observable.on(e, f);
         }
 
+        
         /**
          *
          *
+         * @protected
          * @param {string} e
          * @param {(d: any) => void} [f]
          * @returns {void}
          * @memberof BaseModel
          */
-        off(e: string, f?: (d: any) => void): void {
+        protected off(e: string, f?: (d: any) => void): void {
             if (!f) {
                 return this.observable.off(e);
             }
             return this.observable.off(e, f);
         }
 
+        
         /**
          *
          *
+         * @protected
          * @param {string} e
          * @param {*} [d]
          * @returns {void}
@@ -293,9 +322,11 @@ namespace OS {
             return this.observable.trigger(e, d);
         }
 
+        
         /**
          *
          *
+         * @protected
          * @param {string} e
          * @param {(d: any) => void} f
          * @returns {void}
@@ -305,10 +336,11 @@ namespace OS {
             return announcer.on(e, f, this);
         }
 
+        
         /**
          *
          *
-         * @param {(BaseDialog | string)} d
+         * @param {(GUI.BaseDialog | string)} d
          * @param {GenericObject<any>} [data]
          * @returns {Promise<any>}
          * @memberof BaseModel
@@ -346,24 +378,30 @@ namespace OS {
         /**
          *
          *
+         * @protected
          * @param {GenericObject<any>} data
          * @returns {Promise<any>}
          * @memberof BaseModel
          */
-        ask(data: GenericObject<any>): Promise<any> {
+        protected ask(data: GenericObject<any>): Promise<any> {
             return this._gui.openDialog("YesNoDialog", data);
         }
 
         /**
          *
          *
+         * @protected
          * @param {string} t
          * @param {(string | FormatedString)} m
          * @param {Error} [e]
          * @returns {void}
          * @memberof BaseModel
          */
-        publish(t: string, m: string | FormatedString, e?: Error): void {
+        protected publish(
+            t: string,
+            m: string | FormatedString,
+            e?: Error
+        ): void {
             const mt = this.meta();
             let icon: string = undefined;
             if (mt.icon) {
@@ -452,11 +490,12 @@ namespace OS {
         /**
          *
          *
+         * @protected
          * @param {string} id
          * @returns {HTMLElement}
          * @memberof BaseModel
          */
-        find(id: string): HTMLElement {
+        protected find(id: string): HTMLElement {
             if (this.scheme) {
                 return $(`[data-id='${id}']`, this.scheme)[0];
             }
@@ -465,11 +504,12 @@ namespace OS {
         /**
          *
          *
+         * @protected
          * @param {string} sel
          * @returns {HTMLElement}
          * @memberof BaseModel
          */
-        select(sel: string): HTMLElement {
+        protected select(sel: string): HTMLElement {
             if (this.scheme) {
                 return $(sel, this.scheme)[0];
             }

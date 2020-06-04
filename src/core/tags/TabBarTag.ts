@@ -7,7 +7,7 @@
 namespace OS {
     export namespace GUI {
         export namespace tag {
-            
+            type TabEventData = TagEventDataType<ListViewItemTag>;
             /**
              *
              *
@@ -17,8 +17,8 @@ namespace OS {
              */
             export class TabBarTag extends AFXTag {
                 private _selected: number;
-                private _ontabclose: (e: TagEventType) => boolean;
-                private _ontabselect: TagEventCallback;
+                private _ontabclose: (e: TagEventType<TabEventData>) => boolean;
+                private _ontabselect: TagEventCallback<TabEventData>;
 
                 /**
                  *Creates an instance of TabBarTag.
@@ -146,7 +146,7 @@ namespace OS {
                  *
                  * @memberof TabBarTag
                  */
-                set ontabclose(v: (e: TagEventType) => boolean) {
+                set ontabclose(v: (e: TagEventType<TabEventData>) => boolean) {
                     this._ontabclose = v;
                 }
 
@@ -155,7 +155,7 @@ namespace OS {
                  *
                  * @memberof TabBarTag
                  */
-                set ontabselect(v: TagEventCallback) {
+                set ontabselect(v: TagEventCallback<TabEventData>) {
                     this._ontabselect = v;
                 }
 

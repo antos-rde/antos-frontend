@@ -134,6 +134,7 @@ namespace OS {
                 basename: string;
                 info: FileInfoType;
                 ext: string;
+                type: string;
                 /**
                  *Creates an instance of BaseFileHandle.
                  * @param {string} path
@@ -187,13 +188,22 @@ namespace OS {
                  * @returns {string}
                  * @memberof BaseFileHandle
                  */
-                filename(): string {
+                get filename(): string {
                     if (!this.basename) {
                         return "Untitled";
                     }
                     return this.basename;
                 }
 
+                /**
+                 *
+                 *
+                 * @memberof BaseFileHandle
+                 */
+                set filename(v: string)
+                {
+                    this.basename = v;
+                }
                 /**
                  *
                  *

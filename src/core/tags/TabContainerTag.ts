@@ -19,7 +19,7 @@ namespace OS {
              */
             export class TabContainerTag extends AFXTag {
                 private _selectedTab: TabContainerTabType;
-                private _ontabselect: TagEventCallback;
+                private _ontabselect: TagEventCallback<TabContainerTabType>;
 
                 /**
                  *Creates an instance of TabContainerTag.
@@ -27,7 +27,6 @@ namespace OS {
                  */
                 constructor() {
                     super();
-                    this.dir = "column"; // or row
                     this._ontabselect = (e) => {};
                     
                 }
@@ -38,7 +37,9 @@ namespace OS {
                  * @protected
                  * @memberof TabContainerTag
                  */
-                protected init(): void {}
+                protected init(): void {
+                    this.dir = "column"; // or row
+                }
 
                 /**
                  *
@@ -54,7 +55,7 @@ namespace OS {
                  *
                  * @memberof TabContainerTag
                  */
-                set ontabselect(f: TagEventCallback) {
+                set ontabselect(f: TagEventCallback<TabContainerTabType>) {
                     this._ontabselect = f;
                 }
 
@@ -145,22 +146,25 @@ namespace OS {
                         this.selectedTab = data;
                         return this._ontabselect({ data: data, id: this.aid });
                     };
-                    $(this.children).each((i, e) => {
-                        const item = {} as GenericObject<any>;
-                        if ($(e).attr("tabname")) {
-                            item.text = $(e).attr("tabname");
-                        }
-                        if ($(e).attr("icon")) {
-                            item.icon = $(e).attr("icon");
-                        }
-                        if ($(e).attr("iconclass")) {
-                            item.iconclass = $(e).attr("iconclass");
-                        }
-                        item.container = e;
-                        $(e).css("width", "100%").css("height", "100%");
-                        const el = (this.refs.bar as TabBarTag).push(item);
-                        el.selected = true;
-                    });
+                    this.observable.one("mounted", (id)=>{
+                        $(this.refs.yield).children().each((i, e) => {
+                            const item = {} as GenericObject<any>;
+                            if ($(e).attr("tabname")) {
+                                item.text = $(e).attr("tabname");
+                            }
+                            if ($(e).attr("icon")) {
+                                item.icon = $(e).attr("icon");
+                            }
+                            if ($(e).attr("iconclass")) {
+                                item.iconclass = $(e).attr("iconclass");
+                            }
+                            item.container = e;
+                            $(e).css("width", "100%").css("height", "100%").hide();
+                            const el = (this.refs.bar as TabBarTag).push(item);
+                            el.selected = true;
+                        });
+                    })
+                    
                     this.observable.on("resize", (e) => this.calibrate());
                     this.calibrate();
                 }

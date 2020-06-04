@@ -158,7 +158,7 @@ namespace OS {
 
             export function setting(): Promise<RequestResult> {
                 const p = `${API.REST}/system/settings`;
-                return API.post(p, setting);
+                return API.post(p, OS.setting);
             }
 
             export function dbquery(

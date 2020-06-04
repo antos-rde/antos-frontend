@@ -20,7 +20,7 @@ namespace OS {
                 private _month: number;
                 private _year: number;
                 private _selectedDate: Date;
-                private _ondateselect: TagEventCallback;
+                private _ondateselect: TagEventCallback<Date>;
 
                 /**
                  *Creates an instance of CalendarTag.
@@ -71,7 +71,7 @@ namespace OS {
                  *
                  * @memberof CalendarTag
                  */
-                set ondateselect(v: TagEventCallback) {
+                set ondateselect(v: TagEventCallback<Date>) {
                     this._ondateselect = v;
                 }
 
@@ -111,7 +111,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof CalendarTag
                  */
-                private dateselect(e: TagEventType): void {
+                private dateselect(e: TagEventType<TagEventDataType<tag.GridCellPrototype>>): void {
                     if (!e.data.item) {
                         return;
                     }

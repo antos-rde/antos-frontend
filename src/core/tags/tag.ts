@@ -9,7 +9,7 @@ interface HTMLElement {
     contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.MenuTag): void;
     sync(): void;
     afxml(o: OS.API.Announcer): void;
-    uify(o: OS.API.Announcer): void;
+    uify(o: OS.API.Announcer, flag?: boolean): void;
     mozRequestFullScreen: any;
     webkitRequestFullscreen: any;
     msRequestFullscreen: any;
@@ -32,12 +32,21 @@ namespace OS {
             width?: number;
             height?: number;
         }
-        export interface TagEventType {
+        export interface TagEventDataType<T> {
+            item?: T,
+            [propName:string]: any;
+        }
+        export interface TagEventType<T>{
             id: number | string;
-            data: any;
+            data: T;
         }
 
-        export type TagEventCallback = (e: TagEventType) => void;
+        export interface DnDEventDataType<T> {
+            from: T;
+            to: T;
+        }
+
+        export type TagEventCallback<T> = (e: TagEventType<T>) => void;
         export var zindex: number = 10;
 
         export abstract class AFXTag extends HTMLElement {
@@ -91,7 +100,6 @@ namespace OS {
                     return;
                 }
                 this._mounted = true;
-                // reflect attributes
                 this.mount();
                 super.sync();
             }
@@ -221,9 +229,11 @@ namespace OS {
                     return this.afxml(o);
                 });
         }
-        HTMLElement.prototype.uify = function(o: API.Announcer): void {
+        HTMLElement.prototype.uify = function(o: API.Announcer, toplevel?: boolean): void {
             this.afxml(o);
             this.sync();
+            if(o && toplevel)
+                o.trigger("mounted", this.aid);
         }
 
         export namespace tag {

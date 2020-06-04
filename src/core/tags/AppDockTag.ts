@@ -28,7 +28,7 @@ namespace OS {
              */
             export class AppDockTag extends AFXTag {
                 
-                private _onappselect: TagEventCallback;
+                private _onappselect: TagEventCallback<any>;
                 private _items: AppDockItemType[];
                 private _selectedApp: application.BaseApplication;
 
@@ -137,11 +137,13 @@ namespace OS {
                     el.appendTo(this);
                     el[0].uify(this.observable);
                     bt.set(item);
+                    bt.data = item.app;
                     el.attr("tooltip", `cr:${item.app.title()}`);
                     item.domel = bt;
                     bt.onbtclick = (e) => {
                         e.id = this.aid;
-                        e.data.item = item;
+                        //e.data.item = item;
+                        this._onappselect(e);
                         item.app.show();
                     };
                     this.selectedApp = item.app;
@@ -182,15 +184,15 @@ namespace OS {
                         if (e.target === this) {
                             return;
                         }
-                        const bt = $(e.target).closest("afx-button");
-                        const app = bt[0].get("app");
+                        const bt = $(e.target).closest("afx-button")[0] as any as ButtonTag;
+                        const app = bt.data;
                         m.items = [
                             { text: "__(Show)", dataid: "show" },
                             { text: "__(Hide)", dataid: "hide" },
                             { text: "__(Close)", dataid: "quit" },
                         ];
                         m.onmenuselect = function (evt) {
-                            const item = evt.data.item.get("data");
+                            const item = evt.data.item.data;
                             if (app[item.dataid]) {
                                 return app[item.dataid]();
                             }

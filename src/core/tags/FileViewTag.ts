@@ -14,8 +14,8 @@ namespace OS {
              * @extends {AFXTag}
              */
             export class FileViewTag extends AFXTag {
-                private _onfileselect: TagEventCallback;
-                private _onfileopen: TagEventCallback;
+                private _onfileselect: TagEventCallback<API.FileInfoType>;
+                private _onfileopen: TagEventCallback<API.FileInfoType>;
                 private _selectedFile: API.FileInfoType;
                 private _data: API.FileInfoType[];
                 private _path: string;
@@ -72,7 +72,7 @@ namespace OS {
                  *
                  * @memberof FileViewTag
                  */
-                set onfileselect(e: TagEventCallback) {
+                set onfileselect(e: TagEventCallback<API.FileInfoType>) {
                     this._onfileselect = e;
                 }
 
@@ -81,7 +81,7 @@ namespace OS {
                  *
                  * @memberof FileViewTag
                  */
-                set onfileopen(e: TagEventCallback) {
+                set onfileopen(e: TagEventCallback<API.FileInfoType>) {
                     this._onfileopen = e;
                 }
 
@@ -248,7 +248,7 @@ namespace OS {
                  *
                  * @memberof FileViewTag
                  */
-                set ondragndrop(v: TagEventCallback) {
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag| ListViewItemTag>>) {
                     (this.refs.treeview as TreeViewTag).ondragndrop = v;
                     (this.refs.listview as ListViewTag).ondragndrop = v;
                 }
@@ -525,25 +525,25 @@ namespace OS {
                     list.dragndrop = true;
                     // even handles
                     list.onlistselect = (e) => {
-                        this.fileselect(e.data.item.data);
+                        this.fileselect(e.data.item.data as API.FileInfoType);
                     };
                     grid.onrowselect = (e) => {
                         this.fileselect(
-                            $(e.data.item).children()[0].data
+                            $(e.data.item).children()[0].data as API.FileInfoType
                         );
                     };
                     tree.ontreeselect = (e) => {
-                        this.fileselect(e.data.item.data);
+                        this.fileselect(e.data.item.data  as API.FileInfoType);
                     };
                     // dblclick
                     list.onlistdbclick = (e) => {
-                        this.filedbclick(e.data.item.data);
+                        this.filedbclick(e.data.item.data  as API.FileInfoType);
                     };
                     grid.oncelldbclick = (e) => {
-                        this.filedbclick(e.data.item.data);
+                        this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     tree.ontreedbclick = (e) => {
-                        this.filedbclick(e.data.item.data);
+                        this.filedbclick(e.data.item.data  as API.FileInfoType);
                     };
                     this.switchView();
                 }

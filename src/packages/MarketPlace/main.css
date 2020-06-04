@@ -9,7 +9,7 @@ afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] {
 afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] afx-hbox {
     padding-left: 10px;
 }
-afx-app-window[data-id="marketplace-win"] div[data-id='appname'] {
+afx-app-window[data-id="marketplace-win"] afx-label[data-id='appname'] i.label-text{
     font-weight: bold;
     font-size: 20px;
     padding: 10px;

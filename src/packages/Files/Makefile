@@ -7,5 +7,5 @@ cssfiles = main.css
 copyfiles = scheme.html package.json
 
 
-PKG_NAME=ActivityFile
+PKG_NAME=Files
 include ../pkg.mk

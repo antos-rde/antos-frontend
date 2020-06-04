@@ -8,11 +8,12 @@ namespace OS {
         export namespace tag {
             export class ButtonTag extends AFXTag {
                 private _selected: boolean;
-                private _onbtclick: TagEventCallback;
+                private _onbtclick: TagEventCallback<JQuery.MouseEventBase>;
+                data: GenericObject<any>;
                 constructor() {
                     super();
                 }
-                set onbtclick(v: TagEventCallback)
+                set onbtclick(v: TagEventCallback<JQuery.MouseEventBase>)
                 {
                     this._onbtclick = v;
                 }
@@ -61,7 +62,7 @@ namespace OS {
 
                 protected mount() {
                     $(this.refs.button).click((e) => {
-                        const evt: TagEventType = {
+                        const evt: TagEventType<JQuery.MouseEventBase> = {
                             id: this.aid,
                             data: e,
                         };

@@ -992,14 +992,14 @@ namespace OS {
             }
         }
 
+        
         /**
          *
          *
          * @export
-         * @param {*} f
          * @returns {Promise<RequestResult>}
          */
-        export function setting(f: any): Promise<RequestResult> {
+        export function setting(): Promise<RequestResult> {
             return API.handle.setting();
         }
 
@@ -1137,7 +1137,7 @@ namespace OS {
          * @export
          * @returns {*}
          */
-        export function switcher(): any {
+        export function switcher(...args: string[]): any {
             let k: any, v: any;
             const o: any = {};
             const p = {};

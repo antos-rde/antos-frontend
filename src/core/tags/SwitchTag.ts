@@ -7,8 +7,8 @@ namespace OS {
     export namespace GUI {
         export namespace tag {
             export class SwitchTag extends AFXTag {
-                private _onchange: TagEventCallback;
-                private _onchanging: TagEventCallback;
+                private _onchange: TagEventCallback<boolean>;
+                private _onchanging: TagEventCallback<boolean>;
                 constructor() {
                     super();
                     
@@ -34,7 +34,7 @@ namespace OS {
                     return this.hasattr("enable");
                 }
 
-                set onswchange(v: TagEventCallback) {
+                set onswchange(v: TagEventCallback<boolean>) {
                     this._onchange = v;
                 }
 

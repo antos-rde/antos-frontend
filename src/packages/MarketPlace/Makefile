@@ -1,4 +1,4 @@
-module_files = dialog.js main.js
+module_files = main.js dialog.js
 
 libfiles =
 

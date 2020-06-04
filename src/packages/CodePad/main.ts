@@ -178,7 +178,9 @@ namespace OS {
                     if (e.data.type === "dir") {
                         return;
                     }
-                    return this.openFile(e.data.path.asFileHandle());
+                    return this.openFile(
+                        e.data.path.asFileHandle() as CodePadFileHandle
+                    );
                 };
 
                 this.fileview.onfileselect = (e) => {
@@ -188,7 +190,9 @@ namespace OS {
                     if (e.data.type === "dir") {
                         return;
                     }
-                    const i = this.findTabByFile(e.data.path.asFileHandle());
+                    const i = this.findTabByFile(
+                        e.data.path.asFileHandle() as CodePadFileHandle
+                    );
                     if (i !== -1) {
                         return (this.tabbar.selected = i);
                     }
@@ -202,7 +206,9 @@ namespace OS {
                     m.items = [
                         {
                             text: __("Command palete"),
-                            onmenuselect: (e: GUI.TagEventType) => {
+                            onmenuselect: (
+                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                            ) => {
                                 return this.spotlight.run(this);
                             },
                         },
@@ -237,17 +243,19 @@ namespace OS {
                         .then(function (d: any) {
                             const p1 = des;
                             const p2 = src.parent().path;
-                            if(p1.length < p2.length)
-                            {
+                            if (p1.length < p2.length) {
                                 e.data.to.update(p1);
-                                e.data.from.parent.update(p2);
-                            }
-                            else
-                            {
-                                e.data.from.parent.update(p2);
+                                (e.data
+                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    p2
+                                );
+                            } else {
+                                (e.data
+                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    p2
+                                );
                                 e.data.to.update(p1);
                             }
-                            
                         })
                         .catch((e: Error) =>
                             this.error(__("Unable to move file/folder"), e)
@@ -268,7 +276,6 @@ namespace OS {
                 return this.openFile(this.currfile);
             }
 
-            
             /**
              *
              *
@@ -443,7 +450,6 @@ namespace OS {
                 this.langstat.text = this.currfile.langmode.caption;
             }
 
-            
             /**
              *
              *
@@ -500,7 +506,7 @@ namespace OS {
                     cmdtheme.addAction({ text: v.caption, theme: v.theme });
                 }
                 cmdtheme.onchildselect(function (
-                    d: GUI.TagEventType,
+                    d: GUI.TagEventType<GUI.tag.ListItemEventData>,
                     r: CodePad
                 ) {
                     const data = d.data.item.data;
@@ -513,7 +519,7 @@ namespace OS {
                     cmdmode.addAction({ text: v.caption, mode: v.mode });
                 }
                 cmdmode.onchildselect(function (
-                    d: GUI.TagEventType,
+                    d: GUI.TagEventType<GUI.tag.ListItemEventData>,
                     r: CodePad
                 ) {
                     const data = d.data.item.data;
@@ -529,7 +535,6 @@ namespace OS {
                 this.addAction(CMDMenu.fromMenu(this.fileMenu()));
             }
 
-            
             /**
              *
              *
@@ -558,9 +563,13 @@ namespace OS {
                                     this.extensions[ext.name]
                                 );
                                 this.extensions[ext.name].onchildselect(
-                                    (e: GUI.TagEventType) => {
+                                    (
+                                        e: GUI.TagEventType<
+                                            GUI.tag.ListItemEventData
+                                        >
+                                    ) => {
                                         return this.loadAndRunExtensionAction(
-                                            e.data.item.data
+                                            e.data.item.data as any
                                         );
                                     }
                                 );
@@ -601,7 +610,6 @@ namespace OS {
                     });
             }
 
-            
             /**
              *
              *
@@ -660,7 +668,10 @@ namespace OS {
                             shortcut: "A-W",
                         },
                     ],
-                    onchildselect: (e: GUI.TagEventType, r: CodePad) => {
+                    onchildselect: (
+                        e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                        r: CodePad
+                    ) => {
                         return this.menuAction(e.data.item.data.dataid, r);
                     },
                 };
@@ -674,7 +685,9 @@ namespace OS {
              * @returns {void}
              * @memberof CodePad
              */
-            private ctxFileMenuHandle(e: GUI.TagEventType): void {
+            private ctxFileMenuHandle(
+                e: GUI.TagEventType<GUI.tag.MenuEventData>
+            ): void {
                 const el = e.data.item as GUI.tag.MenuEntryTag;
                 if (!el) {
                     return;
@@ -949,7 +962,7 @@ namespace OS {
                             },
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType,
+                            e: GUI.TagEventType<GUI.tag.MenuEventData>,
                             r: CodePadFileHandle
                         ) => {
                             return this.spotlight.run(this);
@@ -969,7 +982,10 @@ namespace OS {
             private shortcut: string;
             nodes: GenericObject<any>[];
             parent: CMDMenu;
-            private select: (e: GUI.TagEventType, r: CodePad) => void;
+            private select: (
+                e: GUI.TagEventType<GUI.tag.ListItemEventData>,
+                r: CodePad
+            ) => void;
             static fromMenu: (mn: GUI.BasicItemType) => CMDMenu;
 
             /**
@@ -1017,7 +1033,10 @@ namespace OS {
              * @memberof CMDMenu
              */
             onchildselect(
-                f: (e: GUI.TagEventType, r: CodePad) => void
+                f: (
+                    e: GUI.TagEventType<GUI.tag.ListItemEventData>,
+                    r: CodePad
+                ) => void
             ): CMDMenu {
                 this.select = f;
                 return this;
@@ -1093,7 +1112,10 @@ namespace OS {
                 const offset = $(".afx-window-content", win).offset();
                 const pw = win.width / 5;
                 (this.scheme as GUI.tag.WindowTag).width = 3 * pw;
-                $(this.scheme).offset({ top: offset.top - 2, left: offset.left + pw });
+                $(this.scheme).offset({
+                    top: offset.top - 2,
+                    left: offset.left + pw,
+                });
                 var cb = (e: JQuery.MouseEventBase) => {
                     if ($(e.target).closest(this.scheme).length > 0) {
                         return $(this.find("searchbox")).focus();

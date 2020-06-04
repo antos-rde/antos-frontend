@@ -21,7 +21,7 @@ namespace OS {
                 selected?: boolean;
                 [propName: string]: any;
             }
-
+            export type TreeItemEventData = TagEventDataType<TreeViewItemPrototype>;
             /**
              *
              *
@@ -31,7 +31,7 @@ namespace OS {
             export abstract class TreeViewItemPrototype extends AFXTag {
                 private _data: TreeViewDataType;
                 private _indent: number;
-                private _evt: TagEventType;
+                private _evt: TagEventType<TreeItemEventData>;
                 treeroot: TreeViewTag;
                 treepath: string;
                 parent: TreeViewTag;
@@ -418,9 +418,9 @@ namespace OS {
              */
             export class TreeViewTag extends AFXTag {
                 private _selectedItem: TreeViewItemPrototype;
-                private _ontreeselect: TagEventCallback;
-                private _ontreedbclick: TagEventCallback;
-                private _ondragndrop: TagEventCallback;
+                private _ontreeselect: TagEventCallback<TreeItemEventData>;
+                private _ontreedbclick: TagEventCallback<TreeItemEventData>;
+                private _ondragndrop: TagEventCallback<DnDEventDataType<TreeViewTag>>;
                 private _data: TreeViewDataType;
                 private _treemousedown: (e: JQuery.MouseEventBase) => void;
                 private _treemouseup: (e: JQuery.MouseEventBase) => void;
@@ -504,7 +504,7 @@ namespace OS {
                  *
                  * @memberof TreeViewTag
                  */
-                set ontreeselect(v: TagEventCallback) {
+                set ontreeselect(v: TagEventCallback<TreeItemEventData>) {
                     this._ontreeselect = v;
                 }
 
@@ -513,7 +513,7 @@ namespace OS {
                  *
                  * @memberof TreeViewTag
                  */
-                set ontreedbclick(v: TagEventCallback) {
+                set ontreedbclick(v: TagEventCallback<TreeItemEventData>) {
                     this._ontreedbclick = v;
                 }
 
@@ -605,7 +605,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof TreeViewTag
                  */
-                itemclick(e: TagEventType): void {
+                itemclick(e: TagEventType<TreeItemEventData>): void {
                     if (!e || !e.data) {
                         return;
                     }
@@ -656,7 +656,7 @@ namespace OS {
                  *
                  * @memberof TreeViewTag
                  */
-                set ondragndrop(v: TagEventCallback) {
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag>>) {
                     this._ondragndrop = v;
                 }
 

@@ -15,7 +15,7 @@ namespace OS {
              * @extends {AFXTag}
              */
             export class NSpinnerTag extends AFXTag {
-                private _onchange: TagEventCallback;
+                private _onchange: TagEventCallback<number>;
                 private _value: number;
                 step: number;
 
@@ -50,7 +50,7 @@ namespace OS {
                  *
                  * @memberof NSpinnerTag
                  */
-                set onvaluechange(f: TagEventCallback) {
+                set onvaluechange(f: TagEventCallback<number>) {
                     this._onchange = f;
                 }
 
