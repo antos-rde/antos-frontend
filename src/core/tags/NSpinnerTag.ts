@@ -34,7 +34,10 @@ namespace OS {
                  * @protected
                  * @memberof NSpinnerTag
                  */
-                protected init(): void {}
+                protected init(): void {
+                    this._value = 0;
+                    this.step = 1;
+                }
 
                 /**
                  *
@@ -67,7 +70,7 @@ namespace OS {
                     });
 
                     $(this.refs.decr).click((e) => {
-                        return (this.value = this.value - this.step);
+                        this.value = this.value - this.step;
                     });
 
                     // @observable.on "calibrate", () -> @calibrate()

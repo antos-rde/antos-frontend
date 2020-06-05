@@ -314,10 +314,10 @@ namespace OS {
          */
         export function unloadApp(app: string): void {
             PM.killAll(app, true);
-            if (app[app] && app[app].style) {
-                $(app[app].style).remove();
+            if (application[app] && application[app].style) {
+                $(application[app].style).remove();
             }
-            delete app[app];
+            delete application[app];
         }
 
         /**
@@ -333,7 +333,6 @@ namespace OS {
                     path = setting.system.packages[app].path;
                 }
                 const js = path + "/main.js";
-
                 try {
                     const d = await js.asFileHandle().read("script");
                     try {
@@ -613,9 +612,11 @@ namespace OS {
         function bindContextMenu(event: JQuery.MouseEventBase): void {
             var handle = function (e: HTMLElement) {
                 if (e.contextmenuHandle) {
+                    const m = $("#contextmenu")[0] as tag.MenuTag;
+                    m.onmenuselect = () => {}
                     return e.contextmenuHandle(
                         event,
-                        $("#contextmenu")[0] as tag.MenuTag
+                        m
                     );
                 } else {
                     const p = $(e).parent().get(0);
@@ -995,7 +996,6 @@ namespace OS {
             loadTheme(setting.appearance.theme, true);
             wallpaper(undefined);
             OS.announcer.observable.one("syspanelloaded", async function () {
-                // TODO load packages list then build system menu
                 OS.announcer.observable.on("systemlocalechange", (name) =>
                     $("#syspanel")[0].update()
                 );

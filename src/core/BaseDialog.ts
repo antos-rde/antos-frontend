@@ -943,10 +943,13 @@ namespace OS {
         <afx-vbox>
             <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
             <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" /> 
-            <div data-height = '30' style=' text-align:right;padding:3px;'>
-                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
-                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-            </div>
+            <afx-hbox data-height = '30'>
+                <div style=' text-align:right;'>
+                    <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                    <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+                </div>
+                <div data-width="5"></div>
+            </afx-hbox>
         </afx-vbox>
     </afx-hbox>
 </afx-app-window>\

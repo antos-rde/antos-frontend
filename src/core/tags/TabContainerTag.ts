@@ -128,7 +128,7 @@ namespace OS {
                  *
                  * @memberof TabContainerTag
                  */
-                set tabbarheigh(v: number) {
+                set tabbarheight(v: number) {
                     $(this.refs.bar).attr("data-height", `${v}`);
                     (this.refs.wrapper as TileLayoutTag).calibrate();
                 }

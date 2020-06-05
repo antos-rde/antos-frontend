@@ -168,8 +168,10 @@ namespace OS {
                         $(this.refs.toggle).addClass(
                             "afx-tree-view-folder-open"
                         );
+                    } else {
+                        $(this.refs.toggle).addClass("afx-tree-view-folder-close");
                     }
-                    $(this.refs.toggle).addClass("afx-tree-view-folder-close");
+                    
                 }
 
                 /**

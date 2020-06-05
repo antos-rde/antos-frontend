@@ -66,6 +66,7 @@ namespace OS {
                 protected init(): void {
                     this.swon = false;
                     this.enable = true;
+                    this._onchange = this._onchanging = (e) => {};
                 }
                 protected calibrate(): void {}
                 protected reload(d?: any): void {}

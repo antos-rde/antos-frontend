@@ -44,7 +44,8 @@ namespace OS {
                     $(this).css("display", "block");
                     $(this.refs.yield)
                         .css("display", "flex")
-                        .css("width", "100%");
+                        .css("width", "100%")
+                        .css("height", "100%");
                     this.observable.on("resize", (e) => this.calibrate());
                     return this.calibrate();
                 }
@@ -67,6 +68,7 @@ namespace OS {
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
+                            $(this).css("height", "100%");
                             let attv = $(this).attr("data-width");
                             let dw = 0;
                             if (attv && attv !== "grow") {
@@ -108,6 +110,7 @@ namespace OS {
                         .children()
                         .each(function (e) {
                             let dh = 0;
+                            $(this).css("width", "100%");
                             let attv = $(this).attr("data-height");
                             if (attv && attv !== "grow") {
                                 if (attv[attv.length - 1] === "%") {

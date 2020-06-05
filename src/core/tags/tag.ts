@@ -241,7 +241,23 @@ namespace OS {
                 name: string,
                 cls: { new (): T }
             ): void {
-                customElements.define(name, cls);
+                try {
+                    customElements.define(name, cls);
+                } catch (error) {
+                    const proto = customElements.get(name);
+                    if(cls)
+                    {
+                        const props = Object.getOwnPropertyNames(cls.prototype);
+                        // redefine the class
+                        for(let prop of props)
+                        {
+                            proto.prototype[prop] = cls.prototype[prop];
+                        }
+                        return;
+                    }
+                    throw error;
+                    
+                }
             }
         }
     }

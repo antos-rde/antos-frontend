@@ -49,7 +49,7 @@ namespace OS {
              * @memberof DB
              */
             save(d: any): Promise<API.RequestResult> {
-                return new Promise(async function (resolve, reject) {
+                return new Promise(async (resolve, reject) => {
                     try {
                         const r = await Ant.OS.API.handle.dbquery("save", {
                             table: this.table,

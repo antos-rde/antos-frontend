@@ -179,15 +179,14 @@ detail:
                 };
 
                 this.loglist.onitemclose = (e) => {
-                    let el;
+                    let el: TAG.ListViewItemTag;
                     if (e && e.data) {
                         el = e.data.item;
                     }
                     if (!el) {
                         return true;
                     }
-                    const data = el.get("data");
-                    console.log(data);
+                    const data = el.data;
                     if (!data.selected) {
                         return true;
                     }

@@ -319,7 +319,8 @@ namespace OS {
          * @memberof BaseModel
          */
         trigger(e: string, d?: any): void {
-            return this.observable.trigger(e, d);
+            if(!this.observable) return;
+            this.observable.trigger(e, d);
         }
 
         
@@ -509,9 +510,9 @@ namespace OS {
          * @returns {HTMLElement}
          * @memberof BaseModel
          */
-        protected select(sel: string): HTMLElement {
+        protected select(sel: string): JQuery<HTMLElement> {
             if (this.scheme) {
-                return $(sel, this.scheme)[0];
+                return $(sel, this.scheme);
             }
         }
     }
