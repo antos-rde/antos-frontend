@@ -928,7 +928,7 @@ namespace OS {
                         (() => {
                             const result1 = [];
                             for (v of Array.from(dirties)) {
-                                result1.push(v.filename());
+                                result1.push(v.filename);
                             }
                             return result1;
                         })().join(", ")
