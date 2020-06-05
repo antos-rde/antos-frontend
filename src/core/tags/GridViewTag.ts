@@ -11,40 +11,121 @@ interface Array<T> {
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             *
+             *
+             * @export
+             * @class GridRowTag
+             * @extends {AFXTag}
+             */
             export class GridRowTag extends AFXTag {
                 data: GenericObject<any>[];
+
+                /**
+                 *Creates an instance of GridRowTag.
+                 * @memberof GridRowTag
+                 */
                 constructor() {
                     super();
-                    
+
                     this.refs.yield = this;
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridRowTag
+                 */
                 protected mount(): void {}
-                protected init(): void {this.data = [];}
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridRowTag
+                 */
+                protected init(): void {
+                    this.data = [];
+                }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof GridRowTag
+                 */
                 protected layout(): TagLayoutType[] {
                     return [];
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridRowTag
+                 */
                 protected calibrate(): void {}
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof GridRowTag
+                 */
                 protected reload(d?: any): void {}
             }
+
             export type CellEventData = TagEventDataType<GridCellPrototype>;
+
+            /**
+             *
+             *
+             * @export
+             * @abstract
+             * @class GridCellPrototype
+             * @extends {AFXTag}
+             */
             export abstract class GridCellPrototype extends AFXTag {
                 private _oncellselect: TagEventCallback<CellEventData>;
                 private _oncelldbclick: TagEventCallback<CellEventData>;
                 private _data: GenericObject<any>;
+
+                /**
+                 *Creates an instance of GridCellPrototype.
+                 * @memberof GridCellPrototype
+                 */
                 constructor() {
                     super();
-                    
                 }
 
+                /**
+                 *
+                 *
+                 * @memberof GridCellPrototype
+                 */
                 set oncellselect(v: TagEventCallback<CellEventData>) {
                     this._oncellselect = v;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridCellPrototype
+                 */
                 set oncelldbclick(v: TagEventCallback<CellEventData>) {
                     this._oncelldbclick = v;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridCellPrototype
+                 */
                 set data(v: GenericObject<any>) {
-                    if(!v) return;
+                    if (!v) return;
                     this._data = v;
                     this.ondatachange();
                     if (!v.selected) {
@@ -53,27 +134,57 @@ namespace OS {
                     this.selected = v.selected;
                 }
 
+                /**
+                 *
+                 *
+                 * @type {GenericObject<any>}
+                 * @memberof GridCellPrototype
+                 */
                 get data(): GenericObject<any> {
                     return this._data;
                 }
 
+                /**
+                 *
+                 *
+                 * @memberof GridCellPrototype
+                 */
                 set selected(v: boolean) {
                     this.attsw(v, "selected");
-                    if(this._data)
-                        this._data.selected = v;
+                    if (this._data) this._data.selected = v;
                     if (!v) {
                         return;
                     }
                     this.cellselect({ id: this.aid, data: this }, false);
                 }
 
+                /**
+                 *
+                 *
+                 * @type {boolean}
+                 * @memberof GridCellPrototype
+                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} d
+                 * @memberof GridCellPrototype
+                 */
                 protected reload(d: any): void {
                     this.data = this.data;
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridCellPrototype
+                 */
                 protected mount(): void {
                     $(this).attr("class", "afx-grid-cell");
                     this.oncelldbclick = this.oncellselect = (
@@ -91,7 +202,19 @@ namespace OS {
                     });
                 }
 
-                private cellselect(e: TagEventType<GridCellPrototype>, flag: boolean): void {
+                /**
+                 *
+                 *
+                 * @private
+                 * @param {TagEventType<GridCellPrototype>} e
+                 * @param {boolean} flag
+                 * @returns {void}
+                 * @memberof GridCellPrototype
+                 */
+                private cellselect(
+                    e: TagEventType<GridCellPrototype>,
+                    flag: boolean
+                ): void {
                     const evt = { id: this.aid, data: { item: e.data } };
                     if (!flag) {
                         return this._oncellselect(evt);
@@ -99,19 +222,64 @@ namespace OS {
                     return this._oncelldbclick(evt);
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @abstract
+                 * @memberof GridCellPrototype
+                 */
                 protected abstract ondatachange(): void;
             }
 
+            /**
+             *
+             *
+             * @export
+             * @class SimpleGridCellTag
+             * @extends {GridCellPrototype}
+             */
             export class SimpleGridCellTag extends GridCellPrototype {
+                /**
+                 *Creates an instance of SimpleGridCellTag.
+                 * @memberof SimpleGridCellTag
+                 */
                 constructor() {
                     super();
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof SimpleGridCellTag
+                 */
                 protected ondatachange(): void {
                     (this.refs.cell as LabelTag).set(this.data);
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof SimpleGridCellTag
+                 */
                 protected init(): void {}
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof SimpleGridCellTag
+                 */
                 protected calibrate(): void {}
+
+                /**
+                 *
+                 *
+                 * @returns
+                 * @memberof SimpleGridCellTag
+                 */
                 layout() {
                     return [
                         {
@@ -122,6 +290,13 @@ namespace OS {
                 }
             }
 
+            /**
+             *
+             *
+             * @export
+             * @class GridViewTag
+             * @extends {AFXTag}
+             */
             export class GridViewTag extends AFXTag {
                 private _header: GenericObject<any>[];
                 private _rows: GenericObject<any>[][];
@@ -131,9 +306,21 @@ namespace OS {
                 private _oncellselect: TagEventCallback<CellEventData>;
                 private _onrowselect: TagEventCallback<CellEventData>;
                 private _oncelldbclick: TagEventCallback<CellEventData>;
+
+                /**
+                 *Creates an instance of GridViewTag.
+                 * @memberof GridViewTag
+                 */
                 constructor() {
                     super();
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridViewTag
+                 */
                 protected init(): void {
                     this._header = [];
                     this.headeritem = "afx-grid-cell";
@@ -146,34 +333,96 @@ namespace OS {
                         e: TagEventType<CellEventData>
                     ): void => {};
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof GridViewTag
+                 */
                 protected reload(d?: any): void {}
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set oncellselect(v: TagEventCallback<CellEventData>) {
                     this._oncellselect = v;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set onrowselect(v: TagEventCallback<CellEventData>) {
                     this._onrowselect = v;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set oncelldbclick(v: TagEventCallback<CellEventData>) {
                     this._oncelldbclick = v;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set headeritem(v: string) {
                     $(this).attr("headeritem", v);
                 }
 
+                /**
+                 *
+                 *
+                 * @type {string}
+                 * @memberof GridViewTag
+                 */
                 get headeritem(): string {
                     return $(this).attr("headeritem");
                 }
 
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set cellitem(v: string) {
                     $(this).attr("cellitem", v);
                 }
 
+                /**
+                 *
+                 *
+                 * @type {string}
+                 * @memberof GridViewTag
+                 */
                 get cellitem(): string {
                     return $(this).attr("cellitem");
                 }
+
+                /**
+                 *
+                 *
+                 * @type {GenericObject<any>[]}
+                 * @memberof GridViewTag
+                 */
                 get header(): GenericObject<any>[] {
                     return this._header;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set header(v: GenericObject<any>[]) {
                     this._header = v;
                     if (!v || v.length === 0) {
@@ -192,29 +441,87 @@ namespace OS {
                     }
                     this.calibrate();
                 }
+
+                /**
+                 *
+                 *
+                 * @readonly
+                 * @type {GridRowTag[]}
+                 * @memberof GridViewTag
+                 */
                 get selectedRows(): GridRowTag[] {
                     return this._selectedRows;
                 }
+
+                /**
+                 *
+                 *
+                 * @readonly
+                 * @type {GridRowTag}
+                 * @memberof GridViewTag
+                 */
                 get selectedRow(): GridRowTag {
                     return this._selectedRow;
                 }
+
+                /**
+                 *
+                 *
+                 * @readonly
+                 * @type {GridCellPrototype}
+                 * @memberof GridViewTag
+                 */
                 get selectedCell(): GridCellPrototype {
                     return this._selectedCell;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set rows(rows: GenericObject<any>[][]) {
                     $(this.refs.grid).empty();
                     this._rows = rows;
                     rows.map((row) => this.push(row, false));
                 }
+
+                /**
+                 *
+                 *
+                 * @type {GenericObject<any>[][]}
+                 * @memberof GridViewTag
+                 */
                 get rows(): GenericObject<any>[][] {
                     return this._rows;
                 }
+
+                /**
+                 *
+                 *
+                 * @memberof GridViewTag
+                 */
                 set multiselect(v: boolean) {
                     this.attsw(v, "multiselect");
                 }
+
+                /**
+                 *
+                 *
+                 * @type {boolean}
+                 * @memberof GridViewTag
+                 */
                 get multiselect(): boolean {
                     return this.hasattr("multiselect");
                 }
+
+                /**
+                 *
+                 *
+                 * @param {GridRowTag} row
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
                 delete(row: GridRowTag): void {
                     if (!row) {
                         return;
@@ -238,26 +545,30 @@ namespace OS {
                     $(row).remove();
                 }
 
+                /**
+                 *
+                 *
+                 * @param {GenericObject<any>[]} row
+                 * @param {boolean} flag
+                 * @memberof GridViewTag
+                 */
                 push(row: GenericObject<any>[], flag: boolean): void {
-                    
                     const rowel = $("<afx-grid-row>").css(
                         "display",
                         "contents"
                     );
                     if (flag) {
                         $(this.refs.grid).prepend(rowel[0]);
-                        if(!this.rows.includes(row))
-                        {
+                        if (!this.rows.includes(row)) {
                             this.rows.unshift(row);
                         }
                     } else {
                         rowel.appendTo(this.refs.grid);
-                        if(!this.rows.includes(row))
-                        {
+                        if (!this.rows.includes(row)) {
                             this.rows.push(row);
                         }
                     }
-                    
+
                     const el = rowel[0] as GridRowTag;
                     rowel[0].uify(this.observable);
                     el.data = row;
@@ -278,11 +589,28 @@ namespace OS {
                     }
                 }
 
+                /**
+                 *
+                 *
+                 * @param {GenericObject<any>[]} row
+                 * @memberof GridViewTag
+                 */
                 unshift(row: GenericObject<any>[]): void {
                     this.push(row, true);
                 }
 
-                cellselect(e: TagEventType<CellEventData>, flag: boolean): void {
+                /**
+                 *
+                 *
+                 * @param {TagEventType<CellEventData>} e
+                 * @param {boolean} flag
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
+                cellselect(
+                    e: TagEventType<CellEventData>,
+                    flag: boolean
+                ): void {
                     e.id = this.aid;
                     // return if e.data.item is selectedCell and not flag
                     if (this.selectedCell) {
@@ -300,6 +628,13 @@ namespace OS {
                     }
                 }
 
+                /**
+                 *
+                 *
+                 * @param {TagEventType<CellEventData>} e
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
                 rowselect(e: TagEventType<CellEventData>): void {
                     if (!e.data.item) {
                         return;
@@ -311,7 +646,9 @@ namespace OS {
                             items: [],
                         },
                     };
-                    const row = $(e.data.item).parent()[0] as any as GridRowTag;
+                    const row = ($(
+                        e.data.item
+                    ).parent()[0] as any) as GridRowTag;
                     if (this.multiselect) {
                         if (this.selectedRows.includes(row)) {
                             this.selectedRows.splice(
@@ -342,10 +679,24 @@ namespace OS {
                     return this.observable.trigger("rowselect", evt);
                 }
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @returns {boolean}
+                 * @memberof GridViewTag
+                 */
                 private has_header(): boolean {
                     const h = this._header;
                     return h && h.length > 0;
                 }
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @memberof GridViewTag
+                 */
                 protected calibrate(): void {
                     this.calibrate_header();
                     if (this.has_header()) {
@@ -363,6 +714,13 @@ namespace OS {
                     }
                 }
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
                 private calibrate_header(): void {
                     if (!this.has_header()) {
                         return;
@@ -397,6 +755,13 @@ namespace OS {
                     $(this.refs.header).css("grid-template-columns", template);
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
                 protected mount(): void {
                     $(this).css("overflow", "hidden");
 
@@ -410,6 +775,13 @@ namespace OS {
                     return this.calibrate();
                 }
 
+                /**
+                 *
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof GridViewTag
+                 */
                 protected layout(): TagLayoutType[] {
                     return [
                         { el: "div", ref: "header", class: "grid_row_header" },

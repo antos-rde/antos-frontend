@@ -75,3 +75,10 @@ textarea {
     border: 1px solid #262626;
     box-sizing: border-box;
 }
+
+a:link,
+a:visited,
+a:hover
+{
+    color:#df3154;
+}

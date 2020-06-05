@@ -189,6 +189,7 @@ namespace OS {
                     this._width = o.w;
                     this._height = o.h;
                     $(this).css("width", `${o.w}px`).css("height", `${o.h}px`);
+                    $(this.refs.winwrapper).css("height", `${o.h}px`);
                     this.observable.trigger("resize", {
                         id: this.aid,
                         data: o,
@@ -302,6 +303,7 @@ namespace OS {
                         {
                             el: "div",
                             class: "afx-window-wrapper",
+                            ref: "winwrapper",
                             children: [
                                 {
                                     el: "ul",

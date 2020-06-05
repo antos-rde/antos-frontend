@@ -10,3 +10,7 @@ afx-grid-view .grid_row_header afx-grid-cell{
     cursor:default;
     font-weight: bold;
 }
+
+afx-grid-view {
+    display: block;
+}

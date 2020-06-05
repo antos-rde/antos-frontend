@@ -64,7 +64,7 @@ namespace OS {
                     let ocwidth = 0;
                     const avaiheight = $(this).height();
                     const avaiWidth = $(this).width();
-                    $(this.refs.yield).css("height", `${avaiheight}px`);
+                    //$(this.refs.yield).css("height", `${avaiheight}px`);
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -105,7 +105,7 @@ namespace OS {
                     let ocheight = 0;
                     const avaiheight = $(this).height();
                     const avaiwidth = $(this).width();
-                    $(this.refs.yield).css("height", `${avaiheight}px`);
+                    //$(this.refs.yield).css("height", `${avaiheight}px`);
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
