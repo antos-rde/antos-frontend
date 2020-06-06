@@ -668,6 +668,7 @@ namespace OS {
                  * @memberof TreeViewTag
                  */
                 set data(v: TreeViewDataType) {
+                    this._selectedItem = undefined
                     if (!v) {
                         return;
                     }

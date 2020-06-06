@@ -43,6 +43,9 @@ interface String {
     f(...args: any[]): OS.FormatedString;
     __(): string;
     l(): string;
+    trimLeft(arg: string): string;
+    trimRight(arg: string): string;
+    trimBy(arg: string): string;
 }
 
 /**
@@ -378,8 +381,7 @@ namespace OS {
 
     Object.defineProperty(Object.prototype, "__", {
         value() {
-            if(this)
-                return this.toString();
+            if (this) return this.toString();
         },
         enumerable: false,
         writable: true,
@@ -459,7 +461,20 @@ namespace OS {
         }
         return API.lang[this];
     };
+    String.prototype.trimLeft = function (charlist: string): string {
+        if (charlist === undefined) charlist = "s";
 
+        return this.replace(new RegExp("^[" + charlist + "]+"), "");
+    };
+    String.prototype.trimRight = function (charlist: string): string {
+        if (charlist === undefined) charlist = "s";
+
+        return this.replace(new RegExp("[" + charlist + "]+$"), "");
+    };
+
+    String.prototype.trimBy = function (charlist: string) {
+        return this.trimLeft(charlist).trimRight(charlist);
+    };
     Date.prototype.toString = function (): string {
         let dd = this.getDate();
         let mm = this.getMonth() + 1;
@@ -490,7 +505,7 @@ namespace OS {
         return (this.getTime() / 1000) | 0;
     };
 
-    export const VERSION:Version = "1.0.0-a".__v();
+    export const VERSION: Version = "1.0.0-a".__v();
     /**
      *
      *
@@ -500,10 +515,10 @@ namespace OS {
      * @returns {*}
      */
     export function register(name: string, x: PM.ProcessTypeClass): void {
-        if ((x as any as typeof BaseModel).type === ModelType.SubWindow) {
+        if (((x as any) as typeof BaseModel).type === ModelType.SubWindow) {
             GUI.dialog[name] = x;
         } else {
-            (application[name] = x);
+            application[name] = x;
         }
     }
 
@@ -573,9 +588,7 @@ namespace OS {
             .setting()
             .then(function (r: any) {
                 cleanup();
-                return API.handle
-                    .logout()
-                    .then((d: any) => boot());
+                return API.handle.logout().then((d: any) => boot());
             })
             .catch((e: Error) => console.error(e));
     }
@@ -625,7 +638,6 @@ namespace OS {
 
         export var lang: GenericObject<string> = {};
 
-        
         /**
          *
          *
@@ -695,9 +707,7 @@ namespace OS {
                         resolve(this.response);
                     } else {
                         API.loaded(q, p, "FAIL");
-                        reject(
-                            API.throwe(__("Unable to get blob: {0}", p))
-                        );
+                        reject(API.throwe(__("Unable to get blob: {0}", p)));
                     }
                 };
                 API.loading(q, p);
@@ -887,10 +897,7 @@ namespace OS {
                                     }).appendTo("head");
                                     API.shared[l] = true;
                                     console.log("Loaded :", l);
-                                    announcer.trigger(
-                                        "sharedlibraryloaded",
-                                        l
-                                    );
+                                    announcer.trigger("sharedlibraryloaded", l);
                                     return resolve(undefined);
                                 })
                                 .catch((e: Error) => reject(__e(e)));
@@ -899,10 +906,7 @@ namespace OS {
                                 .then(function (data: any) {
                                     API.shared[l] = true;
                                     console.log("Loaded :", l);
-                                    announcer.trigger(
-                                        "sharedlibraryloaded",
-                                        l
-                                    );
+                                    announcer.trigger("sharedlibraryloaded", l);
                                     return resolve(data);
                                 })
                                 .catch((e: Error) => reject(__e(e)));
@@ -931,22 +935,18 @@ namespace OS {
                 if (!(libs.length > 0)) {
                     return resolve();
                 }
-                announcer.observable.one(
-                    "sharedlibraryloaded",
-                    function (l) {
-                        libs.splice(0, 1);
-                        return API.require(libs)
-                            .catch((e: Error) => reject(__e(e)))
-                            .then((r: any) => resolve(r));
-                    }
-                );
+                announcer.observable.one("sharedlibraryloaded", function (l) {
+                    libs.splice(0, 1);
+                    return API.require(libs)
+                        .catch((e: Error) => reject(__e(e)))
+                        .then((r: any) => resolve(r));
+                });
                 return API.requires(libs[0]).catch((e: Error) =>
                     reject(__e(e))
                 );
             });
         }
         export namespace packages {
-
             /**
              *
              *
@@ -992,7 +992,6 @@ namespace OS {
             }
         }
 
-        
         /**
          *
          *
@@ -1130,7 +1129,7 @@ namespace OS {
                     .catch((e) => reject(__e(e)));
             });
         }
-        
+
         /**
          *
          *

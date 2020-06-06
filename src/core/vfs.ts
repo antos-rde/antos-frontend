@@ -1147,10 +1147,7 @@ namespace OS {
                  */
                 _rd(t: string): Promise<any> {
                     return new Promise((resolve, reject) => {
-                        return resolve({
-                            result: this.cache,
-                            error: false,
-                        });
+                        return resolve(this.cache);
                     });
                 }
 

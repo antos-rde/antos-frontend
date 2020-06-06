@@ -169,7 +169,7 @@ namespace OS {
                             // copy file
                             return file
                                 .read("binary")
-                                .then(async (data: BlobPart) => {
+                                .then(async (data: ArrayBuffer) => {
                                     const d = await tof
                                         .setCache(
                                             new Blob([data], {
@@ -246,15 +246,19 @@ namespace OS {
                         } else {
                             return file
                                 .read("binary")
-                                .then((d: any) => {
+                                .then(async (d: any) => {
                                     const zpath = `${base}${file.basename}`.replace(
                                         /^\/+|\/+$/g,
                                         ""
                                     );
                                     zip.file(zpath, d, { binary: true });
-                                    return this.aradd(list, zip, base)
-                                        .then(() => resolve(zip))
-                                        .catch((e) => reject(__e(e)));
+                                    try {
+                                        await this.aradd(list, zip, base);
+                                        return resolve(zip);
+                                    }
+                                    catch (e) {
+                                        return reject(__e(e));
+                                    }
                                 })
                                 .catch((e: Error) => reject(__e(e)));
                         }
