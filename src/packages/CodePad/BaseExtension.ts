@@ -58,11 +58,11 @@ namespace OS {
          *
          *
          * @protected
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @returns {void}
          * @memberof BaseExtension
          */
-        protected notify(m: string | FormatedString): void {
+        protected notify(m: string | FormattedString): void {
             return this.app.notify(m);
         }
 
@@ -70,12 +70,12 @@ namespace OS {
          *
          *
          * @protected
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @param {Error} e
          * @returns {void}
          * @memberof BaseExtension
          */
-        protected error(m: string | FormatedString, e: Error): void {
+        protected error(m: string | FormattedString, e: Error): void {
             return this.app.error(m, e);
         }
 

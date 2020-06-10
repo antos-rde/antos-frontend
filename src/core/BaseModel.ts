@@ -393,14 +393,14 @@ namespace OS {
          *
          * @protected
          * @param {string} t
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @param {Error} [e]
          * @returns {void}
          * @memberof BaseModel
          */
         protected publish(
             t: string,
-            m: string | FormatedString,
+            m: string | FormattedString,
             e?: Error
         ): void {
             const mt = this.meta();
@@ -423,34 +423,34 @@ namespace OS {
         /**
          *
          *
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @returns {void}
          * @memberof BaseModel
          */
-        notify(m: string | FormatedString): void {
+        notify(m: string | FormattedString): void {
             return this.publish("notification", m);
         }
 
         /**
          *
          *
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @returns {void}
          * @memberof BaseModel
          */
-        warn(m: string | FormatedString): void {
+        warn(m: string | FormattedString): void {
             return this.publish("warning", m);
         }
 
         /**
          *
          *
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @param {Error} [e]
          * @returns
          * @memberof BaseModel
          */
-        error(m: string | FormatedString, e?: Error) {
+        error(m: string | FormattedString, e?: Error) {
             return this.publish("error", m, e ? e : this._api.throwe(m));
         }
 

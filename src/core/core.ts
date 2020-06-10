@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS202: Simplify dynamic range loops
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-// Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
+// Copyright 2017-2020 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
 // License v3.0, see the LICENCE file for more information
@@ -40,7 +31,7 @@ interface String {
     unescape(): string;
     asUint8Array(): Uint8Array;
     format(...args: any[]): string;
-    f(...args: any[]): OS.FormatedString;
+    f(...args: any[]): OS.FormattedString;
     __(): string;
     l(): string;
     trimLeft(arg: string): string;
@@ -71,9 +62,9 @@ interface GenericObject<T> {
  *
  *
  * @param {...any[]} args
- * @returns {(OS.FormatedString | string)}
+ * @returns {(OS.FormattedString | string)}
  */
-declare function __(...args: any[]): OS.FormatedString | string;
+declare function __(...args: any[]): OS.FormattedString | string;
 
 /**
  *
@@ -111,13 +102,13 @@ namespace OS {
         return range;
     }
 
-    Ant.__ = function (...args: any[]): FormatedString | string {
+    Ant.__ = function (...args: any[]): FormattedString | string {
         if (!(args.length > 0)) {
             return "Undefined";
         }
         const d = args[0];
         d.l();
-        return new FormatedString(
+        return new FormattedString(
             d,
             __range__(1, args.length - 1, true).map((i) => args[i])
         );
@@ -134,9 +125,9 @@ namespace OS {
      *
      *
      * @export
-     * @class FormatedString
+     * @class FormattedString
      */
-    export class FormatedString {
+    export class FormattedString {
         fs: string;
         values: any[];
         constructor(fs: string, args: any[]) {
@@ -158,7 +149,7 @@ namespace OS {
          *
          *
          * @returns {string}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         toString(): string {
             return this.__();
@@ -168,7 +159,7 @@ namespace OS {
          *
          *
          * @returns {string}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         __(): string {
             return this.fs
@@ -186,7 +177,7 @@ namespace OS {
          *
          *
          * @returns {number}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         hash(): number {
             return this.__().hash();
@@ -197,7 +188,7 @@ namespace OS {
          *
          * @param {(string | RegExp)} t
          * @returns {RegExpMatchArray}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         match(t: string | RegExp): RegExpMatchArray {
             return this.__().match(t);
@@ -207,7 +198,7 @@ namespace OS {
          *
          *
          * @returns {string}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         asBase64(): string {
             return this.__().asBase64();
@@ -217,7 +208,7 @@ namespace OS {
          *
          *
          * @returns {string}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         unescape(): string {
             return this.__().unescape();
@@ -227,7 +218,7 @@ namespace OS {
          *
          *
          * @returns {Uint8Array}
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         asUint8Array(): Uint8Array {
             return this.__().asUint8Array();
@@ -237,7 +228,7 @@ namespace OS {
          *
          *
          * @param {...any[]} args
-         * @memberof FormatedString
+         * @memberof FormattedString
          */
         format(...args: any[]): void {
             __range__(0, args.length - 1, true).map(
@@ -444,8 +435,8 @@ namespace OS {
         };
     }
 
-    String.prototype.f = function (...args: any[]): FormatedString {
-        return new FormatedString(this, args);
+    String.prototype.f = function (...args: any[]): FormattedString {
+        return new FormattedString(this, args);
     };
 
     String.prototype.__ = function (): string {
@@ -810,12 +801,16 @@ namespace OS {
         }
 
         /**
-         *
+         * Perform an REST GET request
          *
          * @export
-         * @param {string} p
-         * @param {string} [t=undefined]
-         * @returns {Promise<any>}
+         * @param {string} p the URI of the request
+         * @param {string} [t=undefined] the response data type:
+         * - jsonp: the response is an json object
+         * - script: the response is a javascript code
+         * - xm, html: the response is a XML/HTNL object
+         * - text: plain text
+         * @returns {Promise<any>} a Promise on the requested data
          */
         export function get(p: string, t: string = undefined): Promise<any> {
             return new Promise(function (resolve, reject) {
@@ -1083,10 +1078,10 @@ namespace OS {
          *
          *
          * @export
-         * @param {(string | FormatedString)} n
+         * @param {(string | FormattedString)} n
          * @returns {Error}
          */
-        export function throwe(n: string | FormatedString): Error {
+        export function throwe(n: string | FormattedString): Error {
             let err = undefined;
             try {
                 throw new Error(n.__());

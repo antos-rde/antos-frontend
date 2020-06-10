@@ -1,38 +1,89 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         /**
-         *
+         * Color type used by AFX API
          *
          * @export
          * @interface ColorType
          */
         export interface ColorType {
+            /**
+             * Red chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
             r: number;
+
+            /**
+             * Green chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
             g: number;
+
+            /**
+             * Blue chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
             b: number;
+
+            /**
+             * Alpha chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
             a?: number;
+
+            /**
+             * color text in CSS format
+             *
+             * @type {string}
+             * @memberof ColorType
+             */
             text?: string;
+
+            /**
+             * Color in hex format
+             *
+             * @type {string}
+             * @memberof ColorType
+             */
             hex?: string;
         }
         export namespace tag {
             /**
-             *
+             * Class definition of Color picker widget
              *
              * @export
              * @class ColorPickerTag
              * @extends {AFXTag}
              */
             export class ColorPickerTag extends AFXTag {
+                /**
+                 * The current selected color object
+                 *
+                 * @private
+                 * @type {ColorType}
+                 * @memberof ColorPickerTag
+                 */
                 private _selectedColor: ColorType;
+
+                /**
+                 * Holder for the color select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<ColorType>}
+                 * @memberof ColorPickerTag
+                 */
                 private _oncolorselect: TagEventCallback<ColorType>;
 
                 /**
-                 *Creates an instance of ColorPickerTag.
+                 * Creates an instance of ColorPickerTag.
                  * @memberof ColorPickerTag
                  */
                 constructor() {
@@ -41,7 +92,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init tag before mounting, do nothing
                  *
                  * @protected
                  * @memberof ColorPickerTag
@@ -49,7 +100,7 @@ namespace OS {
                 protected init(): void {}
 
                 /**
-                 *
+                 * Reload tag, do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -58,7 +109,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Get selected color value
                  *
                  * @readonly
                  * @type {ColorType}
@@ -69,7 +120,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the color select event handle
                  *
                  * @memberof ColorPickerTag
                  */
@@ -78,7 +129,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the widget to DOM tree
                  *
                  * @protected
                  * @memberof ColorPickerTag
@@ -112,7 +163,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Build the color palette
                  *
                  * @private
                  * @memberof ColorPickerTag
@@ -237,7 +288,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * layout definition of the widget
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

@@ -1,25 +1,74 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * Definition of system file view widget
              *
              * @export
              * @class FileViewTag
              * @extends {AFXTag}
              */
             export class FileViewTag extends AFXTag {
+                /**
+                 * Holder for file select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.FileInfoType>}
+                 * @memberof FileViewTag
+                 */
                 private _onfileselect: TagEventCallback<API.FileInfoType>;
+
+                /**
+                 * Holder for file open event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.FileInfoType>}
+                 * @memberof FileViewTag
+                 */
                 private _onfileopen: TagEventCallback<API.FileInfoType>;
+
+                /**
+                 * Reference to the currently selected file meta-data
+                 *
+                 * @private
+                 * @type {API.FileInfoType}
+                 * @memberof FileViewTag
+                 */
                 private _selectedFile: API.FileInfoType;
+
+                /**
+                 * Data holder of the current working directory
+                 *
+                 * @private
+                 * @type {API.FileInfoType[]}
+                 * @memberof FileViewTag
+                 */
                 private _data: API.FileInfoType[];
+
+                /**
+                 * The path of the current working directory
+                 *
+                 * @private
+                 * @type {string}
+                 * @memberof FileViewTag
+                 */
                 private _path: string;
+
+                /**
+                 * Header definition of the widget grid view
+                 *
+                 * @private
+                 * @type {(GenericObject<string | number>[])}
+                 * @memberof FileViewTag
+                 */
                 private _header: GenericObject<string | number>[];
+
+                /**
+                 * Holder for the user-specified meta-data fetch function
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
                 private _fetch: (p: string) => Promise<API.FileInfoType[]>;
 
                 /**
@@ -31,7 +80,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the widget before mounting
                  *
                  * @protected
                  * @memberof FileViewTag
@@ -51,15 +100,18 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Update the current widget, do nothing
                  *
                  * @protected
                  * @param {*} [d]
                  * @memberof FileViewTag
                  */
                 protected reload(d?: any): void {}
+
                 /**
-                 *
+                 * set the function that allows to fetch file entries.
+                 * This handle function should return a promise on
+                 * an arry of [[API.FileInfoType]]
                  *
                  * @memberof FileViewTag
                  */
@@ -68,7 +120,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the callback handle for the file select event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
                  *
                  * @memberof FileViewTag
                  */
@@ -77,7 +131,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 set the callback handle for the file open event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
                  *
                  * @memberof FileViewTag
                  */
@@ -86,7 +142,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * chang the view of the widget, there are three different views
+                 * - `icon`
+                 * - `list`
+                 * - `tree`
                  *
                  * @memberof FileViewTag
                  */
@@ -96,7 +155,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the current view setting of the widget
                  *
                  * @type {string}
                  * @memberof FileViewTag
@@ -106,7 +165,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Turn on/off the changing current working directory feature
+                 * of the widget when a directory is double clicked. If enabled,
+                 * the widget will use the configured [[fetch]] function to query
+                 * the content of the selected directory
                  *
                  * @memberof FileViewTag
                  */
@@ -115,7 +177,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * check whether changing current working directory feature
+                 * is enabled
                  *
                  * @type {boolean}
                  * @memberof FileViewTag
@@ -125,7 +188,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Enable or disable the status bar of the widget
                  *
                  * @memberof FileViewTag
                  */
@@ -139,7 +202,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the status bar is enabled
                  *
                  * @type {boolean}
                  * @memberof FileViewTag
@@ -149,7 +212,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Allow the widget to show or hide hidden file
                  *
                  * @memberof FileViewTag
                  */
@@ -162,7 +225,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the hidden file should be shown in
+                 * the widget
                  *
                  * @type {boolean}
                  * @memberof FileViewTag
@@ -172,7 +236,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the current selected file
                  *
                  * @readonly
                  * @type {API.FileInfoType}
@@ -183,7 +247,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the path of the current working directory.
+                 * When called the widget will refresh the current
+                 * working directory using the configured [[fetch]]
+                 * function
                  *
                  * @memberof FileViewTag
                  */
@@ -211,7 +278,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the path of the current working directory
                  *
                  * @type {string}
                  * @memberof FileViewTag
@@ -221,7 +288,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the data of the current working directory
                  *
                  * @memberof FileViewTag
                  */
@@ -234,7 +301,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the data of the current working directory
                  *
                  * @type {API.FileInfoType[]}
                  * @memberof FileViewTag
@@ -244,21 +311,26 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the file drag and drop event handle. This allows application
+                 * to define custom behavior of the event
                  *
                  * @memberof FileViewTag
                  */
-                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag| ListViewItemTag>>) {
+                set ondragndrop(
+                    v: TagEventCallback<
+                        DnDEventDataType<TreeViewTag | ListViewItemTag>
+                    >
+                ) {
                     (this.refs.treeview as TreeViewTag).ondragndrop = v;
                     (this.refs.listview as ListViewTag).ondragndrop = v;
                 }
 
                 /**
-                 *
+                 * sort file by it type
                  *
                  * @private
-                 * @param {API.FileInfoType} a
-                 * @param {API.FileInfoType} b
+                 * @param {API.FileInfoType} a first file meta-data
+                 * @param {API.FileInfoType} b second file meta-data
                  * @returns {(0|-1|1)}
                  * @memberof FileViewTag
                  */
@@ -276,7 +348,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * calibrate the widget layout
                  *
                  * @memberof FileViewTag
                  */
@@ -295,7 +367,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Refresh the list view of the widget. This function
+                 * is called when the view of the widget changed to `icon`
                  *
                  * @private
                  * @memberof FileViewTag
@@ -318,7 +391,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Refresh the grid view of the widget, this function is called
+                 * when the view of the widget set to `list`
                  *
                  * @private
                  * @memberof FileViewTag
@@ -348,7 +422,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Refresh the Treeview of the widget, this function is called
+                 * when the view of the widget set to `tree`
                  *
                  * @private
                  * @memberof FileViewTag
@@ -359,17 +434,18 @@ namespace OS {
                         text: this.path,
                         path: this.path,
                         open: true,
-                        nodes: this.getTreeData(this.data)
+                        nodes: this.getTreeData(this.data),
                     };
                     (this.refs.treeview as TreeViewTag).data = tdata;
-                   // (this.refs.treeview as TreeViewTag).expandAll();
+                    // (this.refs.treeview as TreeViewTag).expandAll();
                 }
 
                 /**
-                 *
+                 * Create the tree data from the list of input
+                 * file meta-data
                  *
                  * @private
-                 * @param {API.FileInfoType[]} data
+                 * @param {API.FileInfoType[]} data list of file meta-data
                  * @returns {TreeViewDataType[]}
                  * @memberof FileViewTag
                  */
@@ -395,7 +471,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Refresh data of the current widget view
                  *
                  * @private
                  * @returns {void}
@@ -417,7 +493,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Switch between three view options
                  *
                  * @private
                  * @memberof FileViewTag
@@ -445,10 +521,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the file select event
                  *
                  * @private
-                 * @param {API.FileInfoType} e
+                 * @param {API.FileInfoType} e selected file meta-data
                  * @memberof FileViewTag
                  */
                 private fileselect(e: API.FileInfoType): void {
@@ -470,10 +546,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the file open event
                  *
                  * @private
-                 * @param {API.FileInfoType} e
+                 * @param {API.FileInfoType} e selected file meta-data
                  * @memberof FileViewTag
                  */
                 private filedbclick(e: API.FileInfoType): void {
@@ -491,7 +567,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the widget in the DOM tree
                  *
                  * @protected
                  * @memberof FileViewTag
@@ -529,27 +605,28 @@ namespace OS {
                     };
                     grid.onrowselect = (e) => {
                         this.fileselect(
-                            $(e.data.item).children()[0].data as API.FileInfoType
+                            $(e.data.item).children()[0]
+                                .data as API.FileInfoType
                         );
                     };
                     tree.ontreeselect = (e) => {
-                        this.fileselect(e.data.item.data  as API.FileInfoType);
+                        this.fileselect(e.data.item.data as API.FileInfoType);
                     };
                     // dblclick
                     list.onlistdbclick = (e) => {
-                        this.filedbclick(e.data.item.data  as API.FileInfoType);
+                        this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     grid.oncelldbclick = (e) => {
                         this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     tree.ontreedbclick = (e) => {
-                        this.filedbclick(e.data.item.data  as API.FileInfoType);
+                        this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     this.switchView();
                 }
 
                 /**
-                 *
+                 * Layout definition of the widget
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

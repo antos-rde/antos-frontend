@@ -81,13 +81,13 @@ namespace OS {
                 get resizable(): boolean {
                     return this.hasattr("resizable");
                 }
-                set apptitle(v: string| FormatedString) {
+                set apptitle(v: string| FormattedString) {
                     $(this).attr("apptitle", v.__());
                     if (v) {
                         (this.refs["txtTitle"] as LabelTag).text = v;
                     }
                 }
-                get apptitle(): string| FormatedString {
+                get apptitle(): string| FormattedString {
                     return $(this).attr("apptitle");
                 }
 

@@ -1,24 +1,39 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+/**
+ * Extend the Array interface with some
+ * property needed by AFX API
+ *
+ * @interface Array
+ * @template T
  */
 interface Array<T> {
-    domel: GenericObject<any>;
+    /**
+     * Reference to a DOM element created by AFX API,
+     * this property is used by some AFX tags to refer
+     * to its child element in it data object
+     *
+     * @type {GenericObject<any>}
+     * @memberof Array
+     */
+    domel?: GenericObject<any>;
 }
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * A grid Row is a simple element that
+             * contains a group of grid cell
              *
              * @export
              * @class GridRowTag
              * @extends {AFXTag}
              */
             export class GridRowTag extends AFXTag {
+                /**
+                 * Data holder for a collection of cell data
+                 *
+                 * @type {GenericObject<any>[]}
+                 * @memberof GridRowTag
+                 */
                 data: GenericObject<any>[];
 
                 /**
@@ -32,7 +47,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag, do nothing
                  *
                  * @protected
                  * @memberof GridRowTag
@@ -40,7 +55,7 @@ namespace OS {
                 protected mount(): void {}
 
                 /**
-                 *
+                 * Init the tag before mounting: reset the data holder
                  *
                  * @protected
                  * @memberof GridRowTag
@@ -50,7 +65,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Empty layout
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -61,7 +76,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function does nothing in this tag
                  *
                  * @protected
                  * @memberof GridRowTag
@@ -69,7 +84,7 @@ namespace OS {
                 protected calibrate(): void {}
 
                 /**
-                 *
+                 * This function does nothing in this tag
                  *
                  * @protected
                  * @param {*} [d]
@@ -78,10 +93,15 @@ namespace OS {
                 protected reload(d?: any): void {}
             }
 
+            /**
+             * Event data used by grid cell
+             */
             export type CellEventData = TagEventDataType<GridCellPrototype>;
 
             /**
-             *
+             * Prototype of any grid cell, custom grid cell
+             * definition should extend and implement this
+             * abstract prototype
              *
              * @export
              * @abstract
@@ -89,8 +109,31 @@ namespace OS {
              * @extends {AFXTag}
              */
             export abstract class GridCellPrototype extends AFXTag {
+                /**
+                 * Holder for cell selected event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<CellEventData>}
+                 * @memberof GridCellPrototype
+                 */
                 private _oncellselect: TagEventCallback<CellEventData>;
+
+                /**
+                 * Holder for cell double click event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<CellEventData>}
+                 * @memberof GridCellPrototype
+                 */
                 private _oncelldbclick: TagEventCallback<CellEventData>;
+
+                /**
+                 * Data holder of the current cell
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof GridCellPrototype
+                 */
                 private _data: GenericObject<any>;
 
                 /**
@@ -102,7 +145,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the cell selected event callback
                  *
                  * @memberof GridCellPrototype
                  */
@@ -111,7 +154,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the cell double click event callback
                  *
                  * @memberof GridCellPrototype
                  */
@@ -120,7 +163,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the data of the cell, this will trigger
+                 * the [[ondatachange]] function
                  *
                  * @memberof GridCellPrototype
                  */
@@ -135,7 +179,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the current cell data holder
                  *
                  * @type {GenericObject<any>}
                  * @memberof GridCellPrototype
@@ -145,7 +189,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set/unset the current cell as selected.
+                 * This will trigger the [[cellselect]]
+                 * event
                  *
                  * @memberof GridCellPrototype
                  */
@@ -159,7 +205,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the current cell is selected
                  *
                  * @type {boolean}
                  * @memberof GridCellPrototype
@@ -169,7 +215,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Update the current cell. This will
+                 * reset the cell data
                  *
                  * @protected
                  * @param {*} d
@@ -180,7 +227,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the current cell to the grid
                  *
                  * @protected
                  * @memberof GridCellPrototype
@@ -203,7 +250,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the cell select
+                 * event
                  *
                  * @private
                  * @param {TagEventType<GridCellPrototype>} e
@@ -223,7 +271,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Abstract function called when the cell data changed.
+                 * This should be implemented by subclasses
                  *
                  * @protected
                  * @abstract
@@ -233,7 +282,8 @@ namespace OS {
             }
 
             /**
-             *
+             * Simple grid cell defines a grid cell with
+             * an [[LabelTag]] as it cell layout
              *
              * @export
              * @class SimpleGridCellTag
@@ -249,7 +299,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Reset the label of the cell with its data
                  *
                  * @protected
                  * @memberof SimpleGridCellTag
@@ -259,7 +309,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function do nothing in this tag
                  *
                  * @protected
                  * @memberof SimpleGridCellTag
@@ -267,7 +317,7 @@ namespace OS {
                 protected init(): void {}
 
                 /**
-                 *
+                 * This function do nothing in this tag
                  *
                  * @protected
                  * @memberof SimpleGridCellTag
@@ -275,7 +325,7 @@ namespace OS {
                 protected calibrate(): void {}
 
                 /**
-                 *
+                 * The layout of the cell with a simple [[LabelTag]]
                  *
                  * @returns
                  * @memberof SimpleGridCellTag
@@ -291,24 +341,89 @@ namespace OS {
             }
 
             /**
-             *
+             * A Grid contains a header and a collection grid rows
+             * which has the same number of cells as the number of
+             * the header elements
              *
              * @export
              * @class GridViewTag
              * @extends {AFXTag}
              */
             export class GridViewTag extends AFXTag {
+                /**
+                 * Grid header definition
+                 *
+                 * @private
+                 * @type {GenericObject<any>[]}
+                 * @memberof GridViewTag
+                 */
                 private _header: GenericObject<any>[];
+
+                /**
+                 * Grid rows data holder
+                 *
+                 * @private
+                 * @type {GenericObject<any>[][]}
+                 * @memberof GridViewTag
+                 */
                 private _rows: GenericObject<any>[][];
+
+                /**
+                 * Reference to the current selected row DOM element
+                 *
+                 * @private
+                 * @type {GridRowTag}
+                 * @memberof GridViewTag
+                 */
                 private _selectedRow: GridRowTag;
+
+                /**
+                 * A collection of selected grid rows DOM element
+                 *
+                 * @private
+                 * @type {GridRowTag[]}
+                 * @memberof GridViewTag
+                 */
                 private _selectedRows: GridRowTag[];
+
+                /**
+                 * Reference to the current selected cell
+                 *
+                 * @private
+                 * @type {GridCellPrototype}
+                 * @memberof GridViewTag
+                 */
                 private _selectedCell: GridCellPrototype;
+
+                /**
+                 * Cell select event callback holder
+                 *
+                 * @private
+                 * @type {TagEventCallback<CellEventData>}
+                 * @memberof GridViewTag
+                 */
                 private _oncellselect: TagEventCallback<CellEventData>;
+
+                /**
+                 * Row select event callback holder
+                 *
+                 * @private
+                 * @type {TagEventCallback<CellEventData>}
+                 * @memberof GridViewTag
+                 */
                 private _onrowselect: TagEventCallback<CellEventData>;
+
+                /**
+                 * Cell double click event callback holder
+                 *
+                 * @private
+                 * @type {TagEventCallback<CellEventData>}
+                 * @memberof GridViewTag
+                 */
                 private _oncelldbclick: TagEventCallback<CellEventData>;
 
                 /**
-                 *Creates an instance of GridViewTag.
+                 * Creates an instance of GridViewTag.
                  * @memberof GridViewTag
                  */
                 constructor() {
@@ -316,7 +431,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the grid view before mounting.
+                 * Reset all the holders to default values
                  *
                  * @protected
                  * @memberof GridViewTag
@@ -335,7 +451,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function does nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -344,7 +460,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * set the cell select event callback
                  *
                  * @memberof GridViewTag
                  */
@@ -353,7 +469,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the row select event callback
                  *
                  * @memberof GridViewTag
                  */
@@ -362,7 +478,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the cell double click event callback
                  *
                  * @memberof GridViewTag
                  */
@@ -371,7 +487,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the tag name of the header cells
                  *
                  * @memberof GridViewTag
                  */
@@ -380,7 +496,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * get the grid header tag name
                  *
                  * @type {string}
                  * @memberof GridViewTag
@@ -390,7 +506,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the tag name of the grid cell
                  *
                  * @memberof GridViewTag
                  */
@@ -399,7 +515,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * get the tag name of the grid cell
                  *
                  * @type {string}
                  * @memberof GridViewTag
@@ -409,7 +525,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * get the header data holder
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof GridViewTag
@@ -419,7 +535,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * the set the header data
                  *
                  * @memberof GridViewTag
                  */
@@ -443,7 +559,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get all the selected rows
                  *
                  * @readonly
                  * @type {GridRowTag[]}
@@ -454,7 +570,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the latest selected row
                  *
                  * @readonly
                  * @type {GridRowTag}
@@ -465,7 +581,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the current selected cell
                  *
                  * @readonly
                  * @type {GridCellPrototype}
@@ -476,7 +592,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the rows data
                  *
                  * @memberof GridViewTag
                  */
@@ -487,7 +603,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * get the rows data
                  *
                  * @type {GenericObject<any>[][]}
                  * @memberof GridViewTag
@@ -497,7 +613,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * activate deactivate multi-select
                  *
                  * @memberof GridViewTag
                  */
@@ -506,8 +622,7 @@ namespace OS {
                 }
 
                 /**
-                 *
-                 *
+                 * check whether the `multiselect` option is activated
                  * @type {boolean}
                  * @memberof GridViewTag
                  */
@@ -516,9 +631,9 @@ namespace OS {
                 }
 
                 /**
+                 * Delete a grid rows
                  *
-                 *
-                 * @param {GridRowTag} row
+                 * @param {GridRowTag} row row DOM element
                  * @returns {void}
                  * @memberof GridViewTag
                  */
@@ -546,11 +661,12 @@ namespace OS {
                 }
 
                 /**
+                 * Push a row to the grid
                  *
-                 *
-                 * @param {GenericObject<any>[]} row
-                 * @param {boolean} flag
-                 * @memberof GridViewTag
+                 * @param {GenericObject<any>[]} row list of cell data
+                 * @param {boolean} flag indicates where the row is add to beginning or end
+                 * of the row
+                 * @memberof GridViewTags
                  */
                 push(row: GenericObject<any>[], flag: boolean): void {
                     const rowel = $("<afx-grid-row>").css(
@@ -590,9 +706,9 @@ namespace OS {
                 }
 
                 /**
+                 * Unshift a row to the grid
                  *
-                 *
-                 * @param {GenericObject<any>[]} row
+                 * @param {GenericObject<any>[]} row list of cell data in the row
                  * @memberof GridViewTag
                  */
                 unshift(row: GenericObject<any>[]): void {
@@ -600,14 +716,15 @@ namespace OS {
                 }
 
                 /**
+                 * This function triggers the cell select event
                  *
-                 *
-                 * @param {TagEventType<CellEventData>} e
-                 * @param {boolean} flag
+                 * @private
+                 * @param {TagEventType<CellEventData>} e event contains cell event data
+                 * @param {boolean} flag indicates whether the event is double clicked
                  * @returns {void}
                  * @memberof GridViewTag
                  */
-                cellselect(
+                private cellselect(
                     e: TagEventType<CellEventData>,
                     flag: boolean
                 ): void {
@@ -629,13 +746,14 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the row selected event, a cell select
+                 * event will also trigger this event
                  *
                  * @param {TagEventType<CellEventData>} e
                  * @returns {void}
                  * @memberof GridViewTag
                  */
-                rowselect(e: TagEventType<CellEventData>): void {
+                private rowselect(e: TagEventType<CellEventData>): void {
                     if (!e.data.item) {
                         return;
                     }
@@ -680,7 +798,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the grid has header
                  *
                  * @private
                  * @returns {boolean}
@@ -692,7 +810,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the grid
                  *
                  * @protected
                  * @memberof GridViewTag
@@ -715,7 +833,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Recalculate the size of each header cell, changing
+                 * in header cell size will also resize the entire
+                 * related column
                  *
                  * @private
                  * @returns {void}
@@ -756,7 +876,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the grid view tag
                  *
                  * @protected
                  * @returns {void}
@@ -776,7 +896,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition of the grid view
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

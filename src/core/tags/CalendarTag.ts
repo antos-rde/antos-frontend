@@ -1,25 +1,57 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS202: Simplify dynamic range loops
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
-
             /**
-             *
+             * Tag that define system calendar widget
              *
              * @export
              * @class CalendarTag
              * @extends {AFXTag}
              */
             export class CalendarTag extends AFXTag {
+                /**
+                 * The current selected day
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
                 private _day: number;
+
+                /**
+                 * The current selected month
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
                 private _month: number;
+
+                /**
+                 * The current selected year
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
                 private _year: number;
+
+                /**
+                 * The current selected date object
+                 *
+                 * @private
+                 * @type {Date}
+                 * @memberof CalendarTag
+                 */
                 private _selectedDate: Date;
+
+                /**
+                 * holder for date select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<Date>}
+                 * @memberof CalendarTag
+                 */
                 private _ondateselect: TagEventCallback<Date>;
 
                 /**
@@ -35,7 +67,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the tag before mounting
                  *
                  * @protected
                  * @memberof CalendarTag
@@ -46,17 +78,16 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Update the current tag, doing nothing in this tag
                  *
                  * @protected
-                 * @param {*} [d]
+                 * @param {*} [d] any data object
                  * @memberof CalendarTag
                  */
-                protected reload(d?: any): void {
-                }
+                protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Get the current selected date in the widget
                  *
                  * @readonly
                  * @type {Date}
@@ -67,7 +98,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the date select event callback handle for the widget
                  *
                  * @memberof CalendarTag
                  */
@@ -76,7 +107,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the current widget to the DOM tree
                  *
                  * @protected
                  * @memberof CalendarTag
@@ -104,14 +135,16 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the date select event
                  *
                  * @private
-                 * @param {TagEventType} e
+                 * @param {TagEventType} e AFX tag event data [[TagEventType]]
                  * @returns {void}
                  * @memberof CalendarTag
                  */
-                private dateselect(e: TagEventType<TagEventDataType<tag.GridCellPrototype>>): void {
+                private dateselect(
+                    e: TagEventType<TagEventDataType<tag.GridCellPrototype>>
+                ): void {
                     if (!e.data.item) {
                         return;
                     }
@@ -121,7 +154,11 @@ namespace OS {
                     }
                     const evt = {
                         id: this.aid,
-                        data: new Date(this._year, this._month, parseInt(value)),
+                        data: new Date(
+                            this._year,
+                            this._month,
+                            parseInt(value)
+                        ),
                     };
                     this._ondateselect(evt);
                     this._selectedDate = evt.data;
@@ -129,7 +166,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the layout of the tag
                  *
                  * @protected
                  * @memberof CalendarTag
@@ -142,7 +179,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Display the previous month of the current month
                  *
                  * @private
                  * @memberof CalendarTag
@@ -157,9 +194,8 @@ namespace OS {
                     this.calendar(new Date(this._year, this._month, 1));
                 }
 
-                
                 /**
-                 *
+                 * Display the next month of the current month
                  *
                  * @private
                  * @returns
@@ -176,7 +212,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Visualize the calendar base on input date
                  *
                  * @private
                  * @param {Date} date
@@ -265,11 +301,13 @@ namespace OS {
                     rows.push(row);
                     const grid = this.refs.grid as GridViewTag;
                     grid.rows = rows;
-                    (this.refs.mlbl as LabelTag).text = `${months[this._month]} ${this._year}`;
+                    (this.refs.mlbl as LabelTag).text = `${
+                        months[this._month]
+                    } ${this._year}`;
                 }
 
                 /**
-                 *
+                 * Layout definition of the widget
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

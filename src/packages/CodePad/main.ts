@@ -978,7 +978,7 @@ namespace OS {
          * @class CMDMenu
          */
         class CMDMenu {
-            text: string | FormatedString;
+            text: string | FormattedString;
             private shortcut: string;
             nodes: GenericObject<any>[];
             parent: CMDMenu;
@@ -990,11 +990,11 @@ namespace OS {
 
             /**
              *Creates an instance of CMDMenu.
-             * @param {(string | FormatedString)} text
+             * @param {(string | FormattedString)} text
              * @param {string} [shortcut]
              * @memberof CMDMenu
              */
-            constructor(text: string | FormatedString, shortcut?: string) {
+            constructor(text: string | FormattedString, shortcut?: string) {
                 this.text = text;
                 this.shortcut = shortcut;
                 this.nodes = [];

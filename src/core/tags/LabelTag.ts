@@ -7,7 +7,7 @@ namespace OS {
     export namespace GUI {
         export namespace tag {
             export class LabelTag extends AFXTag {
-                private _text: string | FormatedString;
+                private _text: string | FormattedString;
                 constructor() {
                     super();
                 }
@@ -53,7 +53,7 @@ namespace OS {
                     }
                 }
 
-                set text(v: string | FormatedString) {
+                set text(v: string | FormattedString) {
                     this._text = v;
                     if (v && v !== "") {
                         $(this.refs.text).show();
@@ -63,7 +63,7 @@ namespace OS {
                     }
                 }
 
-                get text(): string| FormatedString {
+                get text(): string| FormattedString {
                     return this._text;
                 }
 

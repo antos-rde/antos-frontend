@@ -219,10 +219,10 @@ namespace OS {
          *
          *
          * @export
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @param {Error} e
          */
-        export function osfail(m: string | FormatedString, e: Error): void {
+        export function osfail(m: string | FormattedString, e: Error): void {
             announcer.ostrigger("fail", { m, e });
         }
 
@@ -230,10 +230,10 @@ namespace OS {
          *
          *
          * @export
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          * @param {Error} e
          */
-        export function oserror(m: string | FormatedString, e: Error): void {
+        export function oserror(m: string | FormattedString, e: Error): void {
             announcer.ostrigger("error", { m, e });
         }
 
@@ -241,9 +241,9 @@ namespace OS {
          *
          *
          * @export
-         * @param {(string | FormatedString)} m
+         * @param {(string | FormattedString)} m
          */
-        export function osinfo(m: string | FormatedString): void {
+        export function osinfo(m: string | FormattedString): void {
             announcer.ostrigger("info", { m, e: null });
         }
 

@@ -15,7 +15,7 @@ namespace OS {
              * @extends {AFXTag}
              */
             export class SystemPanelTag extends AFXTag {
-                private _osmenu: GenericObject<string | FormatedString>;
+                private _osmenu: GenericObject<string | FormattedString>;
                 private _view: boolean;
                 private _cb: (e: JQuery.MouseEventBase) => void;
 

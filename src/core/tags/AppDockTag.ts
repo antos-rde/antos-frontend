@@ -1,35 +1,69 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         /**
          *
+         * Interface for an application dock item
          *
          * @export
          * @interface AppDockItemType
          */
         export interface AppDockItemType {
+            /**
+             * Reference to the application process represented
+             * by the dock item
+             *
+             * @type {application.BaseApplication}
+             * @memberof AppDockItemType
+             */
             app: application.BaseApplication;
+
+            /**
+             * Reference to the DOM element of
+             * the owner dock item
+             *
+             * @type {AFXTag}
+             * @memberof AppDockItemType
+             */
             domel?: AFXTag;
             [propName: string]: any;
         }
 
         export namespace tag {
             /**
-             *
+             * This class define the AntOS system application dock tag
              *
              * @export
              * @class AppDockTag
              * @extends {AFXTag}
              */
             export class AppDockTag extends AFXTag {
-                
+                /**
+                 * variable holds the application select event
+                 * callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<any>}
+                 * @memberof AppDockTag
+                 */
                 private _onappselect: TagEventCallback<any>;
+
+                /**
+                 * Items data of the dock
+                 *
+                 * @private
+                 * @type {AppDockItemType[]}
+                 * @memberof AppDockTag
+                 */
                 private _items: AppDockItemType[];
+
+                /**
+                 * Reference to the currently select application
+                 * process in the dock
+                 *
+                 * @private
+                 * @type {application.BaseApplication}
+                 * @memberof AppDockTag
+                 */
                 private _selectedApp: application.BaseApplication;
 
                 /**
@@ -42,17 +76,17 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Implementation of the abstract function: Update the current tag.
+                 * It do nothing for this tag
                  *
                  * @protected
                  * @param {*} [d]
                  * @memberof AppDockTag
                  */
-                protected reload(d?: any): void {
-                }
+                protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Init the tag before mounting
                  *
                  * @protected
                  * @memberof AppDockTag
@@ -62,7 +96,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * The tag layout, it is empty on creation but elements will
+                 * be added automatically to it in operation
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -73,16 +108,7 @@ namespace OS {
                 }
 
                 /**
-                 *
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof AppDockTag
-                 */
-                protected refresh(d?: any): void {}
-
-                /**
-                 *
+                 * getter to get the dock items
                  *
                  * @readonly
                  * @type {AppDockItemType[]}
@@ -93,7 +119,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Setter to set the selected application in the dock
+                 * this will trigger two event:
+                 * - `focus`: on the selected application
+                 * - `blur`: on all other applications on the dock
                  *
                  * @memberof AppDockTag
                  */
@@ -115,7 +144,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * getter to get the current selected application
+                 * on the dock
                  *
                  * @type {BaseApplication}
                  * @memberof AppDockTag
@@ -125,9 +155,12 @@ namespace OS {
                 }
 
                 /**
+                 * When a new application process is created, this function
+                 * will be called to add new application entry to the dock.
+                 * The added application will becomes the current selected
+                 * application
                  *
-                 *
-                 * @param {AppDockItemType} item
+                 * @param {AppDockItemType} item an application dock item entry
                  * @memberof AppDockTag
                  */
                 newapp(item: AppDockItemType): void {
@@ -150,9 +183,11 @@ namespace OS {
                 }
 
                 /**
+                 * Delete and application entry from the dock.
+                 * This function will be called when an application
+                 * is exit
                  *
-                 *
-                 * @param {BaseApplication} a
+                 * @param {BaseApplication} a the application to be removed from the dock
                  * @memberof AppDockTag
                  */
                 removeapp(a: application.BaseApplication): void {
@@ -174,7 +209,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the current dock tag
                  *
                  * @protected
                  * @memberof AppDockTag
@@ -184,7 +219,9 @@ namespace OS {
                         if (e.target === this) {
                             return;
                         }
-                        const bt = $(e.target).closest("afx-button")[0] as any as ButtonTag;
+                        const bt = ($(e.target).closest(
+                            "afx-button"
+                        )[0] as any) as ButtonTag;
                         const app = bt.data;
                         m.items = [
                             { text: "__(Show)", dataid: "show" },

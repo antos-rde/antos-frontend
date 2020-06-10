@@ -1,46 +1,113 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             * This tag define a basic button and its behavior
+             *
+             * @export
+             * @class ButtonTag
+             * @extends {AFXTag}
+             */
             export class ButtonTag extends AFXTag {
-                private _selected: boolean;
+                /**
+                 * Variable hold the button click callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<JQuery.MouseEventBase>}
+                 * @memberof ButtonTag
+                 */
                 private _onbtclick: TagEventCallback<JQuery.MouseEventBase>;
+
+                /**
+                 * Custom user data
+                 *
+                 * @type {GenericObject<any>}
+                 * @memberof ButtonTag
+                 */
                 data: GenericObject<any>;
+
+                /**
+                 *Creates an instance of ButtonTag.
+                 * @memberof ButtonTag
+                 */
                 constructor() {
                     super();
                 }
-                set onbtclick(v: TagEventCallback<JQuery.MouseEventBase>)
-                {
+
+                /**
+                 * Set the click callback handle for the target button
+                 *
+                 * @memberof ButtonTag
+                 */
+                set onbtclick(v: TagEventCallback<JQuery.MouseEventBase>) {
                     this._onbtclick = v;
                 }
+
+                /**
+                 * Set the path to the button icon, the path should be
+                 * a VFS file path
+                 *
+                 * @memberof ButtonTag
+                 */
                 set icon(v: string) {
                     $(this).attr("icon", v);
                     (this.refs.label as LabelTag).icon = v;
                 }
 
+                /**
+                 * Set the icon class to the button, this property
+                 * allows to style the button icon using CSS
+                 *
+                 * @memberof ButtonTag
+                 */
                 set iconclass(v: string) {
                     $(this).attr("iconclass", v);
                     (this.refs.label as LabelTag).iconclass = v;
                 }
 
-                set text(v: string |  FormatedString) {
+                /**
+                 * Set the text of the button
+                 *
+                 * @memberof ButtonTag
+                 */
+                set text(v: string | FormattedString) {
                     (this.refs.label as LabelTag).text = v;
                 }
-                get text(): string| FormatedString {
+
+                /**
+                 * Get the current button test
+                 *
+                 * @type {(string| FormattedString)}
+                 * @memberof ButtonTag
+                 */
+                get text(): string | FormattedString {
                     return (this.refs.label as LabelTag).text;
                 }
+
+                /**
+                 * Enable or disable the button
+                 *
+                 * @memberof ButtonTag
+                 */
                 set enable(v: boolean) {
                     $(this.refs.button).prop("disabled", !v);
                 }
 
+                /**
+                 * Get the `enable` property of the button
+                 *
+                 * @type {boolean}
+                 * @memberof ButtonTag
+                 */
                 get enable(): boolean {
                     return !$(this.refs.button).prop("disabled");
                 }
 
+                /**
+                 * set or remove the attribute `selected` of the button
+                 *
+                 * @memberof ButtonTag
+                 */
                 set selected(v: boolean) {
                     $(this.refs.button).removeClass();
                     this.attsw(v, "selected");
@@ -48,18 +115,42 @@ namespace OS {
                         $(this.refs.button).addClass("selected");
                     }
                 }
+
+                /**
+                 * check whether the attribute `selected` of the button is set
+                 *
+                 * @type {boolean}
+                 * @memberof ButtonTag
+                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
 
+                /**
+                 * activate or deactivate the toggle mode of the button
+                 *
+                 * @memberof ButtonTag
+                 */
                 set toggle(v: boolean) {
                     this.attsw(v, "toggle");
                 }
 
+                /**
+                 * Check whether the button is in toggle mode
+                 *
+                 * @type {boolean}
+                 * @memberof ButtonTag
+                 */
                 get toggle(): boolean {
                     return this.hasattr("toggle");
                 }
 
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
                 protected mount() {
                     $(this.refs.button).click((e) => {
                         const evt: TagEventType<JQuery.MouseEventBase> = {
@@ -73,13 +164,42 @@ namespace OS {
                         }
                     });
                 }
+
+                /**
+                 *  Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
                 protected init(): void {
                     this.enable = true;
                     this.toggle = false;
                     this._onbtclick = (e) => {};
                 }
+
+                /**
+                 * Re-calibrate the button, do nothing in this tag
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
                 protected calibrate(): void {}
+
+                /**
+                 * Update the current tag, do nothing in this tag
+                 *
+                 * @param {*} [d]
+                 * @memberof ButtonTag
+                 */
                 reload(d?: any): void {}
+
+                /**
+                 * Button layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof ButtonTag
+                 */
                 protected layout(): TagLayoutType[] {
                     return [
                         {
@@ -90,6 +210,7 @@ namespace OS {
                     ];
                 }
             }
+
             define("afx-button", ButtonTag);
         }
     }

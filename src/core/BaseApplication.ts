@@ -302,10 +302,10 @@ namespace OS {
             /**
              *
              *
-             * @returns {(string| FormatedString)}
+             * @returns {(string| FormattedString)}
              * @memberof BaseApplication
              */
-            title(): string| FormatedString {
+            title(): string| FormattedString {
                 return (this.scheme as GUI.tag.WindowTag).apptitle;
             }
 

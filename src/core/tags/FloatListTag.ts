@@ -1,21 +1,32 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * A float list is a list of items in which each
+             * item can be moved (drag and drop) freely
              *
              * @export
              * @class FloatListTag
              * @extends {ListViewTag}
              */
             export class FloatListTag extends ListViewTag {
-                protected reload(d?: any): void {
-                }
+                /**
+                 * Update the current tag, do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof FloatListTag
+                 */
+                protected reload(d?: any): void {}
+
+                /**
+                 * Variable that hold the onready callback of
+                 * the tag. This callback will be called after
+                 * the tag is mounted
+                 *
+                 * @private
+                 * @memberof FloatListTag
+                 */
                 private _onready: (e: FloatListTag) => void;
 
                 /**
@@ -27,7 +38,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the onready callback function to the tag.
+                 * This callback will be called after
+                 * the tag is mounted
                  *
                  * @memberof FloatListTag
                  */
@@ -36,7 +49,12 @@ namespace OS {
                 }
 
                 /**
+                 * Set the direction of the list item layout.
+                 * Two directions are available:
+                 * - `vertical`
+                 * - `horizontal`
                  *
+                 * This setter acts as a DOM attribute
                  *
                  * @memberof FloatListTag
                  */
@@ -46,7 +64,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the currently set direction of list
+                 * item layout
                  *
                  * @type {string}
                  * @memberof FloatListTag
@@ -54,24 +73,24 @@ namespace OS {
                 get dir(): string {
                     return $(this).attr("dir");
                 }
-                // disable some uneccessary functions
 
                 /**
-                 *
+                 * Disable the dropdown option in this list
                  *
                  * @memberof FloatListTag
                  */
                 set dropdown(v: boolean) {}
 
                 /**
-                 *
+                 * Disable the list buttons configuration in this
+                 * list
                  *
                  * @memberof FloatListTag
                  */
                 set buttons(v: GenericObject<any>[]) {}
 
                 /**
-                 *
+                 * Disable the `showlist` behavior in this list
                  *
                  * @protected
                  * @param {*} e
@@ -80,7 +99,7 @@ namespace OS {
                 protected showlist(e: any) {}
 
                 /**
-                 *
+                 * Disable the `dropoff` behavior in this list
                  *
                  * @protected
                  * @param {*} e
@@ -89,7 +108,8 @@ namespace OS {
                 protected dropoff(e: any) {}
 
                 /**
-                 *
+                 * Function called when the data of the list
+                 * is changed
                  *
                  * @protected
                  * @memberof FloatListTag
@@ -99,7 +119,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the list to the DOM tree
                  *
                  * @protected
                  * @returns {void}
@@ -120,9 +140,9 @@ namespace OS {
                 }
 
                 /**
+                 * Push an element to the list
                  *
-                 *
-                 * @param {GenericObject<any>} v
+                 * @param {GenericObject<any>} v an element data
                  * @returns
                  * @memberof FloatListTag
                  */
@@ -133,10 +153,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Enable drag and drop on the list
                  *
                  * @private
-                 * @param {ListViewItemTag} el
+                 * @param {ListViewItemTag} el the list item DOM element
                  * @memberof FloatListTag
                  */
                 private enable_drag(el: ListViewItemTag): void {
@@ -174,7 +194,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the view of the list
                  *
                  * @memberof FloatListTag
                  */

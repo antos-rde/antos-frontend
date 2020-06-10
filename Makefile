@@ -1,6 +1,7 @@
 
 
-BUILDDIR?=build/htdocs/os
+BUILDDIR?=/opt/www/htdocs/os
+DOCDIR?=/opt/www/htdocs/docs/antos/api
 BLUE=\033[1;34m
 NC=\033[0m
 
@@ -155,6 +156,9 @@ uglify:
 	done
 
 release: main uglify
+
+doc:
+	typedoc --mode file --excludeNotExported --hideGenerator --out $(DOCDIR)
 
 clean:
 	rm -rf $(BUILDDIR)/resources

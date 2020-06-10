@@ -1,16 +1,16 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
+
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             * List item event data type
+             */
             export type ListItemEventData = TagEventDataType<ListViewItemTag>
             /**
-             *
+             * A list item represent the individual view of an item in the [[ListView]].
+             * This class is an abstract prototype class, implementation of any
+             * list view item should extend it
+             * 
              *
              * @export
              * @abstract
@@ -18,11 +18,59 @@ namespace OS {
              * @extends {AFXTag}
              */
             export abstract class ListViewItemTag extends AFXTag {
+
+                /**
+                 * Data holder for the list item
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof ListViewItemTag
+                 */
                 private _data: GenericObject<any>;
+
+                /**
+                 * Holder for the item select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewItemTag
+                 */
                 private _onselect: TagEventCallback<ListItemEventData>;
+
+                /**
+                 * Context menu event callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewItemTag
+                 */
                 private _onctxmenu: TagEventCallback<ListItemEventData>;
+
+                /**
+                 * Click event callback holder
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewItemTag
+                 */
                 private _onclick: TagEventCallback<ListItemEventData>;
+
+                /**
+                 * Double click event callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewItemTag
+                 */
                 private _ondbclick: TagEventCallback<ListItemEventData>;
+
+                /**
+                 * Item close event callback holder
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewItemTag
+                 */
                 private _onclose: TagEventCallback<ListItemEventData>;
 
                 /**

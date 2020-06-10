@@ -44,7 +44,7 @@ namespace OS {
          * @interface BasicItemType
          */
         export interface BasicItemType {
-            text: string | FormatedString;
+            text: string | FormattedString;
             children?: BasicItemType[];
             nodes?: BasicItemType[];
             [propName: string]: any;
