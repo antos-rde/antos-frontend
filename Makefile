@@ -1,7 +1,7 @@
 
 
 BUILDDIR?=/opt/www/htdocs/os
-DOCDIR?=/opt/www/htdocs/docs/antos/api
+DOCDIR?=/opt/www/htdocs/doc/antos/api
 BLUE=\033[1;34m
 NC=\033[0m
 
