@@ -1,24 +1,54 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
+        /**
+         * Tab container data type definition
+         *
+         * @export
+         * @interface TabContainerTabType
+         */
         export interface TabContainerTabType {
+            /**
+             * Reference to the DOM element of the current container
+             *
+             * @type {HTMLElement}
+             * @memberof TabContainerTabType
+             */
             container: HTMLElement;
+
             [propName: string]: any;
         }
         export namespace tag {
             /**
+             * A tab container allows to attach each tab on a [[TabBarTag]]
+             * with a container widget. The attached container widget should be
+             * composed inside a [[HBoxTag]]
              *
+             * The tab bar in a tab container can be configured to display tabs
+             * in horizontal (row) or vertical (column) order. Default to vertical order
+             *
+             * Once a tab is selected, its attached container will be shown
              *
              * @export
              * @class TabContainerTag
              * @extends {AFXTag}
              */
             export class TabContainerTag extends AFXTag {
+                /**
+                 * Reference to the currently selected tab DOM element
+                 *
+                 * @private
+                 * @type {TabContainerTabType}
+                 * @memberof TabContainerTag
+                 */
                 private _selectedTab: TabContainerTabType;
+
+                /**
+                 * Placeholder of the tab select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<TabContainerTabType>}
+                 * @memberof TabContainerTag
+                 */
                 private _ontabselect: TagEventCallback<TabContainerTabType>;
 
                 /**
@@ -28,11 +58,10 @@ namespace OS {
                 constructor() {
                     super();
                     this._ontabselect = (e) => {};
-                    
                 }
 
                 /**
-                 *
+                 * Init the tab bar direction to vertical (column)
                  *
                  * @protected
                  * @memberof TabContainerTag
@@ -42,7 +71,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -51,7 +80,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Set the tab select event handle
                  *
                  * @memberof TabContainerTag
                  */
@@ -60,7 +89,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tab bar direction:
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
                  *
                  * @memberof TabContainerTag
                  */
@@ -73,7 +104,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the tab bar direction
                  *
                  * @type {("row"| "column")}
                  * @memberof TabContainerTag
@@ -83,7 +114,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Select a tab using the its tab data type.
+                 * This will show the attached container to the tab
                  *
                  * @memberof TabContainerTag
                  */
@@ -101,7 +133,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the tab data of the currently selected Tab
                  *
                  * @type {TabContainerTabType}
                  * @memberof TabContainerTag
@@ -111,7 +143,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tab bar width, this function only
+                 * works when the tab bar direction is set to
+                 * `row`
                  *
                  * @memberof TabContainerTag
                  */
@@ -124,7 +158,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tab bar height, this function only works
+                 * when the tab bar direction is set to `column`
                  *
                  * @memberof TabContainerTag
                  */
@@ -134,7 +169,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag and bind basic events
                  *
                  * @protected
                  * @memberof TabContainerTag
@@ -146,31 +181,38 @@ namespace OS {
                         this.selectedTab = data;
                         return this._ontabselect({ data: data, id: this.aid });
                     };
-                    this.observable.one("mounted", (id)=>{
-                        $(this.refs.yield).children().each((i, e) => {
-                            const item = {} as GenericObject<any>;
-                            if ($(e).attr("tabname")) {
-                                item.text = $(e).attr("tabname");
-                            }
-                            if ($(e).attr("icon")) {
-                                item.icon = $(e).attr("icon");
-                            }
-                            if ($(e).attr("iconclass")) {
-                                item.iconclass = $(e).attr("iconclass");
-                            }
-                            item.container = e;
-                            $(e).css("width", "100%").css("height", "100%").hide();
-                            const el = (this.refs.bar as TabBarTag).push(item);
-                            el.selected = true;
-                        });
-                    })
-                    
+                    this.observable.one("mounted", (id) => {
+                        $(this.refs.yield)
+                            .children()
+                            .each((i, e) => {
+                                const item = {} as GenericObject<any>;
+                                if ($(e).attr("tabname")) {
+                                    item.text = $(e).attr("tabname");
+                                }
+                                if ($(e).attr("icon")) {
+                                    item.icon = $(e).attr("icon");
+                                }
+                                if ($(e).attr("iconclass")) {
+                                    item.iconclass = $(e).attr("iconclass");
+                                }
+                                item.container = e;
+                                $(e)
+                                    .css("width", "100%")
+                                    .css("height", "100%")
+                                    .hide();
+                                const el = (this.refs.bar as TabBarTag).push(
+                                    item
+                                );
+                                el.selected = true;
+                            });
+                    });
+
                     this.observable.on("resize", (e) => this.calibrate());
                     this.calibrate();
                 }
 
                 /**
-                 *
+                 * calibrate the  tab container
                  *
                  * @memberof TabContainerTag
                  */
@@ -179,7 +221,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

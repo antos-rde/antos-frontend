@@ -46,7 +46,7 @@ namespace OS {
                 private _selectedDate: Date;
 
                 /**
-                 * holder for date select event callback
+                 * placeholder for date select event callback
                  *
                  * @private
                  * @type {TagEventCallback<Date>}

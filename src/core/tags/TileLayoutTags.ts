@@ -1,19 +1,49 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             * A tile layout organize it child elements
+             * in a fixed horizontal or vertical direction.
+             *
+             * The size of each child element is attributed based
+             * on its configuration of automatically based on the
+             * remaining space in the layout
+             *
+             *
+             * @export
+             * @class TileLayoutTag
+             * @extends {AFXTag}
+             */
             export class TileLayoutTag extends AFXTag {
+                /**
+                 *C reates an instance of TileLayoutTag.
+                 * @memberof TileLayoutTag
+                 */
                 constructor() {
                     super();
                 }
-                // @setopt @conf.opt, "grow"
-                protected init(): void {
-                }
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof TileLayoutTag
+                 */
+                protected init(): void {}
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof TileLayoutTag
+                 */
                 protected reload(d?: any): void {}
+
+                /**
+                 * Set the name of the tile container, should be: `hbox` or `vbox`
+                 *
+                 * @memberof TileLayoutTag
+                 */
                 set name(v: string) {
                     if (!v) {
                         return;
@@ -25,10 +55,24 @@ namespace OS {
                     this.calibrate();
                 }
 
+                /**
+                 * Get the name of the tile container
+                 *
+                 * @type {string}
+                 * @memberof TileLayoutTag
+                 */
                 get name(): string {
                     return $(this).attr("name");
                 }
-                set dir(v: "row"| "column") {
+
+                /**
+                 * SET the layout direction, should be:
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
+                 *
+                 * @memberof TileLayoutTag
+                 */
+                set dir(v: "row" | "column") {
                     if (!v) {
                         return;
                     }
@@ -36,10 +80,24 @@ namespace OS {
                     $(this.refs.yield).css("flex-direction", v);
                     this.calibrate();
                 }
-                get dir(): "row"| "column"
-                {
+
+                /**
+                 * Get layout direction
+                 *
+                 * @type {("row"| "column")}
+                 * @memberof TileLayoutTag
+                 */
+                get dir(): "row" | "column" {
                     return $(this).attr("dir") as any;
                 }
+
+                /**
+                 * Mount the element
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
                 protected mount(): void {
                     $(this).css("display", "block");
                     $(this.refs.yield)
@@ -50,6 +108,12 @@ namespace OS {
                     return this.calibrate();
                 }
 
+                /**
+                 * re-organize the layout
+                 *
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
                 calibrate(): void {
                     if (this.dir === "row") {
                         return this.hcalibrate();
@@ -59,6 +123,14 @@ namespace OS {
                     }
                 }
 
+                /**
+                 * Organize the layout in horizontal direction, only work when
+                 * the layout direction set to horizontal
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
                 private hcalibrate(): void {
                     const auto_width = [];
                     let ocwidth = 0;
@@ -100,6 +172,14 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Organize the layout in vertical direction, only work when
+                 * the layout direction set to vertical
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
                 private vcalibrate(): void {
                     const auto_height = [];
                     let ocheight = 0;
@@ -142,6 +222,12 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Layout definition
+                 *
+                 * @returns
+                 * @memberof TileLayoutTag
+                 */
                 layout() {
                     return [
                         {
@@ -152,29 +238,61 @@ namespace OS {
                 }
             }
 
+            /**
+             * A HBox organize its child elements in horizontal direction
+             *
+             * @export
+             * @class HBoxTag
+             * @extends {TileLayoutTag}
+             */
             export class HBoxTag extends TileLayoutTag {
+                /**
+                 * Creates an instance of HBoxTag.
+                 * @memberof HBoxTag
+                 */
                 constructor() {
                     super();
                 }
 
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof HBoxTag
+                 */
                 protected mount(): void {
                     super.mount();
                     this.dir = "row";
                     this.name = "hbox";
-                    
                 }
             }
 
+            /**
+             * A VBox organize its child elements in vertical direction
+             *
+             * @export
+             * @class VBoxTag
+             * @extends {TileLayoutTag}
+             */
             export class VBoxTag extends TileLayoutTag {
+                /**
+                 *Creates an instance of VBoxTag.
+                 * @memberof VBoxTag
+                 */
                 constructor() {
                     super();
-                    
                 }
+
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof VBoxTag
+                 */
                 protected mount(): void {
                     super.mount();
                     this.dir = "column";
                     this.name = "vbox";
-                    
                 }
             }
 

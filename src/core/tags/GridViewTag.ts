@@ -29,7 +29,7 @@ namespace OS {
              */
             export class GridRowTag extends AFXTag {
                 /**
-                 * Data holder for a collection of cell data
+                 * Data placeholder for a collection of cell data
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof GridRowTag
@@ -55,7 +55,7 @@ namespace OS {
                 protected mount(): void {}
 
                 /**
-                 * Init the tag before mounting: reset the data holder
+                 * Init the tag before mounting: reset the data placeholder
                  *
                  * @protected
                  * @memberof GridRowTag
@@ -110,7 +110,7 @@ namespace OS {
              */
             export abstract class GridCellPrototype extends AFXTag {
                 /**
-                 * Holder for cell selected event callback
+                 * placeholder for cell selected event callback
                  *
                  * @private
                  * @type {TagEventCallback<CellEventData>}
@@ -119,7 +119,7 @@ namespace OS {
                 private _oncellselect: TagEventCallback<CellEventData>;
 
                 /**
-                 * Holder for cell double click event callback
+                 * placeholder for cell double click event callback
                  *
                  * @private
                  * @type {TagEventCallback<CellEventData>}
@@ -128,7 +128,7 @@ namespace OS {
                 private _oncelldbclick: TagEventCallback<CellEventData>;
 
                 /**
-                 * Data holder of the current cell
+                 * Data placeholder of the current cell
                  *
                  * @private
                  * @type {GenericObject<any>}
@@ -179,7 +179,7 @@ namespace OS {
                 }
 
                 /**
-                 * Get the current cell data holder
+                 * Get the current cell data placeholder
                  *
                  * @type {GenericObject<any>}
                  * @memberof GridCellPrototype
@@ -360,7 +360,7 @@ namespace OS {
                 private _header: GenericObject<any>[];
 
                 /**
-                 * Grid rows data holder
+                 * Grid rows data placeholder
                  *
                  * @private
                  * @type {GenericObject<any>[][]}
@@ -396,7 +396,7 @@ namespace OS {
                 private _selectedCell: GridCellPrototype;
 
                 /**
-                 * Cell select event callback holder
+                 * Cell select event callback placeholder
                  *
                  * @private
                  * @type {TagEventCallback<CellEventData>}
@@ -405,7 +405,7 @@ namespace OS {
                 private _oncellselect: TagEventCallback<CellEventData>;
 
                 /**
-                 * Row select event callback holder
+                 * Row select event callback placeholder
                  *
                  * @private
                  * @type {TagEventCallback<CellEventData>}
@@ -414,7 +414,7 @@ namespace OS {
                 private _onrowselect: TagEventCallback<CellEventData>;
 
                 /**
-                 * Cell double click event callback holder
+                 * Cell double click event callback placeholder
                  *
                  * @private
                  * @type {TagEventCallback<CellEventData>}
@@ -432,7 +432,7 @@ namespace OS {
 
                 /**
                  * Init the grid view before mounting.
-                 * Reset all the holders to default values
+                 * Reset all the placeholders to default values
                  *
                  * @protected
                  * @memberof GridViewTag
@@ -525,7 +525,7 @@ namespace OS {
                 }
 
                 /**
-                 * get the header data holder
+                 * get the header data placeholder
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof GridViewTag
@@ -746,7 +746,7 @@ namespace OS {
                 }
 
                 /**
-                 * This function triggers the row selected event, a cell select
+                 * This function triggers the row select event, a cell select
                  * event will also trigger this event
                  *
                  * @param {TagEventType<CellEventData>} e

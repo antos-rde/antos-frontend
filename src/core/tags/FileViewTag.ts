@@ -10,7 +10,7 @@ namespace OS {
              */
             export class FileViewTag extends AFXTag {
                 /**
-                 * Holder for file select event callback
+                 * placeholder for file select event callback
                  *
                  * @private
                  * @type {TagEventCallback<API.FileInfoType>}
@@ -19,7 +19,7 @@ namespace OS {
                 private _onfileselect: TagEventCallback<API.FileInfoType>;
 
                 /**
-                 * Holder for file open event callback
+                 * placeholder for file open event callback
                  *
                  * @private
                  * @type {TagEventCallback<API.FileInfoType>}
@@ -37,7 +37,7 @@ namespace OS {
                 private _selectedFile: API.FileInfoType;
 
                 /**
-                 * Data holder of the current working directory
+                 * Data placeholder of the current working directory
                  *
                  * @private
                  * @type {API.FileInfoType[]}
@@ -64,7 +64,7 @@ namespace OS {
                 private _header: GenericObject<string | number>[];
 
                 /**
-                 * Holder for the user-specified meta-data fetch function
+                 * placeholder for the user-specified meta-data fetch function
                  *
                  * @private
                  * @memberof FileViewTag

@@ -1,16 +1,14 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
-            export type MenuEventData = TagEventDataType<MenuEntryTag>;
             /**
-             *
+             * Menu event data interface definition
+             */
+            export type MenuEventData = TagEventDataType<MenuEntryTag>;
+
+            /**
+             * This class defines the abstract prototype of an menu entry.
+             * Any implementation of menu entry tag should extend this class
              *
              * @export
              * @abstract
@@ -18,10 +16,47 @@ namespace OS {
              * @extends {AFXTag}
              */
             export abstract class MenuEntryTag extends AFXTag {
+                /**
+                 * Data placeholder of the menu entry
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof MenuEntryTag
+                 */
                 private _data: GenericObject<any>;
+
+                /**
+                 * placeholder of `menu entry select` event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuEntryTag
+                 */
                 private _onmenuselect: TagEventCallback<MenuEventData>;
+
+                /**
+                 * placeholder of `sub-menu entry select event` handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuEntryTag
+                 */
                 private _onchildselect: TagEventCallback<MenuEventData>;
+
+                /**
+                 * Reference to the parent menu entry of current one
+                 *
+                 * @type {MenuEntryTag}
+                 * @memberof MenuEntryTag
+                 */
                 parent: MenuEntryTag;
+
+                /**
+                 * Reference to the root menu entry
+                 *
+                 * @type {MenuTag}
+                 * @memberof MenuEntryTag
+                 */
                 root: MenuTag;
 
                 /**
@@ -36,7 +71,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the tag before mounting
                  *
                  * @protected
                  * @memberof MenuEntryTag
@@ -45,7 +80,7 @@ namespace OS {
                     this.nodes = undefined;
                 }
                 /**
-                 *
+                 * Set the `menu entry select` event handle
                  *
                  * @memberof MenuEntryTag
                  */
@@ -54,7 +89,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the `sub menu entry select` event handle
                  *
                  * @memberof MenuEntryTag
                  */
@@ -63,7 +98,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * get the current `sub menu entry select` event handle
                  *
                  * @type {TagEventCallback}
                  * @memberof MenuEntryTag
@@ -72,7 +107,7 @@ namespace OS {
                     return this._onchildselect;
                 }
                 /**
-                 *
+                 * Set data to the entry
                  *
                  * @memberof MenuEntryTag
                  */
@@ -82,7 +117,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get data of the current menu entry
                  *
                  * @type {GenericObject<any>}
                  * @memberof MenuEntryTag
@@ -92,7 +127,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the current menu entry has sub-menu
                  *
                  * @protected
                  * @returns {boolean}
@@ -104,7 +139,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the current menu entry is the root entry
                  *
                  * @protected
                  * @returns
@@ -119,8 +154,10 @@ namespace OS {
                 }
 
                 /**
-                 *
-                 *
+                 * Layout definition of the menu entry
+                 * This function define the outer layout of the menu entry.
+                 * Custom inner layout of each item implementation should
+                 * be defined in [[itemlayout]]
                  * @protected
                  * @returns {TagLayoutType[]}
                  * @memberof MenuEntryTag
@@ -143,7 +180,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the sub-menu data
                  *
                  * @memberof MenuEntryTag
                  */
@@ -169,7 +206,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the sub-menu data
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof MenuEntryTag
@@ -181,7 +218,7 @@ namespace OS {
                     return undefined;
                 }
                 /**
-                 *
+                 * Bind some base event to the menu entry
                  *
                  * @protected
                  * @memberof MenuEntryTag
@@ -191,7 +228,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Hide the sub-menu of the current menu entry
                  *
                  * @private
                  * @returns {void}
@@ -207,7 +244,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function trigger two event:
+                 * - the `onmenuselect` event on the current entry
+                 * - the `onchildselect` event on the parent of the current entry
                  *
                  * @protected
                  * @param {JQuery.ClickEvent} e
@@ -233,11 +272,23 @@ namespace OS {
                     }
                 }
 
+                /**
+                 * custom inner layout of a menu entry
+                 *
+                 * @protected
+                 * @abstract
+                 * @returns {TagLayoutType[]}
+                 * @memberof MenuEntryTag
+                 */
                 protected abstract itemlayout(): TagLayoutType[];
             }
 
             /**
-             *
+             * This class extends the [[MenuEntryTag]] prototype. It inner layout is
+             * defined with the following elements:
+             * - a [[SwitchTag]] acts as checker or radio
+             * - a [[LabelTag]] to display the content of the menu entry
+             * - a `span` element that display the keyboard shortcut of the entry
              *
              * @class SimpleMenuEntryTag
              * @extends {MenuEntryTag}
@@ -250,17 +301,39 @@ namespace OS {
                 constructor() {
                     super();
                 }
+
+                /**
+                 * Reset some properties to default value
+                 *
+                 * @protected
+                 * @memberof SimpleMenuEntryTag
+                 */
                 protected init(): void {
                     super.init();
                     this.switch = false;
                     this.radio = false;
                     this.checked = false;
                 }
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof SimpleMenuEntryTag
+                 */
                 protected calibrate(): void {}
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof SimpleMenuEntryTag
+                 */
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Turn on/off the checker feature of the menu entry
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -274,7 +347,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the checker feature is enabled on this menu entry
                  *
                  * @type {boolean}
                  * @memberof SimpleMenuEntryTag
@@ -284,7 +357,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Turn on/off the radio feature of the menu entry
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -298,7 +371,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the radio feature is enabled
                  *
                  * @type {boolean}
                  * @memberof SimpleMenuEntryTag
@@ -308,7 +381,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Toggle the switch on the menu entry, this setter
+                 * only works when the `checker` or `radio` feature is
+                 * enabled
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -322,7 +397,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the switch is turned on
                  *
                  * @type {boolean}
                  * @memberof SimpleMenuEntryTag
@@ -332,7 +407,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the label icon using a VFS path
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -348,7 +423,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the label CSS icon class
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -361,7 +436,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the label text
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -374,7 +449,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the keyboard shortcut text
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -388,7 +463,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Uncheck all sub-menu items of the current menu entry
+                 * that have the radio feature enabled
                  *
                  * @returns {void}
                  * @memberof SimpleMenuEntryTag
@@ -406,7 +482,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the current tag
                  *
                  * @protected
                  * @memberof SimpleMenuEntryTag
@@ -417,10 +493,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Trigger the onmenuselect and onchildselect events
                  *
                  * @protected
-                 * @param {JQuery.ClickEvent} e
+                 * @param {JQuery.ClickEvent} e Mouse click event
                  * @returns {void}
                  * @memberof SimpleMenuEntryTag
                  */
@@ -438,7 +514,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Inner item layout of the menu entry
                  *
                  * @returns
                  * @memberof SimpleMenuEntryTag
@@ -453,17 +529,57 @@ namespace OS {
             }
 
             /**
-             *
+             * A menu tag contains a collection of menu entries in which each
+             * entry maybe a leaf entry or may contain a submenu
              *
              * @export
              * @class MenuTag
              * @extends {AFXTag}
              */
             export class MenuTag extends AFXTag {
+                /**
+                 * Reference to the parent menu entry of the current value.
+                 * This value is `undefined` in case of the current menu is
+                 * the root menu
+                 *
+                 * @type {MenuEntryTag}
+                 * @memberof MenuTag
+                 */
                 parent: MenuEntryTag;
+
+                /**
+                 * Reference to the root menu
+                 *
+                 * @type {MenuTag}
+                 * @memberof MenuTag
+                 */
                 root: MenuTag;
-                pid: number;
+
+                /**
+                 * The `pid` of the application that attached to this menu.
+                 * This value is optional
+                 *
+                 * @type {number}
+                 * @memberof MenuTag
+                 */
+                pid?: number;
+
+                /**
+                 * placeholder for menu select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuTag
+                 */
                 private _onmenuselect: TagEventCallback<MenuEventData>;
+
+                /**
+                 * Menu data placeholder
+                 *
+                 * @private
+                 * @type {GenericObject<any>[]}
+                 * @memberof MenuTag
+                 */
                 private _items: GenericObject<any>[];
 
                 /**
@@ -475,7 +591,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Reset some properties to  default value
                  *
                  * @protected
                  * @memberof MenuTag
@@ -484,11 +600,13 @@ namespace OS {
                     this.contentag = "afx-menu-entry";
                     this.context = false;
                     this._items = [];
-                    this._onmenuselect = (e: TagEventType<MenuEventData>): void => {};
+                    this._onmenuselect = (
+                        e: TagEventType<MenuEventData>
+                    ): void => {};
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @memberof MenuTag
@@ -496,7 +614,7 @@ namespace OS {
                 protected calibrate(): void {}
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -505,7 +623,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Set the menu items data
                  *
                  * @memberof MenuTag
                  */
@@ -516,7 +634,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get menu items data
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof MenuTag
@@ -526,7 +644,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set whether the current menu is a context menu
                  *
                  * @memberof MenuTag
                  */
@@ -541,7 +659,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the current menu is a context menu
                  *
                  * @type {boolean}
                  * @memberof MenuTag
@@ -551,7 +669,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set menu select event handle
                  *
                  * @memberof MenuTag
                  */
@@ -560,7 +678,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the default tag name of the menu item.
+                 * If the tag is not specified in an item data,
+                 * this value will be used
                  *
                  * @memberof MenuTag
                  */
@@ -569,7 +689,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the default menu entry tag name
                  *
                  * @type {string}
                  * @memberof MenuTag
@@ -579,7 +699,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the reference to the function that triggers
+                 * the menu select event
                  *
                  * @readonly
                  * @type {TagEventCallback}
@@ -590,7 +711,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the menu select event
                  *
                  * @private
                  * @param {TagEventType} e
@@ -606,9 +727,10 @@ namespace OS {
                 }
 
                 /**
+                 * Show the current menu. This function is called
+                 * only if the current menu is a context menu
                  *
-                 *
-                 * @param {JQuery.MouseEventBase} e
+                 * @param {JQuery.MouseEventBase} e JQuery mouse event
                  * @returns {void}
                  * @memberof MenuTag
                  */
@@ -623,7 +745,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Test whether the current menu is the root menu
                  *
                  * @private
                  * @returns {boolean}
@@ -634,7 +756,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the menu tag and bind some basic events
                  *
                  * @protected
                  * @returns {void}
@@ -654,9 +776,10 @@ namespace OS {
                 }
 
                 /**
+                 * Add a menu entry to the beginning of the current
+                 * menu
                  *
-                 *
-                 * @param {GenericObject<any>} item
+                 * @param {GenericObject<any>} item menu entry data
                  * @memberof MenuTag
                  */
                 unshift(item: GenericObject<any>): void {
@@ -664,9 +787,9 @@ namespace OS {
                 }
 
                 /**
+                 * Delete a menu entry
                  *
-                 *
-                 * @param {MenuEntryTag} item
+                 * @param {MenuEntryTag} item reference to the DOM element of an menu entry
                  * @memberof MenuTag
                  */
                 delete(item: MenuEntryTag): void {
@@ -679,10 +802,10 @@ namespace OS {
                 }
 
                 /**
+                 * Add an menu entry to the beginning or end of the menu
                  *
-                 *
-                 * @param {GenericObject<any>} item
-                 * @param {boolean} flag
+                 * @param {GenericObject<any>} item menu entry data
+                 * @param {boolean} flag indicates whether the entry should be added to the beginning of the menu
                  * @returns {MenuEntryTag}
                  * @memberof MenuTag
                  */
@@ -713,7 +836,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Menu tag layout definition
                  *
                  * @returns
                  * @memberof MenuTag

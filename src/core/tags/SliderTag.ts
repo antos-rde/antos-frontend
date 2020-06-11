@@ -1,25 +1,52 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * A slider or track bar is a graphical control element with which
+             * a user may set a value by moving an indicator, usually horizontally
              *
              * @class SliderTag
              * @extends {AFXTag}
              */
             class SliderTag extends AFXTag {
+                /**
+                 * Slider max value placeholder
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof SliderTag
+                 */
                 private _max: number;
+
+                /**
+                 * Current slider value placeholder
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof SliderTag
+                 */
                 private _value: number;
+
+                /**
+                 * Placeholder of the on change event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof SliderTag
+                 */
                 private _onchange: TagEventCallback<number>;
+
+                /**
+                 * Placeholder of the on changing event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof SliderTag
+                 */
                 private _onchanging: TagEventCallback<number>;
 
                 /**
-                 *Creates an instance of SliderTag.
+                 * Creates an instance of SliderTag.
                  * @memberof SliderTag
                  */
                 constructor() {
@@ -27,7 +54,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 *  Init the default value of the slider:
+                 * - `max`: 100
+                 * - `value`: 0
                  *
                  * @protected
                  * @memberof SliderTag
@@ -40,7 +69,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -49,7 +78,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Set value change event handle.
+                 * This handle will be triggered when the
+                 * slider indicator is released
                  *
                  * @memberof SliderTag
                  */
@@ -58,7 +89,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set value changing event handle.
+                 * This handle is triggered when moving the
+                 * slider indicator
                  *
                  * @memberof SliderTag
                  */
@@ -67,7 +100,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Enable/disable the slider
                  *
                  * @memberof SliderTag
                  */
@@ -88,7 +121,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the slider is enabled
                  *
                  * @type {boolean}
                  * @memberof SliderTag
@@ -98,7 +131,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the slider value
                  *
                  * @memberof SliderTag
                  */
@@ -108,7 +141,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the current slider value
                  *
                  * @type {number}
                  * @memberof SliderTag
@@ -118,7 +151,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the maximum value of the slider
                  *
                  * @memberof SliderTag
                  */
@@ -128,7 +161,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the maximum value of the slider
                  *
                  * @type {number}
                  * @memberof SliderTag
@@ -138,13 +171,12 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag and bind some basic events
                  *
                  * @protected
                  * @memberof SliderTag
                  */
                 protected mount(): void {
-                    
                     this.enable_dragging();
                     $(this.refs.point).css("position", "absolute");
                     $(this.refs.point).hide();
@@ -165,7 +197,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the slide based on its value and max value
                  *
                  * @memberof SliderTag
                  */
@@ -194,7 +226,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * enable dragging on the slider indicator
                  *
                  * @private
                  * @memberof SliderTag
@@ -231,7 +263,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

@@ -1,20 +1,32 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * An overlay tag is a layout tag that alway stay on top of
+             * the virtual desktop environment. Tile layout elements ([[VBoxTag]], [[HboxTag]])
+             * can be used inside this tag to compose elements
              *
              * @export
              * @class OverlayTag
              * @extends {AFXTag}
              */
             export class OverlayTag extends AFXTag {
+                /**
+                 * Tag width placeholder
+                 *
+                 * @private
+                 * @type {string}
+                 * @memberof OverlayTag
+                 */
                 private _width: string;
+
+                /**
+                 * Tag height place holder
+                 *
+                 * @private
+                 * @type {string}
+                 * @memberof OverlayTag
+                 */
                 private _height: string;
 
                 /**
@@ -29,7 +41,7 @@ namespace OS {
                 //$(@refs.yield).css "flex", "1"
 
                 /**
-                 *
+                 * Put the tag on top of the virtual desktop environment
                  *
                  * @protected
                  * @memberof OverlayTag
@@ -43,7 +55,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -52,7 +64,8 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Set the width of the tag, the tag width should be in form of:
+                 * `100px` of `80%`
                  *
                  * @memberof OverlayTag
                  */
@@ -65,7 +78,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the tag width
                  *
                  * @type {string}
                  * @memberof OverlayTag
@@ -75,7 +88,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tag height, the tag height should be in form of:
+                 * `100px` of `80%`
                  *
                  * @memberof OverlayTag
                  */
@@ -88,7 +102,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the tag height
                  *
                  * @type {string}
                  * @memberof OverlayTag
@@ -98,7 +112,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the element when mounting
                  *
                  * @protected
                  * @returns {void}
@@ -109,7 +123,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the width and height of the tag
                  *
                  * @returns {void}
                  * @memberof OverlayTag
@@ -126,7 +140,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition of the tag
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

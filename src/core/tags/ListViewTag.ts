@@ -1,16 +1,15 @@
-
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
              * List item event data type
              */
-            export type ListItemEventData = TagEventDataType<ListViewItemTag>
+            export type ListItemEventData = TagEventDataType<ListViewItemTag>;
             /**
              * A list item represent the individual view of an item in the [[ListView]].
              * This class is an abstract prototype class, implementation of any
              * list view item should extend it
-             * 
+             *
              *
              * @export
              * @abstract
@@ -18,9 +17,8 @@ namespace OS {
              * @extends {AFXTag}
              */
             export abstract class ListViewItemTag extends AFXTag {
-
                 /**
-                 * Data holder for the list item
+                 * Data placeholder for the list item
                  *
                  * @private
                  * @type {GenericObject<any>}
@@ -29,7 +27,7 @@ namespace OS {
                 private _data: GenericObject<any>;
 
                 /**
-                 * Holder for the item select event callback
+                 * placeholder for the item select event callback
                  *
                  * @private
                  * @type {TagEventCallback<ListItemEventData>}
@@ -47,7 +45,7 @@ namespace OS {
                 private _onctxmenu: TagEventCallback<ListItemEventData>;
 
                 /**
-                 * Click event callback holder
+                 * Click event callback placeholder
                  *
                  * @private
                  * @type {TagEventCallback<ListItemEventData>}
@@ -65,7 +63,7 @@ namespace OS {
                 private _ondbclick: TagEventCallback<ListItemEventData>;
 
                 /**
-                 * Item close event callback holder
+                 * Item close event callback placeholder
                  *
                  * @private
                  * @type {TagEventCallback<ListItemEventData>}
@@ -85,7 +83,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Turn on/off the `closable` feature of the list item
                  *
                  * @memberof ListViewItemTag
                  */
@@ -97,11 +95,18 @@ namespace OS {
                         $(this.refs.btcl).hide();
                     }
                 }
+
+                /**
+                 * Check whether the item is closable
+                 *
+                 * @type {boolean}
+                 * @memberof ListViewItemTag
+                 */
                 get closable(): boolean {
                     return this.hasattr("closable");
                 }
                 /**
-                 *
+                 * Set item select event handle
                  *
                  * @memberof ListViewItemTag
                  */
@@ -110,7 +115,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * select/unselect the current item
                  *
                  * @memberof ListViewItemTag
                  */
@@ -124,11 +129,18 @@ namespace OS {
                     $(this.refs.item).addClass("selected");
                     this._onselect({ id: this.aid, data: this });
                 }
+
+                /**
+                 * Check whether the current item is selected
+                 *
+                 * @type {boolean}
+                 * @memberof ListViewItemTag
+                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
                 /**
-                 *
+                 * Set the context menu event handle
                  *
                  * @memberof ListViewItemTag
                  */
@@ -137,7 +149,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the item click event handle
                  *
                  * @memberof ListViewItemTag
                  */
@@ -146,7 +158,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the item double click event handle
                  *
                  * @memberof ListViewItemTag
                  */
@@ -155,7 +167,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * set the item close event handle
                  *
                  * @memberof ListViewItemTag
                  */
@@ -164,7 +176,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag and bind some events
                  *
                  * @protected
                  * @memberof ListViewItemTag
@@ -190,7 +202,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition of the item tag.
+                 * This function define the outer layout of the item.
+                 * Custom inner layout of each item implementation should
+                 * be defined in [[itemlayout]]
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -210,7 +225,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the data of the list item. This will
+                 * trigger the [[ondatachange]] function
                  *
                  * @memberof ListViewItemTag
                  */
@@ -220,7 +236,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the data of the current list item
                  *
                  * @type {GenericObject<any>}
                  * @memberof ListViewItemTag
@@ -230,7 +246,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Any subclass of this class should implement this
+                 * function to provide its custom item layout
                  *
                  * @protected
                  * @abstract
@@ -240,7 +257,8 @@ namespace OS {
                 protected abstract itemlayout(): TagLayoutType;
 
                 /**
-                 *
+                 * This function is called when the item data is changed.
+                 * It should be implemented in all subclass of this class
                  *
                  * @protected
                  * @abstract
@@ -250,19 +268,24 @@ namespace OS {
             }
 
             /**
-             *
+             * The layout of a simple list item contains only a
+             * AFX label
              *
              * @export
              * @class SimpleListItemTag
              * @extends {ListViewItemTag}
              */
             export class SimpleListItemTag extends ListViewItemTag {
+                /**
+                 *Creates an instance of SimpleListItemTag.
+                 * @memberof SimpleListItemTag
+                 */
                 constructor() {
                     super();
                 }
 
                 /**
-                 *
+                 * Reset some property to default
                  *
                  * @protected
                  * @memberof SimpleListItemTag
@@ -273,7 +296,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @memberof SimpleListItemTag
@@ -281,7 +304,8 @@ namespace OS {
                 protected calibrate(): void {}
 
                 /**
-                 *
+                 * Refresh the inner label when the item data
+                 * is changed
                  *
                  * @protected
                  * @returns {void}
@@ -303,7 +327,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Re-render the list item
                  *
                  * @protected
                  * @memberof SimpleListItemTag
@@ -313,7 +337,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * List item custom layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType}
@@ -325,23 +349,115 @@ namespace OS {
             }
 
             /**
-             *
+             * This tag defines a traditional or a dropdown list widget.
+             * It contains a collection of list items in which layout
+             * of each item may be variable
              *
              * @export
              * @class ListViewTag
              * @extends {AFXTag}
              */
             export class ListViewTag extends AFXTag {
+                /**
+                 * placeholder of list select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewTag
+                 */
                 private _onlistselect: TagEventCallback<ListItemEventData>;
+
+                /**
+                 * placeholder of list double click event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<ListItemEventData>}
+                 * @memberof ListViewTag
+                 */
                 private _onlistdbclick: TagEventCallback<ListItemEventData>;
-                private _ondragndrop: TagEventCallback<DnDEventDataType<ListViewItemTag>>;
-                private _onitemclose: (e: TagEventType<ListItemEventData>) => boolean;
+
+                /**
+                 * placeholder of list drag and drop event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<DnDEventDataType<ListViewItemTag>>}
+                 * @memberof ListViewTag
+                 */
+                private _ondragndrop: TagEventCallback<
+                    DnDEventDataType<ListViewItemTag>
+                >;
+
+                /**
+                 * placeholder of list item close event handle
+                 *
+                 * @private
+                 * @memberof ListViewTag
+                 */
+                private _onitemclose: (
+                    e: TagEventType<ListItemEventData>
+                ) => boolean;
+
+                /**
+                 * placeholder of drag and drop mouse down event handle
+                 *
+                 * @private
+                 * @memberof ListViewTag
+                 */
                 private _onmousedown: (e: JQuery.MouseEventBase) => void;
+
+                /**
+                 * placeholder of drag and drop mouse up event handle
+                 *
+                 * @private
+                 * @memberof ListViewTag
+                 */
                 private _onmouseup: (e: JQuery.MouseEventBase) => void;
+
+                /**
+                 * placeholder of drag and drop mouse move event handle
+                 *
+                 * @private
+                 * @memberof ListViewTag
+                 */
                 private _onmousemove: (e: JQuery.MouseEventBase) => void;
+
+                /**
+                 * Reference to the latest selected DOM item
+                 *
+                 * @private
+                 * @type {ListViewItemTag}
+                 * @memberof ListViewTag
+                 */
                 private _selectedItem: ListViewItemTag;
+
+                /**
+                 * A collection of selected items in the list.
+                 * The maximum size of this collection is 1 if
+                 * the [[multiselect]] feature is disabled
+                 *
+                 * @private
+                 * @type {ListViewItemTag[]}
+                 * @memberof ListViewTag
+                 */
                 private _selectedItems: ListViewItemTag[];
+
+                /**
+                 * Data placeholder of the list
+                 *
+                 * @private
+                 * @type {GenericObject<any>[]}
+                 * @memberof ListViewTag
+                 */
                 private _data: GenericObject<any>[];
+
+                /**
+                 * Event data passing between mouse event when performing
+                 * drag and drop on the list
+                 *
+                 * @private
+                 * @type {{ from: ListViewItemTag; to: ListViewItemTag }}
+                 * @memberof ListViewTag
+                 */
                 private _dnd: { from: ListViewItemTag; to: ListViewItemTag };
 
                 /**
@@ -353,7 +469,9 @@ namespace OS {
                     this._onlistdbclick = this._onlistselect = this._ondragndrop = (
                         e: TagEventType<ListItemEventData>
                     ) => {};
-                    this._onitemclose = (e: TagEventType<ListItemEventData>) => {
+                    this._onitemclose = (
+                        e: TagEventType<ListItemEventData>
+                    ) => {
                         return true;
                     };
                     this._onmousedown = this._onmouseup = this._onmousemove = (
@@ -364,7 +482,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Reset the tag's properties to the default values
                  *
                  * @protected
                  * @memberof ListViewTag
@@ -382,7 +500,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function does nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -391,7 +509,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * toggle between dropdown and traditional list
                  *
                  * @memberof ListViewTag
                  */
@@ -429,16 +547,18 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set drag and drop event handle
                  *
                  * @memberof ListViewTag
                  */
-                set ondragndrop(v: TagEventCallback<DnDEventDataType<ListViewItemTag>>) {
+                set ondragndrop(
+                    v: TagEventCallback<DnDEventDataType<ListViewItemTag>>
+                ) {
                     this._ondragndrop = v;
                 }
 
                 /**
-                 *
+                 * Set list select event handle
                  *
                  * @memberof ListViewTag
                  */
@@ -447,7 +567,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set double click event handle
                  *
                  * @memberof ListViewTag
                  */
@@ -456,16 +576,18 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set item close event handle
                  *
                  * @memberof ListViewTag
                  */
-                set onitemclose(v: (e: TagEventType<ListItemEventData>) => boolean) {
+                set onitemclose(
+                    v: (e: TagEventType<ListItemEventData>) => boolean
+                ) {
                     this._onitemclose = v;
                 }
 
                 /**
-                 *
+                 * Check whether the list is dropdown or traditional list
                  *
                  * @type {boolean}
                  * @memberof ListViewTag
@@ -475,7 +597,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the default tag name of list's items.
+                 * If the tag name is not specified in the
+                 * data of a list item, this tag will be used
                  *
                  * @memberof ListViewTag
                  */
@@ -484,7 +608,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the default tag name of list item
                  *
                  * @type {string}
                  * @memberof ListViewTag
@@ -494,7 +618,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Turn on/off of the `multiselect` feature
                  *
                  * @memberof ListViewTag
                  */
@@ -503,7 +627,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether multi-select is allowed
+                 * in this list
                  *
                  * @memberof ListViewTag
                  */
@@ -515,7 +640,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Enable/disable drag and drop event in the list
                  *
                  * @memberof ListViewTag
                  */
@@ -524,7 +649,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the drag and drop event is enabled
                  *
                  * @type {boolean}
                  * @memberof ListViewTag
@@ -534,7 +659,26 @@ namespace OS {
                 }
 
                 /**
+                 * Set the buttons layout of the list.
+                 * Button layout allows to add some custom
+                 * behaviors to the list.
                  *
+                 * Each button data should define the [[onbtclick]]
+                 * event handle to specify the custom behavior
+                 *
+                 * When the list is configured as dropdown. The buttons
+                 * layout will be disabled
+                 *
+                 * Example of a button data:
+                 *
+                 * ```
+                 * {
+                 *      text: "Button text",
+                 *      icon: "home://path/to/icon.png",
+                 *      iconclass: "icon-class-name",
+                 *      onbtclick: (e) => console.log(e)
+                 * }
+                 * ```
                  *
                  * @memberof ListViewTag
                  */
@@ -555,7 +699,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get data of the list
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof ListViewTag
@@ -565,7 +709,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set data to the list
                  *
                  * @memberof ListViewTag
                  */
@@ -588,7 +732,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @memberof ListViewTag
@@ -596,7 +740,7 @@ namespace OS {
                 protected ondatachange(): void {}
 
                 /**
-                 *
+                 * Select list item(s) by their indexes
                  *
                  * @memberof ListViewTag
                  */
@@ -628,7 +772,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the latest selected item
                  *
                  * @readonly
                  * @type {ListViewItemTag}
@@ -639,7 +783,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get all the selected items
                  *
                  * @readonly
                  * @type {ListViewItemTag[]}
@@ -650,7 +794,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the indexes of all selected items
                  *
                  * @type {(number | number[])}
                  * @memberof ListViewTag
@@ -667,10 +811,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Add an item to the beginning of the list
                  *
                  * @param {GenericObject<any>} item
-                 * @returns
+                 * @returns {ListViewItemTag} the added list item element
                  * @memberof ListViewTag
                  */
                 unshift(item: GenericObject<any>) {
@@ -678,7 +822,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * check whether the list has data
                  *
                  * @private
                  * @param {GenericObject<any>} v
@@ -690,11 +834,11 @@ namespace OS {
                 }
 
                 /**
+                 * Add an item to the beginning or end of the list
                  *
-                 *
-                 * @param {GenericObject<any>} item
-                 * @param {boolean} [flag]
-                 * @returns {ListViewItemTag}
+                 * @param {GenericObject<any>} item list item data
+                 * @param {boolean} [flag] indicates whether to add the item in the beginning of the list
+                 * @returns {ListViewItemTag} the added list item element
                  * @memberof ListViewTag
                  */
                 push(
@@ -739,9 +883,9 @@ namespace OS {
                 }
 
                 /**
+                 * Delete an item
                  *
-                 *
-                 * @param {ListViewItemTag} item
+                 * @param {ListViewItemTag} item item DOM element
                  * @memberof ListViewTag
                  */
                 delete(item: ListViewItemTag): void {
@@ -761,7 +905,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Select item next to the currently selected item.
+                 * If there is no item selected, the first item will
+                 * be selected
                  *
                  * @returns {void}
                  * @memberof ListViewTag
@@ -779,7 +925,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Select the previous item in the list.
                  *
                  * @returns {void}
                  * @memberof ListViewTag
@@ -797,7 +943,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Unselect all the selected items in the list
                  *
                  * @returns {void}
                  * @memberof ListViewTag
@@ -811,15 +957,18 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the click event on an item
                  *
                  * @private
-                 * @param {TagEventType} e
-                 * @param {boolean} flag
+                 * @param {TagEventType} e tag event object
+                 * @param {boolean} flag indicates whether this is a double click event
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                private iclick(e: TagEventType<ListViewItemTag>, flag: boolean): void {
+                private iclick(
+                    e: TagEventType<ListViewItemTag>,
+                    flag: boolean
+                ): void {
                     if (!e.data) {
                         return;
                     }
@@ -833,24 +982,27 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the double click event on an item
                  *
                  * @private
-                 * @param {TagEventType} e
+                 * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
                 private idbclick(e: TagEventType<ListViewItemTag>) {
-                    const evt: TagEventType<ListItemEventData> = { id: this.aid, data: { item: e.data } };
+                    const evt: TagEventType<ListItemEventData> = {
+                        id: this.aid,
+                        data: { item: e.data },
+                    };
                     this._onlistdbclick(evt);
                     return this.observable.trigger("listdbclick", evt);
                 }
 
                 /**
-                 *
+                 * This function triggers the list item select event
                  *
                  * @private
-                 * @param {TagEventType} e
+                 * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
@@ -909,7 +1061,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag and bind some basic event
                  *
                  * @protected
                  * @returns {void}
@@ -981,10 +1133,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * This function triggers the item close event
                  *
                  * @private
-                 * @param {TagEventType} e
+                 * @param {TagEventType} e tag event object
                  * @returns {void}
                  * @memberof ListViewTag
                  */
@@ -992,7 +1144,7 @@ namespace OS {
                     if (!e.data) {
                         return;
                     }
-                    const evt = { id: this.aid, data: {item: e.data} };
+                    const evt = { id: this.aid, data: { item: e.data } };
                     const r = this._onitemclose(evt);
                     if (!r) {
                         return;
@@ -1002,7 +1154,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Show the dropdown list.
+                 * This function is called only when the list is a dropdown
+                 * list
                  *
                  * @protected
                  * @param {*} e
@@ -1028,7 +1182,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Hide the dropdown list.
+                 * This function is called only when the list is a dropdown
+                 * list
                  *
                  * @protected
                  * @param {*} e
@@ -1041,7 +1197,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * calibrate the list layout
                  *
                  * @protected
                  * @returns {void}
@@ -1058,7 +1214,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * List view layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

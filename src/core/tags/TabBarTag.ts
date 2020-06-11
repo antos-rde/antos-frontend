@@ -1,23 +1,42 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             * Tag event data type definition
+             */
             type TabEventData = TagEventDataType<ListViewItemTag>;
             /**
-             *
+             * a TabBar allows to control a collection of tabs
              *
              * @export
              * @class TabBarTag
              * @extends {AFXTag}
              */
             export class TabBarTag extends AFXTag {
+                /**
+                 * Placeholder of currently selected tab index
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof TabBarTag
+                 */
                 private _selected: number;
+
+                /**
+                 * Placeholder of tab close event handle
+                 *
+                 * @private
+                 * @memberof TabBarTag
+                 */
                 private _ontabclose: (e: TagEventType<TabEventData>) => boolean;
+
+                /**
+                 * Placeholder of tab select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<TabEventData>}
+                 * @memberof TabBarTag
+                 */
                 private _ontabselect: TagEventCallback<TabEventData>;
 
                 /**
@@ -31,7 +50,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the tag
                  *
                  * @protected
                  * @memberof TabBarTag
@@ -41,7 +60,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -50,7 +69,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Enable/disable a tab to be closed
                  *
                  * @memberof TabBarTag
                  */
@@ -59,7 +78,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether tabs can be closed
                  *
                  * @type {boolean}
                  * @memberof TabBarTag
@@ -69,9 +88,9 @@ namespace OS {
                 }
 
                 /**
+                 * Add a tab in the end of the tab bar
                  *
-                 *
-                 * @param {GenericObject<any>} item
+                 * @param {GenericObject<any>} item tab data
                  * @memberof TabBarTag
                  */
                 push(item: GenericObject<any>): ListViewItemTag {
@@ -80,9 +99,9 @@ namespace OS {
                 }
 
                 /**
+                 * Delete a tab
                  *
-                 *
-                 * @param {ListViewItemTag} el
+                 * @param {ListViewItemTag} el reference to DOM element of a tab
                  * @memberof TabBarTag
                  */
                 delete(el: ListViewItemTag) {
@@ -90,9 +109,9 @@ namespace OS {
                 }
 
                 /**
+                 * Add a tab to the beginning of the tab bar
                  *
-                 *
-                 * @param {GenericObject<any>} item
+                 * @param {GenericObject<any>} item tab data
                  * @memberof TabBarTag
                  */
                 unshift(item: GenericObject<any>): ListViewItemTag {
@@ -101,7 +120,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set tabs data
                  *
                  * @memberof TabBarTag
                  */
@@ -113,7 +132,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get all tabs data
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof TabBarTag
@@ -123,7 +142,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Select a tab by its index
                  *
                  * @memberof TabBarTag
                  */
@@ -132,7 +151,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the currently selected tab
                  *
                  * @type {(number | number[])}
                  * @memberof TabBarTag
@@ -142,7 +161,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tab close event handle
                  *
                  * @memberof TabBarTag
                  */
@@ -151,7 +170,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the tab select event handle
                  *
                  * @memberof TabBarTag
                  */
@@ -160,7 +179,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tab bar and bind some basic events
                  *
                  * @protected
                  * @memberof TabBarTag
@@ -178,7 +197,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * TabBar layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

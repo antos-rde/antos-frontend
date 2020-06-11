@@ -1,23 +1,96 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            /**
+             * A WindowTag represents a virtual window element
+             * used by AntOS applications and dialogs.
+             *
+             * @export
+             * @class WindowTag
+             * @extends {AFXTag}
+             */
             export class WindowTag extends AFXTag {
+                /**
+                 * The element ID of the virtual desktop element
+                 *
+                 * @type {string}
+                 * @memberof WindowTag
+                 */
                 desktop: string;
+
+                /**
+                 * Window width placeholder
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof WindowTag
+                 */
                 private _width: number;
+
+                /**
+                 * Window height placeholder
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof WindowTag
+                 */
                 private _height: number;
+
+                /**
+                 * Placeholder indicates whether the current window is shown
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
                 private _shown: boolean;
+
+                /**
+                 * Placeholder indicates whether the current window is maximized
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
                 private _isMaxi: boolean;
+
+                /**
+                 * This placeholder stores the latest offset of the current window.
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof WindowTag
+                 */
                 private _history: GenericObject<any>;
+
+                /**
+                 * This placeholder stores the offset of the virtual desktop element
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof WindowTag
+                 */
                 private _desktop_pos: GenericObject<any>;
+
+                /**
+                 * Creates an instance of WindowTag.
+                 * @memberof WindowTag
+                 */
                 constructor() {
                     super();
                 }
 
+                /**
+                 * Init window tag
+                 * - `shown`: false
+                 * - `isMaxi`: false
+                 * - `minimizable`: false
+                 * - `resizable`: true
+                 * - `apptitle`: Untitled
+                 *
+                 * @protected
+                 * @memberof WindowTag
+                 */
                 protected init(): void {
                     this._shown = false;
                     this._isMaxi = false;
@@ -27,11 +100,30 @@ namespace OS {
                     this.minimizable = true;
                     this.resizable = true;
                     this.apptitle = "Untitled";
-                    
                 }
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof WindowTag
+                 */
                 protected calibrate(): void {}
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof WindowTag
+                 */
                 protected reload(d?: any): void {}
 
+                /**
+                 * Set the window width
+                 *
+                 * @memberof WindowTag
+                 */
                 set width(v: number) {
                     this._width = v;
                     if (!v) {
@@ -39,10 +131,22 @@ namespace OS {
                     }
                     this.setsize({ w: v, h: this.height });
                 }
+
+                /**
+                 * Get the window width
+                 *
+                 * @type {number}
+                 * @memberof WindowTag
+                 */
                 get width(): number {
                     return this._width;
                 }
 
+                /**
+                 * Set the window height
+                 *
+                 * @memberof WindowTag
+                 */
                 set height(v: number) {
                     this._height = v;
                     if (!v) {
@@ -54,9 +158,21 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Get the window height
+                 *
+                 * @type {number}
+                 * @memberof WindowTag
+                 */
                 get height(): number {
                     return this._height;
                 }
+
+                /**
+                 * enable/disable window minimizable
+                 *
+                 * @memberof WindowTag
+                 */
                 set minimizable(v: boolean) {
                     this.attsw(v, "minimizable");
                     if (v) {
@@ -65,9 +181,22 @@ namespace OS {
                         $(this.refs["minbt"]).hide();
                     }
                 }
+
+                /**
+                 * Check whether the window is minimizable
+                 *
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
                 get minimizable(): boolean {
                     return this.hasattr("minimizable");
                 }
+
+                /**
+                 * enable/disable widow resizable
+                 *
+                 * @memberof WindowTag
+                 */
                 set resizable(v: boolean) {
                     this.attsw(v, "resizable");
                     if (v) {
@@ -78,19 +207,45 @@ namespace OS {
                         $(this.refs["grip"]).hide();
                     }
                 }
+
+                /**
+                 * Check whether the current window is resizable
+                 *
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
                 get resizable(): boolean {
                     return this.hasattr("resizable");
                 }
-                set apptitle(v: string| FormattedString) {
+
+                /**
+                 * Set the window title
+                 *
+                 * @memberof WindowTag
+                 */
+                set apptitle(v: string | FormattedString) {
                     $(this).attr("apptitle", v.__());
                     if (v) {
                         (this.refs["txtTitle"] as LabelTag).text = v;
                     }
                 }
-                get apptitle(): string| FormattedString {
+
+                /**
+                 * Get window title
+                 *
+                 * @type {(string| FormattedString)}
+                 * @memberof WindowTag
+                 */
+                get apptitle(): string | FormattedString {
                     return $(this).attr("apptitle");
                 }
 
+                /**
+                 * Resize all the children of the window based on its width and height
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
                 private resize(): void {
                     const ch =
                         $(this.refs["yield"]).height() /
@@ -102,8 +257,14 @@ namespace OS {
                         });
                 }
 
+                /**
+                 * Mount the window tag and bind basic events
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
                 protected mount(): void {
-                    
                     this.contextmenuHandle = function (e) {};
                     $(this.refs["minbt"]).click((e) => {
                         return this.observable.trigger("hide", {
@@ -182,6 +343,14 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Set the window size
+                 *
+                 * @private
+                 * @param {GenericObject<any>} o format: `{ w: window_width, h: window_height }`
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
                 private setsize(o: GenericObject<any>): void {
                     if (!o) {
                         return;
@@ -196,6 +365,12 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Enable to drag window on the virtual desktop
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
                 private enable_dragging(): void {
                     $(this.refs["dragger"])
                         .css("user-select", "none")
@@ -237,6 +412,13 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Enable window resize, this only works if the window
+                 * is resizable
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
                 private enable_resize(): void {
                     $(this.refs["grip"])
                         .css("user-select", "none")
@@ -269,6 +451,14 @@ namespace OS {
                     });
                 }
 
+                /**
+                 * Maximize the window or restore its previous width, height,
+                 * and position
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
                 private toggle_window(): void {
                     let h: number, w: number;
                     if (!this.resizable) {
@@ -298,6 +488,13 @@ namespace OS {
                     }
                 }
 
+                /**
+                 * Layout definition of the window tag
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof WindowTag
+                 */
                 protected layout(): TagLayoutType[] {
                     return [
                         {

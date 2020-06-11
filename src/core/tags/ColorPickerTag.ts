@@ -74,7 +74,7 @@ namespace OS {
                 private _selectedColor: ColorType;
 
                 /**
-                 * Holder for the color select event callback
+                 * placeholder for the color select event callback
                  *
                  * @private
                  * @type {TagEventCallback<ColorType>}

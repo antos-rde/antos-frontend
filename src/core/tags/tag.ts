@@ -629,14 +629,14 @@ namespace OS {
         };
         /**
          * All the AFX tags are defined in this namespace,
-         * these tags are are defined as custom DOM elements and will be
+         * these tags are defined as custom DOM elements and will be
          * stored in the `customElements` registry of the browser
          */
         export namespace tag {
             /**
              * Define an AFX tag as a custom element and add it to the
              * global `customElements` registry. If the tag is redefined, i.e.
-             * the tag already exist, its behavior will be updated with the
+             * the tag already exists, its behavior will be updated with the
              * new definition
              *
              * @export

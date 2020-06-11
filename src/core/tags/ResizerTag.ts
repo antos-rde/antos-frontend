@@ -1,21 +1,54 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
+             * A `resizer` tag is basically used to dynamically resize an element using mouse.
+             * It is usually put inside a [[TileLayoutTag]] an can be attached to any element. Example:
              *
+             * The resizer tag in the following example  will be attached to the first `afx-vbox`,
+             * and allows to resize this element using mouse
+             *
+             * ```xml
+             * <afx-hbox>
+             *      <afx-vbox>...</afx-vbox>
+             *      <afx-resizer></afx-resizer>
+             *      <afx-vbox>...</afx-vbox>
+             * </afx-hbox>
+             * ```
              *
              * @export
              * @class ResizerTag
              * @extends {AFXTag}
              */
             export class ResizerTag extends AFXTag {
+                /**
+                 * Reference to the element that this tag is attached to
+                 *
+                 * @private
+                 * @type {*}
+                 * @memberof ResizerTag
+                 */
                 private _resizable_el: any;
+
+                /**
+                 * Reference to the parent tag of the current tag.
+                 * The parent tag should be an instance of a [[TileLayoutTag]]
+                 * such as [[VBoxTag]] or [[HBoxTag]]
+                 *
+                 * @private
+                 * @type {*}
+                 * @memberof ResizerTag
+                 */
                 private _parent: any;
+
+                /**
+                 * Placeholder of the minimum value that
+                 * the attached element can be resized
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof ResizerTag
+                 */
                 private _minsize: number;
 
                 /**
@@ -27,7 +60,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the properties of the tag to default values
                  *
                  * @protected
                  * @memberof ResizerTag
@@ -40,16 +73,17 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
                  * @memberof ResizerTag
                  */
-                protected reload(d?: any): void {
-                }
+                protected reload(d?: any): void {}
                 /**
-                 *
+                 * Set resize direction, two possible values:
+                 * - `hz` - horizontal direction, resize by width
+                 * - `ve` - vertical direction, resize by height
                  *
                  * @memberof ResizerTag
                  */
@@ -58,7 +92,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the resize direction
                  *
                  * @type {string}
                  * @memberof ResizerTag
@@ -68,7 +102,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag to the DOM tree
                  *
                  * @protected
                  * @memberof ResizerTag
@@ -111,7 +145,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Enable draggable on the element
                  *
                  * @private
                  * @memberof ResizerTag
@@ -141,10 +175,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Resize the attached element in the horizontal direction (width)
                  *
                  * @private
-                 * @param {JQuery.MouseEventBase} e
+                 * @param {JQuery.MouseEventBase} e JQuery mouse event
                  * @returns {void}
                  * @memberof ResizerTag
                  */
@@ -165,10 +199,10 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Resize the attached element in the vertical direction (height)
                  *
                  * @protected
-                 * @param {JQuery.MouseEventBase} e
+                 * @param {JQuery.MouseEventBase} e JQuery mouse event
                  * @returns {void}
                  * @memberof ResizerTag
                  */
@@ -189,7 +223,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition of the tag, empty layout
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

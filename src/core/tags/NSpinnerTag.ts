@@ -1,22 +1,38 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-
 namespace OS {
     export namespace GUI {
         export namespace tag {
             /**
-             *
+             * A simple number sinner tag
              *
              * @export
              * @class NSpinnerTag
              * @extends {AFXTag}
              */
             export class NSpinnerTag extends AFXTag {
+                /**
+                 * Placeholder for value change event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof NSpinnerTag
+                 */
                 private _onchange: TagEventCallback<number>;
+
+                /**
+                 * Placeholder for the spinner data
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof NSpinnerTag
+                 */
                 private _value: number;
+
+                /**
+                 * Place holder for the spinner step
+                 *
+                 * @type {number}
+                 * @memberof NSpinnerTag
+                 */
                 step: number;
 
                 /**
@@ -29,7 +45,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Init the spinner value to `0` and step to `1`
                  *
                  * @protected
                  * @memberof NSpinnerTag
@@ -40,7 +56,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -49,7 +65,7 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Set the value change event handle
                  *
                  * @memberof NSpinnerTag
                  */
@@ -58,7 +74,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag and bind basic events
                  *
                  * @protected
                  * @memberof NSpinnerTag
@@ -93,7 +109,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the layout of the spinner
                  *
                  * @memberof NSpinnerTag
                  */
@@ -133,7 +149,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set the spinner value
                  *
                  * @memberof NSpinnerTag
                  */
@@ -146,7 +162,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the spinner value
                  *
                  * @type {number}
                  * @memberof NSpinnerTag
@@ -156,7 +172,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Spinner layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

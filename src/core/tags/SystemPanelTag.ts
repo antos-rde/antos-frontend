@@ -1,22 +1,41 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 namespace OS {
     export namespace GUI {
         export namespace tag {
-
             /**
-             *
+             * A system panel contains the following elements:
+             * - Spotlight to access to applications menu
+             * - Current focused application menu
+             * - System tray for all running services running in background
              *
              * @export
              * @class SystemPanelTag
              * @extends {AFXTag}
              */
             export class SystemPanelTag extends AFXTag {
+                /**
+                 * Reference to spotlight data
+                 *
+                 * @private
+                 * @type {(GenericObject<string | FormattedString>)}
+                 * @memberof SystemPanelTag
+                 */
                 private _osmenu: GenericObject<string | FormattedString>;
+
+                /**
+                 * Placeholder indicates whether the spotlight is currently shown
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof SystemPanelTag
+                 */
                 private _view: boolean;
+
+                /**
+                 * Place holder for a private callback function
+                 *
+                 * @private
+                 * @memberof SystemPanelTag
+                 */
                 private _cb: (e: JQuery.MouseEventBase) => void;
 
                 /**
@@ -33,7 +52,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @memberof SystemPanelTag
@@ -41,7 +60,7 @@ namespace OS {
                 protected init(): void {}
 
                 /**
-                 *
+                 * Do nothing
                  *
                  * @protected
                  * @param {*} [d]
@@ -50,7 +69,8 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 *
+                 * Attach a service to the system tray on the pannel,
+                 * this operation is performed when a service is started
                  *
                  * @param {BaseService} s
                  * @returns
@@ -62,7 +82,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Launch the selected application from the spotlight
+                 * applications list
                  *
                  * @private
                  * @returns {void}
@@ -84,7 +105,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Perform spotlight search operation on keyboard event
                  *
                  * @private
                  * @param {JQuery.KeyboardEventBase} e
@@ -126,7 +147,9 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * detach a service from the system tray of the panel.
+                 * This function is called when the corresponding running
+                 * service is killed
                  *
                  * @param {BaseService} s
                  * @memberof SystemPanelTag
@@ -138,7 +161,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Layout definition of the panel
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -222,7 +245,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Refresh applications list on the spotlight widget
+                 * from system packages meta-data
                  *
                  * @private
                  * @memberof SystemPanelTag
@@ -253,7 +277,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Show/hide the spotlight
                  *
                  * @private
                  * @param {boolean} flag
@@ -264,7 +288,7 @@ namespace OS {
                     if (flag) {
                         $(this.refs.overlay).show();
                         this.refreshAppList();
-                        
+
                         this.calibrate();
                         $(document).on("click", this._cb);
                         (this.refs.search as HTMLInputElement).value = "";
@@ -276,7 +300,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Calibrate the spotlight widget
                  *
                  * @memberof SystemPanelTag
                  */
@@ -287,7 +311,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Mount the tag bind some basic event
                  *
                  * @protected
                  * @memberof SystemPanelTag
