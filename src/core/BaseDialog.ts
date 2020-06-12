@@ -1,11 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -26,7 +18,8 @@
 namespace OS {
     export namespace GUI {
         /**
-         *
+         * the SubWindow class is the abstract prototype of all
+         * modal windows or dialogs definition in AntOS
          *
          * @export
          * @abstract
@@ -34,12 +27,26 @@ namespace OS {
          * @extends {BaseModel}
          */
         export abstract class SubWindow extends BaseModel {
-            modal: false;
+            /**
+             * Placeholder indicates whether the sub window is in
+             * modal mode. This value is reserver for future use
+             *
+             * @type {boolean}
+             * @memberof SubWindow
+             */
+            modal: boolean;
+
+            /**
+             * Reference to the parent of the current sub-window
+             *
+             * @type {(BaseModel | typeof GUI)}
+             * @memberof SubWindow
+             */
             parent: BaseModel | typeof GUI;
 
             /**
              *Creates an instance of SubWindow.
-             * @param {string} name
+             * @param {string} name SubWindow (class) name
              * @memberof SubWindow
              */
             constructor(name: string) {
@@ -49,7 +56,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Exit the sub-window
              *
              * @returns {void}
              * @memberof SubWindow
@@ -69,7 +76,11 @@ namespace OS {
             }
 
             /**
+             * Init the sub-window, this function is called
+             * on creation of the sub-window object. It is used
+             * to render the sub-window UI.
              *
+             * Need to be implemented by subclasses
              *
              * @abstract
              * @memberof SubWindow
@@ -77,7 +88,7 @@ namespace OS {
             abstract init(): void;
 
             /**
-             *
+             * Main entry point after rendering of the sub-window
              *
              * @abstract
              * @memberof SubWindow
@@ -85,7 +96,8 @@ namespace OS {
             abstract main(): void;
 
             /**
-             *
+             * Return the parent meta-data of the current
+             * sub-window
              *
              * @returns {API.PackageMetaType}
              * @memberof SubWindow
@@ -98,7 +110,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Show the sub-window
              *
              * @memberof SubWindow
              */
@@ -108,7 +120,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Hide the sub-window
              *
              * @returns {void}
              * @memberof SubWindow
@@ -121,7 +133,7 @@ namespace OS {
         SubWindow.type = ModelType.SubWindow;
 
         /**
-         *
+         * Abstract prototype of all AntOS dialogs widget
          *
          * @export
          * @abstract
@@ -129,13 +141,24 @@ namespace OS {
          * @extends {SubWindow}
          */
         export abstract class BaseDialog extends SubWindow {
+            /**
+             * Placeholder for the dialog callback on exit
+             *
+             * @memberof BaseDialog
+             */
             handle: (d: any) => void;
+
+            /**
+             * Placeholder of the dialog input data
+             *
+             * @type {GenericObject<any>}
+             * @memberof BaseDialog
+             */
             data: GenericObject<any>;
-            title: string;
 
             /**
              *Creates an instance of BaseDialog.
-             * @param {string} name
+             * @param {string} name Dialog (class) name
              * @memberof BaseDialog
              */
             constructor(name: string) {
@@ -143,9 +166,8 @@ namespace OS {
                 this.handle = undefined;
             }
 
-            
             /**
-             *
+             * Function called when dialog exits
              *
              * @protected
              * @param {BaseEvent} e
@@ -160,20 +182,41 @@ namespace OS {
         }
 
         /**
-         *
+         * A basic dialog renders a dialog widget using the UI
+         * scheme provided in it constructor or defined in its
+         * class variable `scheme`
          *
          * @export
          * @class BasicDialog
          * @extends {BaseDialog}
          */
         export class BasicDialog extends BaseDialog {
-            markup: string | OS.API.VFS.BaseFileHandle;
+            /**
+             * Placeholder for the UI scheme to be rendered. This can
+             * be either the string definition of the scheme or
+             * the VFS file handle of the scheme file
+             *
+             * @private
+             * @type {(string | OS.API.VFS.BaseFileHandle)}
+             * @memberof BasicDialog
+             */
+            private markup: string | OS.API.VFS.BaseFileHandle;
+
+            /**
+             * If the `markup` variable is not provided, the
+             * the [[init]] function will find the scheme definition
+             * in this class variable
+             *
+             * @static
+             * @type {string}
+             * @memberof BasicDialog
+             */
             static scheme: string;
 
             /**
              *Creates an instance of BasicDialog.
-             * @param {string} name
-             * @param {(string | OS.API.VFS.BaseFileHandle)} [markup]
+             * @param {string} name dialog name
+             * @param {(string | OS.API.VFS.BaseFileHandle)} [markup] UI scheme definition
              * @memberof BasicDialog
              */
             constructor(
@@ -185,7 +228,8 @@ namespace OS {
             }
 
             /**
-             *
+             * Render the dialog using the UI scheme provided by either
+             * the `markup` instance variable or the `scheme` class variable
              *
              * @returns {void}
              * @memberof BasicDialog
@@ -193,11 +237,7 @@ namespace OS {
             init(): void {
                 if (this.markup) {
                     if (typeof this.markup === "string") {
-                        return GUI.htmlToScheme(
-                            this.markup,
-                            this,
-                            this.host
-                        );
+                        return GUI.htmlToScheme(this.markup, this, this.host);
                     } else {
                         // a file handle
                         return this.render(this.markup.path);
@@ -207,20 +247,14 @@ namespace OS {
                     GUI.dialogs[this.name].scheme
                 ) {
                     const html: string = GUI.dialogs[this.name].scheme;
-                    return GUI.htmlToScheme(
-                        html.trim(),
-                        this,
-                        this.host
-                    );
-                }
-                else
-                {
+                    return GUI.htmlToScheme(html.trim(), this, this.host);
+                } else {
                     this.error(__("Unable to find dialog scheme"));
                 }
             }
 
             /**
-             *
+             * Main entry point for the dialog
              *
              * @memberof BasicDialog
              */
@@ -234,9 +268,25 @@ namespace OS {
             }
         }
 
+        /**
+         * The namespace `dialogs` is dedicated to all Dialog definition
+         * in AntOS
+         */
         export namespace dialogs {
             /**
+             * Simple prompt dialog to get user input text.
+             * The input date of the dialog:
              *
+             * ```
+             * {
+             *      title: string, // window title
+             *      label: string, // label text
+             *      value: string   // user input text
+             * }
+             * ```
+             *
+             * The data passing from the dialog to the callback function is
+             * in the string text of the user input value
              *
              * @export
              * @class PromptDialog
@@ -252,7 +302,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Main entry point
                  *
                  * @memberof PromptDialog
                  */
@@ -294,7 +344,9 @@ namespace OS {
                     $input.focus();
                 }
             }
-
+            /**
+             * Scheme definition of the Prompt dialog
+             */
             PromptDialog.scheme = `\
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
@@ -318,7 +370,11 @@ namespace OS {
             `;
 
             /**
+             * A text dialog is similar to a [[PromptDialog]] nut allows
+             * user to input multi-line text.
              *
+             * Refer to [[PromptDialog]] for the definition of input and callback data
+             * of the dialog
              *
              * @export
              * @class TextDialog
@@ -334,7 +390,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Main entry point
                  *
                  * @memberof TextDialog
                  */
@@ -365,7 +421,9 @@ namespace OS {
                     $input.focus();
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             TextDialog.scheme = `\
 <afx-app-window data-id = "TextDialog" width='400' height='300'>
     <afx-vbox>
@@ -388,7 +446,7 @@ namespace OS {
             `;
 
             /**
-             *
+             * A Calendar dialog allows user to select a date
              *
              * @export
              * @class CalendarDialog
@@ -396,7 +454,19 @@ namespace OS {
              */
             export class CalendarDialog extends BasicDialog {
                 /**
-                 *Creates an instance of CalendarDialog.
+                 * Creates an instance of CalendarDialog.
+                 *
+                 * Input data:
+                 *
+                 * ```
+                 * {
+                 *      title: string // window title
+                 * }
+                 * ```
+                 *
+                 * Callback data: a Date object represent the selected date
+                 *
+                 *
                  * @memberof CalendarDialog
                  */
                 constructor() {
@@ -431,7 +501,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             CalendarDialog.scheme = `\
 <afx-app-window  width='300' height='230' apptitle = "Calendar" >
     <afx-vbox>
@@ -455,7 +527,16 @@ namespace OS {
             `;
 
             /**
+             * Color picker dialog
              *
+             * Input data:
+             *
+             * ```
+             * {
+             *      title: string // window title
+             * }
+             * ```
+             * Callback data: [[ColorType]] object
              *
              * @export
              * @class ColorPickerDialog
@@ -499,7 +580,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             ColorPickerDialog.scheme = `\
 <afx-app-window  width='320' height='250' apptitle = "Color picker" >
     <afx-vbox>
@@ -523,7 +606,18 @@ namespace OS {
             `;
 
             /**
+             * Show key-value pair of the input object
              *
+             * Input data:
+             *
+             * ```
+             * {
+             *      title: string, // window title
+             *      [propName:string]: any
+             * }
+             * ```
+             *
+             * No data for callback
              *
              * @export
              * @class InfoDialog
@@ -566,7 +660,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             InfoDialog.scheme = `\
 <afx-app-window  width='250' height='300' apptitle = "Info" >
     <afx-vbox>
@@ -588,6 +684,26 @@ namespace OS {
 </afx-app-window>\
             `;
 
+            /**
+             * A simple confirm dialog
+             *
+             * Input data:
+             *
+             * ```
+             * {
+             *      title: string, // window title
+             *      icon?: string, // label icon
+             *      iconclass?: string, // label iconclass
+             *      text: string // label text
+             * }
+             * ```
+             *
+             * Callback data: `boolean`
+             *
+             * @export
+             * @class YesNoDialog
+             * @extends {BasicDialog}
+             */
             export class YesNoDialog extends BasicDialog {
                 /**
                  *Creates an instance of YesNoDialog.
@@ -598,7 +714,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Main entry point
                  *
                  * @memberof YesNoDialog
                  */
@@ -625,7 +741,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             YesNoDialog.scheme = `\
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
@@ -648,7 +766,22 @@ namespace OS {
             `;
 
             /**
+             * A selection dialog provide user with a list of options to
+             * select.
              *
+             * Input data:
+             *
+             * ```
+             * {
+             *      title: string, // window title
+             *      data:
+             *      {
+             *          text: string,
+             *          [propName:string]: any
+             *      } [] // list data
+             * ```
+             *
+             * Callback data: the selected data in the input list
              *
              * @export
              * @class SelectionDialog
@@ -664,7 +797,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Main entry
                  *
                  * @memberof SelectionDialog
                  */
@@ -694,7 +827,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             SelectionDialog.scheme = `\
 <afx-app-window  width='250' height='300' apptitle = "Selection">
     <afx-vbox>
@@ -717,7 +852,12 @@ namespace OS {
             `;
 
             /**
+             * An About dialog is dedicated to show the parent
+             * application meta-data
              *
+             * Input data: no
+             *
+             * Callback data: no
              *
              * @export
              * @class AboutDialog
@@ -733,7 +873,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Main entry point
                  *
                  * @returns {void}
                  * @memberof AboutDialog
@@ -770,7 +910,9 @@ namespace OS {
                     };
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             AboutDialog.scheme = `\
 <afx-app-window data-id = 'about-window'  width='300' height='200'>
     <afx-vbox>
@@ -795,7 +937,21 @@ namespace OS {
             `;
 
             /**
+             * File dialog allows user to select a file/folder
              *
+             * Input data:
+             *
+             * ```
+             * {
+             *      title: string, // window title
+             *      root?: string, // the root path folder of the file view
+             *      type?: "file"|"dir"|"app", // file type to be selected
+             *      mimes?: string[], // mime types of file to be selected
+             *      hidden?: boolean, // show/hide hidden file
+             *      file?: string // file name
+             *
+             * }
+             * ```
              *
              * @export
              * @class FileDialog
@@ -935,7 +1091,9 @@ namespace OS {
                     }
                 }
             }
-
+            /**
+             * Scheme definition
+             */
             FileDialog.scheme = `\
 <afx-app-window width='400' height='300'>
     <afx-hbox>

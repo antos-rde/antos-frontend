@@ -142,10 +142,16 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * chang the view of the widget, there are three different views
                  * - `icon`
                  * - `list`
                  * - `tree`
+                 *
+                 * Getter:
+                 *
+                 * Get the current view setting of the widget
                  *
                  * @memberof FileViewTag
                  */
@@ -153,42 +159,36 @@ namespace OS {
                     $(this).attr("view", v);
                     this.switchView();
                 }
-
-                /**
-                 * Get the current view setting of the widget
-                 *
-                 * @type {string}
-                 * @memberof FileViewTag
-                 */
                 get view(): string {
                     return $(this).attr("view");
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Turn on/off the changing current working directory feature
                  * of the widget when a directory is double clicked. If enabled,
                  * the widget will use the configured [[fetch]] function to query
                  * the content of the selected directory
+                 *
+                 * Getter:
+                 *
+                 * check whether changing current working directory feature
+                 * is enabled
                  *
                  * @memberof FileViewTag
                  */
                 set chdir(v: boolean) {
                     this.attsw(v, "chdir");
                 }
-
-                /**
-                 * check whether changing current working directory feature
-                 * is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof FileViewTag
-                 */
                 get chdir(): boolean {
                     return this.hasattr("chdir");
                 }
 
                 /**
-                 * Enable or disable the status bar of the widget
+                 * Setter : Enable or disable the status bar of the widget
+                 *
+                 * Getter: Check whether the status bar is enabled
                  *
                  * @memberof FileViewTag
                  */
@@ -200,19 +200,19 @@ namespace OS {
                     }
                     $(this.refs.status).hide();
                 }
-
-                /**
-                 * Check whether the status bar is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof FileViewTag
-                 */
                 get status(): boolean {
                     return this.hasattr("status");
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Allow the widget to show or hide hidden file
+                 *
+                 * Getter:
+                 *
+                 * Check whether the hidden file should be shown in
+                 * the widget
                  *
                  * @memberof FileViewTag
                  */
@@ -223,14 +223,6 @@ namespace OS {
                     }
                     this.switchView();
                 }
-
-                /**
-                 * Check whether the hidden file should be shown in
-                 * the widget
-                 *
-                 * @type {boolean}
-                 * @memberof FileViewTag
-                 */
                 get showhidden(): boolean {
                     return this.hasattr("showhidden");
                 }
@@ -247,10 +239,16 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the path of the current working directory.
                  * When called the widget will refresh the current
                  * working directory using the configured [[fetch]]
                  * function
+                 *
+                 * Getter:
+                 *
+                 * Get the path of the current working directory
                  *
                  * @memberof FileViewTag
                  */
@@ -276,19 +274,14 @@ namespace OS {
                             announcer.oserror(e.toString(), e)
                         );
                 }
-
-                /**
-                 * Get the path of the current working directory
-                 *
-                 * @type {string}
-                 * @memberof FileViewTag
-                 */
                 get path(): string {
                     return this._path;
                 }
 
                 /**
-                 * Set the data of the current working directory
+                 * Setter: Set the data of the current working directory
+                 *
+                 * Getter: Get the data of the current working directory
                  *
                  * @memberof FileViewTag
                  */
@@ -299,13 +292,6 @@ namespace OS {
                     this._data = v;
                     this.refreshData();
                 }
-
-                /**
-                 * Get the data of the current working directory
-                 *
-                 * @type {API.FileInfoType[]}
-                 * @memberof FileViewTag
-                 */
                 get data(): API.FileInfoType[] {
                     return this._data;
                 }

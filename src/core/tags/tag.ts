@@ -360,7 +360,9 @@ namespace OS {
             }
 
             /**
-             * Setter to set the id of the tag in string or number
+             * Setter: set the id of the tag in string or number
+             *
+             * Getter: get the id of the current tag
              *
              * @memberof AFXTag
              */
@@ -368,12 +370,6 @@ namespace OS {
                 $(this).attr("data-id", v);
             }
 
-            /**
-             * Getter to get the id of the current tag
-             *
-             * @type {(string | number)}
-             * @memberof AFXTag
-             */
             get aid(): string | number {
                 return $(this).attr("data-id");
             }

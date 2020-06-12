@@ -89,9 +89,15 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Set the tab bar direction:
                  * - `row`: horizontal direction
                  * - `column`: vertical direction
+                 * 
+                 * Getter:
+                 * 
+                 * Get the tab bar direction
                  *
                  * @memberof TabContainerTag
                  */
@@ -102,20 +108,19 @@ namespace OS {
                     }
                     (this.refs.wrapper as TileLayoutTag).dir = v;
                 }
-
-                /**
-                 * Get the tab bar direction
-                 *
-                 * @type {("row"| "column")}
-                 * @memberof TabContainerTag
-                 */
                 get dir(): "row" | "column" {
                     return $(this).attr("dir") as any;
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Select a tab using the its tab data type.
                  * This will show the attached container to the tab
+                 * 
+                 * Getter:
+                 * 
+                 * Get the tab data of the currently selected Tab
                  *
                  * @memberof TabContainerTag
                  */
@@ -131,13 +136,6 @@ namespace OS {
                     $(v.container).show();
                     this.observable.trigger("resize", undefined);
                 }
-
-                /**
-                 * Get the tab data of the currently selected Tab
-                 *
-                 * @type {TabContainerTabType}
-                 * @memberof TabContainerTag
-                 */
                 get selectedTab(): TabContainerTabType {
                     return this._selectedTab;
                 }

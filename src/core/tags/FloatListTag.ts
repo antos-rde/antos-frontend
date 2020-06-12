@@ -49,12 +49,19 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Set the direction of the list item layout.
                  * Two directions are available:
                  * - `vertical`
                  * - `horizontal`
                  *
                  * This setter acts as a DOM attribute
+                 * 
+                 * Getter:
+                 * 
+                 * Get the currently set direction of list
+                 * item layout
                  *
                  * @memberof FloatListTag
                  */
@@ -62,14 +69,6 @@ namespace OS {
                     $(this).attr("dir", v);
                     this.calibrate();
                 }
-
-                /**
-                 * Get the currently set direction of list
-                 * item layout
-                 *
-                 * @type {string}
-                 * @memberof FloatListTag
-                 */
                 get dir(): string {
                     return $(this).attr("dir");
                 }

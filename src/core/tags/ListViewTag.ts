@@ -83,7 +83,9 @@ namespace OS {
                 }
 
                 /**
-                 * Turn on/off the `closable` feature of the list item
+                 * Setter: Turn on/off the `closable` feature of the list item
+                 *
+                 * Getter: Check whether the item is closable
                  *
                  * @memberof ListViewItemTag
                  */
@@ -95,13 +97,6 @@ namespace OS {
                         $(this.refs.btcl).hide();
                     }
                 }
-
-                /**
-                 * Check whether the item is closable
-                 *
-                 * @type {boolean}
-                 * @memberof ListViewItemTag
-                 */
                 get closable(): boolean {
                     return this.hasattr("closable");
                 }
@@ -115,7 +110,9 @@ namespace OS {
                 }
 
                 /**
-                 * select/unselect the current item
+                 * Setter: select/unselect the current item
+                 *
+                 * Getter: Check whether the current item is selected
                  *
                  * @memberof ListViewItemTag
                  */
@@ -129,13 +126,6 @@ namespace OS {
                     $(this.refs.item).addClass("selected");
                     this._onselect({ id: this.aid, data: this });
                 }
-
-                /**
-                 * Check whether the current item is selected
-                 *
-                 * @type {boolean}
-                 * @memberof ListViewItemTag
-                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
@@ -225,8 +215,14 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the data of the list item. This will
                  * trigger the [[ondatachange]] function
+                 *
+                 * Getter:
+                 *
+                 * Get the data of the current list item
                  *
                  * @memberof ListViewItemTag
                  */
@@ -234,13 +230,6 @@ namespace OS {
                     this._data = v;
                     this.ondatachange();
                 }
-
-                /**
-                 * Get the data of the current list item
-                 *
-                 * @type {GenericObject<any>}
-                 * @memberof ListViewItemTag
-                 */
                 get data(): GenericObject<any> {
                     return this._data;
                 }
@@ -509,7 +498,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * toggle between dropdown and traditional list
+                 * Setter: toggle between dropdown and traditional list
+                 *
+                 * Getter: Check whether the list is dropdown or traditional list
                  *
                  * @memberof ListViewTag
                  */
@@ -586,52 +577,45 @@ namespace OS {
                     this._onitemclose = v;
                 }
 
-                /**
-                 * Check whether the list is dropdown or traditional list
-                 *
-                 * @type {boolean}
-                 * @memberof ListViewTag
-                 */
                 get dropdown(): boolean {
                     return this.hasAttribute("dropdown");
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the default tag name of list's items.
                  * If the tag name is not specified in the
                  * data of a list item, this tag will be used
+                 *
+                 * Getter:
+                 *
+                 * Get the default tag name of list item
                  *
                  * @memberof ListViewTag
                  */
                 set itemtag(v: string) {
                     $(this).attr("itemtag", v);
                 }
-
-                /**
-                 * Get the default tag name of list item
-                 *
-                 * @type {string}
-                 * @memberof ListViewTag
-                 */
                 get itemtag(): string {
                     return $(this).attr("itemtag");
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Turn on/off of the `multiselect` feature
+                 *
+                 * Getter:
+                 *
+                 * Check whether multi-select is allowed
+                 * in this list
                  *
                  * @memberof ListViewTag
                  */
                 set multiselect(v: boolean) {
                     this.attsw(v, "multiselect");
                 }
-
-                /**
-                 * Check whether multi-select is allowed
-                 * in this list
-                 *
-                 * @memberof ListViewTag
-                 */
                 get multiselect() {
                     if (this.dropdown) {
                         return false;
@@ -640,20 +624,15 @@ namespace OS {
                 }
 
                 /**
-                 * Enable/disable drag and drop event in the list
+                 * Setter: Enable/disable drag and drop event in the list
+                 *
+                 * Getter: Check whether the drag and drop event is enabled
                  *
                  * @memberof ListViewTag
                  */
                 set dragndrop(v: boolean) {
                     this.attsw(v, "dragndrop");
                 }
-
-                /**
-                 * Check whether the drag and drop event is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof ListViewTag
-                 */
                 get dragndrop(): boolean {
                     return this.hasattr("dragndrop");
                 }
@@ -699,7 +678,9 @@ namespace OS {
                 }
 
                 /**
-                 * Get data of the list
+                 * Getter: Get data of the list
+                 *
+                 * Setter: Set data to the list
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof ListViewTag
@@ -707,12 +688,6 @@ namespace OS {
                 get data(): GenericObject<any>[] {
                     return this._data;
                 }
-
-                /**
-                 * Set data to the list
-                 *
-                 * @memberof ListViewTag
-                 */
                 set data(data: GenericObject<any>[]) {
                     this._data = data;
                     this._selectedItem = undefined;
@@ -740,7 +715,9 @@ namespace OS {
                 protected ondatachange(): void {}
 
                 /**
-                 * Select list item(s) by their indexes
+                 * Setter: Select list item(s) by their indexes
+                 *
+                 * Getter: Get the indexes of all selected items
                  *
                  * @memberof ListViewTag
                  */
@@ -793,12 +770,6 @@ namespace OS {
                     return this._selectedItems;
                 }
 
-                /**
-                 * Get the indexes of all selected items
-                 *
-                 * @type {(number | number[])}
-                 * @memberof ListViewTag
-                 */
                 get selected(): number | number[] {
                     if (this.multiselect) {
                         return this.selectedItems.map(function (

@@ -64,8 +64,14 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
+                 * Setter:
+                 * 
                  * Set the width of the tag, the tag width should be in form of:
                  * `100px` of `80%`
+                 * 
+                 * Getter:
+                 * 
+                 * Get the tag width
                  *
                  * @memberof OverlayTag
                  */
@@ -76,20 +82,19 @@ namespace OS {
                     this._width = v;
                     this.calibrate();
                 }
-
-                /**
-                 * Get the tag width
-                 *
-                 * @type {string}
-                 * @memberof OverlayTag
-                 */
                 get width(): string {
                     return this._width;
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Set the tag height, the tag height should be in form of:
                  * `100px` of `80%`
+                 * 
+                 * Getter:
+                 * 
+                 * Get the tag height
                  *
                  * @memberof OverlayTag
                  */
@@ -100,13 +105,6 @@ namespace OS {
                     this._height = v;
                     this.calibrate();
                 }
-
-                /**
-                 * Get the tag height
-                 *
-                 * @type {string}
-                 * @memberof OverlayTag
-                 */
                 get height(): string {
                     return this._height;
                 }

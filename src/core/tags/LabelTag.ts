@@ -102,7 +102,9 @@ namespace OS {
                 }
 
                 /**
-                 * Set the text of the label
+                 * Setter: Set the text of the label
+                 * 
+                 * Getter: Get the text displayed on the label
                  *
                  * @memberof LabelTag
                  */
@@ -115,13 +117,6 @@ namespace OS {
                         $(this.refs.text).hide();
                     }
                 }
-
-                /**
-                 * Get the text displayed on the label
-                 *
-                 * @type {(string| FormattedString)}
-                 * @memberof LabelTag
-                 */
                 get text(): string | FormattedString {
                     return this._text;
                 }

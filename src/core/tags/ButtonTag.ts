@@ -66,7 +66,9 @@ namespace OS {
                 }
 
                 /**
-                 * Set the text of the button
+                 * Setter: Set the text of the button
+                 *
+                 * Getter: Get the current button test
                  *
                  * @memberof ButtonTag
                  */
@@ -74,37 +76,28 @@ namespace OS {
                     (this.refs.label as LabelTag).text = v;
                 }
 
-                /**
-                 * Get the current button test
-                 *
-                 * @type {(string| FormattedString)}
-                 * @memberof ButtonTag
-                 */
                 get text(): string | FormattedString {
                     return (this.refs.label as LabelTag).text;
                 }
 
                 /**
-                 * Enable or disable the button
+                 * Setter: Enable or disable the button
+                 *
+                 * Getter: Get the `enable` property of the button
                  *
                  * @memberof ButtonTag
                  */
                 set enable(v: boolean) {
                     $(this.refs.button).prop("disabled", !v);
                 }
-
-                /**
-                 * Get the `enable` property of the button
-                 *
-                 * @type {boolean}
-                 * @memberof ButtonTag
-                 */
                 get enable(): boolean {
                     return !$(this.refs.button).prop("disabled");
                 }
 
                 /**
-                 * set or remove the attribute `selected` of the button
+                 * Setter: set or remove the attribute `selected` of the button
+                 *
+                 * Getter: check whether the attribute `selected` of the button is set
                  *
                  * @memberof ButtonTag
                  */
@@ -115,32 +108,20 @@ namespace OS {
                         $(this.refs.button).addClass("selected");
                     }
                 }
-
-                /**
-                 * check whether the attribute `selected` of the button is set
-                 *
-                 * @type {boolean}
-                 * @memberof ButtonTag
-                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
 
                 /**
-                 * activate or deactivate the toggle mode of the button
+                 * Setter: activate or deactivate the toggle mode of the button
+                 *
+                 * Getter: Check whether the button is in toggle mode
                  *
                  * @memberof ButtonTag
                  */
                 set toggle(v: boolean) {
                     this.attsw(v, "toggle");
                 }
-
-                /**
-                 * Check whether the button is in toggle mode
-                 *
-                 * @type {boolean}
-                 * @memberof ButtonTag
-                 */
                 get toggle(): boolean {
                     return this.hasattr("toggle");
                 }

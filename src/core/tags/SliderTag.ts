@@ -100,7 +100,9 @@ namespace OS {
                 }
 
                 /**
-                 * Enable/disable the slider
+                 * Setter: Enable/disable the slider
+                 * 
+                 * Getter: Check whether the slider is enabled
                  *
                  * @memberof SliderTag
                  */
@@ -119,19 +121,14 @@ namespace OS {
                         $(this).unbind("mouseover").unbind("mouseout");
                     }
                 }
-
-                /**
-                 * Check whether the slider is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof SliderTag
-                 */
                 get enable(): boolean {
                     return this.hasattr("enable");
                 }
 
                 /**
-                 * Set the slider value
+                 * Setter: Set the slider value
+                 * 
+                 * Getter: Get the current slider value
                  *
                  * @memberof SliderTag
                  */
@@ -139,19 +136,14 @@ namespace OS {
                     this._value = v;
                     this.calibrate();
                 }
-
-                /**
-                 * Get the current slider value
-                 *
-                 * @type {number}
-                 * @memberof SliderTag
-                 */
                 get value(): number {
                     return this._value;
                 }
 
                 /**
-                 * Set the maximum value of the slider
+                 * Setter: Set the maximum value of the slider
+                 * 
+                 * Getter: Get the maximum value of the slider
                  *
                  * @memberof SliderTag
                  */
@@ -159,13 +151,6 @@ namespace OS {
                     this._max = v;
                     this.calibrate();
                 }
-
-                /**
-                 * Get the maximum value of the slider
-                 *
-                 * @type {number}
-                 * @memberof SliderTag
-                 */
                 get max(): number {
                     return this._max;
                 }

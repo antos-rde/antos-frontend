@@ -1,10 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -24,9 +17,16 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 
 namespace OS {
+    /**
+     * This namespace is dedicated to application and service definition.
+     * When an application is loaded, its prototype definition will be
+     * inserted to this namespace for reuse lately
+     */
     export namespace application {
         /**
-         *
+         * Abstract prototype of all AntOS application.
+         * Any new application definition should extend
+         * this prototype
          *
          * @export
          * @abstract
@@ -34,15 +34,46 @@ namespace OS {
          * @extends {BaseModel}
          */
         export abstract class BaseApplication extends BaseModel {
+            /**
+             * Placeholder of all settings specific to the application.
+             * The settings stored in this object will be saved to system
+             * setting when logout and can be reused in the next login session
+             *
+             * @type {GenericObject<any>}
+             * @memberof BaseApplication
+             */
             setting: GenericObject<any>;
+
+            /**
+             * Hotkeys (shortcuts) defined for this application
+             *
+             * @protected
+             * @type {GUI.ShortcutType}
+             * @memberof BaseApplication
+             */
             protected keycomb: GUI.ShortcutType;
+
+            /**
+             * Reference to the system dock
+             *
+             * @type {GUI.tag.AppDockTag}
+             * @memberof BaseApplication
+             */
             sysdock: GUI.tag.AppDockTag;
+
+            /**
+             * Reference to the system application menu located
+             * on the system panel
+             *
+             * @type {GUI.tag.MenuTag}
+             * @memberof BaseApplication
+             */
             appmenu: GUI.tag.MenuTag;
 
             /**
              *Creates an instance of BaseApplication.
-             * @param {string} name
-             * @param {AppArgumentsType[]} args
+             * @param {string} name application name
+             * @param {AppArgumentsType[]} args application arguments
              * @memberof BaseApplication
              */
             constructor(name: string, args: AppArgumentsType[]) {
@@ -62,11 +93,15 @@ namespace OS {
                         this.applySetting(m.data.m);
                     }
                 });
-                
             }
 
             /**
+             * Init the application, this function is called when the
+             * application process is called and docked the the application
+             * dock.
              *
+             * The application UI will be rendered after the execution
+             * of this function.
              *
              * @returns {void}
              * @memberof BaseApplication
@@ -78,10 +113,12 @@ namespace OS {
                 this.on("focus", () => {
                     this.sysdock.selectedApp = this;
                     this.appmenu.pid = this.pid;
-                    this.appmenu.items= this.baseMenu() || [];
-                    this.appmenu.onmenuselect=(d: GUI.tag.MenuEventData): void => {
-                            return this.trigger("menuselect", d);
-                        }
+                    this.appmenu.items = this.baseMenu() || [];
+                    this.appmenu.onmenuselect = (
+                        d: GUI.tag.MenuEventData
+                    ): void => {
+                        return this.trigger("menuselect", d);
+                    };
                     if (this.dialog) {
                         return this.dialog.show();
                     }
@@ -107,9 +144,9 @@ namespace OS {
                 return this.loadScheme();
             }
 
-            
             /**
-             *
+             * Render the application UI by first loading its scheme
+             * and then mount this scheme to the DOM tree
              *
              * @protected
              * @returns {void}
@@ -121,12 +158,14 @@ namespace OS {
                 return this.render(path);
             }
 
-            
             /**
-             *
+             * API function to perform an heavy task.
+             * This function will trigger the global `loading`
+             * event at the beginning of the task, and the `loaded`
+             * event after finishing the task
              *
              * @protected
-             * @param {Promise<any>} promise
+             * @param {Promise<any>} promise the promise on a task to be performed
              * @returns {Promise<any>}
              * @memberof BaseApplication
              */
@@ -145,17 +184,21 @@ namespace OS {
                 });
             }
 
-            
             /**
-             *
+             * Bind a hotkey to the application, this function
+             * is used to define application keyboard shortcut
              *
              * @protected
-             * @param {string} k
-             * @param {(e: JQuery.MouseDownEvent) => void} f
+             * @param {string} k the hotkey to bind, should be in the following
+             * format: `[ALT|SHIFT|CTRL|META]-KEY`, e.g. `CTRL-S`
+             * @param {(e: JQuery.KeyboardEventBase) => void} f the callback function
              * @returns {void}
              * @memberof BaseApplication
              */
-            protected bindKey(k: string, f: (e: JQuery.MouseDownEvent) => void): void {
+            protected bindKey(
+                k: string,
+                f: (e: JQuery.KeyboardEventBase) => void
+            ): void {
                 const arr = k.split("-");
                 if (arr.length !== 2) {
                     return;
@@ -168,12 +211,12 @@ namespace OS {
                 this.keycomb[fnk][c] = f;
             }
 
-            
             /**
-             *
+             * Update the application local from the system
+             * locale or application specific locale configuration
              *
              * @private
-             * @param {string} name
+             * @param {string} name locale name e.g. `en_GB`
              * @returns {void}
              * @memberof BaseApplication
              */
@@ -194,19 +237,16 @@ namespace OS {
             }
 
             /**
+             * Execute the callback subscribed to a
+             * keyboard shortcut
              *
-             *
-             * @param {string} fnk
-             * @param {string} c
-             * @param {JQuery.MouseDownEvent} e
-             * @returns {boolean}
+             * @param {string} fnk meta or modifier key e.g. `CTRL`, `ALT`, `SHIFT` or `META`
+             * @param {string} c a regular key
+             * @param {JQuery.KeyboardEventBase} e JQuery keyboard event
+             * @returns {boolean} return whether the shortcut is executed
              * @memberof BaseApplication
              */
-            shortcut(
-                fnk: string,
-                c: string,
-                e: JQuery.KeyDownEvent
-            ): boolean {
+            shortcut(fnk: string, c: string, e: JQuery.KeyDownEvent): boolean {
                 if (!this.keycomb[fnk]) {
                     return true;
                 }
@@ -217,19 +257,17 @@ namespace OS {
                 return false;
             }
 
-            
             /**
-             *
+             * Apply a setting to the application
              *
              * @protected
-             * @param {string} k
+             * @param {string} k the setting name
              * @memberof BaseApplication
              */
             protected applySetting(k: string): void {}
 
-            
             /**
-             *
+             * Apply all settings to the application
              *
              * @protected
              * @memberof BaseApplication
@@ -241,13 +279,13 @@ namespace OS {
                 }
             }
 
-            
             /**
-             *
+             * Set a setting value to the application setting
+             * registry
              *
              * @protected
-             * @param {string} k
-             * @param {*} v
+             * @param {string} k setting name
+             * @param {*} v setting value
              * @returns {void}
              * @memberof BaseApplication
              */
@@ -257,7 +295,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Show the appliation
              *
              * @returns {void}
              * @memberof BaseApplication
@@ -267,7 +305,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Blur the application
              *
              * @returns {void}
              * @memberof BaseApplication
@@ -280,7 +318,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Hide the application
              *
              * @returns {void}
              * @memberof BaseApplication
@@ -290,7 +328,8 @@ namespace OS {
             }
 
             /**
-             *
+             * Maximize or restore the application window size
+             * and its position
              *
              * @returns {void}
              * @memberof BaseApplication
@@ -300,21 +339,23 @@ namespace OS {
             }
 
             /**
-             *
+             * Get the application title
              *
              * @returns {(string| FormattedString)}
              * @memberof BaseApplication
              */
-            title(): string| FormattedString {
+            title(): string | FormattedString {
                 return (this.scheme as GUI.tag.WindowTag).apptitle;
             }
 
-            
             /**
+             * Function called when the application exit.
+             * If the input exit event is prevented, the application
+             * process will not be killed
              *
              *
              * @protected
-             * @param {BaseEvent} evt
+             * @param {BaseEvent} evt exit event
              * @memberof BaseApplication
              */
             protected onexit(evt: BaseEvent): void {
@@ -328,7 +369,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Get the application meta-data
              *
              * @returns {API.PackageMetaType}
              * @memberof BaseApplication
@@ -337,9 +378,11 @@ namespace OS {
                 return application[this.name].meta;
             }
 
-            
             /**
-             *
+             * Base menu definition. This function
+             * return the based menu definition of all applications.
+             * Other application specific menu entries
+             * should be defined in [[menu]] function
              *
              * @protected
              * @returns {GUI.BasicItemType[]}
@@ -360,18 +403,17 @@ namespace OS {
             }
 
             /**
-             *
+             * The main application entry that is called after
+             * the application UI is rendered. This application
+             * must be implemented by all subclasses
              *
              * @abstract
              * @memberof BaseApplication
              */
             abstract main(): void;
-            //main program
-            // implement by subclasses
 
-            
             /**
-             *
+             * Application specific menu definition
              *
              * @protected
              * @returns {GUI.BasicItemType[]}
@@ -383,9 +425,11 @@ namespace OS {
                 return [];
             }
 
-            
             /**
-             *
+             * The cleanup function that is called by [[onexit]] function.
+             * Application need to override this function to perform some
+             * specific task before exiting or to prevent the application
+             * to be exited
              *
              * @protected
              * @param {BaseEvent} e

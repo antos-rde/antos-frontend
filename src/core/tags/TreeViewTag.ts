@@ -110,7 +110,7 @@ namespace OS {
                 /**
                  * Placeholder for the `fetch` function of the node.
                  * This function is used to fetch the child nodes of the
-                 * current nodes. This function should a promise on
+                 * current nodes. This function should return a promise on
                  * a list of [[TreeViewDataType]]
                  *
                  * @memberof TreeViewItemPrototype
@@ -161,8 +161,14 @@ namespace OS {
                 }
 
                 /**
-                 * Set the data of the current node. This wll trigger the
+                 * Setter:
+                 *
+                 * Set the data of the current node. This will trigger the
                  * [[ondatachange]] function
+                 *
+                 * Getter:
+                 *
+                 * Get the current node's data
                  *
                  * @memberof TreeViewItemPrototype
                  */
@@ -179,21 +185,20 @@ namespace OS {
                     v.domel = this;
                     this.ondatachange();
                 }
-
-                /**
-                 * Get the current node's data
-                 *
-                 * @type {TreeViewDataType}
-                 * @memberof TreeViewItemPrototype
-                 */
                 get data(): TreeViewDataType {
                     return this._data;
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Select or unselect the current node.
                  * This will trigger the item select event
                  * on the tree root if the parameter is `true`
+                 *
+                 * Getter:
+                 *
+                 * Check whether the current node is selected
                  *
                  * @memberof TreeViewItemPrototype
                  */
@@ -212,21 +217,20 @@ namespace OS {
                         $(this.refs.wrapper).addClass("afx_tree_item_selected");
                     }
                 }
-
-                /**
-                 * Check whether the current node is selected
-                 *
-                 * @type {boolean}
-                 * @memberof TreeViewItemPrototype
-                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Refresh the current node and expands its sub tree.
                  * This function only works if the current node is not
                  * a leaf node
+                 *
+                 * Getter:
+                 *
+                 * Check whether the current node is expanded
                  *
                  * @memberof TreeViewItemPrototype
                  */
@@ -265,18 +269,13 @@ namespace OS {
                         );
                     }
                 }
-
-                /**
-                 * Check whether the current node is expanded
-                 *
-                 * @type {boolean}
-                 * @memberof TreeViewItemPrototype
-                 */
                 get open(): boolean {
                     return this.hasattr("open");
                 }
                 /**
-                 * Get the current indent level
+                 * Setter: Set the current indent level of this node from the root node
+                 *
+                 * Getter: Get the current indent level
                  *
                  * @type {number}
                  * @memberof TreeViewItemPrototype
@@ -284,12 +283,6 @@ namespace OS {
                 get indent(): number {
                     return this._indent;
                 }
-
-                /**
-                 * Set the current indent level of this node from the root node
-                 *
-                 * @memberof TreeViewItemPrototype
-                 */
                 set indent(v: number) {
                     if (!v) {
                         return;
@@ -320,7 +313,9 @@ namespace OS {
                 }
 
                 /**
-                 * Get the child nodes data of the current node
+                 * Getter: Get the child nodes data of the current node
+                 *
+                 * Setter: Set the child nodes data of the current node
                  *
                  * @type {TreeViewDataType[]}
                  * @memberof TreeViewItemPrototype
@@ -329,12 +324,6 @@ namespace OS {
                     if (!this._data) return undefined;
                     return this._data.nodes;
                 }
-
-                /**
-                 * Set the child nodes data of the current node
-                 *
-                 * @memberof TreeViewItemPrototype
-                 */
                 set nodes(nodes: TreeViewDataType[]) {
                     if (!nodes || !this.data) {
                         return;
@@ -523,7 +512,7 @@ namespace OS {
              */
             export class TreeViewTag extends AFXTag {
                 /**
-                 * Reference the the selected node
+                 * Reference to the selected node
                  *
                  * @private
                  * @type {TreeViewItemPrototype}
@@ -646,7 +635,7 @@ namespace OS {
                 /**
                  * Placeholder for the `fetch` function of the tree.
                  * This function is used to fetch the child nodes of the
-                 * current tree. This function should a promise on
+                 * current tree. This function should return a promise on
                  * a list of [[TreeViewDataType]]
                  *
                  * @memberof TreeViewItemPrototype
@@ -700,20 +689,15 @@ namespace OS {
                  */
                 protected reload(d?: any): void {}
                 /**
-                 * Enable/disable drag and drop event on the tree
+                 * Setter: Enable/disable drag and drop event on the tree
+                 *
+                 * Getter: Check whether the drag and drop event is enabled
                  *
                  * @memberof TreeViewTag
                  */
                 set dragndrop(v: boolean) {
                     this.attsw(v, "dragndrop");
                 }
-
-                /**
-                 * Check whether the drag and drop event is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof TreeViewTag
-                 */
                 get dragndrop(): boolean {
                     return this.hasattr("dragndrop");
                 }
@@ -737,24 +721,23 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the default tag name of the tree node.
                  * If there is no tag name in the node data,
                  * this value will be used when creating node.
                  *
                  * Defaut to `afx-tree-view-item`
                  *
+                 * Getter:
+                 *
+                 * Get the default node tag name
+                 *
                  * @memberof TreeViewTag
                  */
                 set itemtag(v: string) {
                     $(this).attr("itemtag", v);
                 }
-
-                /**
-                 * Get the default node tag name
-                 *
-                 * @type {string}
-                 * @memberof TreeViewTag
-                 */
                 get itemtag(): string {
                     return $(this).attr("itemtag");
                 }
@@ -771,7 +754,9 @@ namespace OS {
                 }
 
                 /**
-                 * Get the DOM element of the selected node
+                 * Setter: Set the selected node using its DOM element
+                 *
+                 * Getter: Get the DOM element of the selected node
                  *
                  * @type {TreeViewItemPrototype}
                  * @memberof TreeViewTag
@@ -779,12 +764,6 @@ namespace OS {
                 get selectedItem(): TreeViewItemPrototype {
                     return this._selectedItem;
                 }
-
-                /**
-                 * Set the selected node using its DOM element
-                 *
-                 * @memberof TreeViewTag
-                 */
                 set selectedItem(v: TreeViewItemPrototype) {
                     if (!v) {
                         return;
@@ -887,8 +866,14 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the tree data. This operation will create
                  * all tree node elements of the current tree
+                 *
+                 * Getter:
+                 *
+                 * Get the tree data
                  *
                  * @memberof TreeViewTag
                  */
@@ -923,13 +908,6 @@ namespace OS {
                         }
                     }
                 }
-
-                /**
-                 * Get the tree data
-                 *
-                 * @type {TreeViewDataType}
-                 * @memberof TreeViewTag
-                 */
                 get data(): TreeViewDataType {
                     return this._data;
                 }

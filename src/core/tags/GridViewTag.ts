@@ -163,8 +163,14 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set the data of the cell, this will trigger
                  * the [[ondatachange]] function
+                 *
+                 * Getter:
+                 *
+                 * Get the current cell data placeholder
                  *
                  * @memberof GridCellPrototype
                  */
@@ -177,21 +183,20 @@ namespace OS {
                     }
                     this.selected = v.selected;
                 }
-
-                /**
-                 * Get the current cell data placeholder
-                 *
-                 * @type {GenericObject<any>}
-                 * @memberof GridCellPrototype
-                 */
                 get data(): GenericObject<any> {
                     return this._data;
                 }
 
                 /**
+                 * Setter:
+                 *
                  * Set/unset the current cell as selected.
                  * This will trigger the [[cellselect]]
                  * event
+                 *
+                 * Getter:
+                 *
+                 * Check whether the current cell is selected
                  *
                  * @memberof GridCellPrototype
                  */
@@ -203,13 +208,6 @@ namespace OS {
                     }
                     this.cellselect({ id: this.aid, data: this }, false);
                 }
-
-                /**
-                 * Check whether the current cell is selected
-                 *
-                 * @type {boolean}
-                 * @memberof GridCellPrototype
-                 */
                 get selected(): boolean {
                     return this.hasattr("selected");
                 }
@@ -487,45 +485,37 @@ namespace OS {
                 }
 
                 /**
-                 * set the tag name of the header cells
+                 * Setter: set the tag name of the header cells
+                 *
+                 * Getter: get the grid header tag name
                  *
                  * @memberof GridViewTag
                  */
                 set headeritem(v: string) {
                     $(this).attr("headeritem", v);
                 }
-
-                /**
-                 * get the grid header tag name
-                 *
-                 * @type {string}
-                 * @memberof GridViewTag
-                 */
                 get headeritem(): string {
                     return $(this).attr("headeritem");
                 }
 
                 /**
-                 * set the tag name of the grid cell
+                 * Setter: set the tag name of the grid cell
+                 *
+                 * Getter: get the tag name of the grid cell
                  *
                  * @memberof GridViewTag
                  */
                 set cellitem(v: string) {
                     $(this).attr("cellitem", v);
                 }
-
-                /**
-                 * get the tag name of the grid cell
-                 *
-                 * @type {string}
-                 * @memberof GridViewTag
-                 */
                 get cellitem(): string {
                     return $(this).attr("cellitem");
                 }
 
                 /**
-                 * get the header data placeholder
+                 * Setter: set the header data
+                 *
+                 * Getter: get the header data placeholder
                  *
                  * @type {GenericObject<any>[]}
                  * @memberof GridViewTag
@@ -533,12 +523,6 @@ namespace OS {
                 get header(): GenericObject<any>[] {
                     return this._header;
                 }
-
-                /**
-                 * the set the header data
-                 *
-                 * @memberof GridViewTag
-                 */
                 set header(v: GenericObject<any>[]) {
                     this._header = v;
                     if (!v || v.length === 0) {
@@ -592,7 +576,9 @@ namespace OS {
                 }
 
                 /**
-                 * set the rows data
+                 * Setter: set the rows data
+                 *
+                 * Getter: get the rows data
                  *
                  * @memberof GridViewTag
                  */
@@ -601,31 +587,20 @@ namespace OS {
                     this._rows = rows;
                     rows.map((row) => this.push(row, false));
                 }
-
-                /**
-                 * get the rows data
-                 *
-                 * @type {GenericObject<any>[][]}
-                 * @memberof GridViewTag
-                 */
                 get rows(): GenericObject<any>[][] {
                     return this._rows;
                 }
 
                 /**
-                 * activate deactivate multi-select
+                 * Setter: activate deactivate multi-select
+                 *
+                 * Getter: check whether the `multiselect` option is activated
                  *
                  * @memberof GridViewTag
                  */
                 set multiselect(v: boolean) {
                     this.attsw(v, "multiselect");
                 }
-
-                /**
-                 * check whether the `multiselect` option is activated
-                 * @type {boolean}
-                 * @memberof GridViewTag
-                 */
                 get multiselect(): boolean {
                     return this.hasattr("multiselect");
                 }

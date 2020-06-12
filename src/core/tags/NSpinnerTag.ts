@@ -149,7 +149,9 @@ namespace OS {
                 }
 
                 /**
-                 * Set the spinner value
+                 * Setter: Set the spinner value
+                 *
+                 * Getter: Get the spinner value
                  *
                  * @memberof NSpinnerTag
                  */
@@ -160,13 +162,6 @@ namespace OS {
                     this._onchange(evt);
                     this.observable.trigger("nspin", evt);
                 }
-
-                /**
-                 * Get the spinner value
-                 *
-                 * @type {number}
-                 * @memberof NSpinnerTag
-                 */
                 get value(): number {
                     return this._value;
                 }

@@ -120,7 +120,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * Set the window width
+                 * Setter: Set the window width
+                 *
+                 * Getter: Get the window width
                  *
                  * @memberof WindowTag
                  */
@@ -131,19 +133,14 @@ namespace OS {
                     }
                     this.setsize({ w: v, h: this.height });
                 }
-
-                /**
-                 * Get the window width
-                 *
-                 * @type {number}
-                 * @memberof WindowTag
-                 */
                 get width(): number {
                     return this._width;
                 }
 
                 /**
-                 * Set the window height
+                 * Setter: Set the window height
+                 *
+                 * Getter: Get the window height
                  *
                  * @memberof WindowTag
                  */
@@ -157,19 +154,14 @@ namespace OS {
                         h: v,
                     });
                 }
-
-                /**
-                 * Get the window height
-                 *
-                 * @type {number}
-                 * @memberof WindowTag
-                 */
                 get height(): number {
                     return this._height;
                 }
 
                 /**
-                 * enable/disable window minimizable
+                 * Setter: enable/disable window minimizable
+                 *
+                 * getter: Check whether the window is minimizable
                  *
                  * @memberof WindowTag
                  */
@@ -181,19 +173,14 @@ namespace OS {
                         $(this.refs["minbt"]).hide();
                     }
                 }
-
-                /**
-                 * Check whether the window is minimizable
-                 *
-                 * @type {boolean}
-                 * @memberof WindowTag
-                 */
                 get minimizable(): boolean {
                     return this.hasattr("minimizable");
                 }
 
                 /**
-                 * enable/disable widow resizable
+                 * Setter: enable/disable widow resizable
+                 *
+                 * Getter: Check whether the current window is resizable
                  *
                  * @memberof WindowTag
                  */
@@ -207,19 +194,14 @@ namespace OS {
                         $(this.refs["grip"]).hide();
                     }
                 }
-
-                /**
-                 * Check whether the current window is resizable
-                 *
-                 * @type {boolean}
-                 * @memberof WindowTag
-                 */
                 get resizable(): boolean {
                     return this.hasattr("resizable");
                 }
 
                 /**
-                 * Set the window title
+                 * Setter: Set the window title
+                 *
+                 * Getter: Get window title
                  *
                  * @memberof WindowTag
                  */
@@ -229,13 +211,6 @@ namespace OS {
                         (this.refs["txtTitle"] as LabelTag).text = v;
                     }
                 }
-
-                /**
-                 * Get window title
-                 *
-                 * @type {(string| FormattedString)}
-                 * @memberof WindowTag
-                 */
                 get apptitle(): string | FormattedString {
                     return $(this).attr("apptitle");
                 }

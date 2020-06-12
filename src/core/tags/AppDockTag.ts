@@ -119,10 +119,17 @@ namespace OS {
                 }
 
                 /**
-                 * Setter to set the selected application in the dock
+                 * Setter:
+                 *
+                 * set the selected application in the dock
                  * this will trigger two event:
                  * - `focus`: on the selected application
                  * - `blur`: on all other applications on the dock
+                 *
+                 * Getter:
+                 *
+                 *  Get the current selected application
+                 * on the dock
                  *
                  * @memberof AppDockTag
                  */
@@ -143,13 +150,6 @@ namespace OS {
                     ($(Ant.OS.GUI.workspace)[0] as FloatListTag).unselect();
                 }
 
-                /**
-                 * getter to get the current selected application
-                 * on the dock
-                 *
-                 * @type {BaseApplication}
-                 * @memberof AppDockTag
-                 */
                 get selectedApp(): application.BaseApplication {
                     return this._selectedApp;
                 }

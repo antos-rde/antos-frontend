@@ -81,22 +81,21 @@ namespace OS {
                  */
                 protected reload(d?: any): void {}
                 /**
+                 * Setter:
+                 * 
                  * Set resize direction, two possible values:
                  * - `hz` - horizontal direction, resize by width
                  * - `ve` - vertical direction, resize by height
+                 * 
+                 * Getter:
+                 * 
+                 * Get the resize direction
                  *
                  * @memberof ResizerTag
                  */
                 set dir(v: string) {
                     $(this).attr("dir", v);
                 }
-
-                /**
-                 * Get the resize direction
-                 *
-                 * @type {string}
-                 * @memberof ResizerTag
-                 */
                 get dir(): string {
                     return $(this).attr("dir");
                 }

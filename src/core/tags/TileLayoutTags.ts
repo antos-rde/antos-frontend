@@ -40,7 +40,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * Set the name of the tile container, should be: `hbox` or `vbox`
+                 * Setter: Set the name of the tile container, should be: `hbox` or `vbox`
+                 * 
+                 * Getter: Get the name of the tile container
                  *
                  * @memberof TileLayoutTag
                  */
@@ -54,21 +56,20 @@ namespace OS {
                         .addClass(`afx-${v}-container`);
                     this.calibrate();
                 }
-
-                /**
-                 * Get the name of the tile container
-                 *
-                 * @type {string}
-                 * @memberof TileLayoutTag
-                 */
                 get name(): string {
                     return $(this).attr("name");
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * SET the layout direction, should be:
                  * - `row`: horizontal direction
                  * - `column`: vertical direction
+                 * 
+                 * Getter:
+                 * 
+                 * Get layout direction
                  *
                  * @memberof TileLayoutTag
                  */
@@ -80,13 +81,6 @@ namespace OS {
                     $(this.refs.yield).css("flex-direction", v);
                     this.calibrate();
                 }
-
-                /**
-                 * Get layout direction
-                 *
-                 * @type {("row"| "column")}
-                 * @memberof TileLayoutTag
-                 */
                 get dir(): "row" | "column" {
                     return $(this).attr("dir") as any;
                 }

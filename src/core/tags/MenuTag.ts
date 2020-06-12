@@ -89,25 +89,22 @@ namespace OS {
                 }
 
                 /**
-                 * Set the `sub menu entry select` event handle
+                 * Setter: Set the `sub menu entry select` event handle
+                 * 
+                 * Getter: get the current `sub menu entry select` event handle
                  *
                  * @memberof MenuEntryTag
                  */
                 set onchildselect(v: TagEventCallback<MenuEventData>) {
                     this._onchildselect = v;
                 }
-
-                /**
-                 * get the current `sub menu entry select` event handle
-                 *
-                 * @type {TagEventCallback}
-                 * @memberof MenuEntryTag
-                 */
                 get onchildselect(): TagEventCallback<MenuEventData> {
                     return this._onchildselect;
                 }
                 /**
-                 * Set data to the entry
+                 * Setter: Set data to the entry
+                 * 
+                 * Getter: Get data of the current menu entry
                  *
                  * @memberof MenuEntryTag
                  */
@@ -115,13 +112,6 @@ namespace OS {
                     this._data = data;
                     this.set(data);
                 }
-
-                /**
-                 * Get data of the current menu entry
-                 *
-                 * @type {GenericObject<any>}
-                 * @memberof MenuEntryTag
-                 */
                 get data(): GenericObject<any> {
                     return this._data;
                 }
@@ -180,7 +170,9 @@ namespace OS {
                 }
 
                 /**
-                 * Set the sub-menu data
+                 * Setter: Set the sub-menu data
+                 * 
+                 * Getter: Get the sub-menu data
                  *
                  * @memberof MenuEntryTag
                  */
@@ -204,13 +196,6 @@ namespace OS {
                         });
                     }
                 }
-
-                /**
-                 * Get the sub-menu data
-                 *
-                 * @type {GenericObject<any>[]}
-                 * @memberof MenuEntryTag
-                 */
                 get nodes(): GenericObject<any>[] {
                     if (this.data && this.data.nodes) {
                         return this.data.nodes;
@@ -333,7 +318,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * Turn on/off the checker feature of the menu entry
+                 * Setter: Turn on/off the checker feature of the menu entry
+                 * 
+                 * Getter: Check whether the checker feature is enabled on this menu entry
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -345,19 +332,14 @@ namespace OS {
                         $(this.refs.switch).hide();
                     }
                 }
-
-                /**
-                 * Check whether the checker feature is enabled on this menu entry
-                 *
-                 * @type {boolean}
-                 * @memberof SimpleMenuEntryTag
-                 */
                 get switch(): boolean {
                     return this.hasattr("switch");
                 }
 
                 /**
-                 * Turn on/off the radio feature of the menu entry
+                 * Setter: Turn on/off the radio feature of the menu entry
+                 * 
+                 * Getter: Check whether the radio feature is enabled
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -369,21 +351,20 @@ namespace OS {
                         $(this.refs.switch).hide();
                     }
                 }
-
-                /**
-                 * Check whether the radio feature is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof SimpleMenuEntryTag
-                 */
                 get radio(): boolean {
                     return this.hasattr("radio");
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Toggle the switch on the menu entry, this setter
                  * only works when the `checker` or `radio` feature is
                  * enabled
+                 * 
+                 * Getter:
+                 * 
+                 * Check whether the switch is turned on
                  *
                  * @memberof SimpleMenuEntryTag
                  */
@@ -395,13 +376,6 @@ namespace OS {
                     }
                     (this.refs.switch as SwitchTag).swon = v;
                 }
-
-                /**
-                 * Check whether the switch is turned on
-                 *
-                 * @type {boolean}
-                 * @memberof SimpleMenuEntryTag
-                 */
                 get checked(): boolean {
                     return this.hasattr("checked");
                 }
@@ -623,7 +597,9 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * Set the menu items data
+                 * Setter: Set the menu items data
+                 * 
+                 * Getter: Get menu items data
                  *
                  * @memberof MenuTag
                  */
@@ -632,19 +608,14 @@ namespace OS {
                     $(this.refs.container).empty();
                     data.map((item) => this.push(item, false));
                 }
-
-                /**
-                 * Get menu items data
-                 *
-                 * @type {GenericObject<any>[]}
-                 * @memberof MenuTag
-                 */
                 get items(): GenericObject<any>[] {
                     return this._items;
                 }
 
                 /**
-                 * Set whether the current menu is a context menu
+                 * Setter: Set whether the current menu is a context menu
+                 * 
+                 * Getter: Check whether the current menu is a context menu
                  *
                  * @memberof MenuTag
                  */
@@ -657,13 +628,6 @@ namespace OS {
                     $(this.refs.wrapper).addClass("context");
                     $(this).hide();
                 }
-
-                /**
-                 * Check whether the current menu is a context menu
-                 *
-                 * @type {boolean}
-                 * @memberof MenuTag
-                 */
                 get context(): boolean {
                     return this.hasattr("context");
                 }
@@ -678,22 +642,21 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 * 
                  * Set the default tag name of the menu item.
                  * If the tag is not specified in an item data,
                  * this value will be used
+                 * 
+                 * Getter:
+                 * 
+                 * Get the default menu entry tag name
                  *
                  * @memberof MenuTag
                  */
                 set contentag(v: string) {
                     $(this).attr("contentag", v);
                 }
-
-                /**
-                 * Get the default menu entry tag name
-                 *
-                 * @type {string}
-                 * @memberof MenuTag
-                 */
                 get contentag(): string {
                     return $(this).attr("contentag");
                 }

@@ -1,10 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -26,45 +19,91 @@
 namespace OS {
     export namespace API {
         /**
-         *
+         * Observable entry type definition
          *
          * @export
          * @interface ObservableEntryType
          */
         export interface ObservableEntryType {
+            /**
+             * A Set of callbacks that should be called only once.
+             * These callbacks will be removed after the first
+             * occurrence of the corresponding event
+             *
+             * @memberof ObservableEntryType
+             */
             one: Set<(d: any) => void>;
+
+            /**
+             * A Set of callbacks that should be called
+             * every time the corresponding event is triggered
+             *
+             * @memberof ObservableEntryType
+             */
             many: Set<(d: any) => void>;
         }
 
         /**
-         *
+         * Announcement listener type definition
          *
          * @export
          * @interface AnnouncerListenerType
          */
         export interface AnnouncerListenerType {
             [index: number]: {
+                /**
+                 * The event name
+                 *
+                 * @type {string}
+                 */
                 e: string;
+
+                /**
+                 * The event callback
+                 *
+                 */
                 f: (d: any) => void;
             }[];
         }
 
         /**
-         *
-         *
+         * This class is the based class used in AntOS event
+         * announcement system.
+         * It implements the observer pattern using simple
+         * subscribe/publish mechanism
          * @export
          * @class Announcer
          */
         export class Announcer {
+            /**
+             * The observable object that stores event name
+             * and its corresponding callback in [[ObservableEntryType]]
+             *
+             * @type {GenericObject<ObservableEntryType>}
+             * @memberof Announcer
+             */
             observable: GenericObject<ObservableEntryType>;
+
+            /**
+             * Enable/disable the announcer
+             *
+             * @type {boolean}
+             * @memberof Announcer
+             */
             enable: boolean;
+
+            /**
+             *Creates an instance of Announcer.
+             * @memberof Announcer
+             */
             constructor() {
                 this.observable = {};
                 this.enable = true;
             }
 
             /**
-             *
+             * Disable the announcer, when this function is called
+             * all events and their callbacks will be removed
              *
              * @returns
              * @memberof Announcer
@@ -75,10 +114,11 @@ namespace OS {
             }
 
             /**
+             * Subscribe to an event, the callback will be called
+             * every time the corresponding event is trigged
              *
-             *
-             * @param {string} evtName
-             * @param {(d: any) => void} callback
+             * @param {string} evtName event name
+             * @param {(d: any) => void} callback The corresponding callback
              * @returns {void}
              * @memberof Announcer
              */
@@ -96,10 +136,11 @@ namespace OS {
             }
 
             /**
+             * Subscribe to an event, the callback will
+             * be called only once and then removed from the announcer
              *
-             *
-             * @param {string} evtName
-             * @param {(d: any) => void} callback
+             * @param {string} evtName event name
+             * @param {(d: any) => void} callback the corresponding callback
              * @returns {void}
              * @memberof Announcer
              */
@@ -117,10 +158,12 @@ namespace OS {
             }
 
             /**
+             * Unsubscribe the callback from an event
              *
-             *
-             * @param {string} evtName
-             * @param {(d: any) => void} [callback]
+             * @param {string} evtName event name
+             * @param {(d: any) => void} [callback] the callback to be unsubscribed.
+             * When the `callback` is `*`, all callbacks related to `evtName` will be
+             * removed
              * @memberof Announcer
              */
             off(evtName: string, callback?: (d: any) => void): void {
@@ -147,10 +190,10 @@ namespace OS {
             }
 
             /**
+             * Trigger an event
              *
-             *
-             * @param {string} evtName
-             * @param {*} data
+             * @param {string} evtName event name
+             * @param {*} data data object that will be send to all related callback
              * @returns {void}
              * @memberof Announcer
              */
@@ -179,24 +222,39 @@ namespace OS {
             }
         }
     }
+    /**
+     * This namespace defines every thing related to the system announcement.
+     *
+     * The system announcement provides a global way to communicate between
+     * processes (applications/services) using the subscribe/publish
+     * mechanism
+     */
     export namespace announcer {
+        /**
+         * The global announcer object tha manages global events
+         * and callbacks
+         */
         export var observable: API.Announcer = new API.Announcer();
+        /**
+         * This variable is used to allocate the `id` of message
+         * passing between publishers and subscribers in the
+         * system announcement
+         */
         export var quota: 0;
+        /**
+         * Place holder of all global events listeners
+         */
         export var listeners: API.AnnouncerListenerType = {};
 
         /**
-         *
+         * Subscribe to a global event
          *
          * @export
-         * @param {string} e
-         * @param {(d: any) => void} f
-         * @param {GUI.BaseModel} a
+         * @param {string} e event name
+         * @param {(d: any) => void} f event callback
+         * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        export function on(
-            e: string,
-            f: (d: any) => void,
-            a: BaseModel
-        ): void {
+        export function on(e: string, f: (d: any) => void, a: BaseModel): void {
             if (!announcer.listeners[a.pid]) {
                 announcer.listeners[a.pid] = [];
             }
@@ -205,64 +263,67 @@ namespace OS {
         }
 
         /**
-         *
+         * Trigger a global event
          *
          * @export
-         * @param {string} e
-         * @param {*} d
+         * @param {string} e event name
+         * @param {*} d data passing to all related callback
          */
         export function trigger(e: string, d: any): void {
             announcer.observable.trigger(e, d);
         }
 
         /**
-         *
+         * Report system fail. This will trigger the global `fail`
+         * event
          *
          * @export
-         * @param {(string | FormattedString)} m
-         * @param {Error} e
+         * @param {(string | FormattedString)} m message string
+         * @param {Error} e error to be reported
          */
         export function osfail(m: string | FormattedString, e: Error): void {
             announcer.ostrigger("fail", { m, e });
         }
 
         /**
-         *
+         * Report system error. This will trigger the global `error`
+         * event
          *
          * @export
-         * @param {(string | FormattedString)} m
-         * @param {Error} e
+         * @param {(string | FormattedString)} m message string
+         * @param {Error} e error to be reported
          */
         export function oserror(m: string | FormattedString, e: Error): void {
             announcer.ostrigger("error", { m, e });
         }
 
         /**
-         *
+         * Trigger system notification (`info` event)
          *
          * @export
-         * @param {(string | FormattedString)} m
+         * @param {(string | FormattedString)} m notification message
          */
         export function osinfo(m: string | FormattedString): void {
             announcer.ostrigger("info", { m, e: null });
         }
 
         /**
-         *
+         * trigger a specific global event
          *
          * @export
-         * @param {string} e
-         * @param {*} d
+         * @param {string} e event name
+         * @param {*} d event data
          */
         export function ostrigger(e: string, d: any): void {
             announcer.trigger(e, { id: 0, data: d, name: "OS" });
         }
 
         /**
-         *
+         * Unregister a process (application/service) from
+         * the global announcement system
          *
          * @export
-         * @param {GUI.BaseModel} app
+         * @param {GUI.BaseModel} app reference to the process
          * @returns {void}
          */
         export function unregister(app: BaseModel): void {
@@ -279,14 +340,14 @@ namespace OS {
         }
 
         /**
-         *
+         * Allocate message id
          *
          * @export
          * @returns {number}
          */
         export function getMID(): number {
-            announcer.quota += 1;
-            return announcer.quota;
+            quota += 1;
+            return quota;
         }
     }
 }

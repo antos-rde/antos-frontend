@@ -19,7 +19,9 @@ namespace OS {
                 private _onchange: TagEventCallback<boolean>;
 
                 /**
-                 * Turn on/off the switch
+                 * Setter: Turn on/off the switch
+                 *
+                 * Getter: Check whether the switch is turned on
                  *
                  * @memberof SwitchTag
                  */
@@ -30,32 +32,20 @@ namespace OS {
                         $(this.refs.switch).addClass("swon");
                     }
                 }
-
-                /**
-                 * Check whether the switch is turned on
-                 *
-                 * @type {boolean}
-                 * @memberof SwitchTag
-                 */
                 get swon(): boolean {
                     return this.hasattr("swon");
                 }
 
                 /**
-                 * Enable the switch
+                 * Setter: Enable the switch
+                 *
+                 * Getter: Check whether the switch is enabled
                  *
                  * @memberof SwitchTag
                  */
                 set enable(v: boolean) {
                     this.attsw(v, "enable");
                 }
-
-                /**
-                 * Check whether the switch is enabled
-                 *
-                 * @type {boolean}
-                 * @memberof SwitchTag
-                 */
                 get enable(): boolean {
                     return this.hasattr("enable");
                 }

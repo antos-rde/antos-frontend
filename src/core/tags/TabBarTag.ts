@@ -69,20 +69,15 @@ namespace OS {
                 protected reload(d?: any): void {}
 
                 /**
-                 * Enable/disable a tab to be closed
+                 * Setter: Enable/disable a tab to be closed
+                 *
+                 * Getter: Check whether tabs can be closed
                  *
                  * @memberof TabBarTag
                  */
                 set closable(v: boolean) {
                     this.attsw(v, "closable");
                 }
-
-                /**
-                 * Check whether tabs can be closed
-                 *
-                 * @type {boolean}
-                 * @memberof TabBarTag
-                 */
                 get closable(): boolean {
                     return this.hasattr("closable");
                 }
@@ -120,7 +115,9 @@ namespace OS {
                 }
 
                 /**
-                 * Set tabs data
+                 * Setter: Set tabs data
+                 *
+                 * Getter: Get all tabs data
                  *
                  * @memberof TabBarTag
                  */
@@ -130,32 +127,20 @@ namespace OS {
                     }
                     (this.refs.list as ListViewTag).data = v;
                 }
-
-                /**
-                 * Get all tabs data
-                 *
-                 * @type {GenericObject<any>[]}
-                 * @memberof TabBarTag
-                 */
                 get items(): GenericObject<any>[] {
                     return (this.refs.list as ListViewTag).data;
                 }
 
                 /**
-                 * Select a tab by its index
+                 * Setter: Select a tab by its index
+                 *
+                 * Getter: Get the currently selected tab
                  *
                  * @memberof TabBarTag
                  */
                 set selected(v: number | number[]) {
                     (this.refs.list as ListViewTag).selected = v;
                 }
-
-                /**
-                 * Get the currently selected tab
-                 *
-                 * @type {(number | number[])}
-                 * @memberof TabBarTag
-                 */
                 get selected(): number | number[] {
                     return (this.refs.list as ListViewTag).selected;
                 }
