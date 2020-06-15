@@ -85,7 +85,7 @@ namespace OS {
          */
         export interface RequestResult {
             /**
-             * Indicate whether an the response is error
+             * Indicate whether the response is error
              *
              * @type {(boolean | string)}
              * @memberof RequestResult

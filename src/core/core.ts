@@ -17,39 +17,156 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 
 "use strict";
+/**
+ * Reference to the global this
+ */
 const Ant = this;
 
 /**
- *
+ * Extend the String prototype with some API
+ * functions used by AntOS API
  *
  * @interface String
  */
 interface String {
+    /**
+     * Simple string hash function
+     *
+     * @returns {number}
+     * @memberof String
+     */
     hash(): number;
+
+    /**
+     * Parse the current string and convert it
+     * to an object of type [[Version]] if the string
+     * is in the format recognized by [[Version]],
+     * e.g.: `1.0.1-a`
+     *
+     * @returns {OS.Version}
+     * @memberof String
+     */
     __v(): OS.Version;
+
+    /**
+     * Convert the current string to base 64 string
+     *
+     * @returns {string}
+     * @memberof String
+     */
     asBase64(): string;
+
+    /**
+     * Unescape all escaped characters on the
+     * string using `\`
+     *
+     * @returns {string}
+     * @memberof String
+     */
     unescape(): string;
+
+    /**
+     * Convert the current string to uint8 array
+     *
+     * @returns {Uint8Array}
+     * @memberof String
+     */
     asUint8Array(): Uint8Array;
+
+    /**
+     * Format the current using input parameters.
+     * The current string should be a formatted string
+     * in the following form:
+     *
+     * ```typescript
+     * "example string: {0} and {1}".format("hello", "world")
+     * // return "example string: hello and world"
+     * ```
+     *
+     * @param {...any[]} args
+     * @returns {string}
+     * @memberof String
+     */
     format(...args: any[]): string;
+
+    /**
+     * Create a [[FormattedString]] object using the current
+     * string and the input parameters
+     *
+     * @param {...any[]} args
+     * @returns {OS.FormattedString}
+     * @memberof String
+     */
     f(...args: any[]): OS.FormattedString;
+
+    /**
+     * Check if the current string is translatable, if it
+     * is the case, translate the string to the language specified
+     * in the current system locale setting.
+     *
+     * A translatable string is a string in the following
+     * form: `"__(example string)"`
+     *
+     * @returns {string}
+     * @memberof String
+     */
     __(): string;
+
+    /**
+     * Translate current string to the language specified
+     * by the system locale setting
+     *
+     * @returns {string}
+     * @memberof String
+     */
     l(): string;
+
+    /**
+     * Trim left of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
     trimLeft(arg: string): string;
+
+    /**
+     * Trim right of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
     trimRight(arg: string): string;
+
+    /**
+     * Trim both left and right of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
     trimBy(arg: string): string;
 }
 
 /**
- *
+ * Extend the Data prototype with the
+ * [[timestamp]] function
  *
  * @interface Date
  */
 interface Date {
+    /**
+     * Return the timestamp of the current Date object
+     *
+     * @returns {number}
+     * @memberof Date
+     */
     timestamp(): number;
 }
 
 /**
- *
+ * Generic key-value pair object interface
  *
  * @interface GenericObject
  * @template T
@@ -59,7 +176,12 @@ interface GenericObject<T> {
 }
 
 /**
+ * Global function to create a [[FormattedString]] from
+ * a formatted string and a list of parameters. Example
  *
+ * ```typescript
+ * __("hello {0}", world) // return a FormattedString object
+ * ```
  *
  * @param {...any[]} args
  * @returns {(OS.FormattedString | string)}
@@ -67,21 +189,28 @@ interface GenericObject<T> {
 declare function __(...args: any[]): OS.FormattedString | string;
 
 /**
- *
+ * This global function allow chaining stack trace from one error to
+ * another. It is particular helping when tracking the source of
+ * the error in promises chain which results in some obfuscated stack
+ * traces as the stack resets on every new promise.
  *
  * @param {Error} e
  * @returns {Error}
  */
 declare function __e(e: Error): Error;
 
-//define the OS object
+/**
+ * This namespace is the main entry point of AntOS
+ * API
+ */
 namespace OS {
     /**
+     * Return an range of numbers
      *
-     *
-     * @param {number} left
-     * @param {number} right
-     * @param {boolean} inclusive
+     * @param {number} left start of the range
+     * @param {number} right end of the range
+     * @param {boolean} inclusive specifies whether the
+     * `right` of the range is included in the returned array
      * @returns {number[]}
      */
     function __range__(
@@ -114,7 +243,6 @@ namespace OS {
         );
     };
 
-    // chaning error
     Ant.__e = function (e: Error): Error {
         const reason = new Error(e.toString());
         reason.stack += "\nCaused By:\n" + e.stack;
@@ -122,14 +250,40 @@ namespace OS {
     };
 
     /**
-     *
+     * Represent a translatable formatted string
      *
      * @export
      * @class FormattedString
      */
     export class FormattedString {
+        /**
+         * Format string in the following form
+         *
+         * ```typescript
+         * "format string with {0} and {1}"
+         * // {[0-9]} is the format pattern
+         * ```
+         *
+         * @type {string}
+         * @memberof FormattedString
+         */
         fs: string;
+
+        /**
+         * The value of the format pattern represented
+         * in [[fs]]
+         *
+         * @type {any[]}
+         * @memberof FormattedString
+         */
         values: any[];
+
+        /**
+         * Creates an instance of FormattedString.
+         * @param {string} fs format string
+         * @param {any[]} args input values of the format patterns
+         * @memberof FormattedString
+         */
         constructor(fs: string, args: any[]) {
             this.fs = fs;
             this.values = [];
@@ -146,7 +300,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Convert FormattedString to String
          *
          * @returns {string}
          * @memberof FormattedString
@@ -156,7 +310,9 @@ namespace OS {
         }
 
         /**
-         *
+         * Translate the format string to the current system
+         * locale language, format the string with values and
+         * then converted it to normal `string`
          *
          * @returns {string}
          * @memberof FormattedString
@@ -174,7 +330,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Return the hash number of the formatted string
          *
          * @returns {number}
          * @memberof FormattedString
@@ -184,9 +340,10 @@ namespace OS {
         }
 
         /**
+         * Match the formatted string against a regular expression
+         * a string pattern
          *
-         *
-         * @param {(string | RegExp)} t
+         * @param {(string | RegExp)} t string or regular expression
          * @returns {RegExpMatchArray}
          * @memberof FormattedString
          */
@@ -195,7 +352,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Convert the formatted string to Base^$
          *
          * @returns {string}
          * @memberof FormattedString
@@ -205,7 +362,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Un escape the formatted string
          *
          * @returns {string}
          * @memberof FormattedString
@@ -215,7 +372,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Convert the formatted string to uint8 array
          *
          * @returns {Uint8Array}
          * @memberof FormattedString
@@ -225,7 +382,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Input values for the format string
          *
          * @param {...any[]} args
          * @memberof FormattedString
@@ -238,21 +395,70 @@ namespace OS {
     }
 
     /**
+     * This class represents the Version number format used by AntOS. A typical
+     * AntOS version number is in the following format:
      *
+     * ```
+     * [major_number].[minor_number].[patch]-[branch]
+     *
+     * e.g.: 1.2.3-r means that:
+     * - version major number is 1
+     * - version minor number is 2
+     * - patch version is 3
+     * - the current branch is release `r`
+     * ```
      *
      * @export
      * @class Version
      */
     export class Version {
+        /**
+         * The version string
+         *
+         * @type {string}
+         * @memberof Version
+         */
         string: string;
+
+        /**
+         * The current branch
+         * - 1: `a` - alpha branch
+         * - 2: `b` - beta branch
+         * - 3: `r` - release branch
+         *
+         * @private
+         * @type {number}
+         * @memberof Version
+         */
         private branch: number;
+
+        /**
+         * Version major number
+         *
+         * @type {number}
+         * @memberof Version
+         */
         major: number;
+
+        /**
+         * Version minor number
+         *
+         * @type {number}
+         * @memberof Version
+         */
         minor: number;
+
+        /**
+         * Version patch number
+         *
+         * @type {number}
+         * @memberof Version
+         */
         patch: number;
 
         /**
          *Creates an instance of Version.
-         * @param {string} string
+         * @param {string} string string represents the version
          * @memberof Version
          */
         constructor(string: string) {
@@ -288,10 +494,17 @@ namespace OS {
         }
 
         /**
+         * Compare the current version with another version.
          *
+         * The comparison priority is `branch>major>minor>patch`.
          *
-         * @param {(string | Version)} o
+         * For the branch, the priority is `r>b>a`
+         *
+         * @param {(string | Version)} o version string or object
          * @returns {(0 | 1 | -1)}
+         * Return 0 if the two versions are the same, 1 if
+         * the current version is newer than the input version,
+         * otherwise return -1
          * @memberof Version
          */
         compare(o: string | Version): 0 | 1 | -1 {
@@ -328,9 +541,10 @@ namespace OS {
         }
 
         /**
+         * Check if the current version is newer than
+         * the input version
          *
-         *
-         * @param {(string | Version)} o
+         * @param {(string | Version)} o version string or object
          * @returns {boolean}
          * @memberof Version
          */
@@ -339,9 +553,10 @@ namespace OS {
         }
 
         /**
+         * Check if the current version is older than
+         * the input version
          *
-         *
-         * @param {(string | Version)} o
+         * @param {(string | Version)} o version string or object
          * @returns {boolean}
          * @memberof Version
          */
@@ -350,7 +565,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Return itself
          *
          * @returns {Version}
          * @memberof Version
@@ -360,7 +575,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Convert Version object to string
          *
          * @returns {string}
          * @memberof Version
@@ -496,25 +711,45 @@ namespace OS {
         return (this.getTime() / 1000) | 0;
     };
 
+    /**
+     * Variable represents the current AntOS version, it
+     * is an instance of [[Version]]
+     */
     export const VERSION: Version = "1.0.0-a".__v();
     /**
+     * Register a model prototype to the system namespace.
+     * There are two types of model to be registered, if the model
+     * is of type [[SubWindow]], its prototype will be registered
+     * in the [[dialogs]] namespace, otherwise, if the model type
+     * is [[Application]] or [[Service]], its prototype will be
+     * registered in the [[application]] namespace.
      *
+     * When a model is loaded in the system, its prototype is registered
+     * for later uses
      *
      * @export
-     * @param {string} name
-     * @param {*} x
+     * @param {string} name class name
+     * @param {*} x the corresponding class
      * @returns {*}
      */
-    export function register(name: string, x: PM.ProcessTypeClass): void {
+    export function register(name: string, x: PM.ModelTypeClass): void {
         if (((x as any) as typeof BaseModel).type === ModelType.SubWindow) {
-            GUI.dialog[name] = x;
+            GUI.dialogs[name] = x;
         } else {
             application[name] = x;
         }
     }
 
     /**
+     * This function cleans up the entire system and
+     * makes sure the system is in a new and clean session.
+     * It performs the following operations:
      *
+     * - Kill all running processes
+     * - Unregister all global events and reset the  global
+     * announcement system
+     * - Clear the current theme
+     * - Reset process manager and all system settings
      *
      * @export
      */
@@ -540,13 +775,15 @@ namespace OS {
     }
 
     /**
-     *
+     * Booting up AntOS. This function checks whether the user
+     * is successfully logged in, then call [[startAntOS]], otherwise
+     * it shows the login screen
      *
      * @export
      */
     export function boot(): void {
         //first login
-        console.log("Booting sytem");
+        console.log("Booting system");
         API.handle
             .auth()
             .then(function (d: API.RequestResult) {
@@ -562,10 +799,17 @@ namespace OS {
             .catch((e: Error) => console.error(e));
     }
 
+    /**
+     * Placeholder for all the callbacks that are called when the system
+     * exits. These callbacks are useful when an application or service wants
+     * to perform a particular task before shuting down the system
+     */
     export const cleanupHandles: { [index: string]: () => void } = {};
 
     /**
-     *
+     * Perform the system shutdown operation. This function calls all
+     * clean up handles in [[cleanupHandles]], then save the system setting
+     * before exiting
      *
      * @export
      */
@@ -585,11 +829,11 @@ namespace OS {
     }
 
     /**
-     *
+     * Register a callback to the system [[cleanupHandles]]
      *
      * @export
-     * @param {string} n
-     * @param {() => void} f
+     * @param {string} n callback string name
+     * @param {() => void} f the callback handle
      * @returns
      */
     export function onexit(n: string, f: () => void) {
@@ -597,7 +841,9 @@ namespace OS {
             return (cleanupHandles[n] = f);
         }
     }
-
+    /**
+     *
+     */
     export namespace API {
         /**
          *

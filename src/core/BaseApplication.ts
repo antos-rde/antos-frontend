@@ -24,7 +24,7 @@ namespace OS {
      */
     export namespace application {
         /**
-         * Abstract prototype of all AntOS application.
+         * Abstract prototype of all AntOS applications.
          * Any new application definition should extend
          * this prototype
          *
@@ -97,7 +97,7 @@ namespace OS {
 
             /**
              * Init the application, this function is called when the
-             * application process is called and docked the the application
+             * application process is created and docked in the application
              * dock.
              *
              * The application UI will be rendered after the execution
@@ -380,7 +380,7 @@ namespace OS {
 
             /**
              * Base menu definition. This function
-             * return the based menu definition of all applications.
+             * returns the based menu definition of all applications.
              * Other application specific menu entries
              * should be defined in [[menu]] function
              *

@@ -203,7 +203,7 @@ namespace OS {
             private markup: string | OS.API.VFS.BaseFileHandle;
 
             /**
-             * If the `markup` variable is not provided, the
+             * If the `markup` variable is not provided, then
              * the [[init]] function will find the scheme definition
              * in this class variable
              *
@@ -277,7 +277,7 @@ namespace OS {
              * Simple prompt dialog to get user input text.
              * The input date of the dialog:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string, // window title
              *      label: string, // label text
@@ -458,7 +458,7 @@ namespace OS {
                  *
                  * Input data:
                  *
-                 * ```
+                 * ```typescript
                  * {
                  *      title: string // window title
                  * }
@@ -531,7 +531,7 @@ namespace OS {
              *
              * Input data:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string // window title
              * }
@@ -610,7 +610,7 @@ namespace OS {
              *
              * Input data:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string, // window title
              *      [propName:string]: any
@@ -689,7 +689,7 @@ namespace OS {
              *
              * Input data:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string, // window title
              *      icon?: string, // label icon
@@ -771,7 +771,7 @@ namespace OS {
              *
              * Input data:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string, // window title
              *      data:
@@ -941,7 +941,7 @@ namespace OS {
              *
              * Input data:
              *
-             * ```
+             * ```typescript
              * {
              *      title: string, // window title
              *      root?: string, // the root path folder of the file view
@@ -950,6 +950,15 @@ namespace OS {
              *      hidden?: boolean, // show/hide hidden file
              *      file?: string // file name
              *
+             * }
+             * ```
+             * 
+             * Callback data:
+             * 
+             * ```typescript
+             * {
+             *      file: string, // selected file path
+             *      name: string // user input file name
              * }
              * ```
              *

@@ -242,7 +242,7 @@ namespace OS {
          */
         export var quota: 0;
         /**
-         * Place holder of all global events listeners
+         * Placeholder of all global events listeners
          */
         export var listeners: API.AnnouncerListenerType = {};
 

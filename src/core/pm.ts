@@ -1,7 +1,7 @@
 namespace OS {
     export namespace PM {
         export type ProcessType = application.BaseApplication | application.BaseService;
-        export type ProcessTypeClass = {
+        export type ModelTypeClass = {
             new <T extends BaseModel>(args: AppArgumentsType[]): T;
         };
         export var pidalloc: number = 0;
@@ -17,7 +17,7 @@ namespace OS {
          */
         export function createProcess(
             app: string,
-            cls: ProcessTypeClass,
+            cls: ModelTypeClass,
             args?: AppArgumentsType[]
         ): Promise<ProcessType> {
             return new Promise(function (resolve, reject) {
