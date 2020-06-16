@@ -231,12 +231,12 @@ namespace OS {
      */
     export namespace announcer {
         /**
-         * The global announcer object tha manages global events
+         * The global announcer object that manages global events
          * and callbacks
          */
         export var observable: API.Announcer = new API.Announcer();
         /**
-         * This variable is used to allocate the `id` of message
+         * This variable is used to allocate the `id` of all messages
          * passing between publishers and subscribers in the
          * system announcement
          */

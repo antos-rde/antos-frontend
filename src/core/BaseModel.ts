@@ -252,7 +252,7 @@ namespace OS {
         static singleton: boolean;
 
         /**
-         * The javacript of css dependencies of the model. All dependencies
+         * The javascript or css files that the model depends on. All dependencies
          * will be loaded before the model is rendered
          *
          * @static

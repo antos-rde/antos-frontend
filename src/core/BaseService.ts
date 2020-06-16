@@ -19,7 +19,7 @@ namespace OS {
     export namespace application {
         /**
          * Services are processes that run in the background and
-         * are waken up in certain circumstances such as global
+         * are waken up in certain circumstances such as by global
          * events or user interactions.
          *
          * Each service takes an entry in the system tray menu
@@ -67,7 +67,7 @@ namespace OS {
             domel: HTMLElement;
 
             /**
-             * Reference to the timer that periodically execute the callback
+             * Reference to the timer that periodically executes the callback
              * defined in [[watch]].
              *
              * @private
@@ -77,7 +77,7 @@ namespace OS {
             private timer: number;
 
             /**
-             * Reference to th system tray menu
+             * Reference to the system tray menu
              *
              * @type {HTMLElement}
              * @memberof BaseService
@@ -85,7 +85,7 @@ namespace OS {
             holder: HTMLElement;
 
             /**
-             * Place holder for service select callback
+             * Placeholder for service select callback
              *
              * @memberof BaseService
              */

@@ -842,41 +842,210 @@ namespace OS {
         }
     }
     /**
+     * The namespace API is dedicated to the definition of the core system APIs
+     * used by AntOS and its applications. The following core APIs are defined:
      *
+     * - The AntOS announcement system
+     * - Virtual File system
+     * - Virtual Database
+     * - Low-level REST based client-server communication
+     * - Dependencies management
+     * - System utilities
+     *
+     * These APIs are considered as middle-ware that abstracts the client-server
+     * communication and provide the application layer with a standardized APIs
+     * for file/database access, system events handling (announcement), automatic
+     * dependencies resolving, etc.
      */
     export namespace API {
         /**
-         *
+         * AntOS package meta-data type definition
          *
          * @export
-         * @interface PackageType
+         * @interface PackageMetaType
          */
         export interface PackageMetaType {
-            app: string;
+            /**
+             * The application class name, if the package has only services
+             * this property is ignored and [[pkgname]] should be specified
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            app?: string;
+
+            /**
+             * Package name, in case of [[app]] being undefined, this property
+             * need to be specified
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            pkgname?: string;
+
+            /**
+             * Package category
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             category: string;
+
+            /**
+             * Package description string
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             description: string;
+
+            /**
+             * List of services that is attached to the
+             * package
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
             services?: string[];
+
+            /**
+             * CSS icon class of the package
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             iconclass?: string;
+
+            /**
+             * Package information
+             *
+             * @type {{
+             *                 author: string;
+             *                 email: string;
+             *                 [propName: string]: any;
+             *             }}
+             * @memberof PackageMetaType
+             */
             info: {
+                /**
+                 * Author of the package
+                 *
+                 * @type {string}
+                 */
                 author: string;
+
+                /**
+                 * Author's email
+                 *
+                 * @type {string}
+                 */
                 email: string;
                 [propName: string]: any;
             };
+
+            /**
+             * Application-specific locale definition. When the system locale changes,
+             * translatable texts inside the application will be first translated using
+             * the locale dictionary defined in the package meta-data. If no translation
+             * found, the system locale dictionary is used instead.
+             *
+             * A local dictionary definition should be in the following format:
+             *
+             * ```typescript
+             * {
+             *      [locale_name: string]: {
+             *          [origin_string]: string // translation string
+             *      }
+             * }
+             * ```
+             *
+             * Example of locale dictionaries:
+             *
+             * ```typescript
+             * {
+             *      "en_GB": {
+             *          "Cancel": "Cancel",
+             *          "Modify": "Modify"
+             *      },
+             *      "fr_FR": {
+             *          "Cancel": "Annuler",
+             *          "Modify": "Modifier"
+             *      }
+             * }
+             * ```
+             *
+             * @type {{ [index: string]: GenericObject<string> }} locale dictionaries
+             * @memberof PackageMetaType
+             */
             locales: { [index: string]: GenericObject<string> };
+
+            /**
+             * Mime types supported by the packages, regular expression can be used
+             * to specified a range of mimes in common
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
             mimes: string[];
+
+            /**
+             * Package (application) name
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             name: string;
+
+            /**
+             * VFS path to package installation location
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             path: string;
+
+            /**
+             * Package version, should be in a format conforming
+             * to the version definition in [[Version]] class
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
             version: string;
             [propName: string]: any;
         }
+        /**
+         * Placeholder to store all loaded shared libraries. Once
+         * a shared library is firstly loaded, its identity will be
+         * stored in this variable. Based on this information, in
+         * the next use of the library, the system knows that the
+         * library is already loaded and ready to use.
+         *
+         * A shared library can be a javascript or a CSS file.
+         */
         export const shared: GenericObject<boolean> = {};
 
+        /**
+         * Placeholder for all global search handles registered to the system.
+         * These callbacks will be called when user performs the search operation
+         * in the spotlight UI.
+         *
+         * Applications can define their own search handle to provide the spotlight UI
+         * with additional search results
+         *
+         */
         export const searchHandle: GenericObject<(text: string) => any[]> = {};
 
+        /**
+         * Placeholder of the current system locale dictionary, the system uses
+         * this dictionary to translate all translatable texts to the current
+         * locale language
+         */
         export var lang: GenericObject<string> = {};
 
         /**
-         *
+         * Re-export the system announcement [[getMID]] function to the
+         * core API
          *
          * @export
          * @returns {number}
@@ -886,12 +1055,15 @@ namespace OS {
         }
 
         /**
+         * REST-based API.
          *
+         * Perform a POST request to the server. Data exchanged
+         * is in `application/json`
          *
          * @export
-         * @param {string} p
-         * @param {*} d
-         * @returns {Promise<any>}
+         * @param {string} p the server URI
+         * @param {*} d data object that will be converted to JSON
+         * @returns {Promise<any>} a promise on the result data
          */
         export function post(p: string, d: any): Promise<any> {
             return new Promise(function (resolve, reject) {
@@ -926,11 +1098,15 @@ namespace OS {
         }
 
         /**
+         * REST-based API.
          *
+         * Perform a GET request and read back the data in
+         * `ArrayBuffer` (binary) format. This is useful for
+         * binary data reading
          *
          * @export
-         * @param {string} p
-         * @returns {Promise<ArrayBuffer>}
+         * @param {string} p resource URI
+         * @returns {Promise<ArrayBuffer>} a promise on the returned binary data
          */
         export function blob(p: string): Promise<ArrayBuffer> {
             return new Promise(function (resolve, reject) {
@@ -953,11 +1129,13 @@ namespace OS {
         }
 
         /**
+         * REST-based API.
          *
+         * Send file to server
          *
          * @export
-         * @param {string} p
-         * @param {string} d
+         * @param {string} p resource URI
+         * @param {string} d VFS path of the destination file
          * @returns {Promise<any>}
          */
         export function upload(p: string, d: string): Promise<any> {
@@ -997,11 +1175,13 @@ namespace OS {
         }
 
         /**
+         * REST-based API.
          *
+         * Download a file
          *
          * @export
-         * @param {string} name
-         * @param {*} b
+         * @param {string} name file name
+         * @param {*} b file content
          */
         export function saveblob(name: string, b: any): void {
             const url = window.URL.createObjectURL(b);
@@ -1016,11 +1196,13 @@ namespace OS {
         }
 
         /**
-         *
+         * Helper function to trigger the global `loading`
+         * event. This event should be triggered in the
+         * beginning of a heavy task
          *
          * @export
-         * @param {number} q
-         * @param {string} p
+         * @param {number} q message id, see [[mid]]
+         * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
             announcer.trigger("loading", {
@@ -1031,12 +1213,15 @@ namespace OS {
         }
 
         /**
-         *
+         * Helper function to trigger the global `loaded`
+         * event: This event should be triggered in the
+         * end of a heavy task that has previously triggered
+         * the `loading` event
          *
          * @export
-         * @param {number} q
-         * @param {string} p
-         * @param {string} m
+         * @param {number} q the message id of the corresponding `loading` event
+         * @param {string} p the message string
+         * @param {string} m message status  (`OK` of `FAIL`)
          */
         export function loaded(q: number, p: string, m: string): void {
             announcer.trigger("loaded", {
@@ -1054,7 +1239,7 @@ namespace OS {
          * @param {string} [t=undefined] the response data type:
          * - jsonp: the response is an json object
          * - script: the response is a javascript code
-         * - xm, html: the response is a XML/HTNL object
+         * - xm, html: the response is a XML/HTML object
          * - text: plain text
          * @returns {Promise<any>} a Promise on the requested data
          */
@@ -1082,22 +1267,28 @@ namespace OS {
         }
 
         /**
+         * REST-based API
          *
+         * Perform a GET operation and executed the returned
+         * content as javascript
          *
          * @export
-         * @param {string} p
-         * @returns {Promise<any>}
+         * @param {string} p URI resource
+         * @returns {Promise<any>} promise on the executed content
          */
         export function script(p: string): Promise<any> {
             return API.get(p, "script");
         }
 
         /**
+         * REST-based API
          *
+         * Get the content of a global asset resource stored
+         * in `os://resources/`
          *
          * @export
-         * @param {string} r
-         * @returns {Promise<any>}
+         * @param {string} r relative path to the resource
+         * @returns {Promise<any>} promise on the returned content
          */
         export function resource(r: string): Promise<any> {
             const path = `resources/${r}`;
@@ -1105,10 +1296,11 @@ namespace OS {
         }
 
         /**
-         *
+         * Helper function to verify whether a shared library
+         * is loaded and ready to use
          *
          * @export
-         * @param {string} l
+         * @param {string} l path to the library
          * @returns {boolean}
          */
         export function libready(l: string): boolean {
@@ -1116,11 +1308,11 @@ namespace OS {
         }
 
         /**
-         *
+         * Load a shared library if not ready
          *
          * @export
-         * @param {string} l
-         * @returns {Promise<any>}
+         * @param {string} l VFS path to the library
+         * @returns {Promise<any>} a promise on the result data
          */
         export function requires(l: string): Promise<any> {
             return new Promise(function (resolve, reject) {
@@ -1165,10 +1357,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Synchronously load a list of shared libraries
          *
          * @export
-         * @param {string[]} libs
+         * @param {string[]} libs list of shared libraries
          * @returns {Promise<any>}
          */
         export function require(libs: string[]): Promise<any> {
@@ -1176,23 +1368,34 @@ namespace OS {
                 if (!(libs.length > 0)) {
                     return resolve();
                 }
-                announcer.observable.one("sharedlibraryloaded", function (l) {
+                announcer.observable.one("sharedlibraryloaded", async function (
+                    l
+                ) {
                     libs.splice(0, 1);
-                    return API.require(libs)
-                        .catch((e: Error) => reject(__e(e)))
-                        .then((r: any) => resolve(r));
+                    let r: void;
+                    try {
+                        r = await API.require(libs);
+                    } catch (e) {
+                        r = reject(__e(e));
+                    }
+                    return resolve(r);
                 });
                 return API.requires(libs[0]).catch((e: Error) =>
                     reject(__e(e))
                 );
             });
         }
+        /**
+         * The namespace packages is dedicated to all package management
+         * related APIs.
+         */
         export namespace packages {
             /**
-             *
+             * Fetch the package meta-data from the server
              *
              * @export
-             * @returns {Promise<RequestResult>}
+             * @returns {Promise<RequestResult>} Promise on a [[RequestResult]].
+             * A success request result should contain a list of [[PackageMetaType]]
              */
             export function fetch(): Promise<RequestResult> {
                 return API.handle.packages({
@@ -1211,7 +1414,8 @@ namespace OS {
             }
 
             /**
-             *
+             * Request the server to regenerate the package
+             * caches
              *
              * @export
              * @returns {Promise<RequestResult>}
@@ -1234,22 +1438,42 @@ namespace OS {
         }
 
         /**
-         *
+         * Save the current user setting
          *
          * @export
-         * @returns {Promise<RequestResult>}
+         * @returns {Promise<RequestResult>} promise on a [[RequestResult]]
          */
         export function setting(): Promise<RequestResult> {
             return API.handle.setting();
         }
 
         /**
-         *
+         * An apigateway allows client side to execute a custom server-side
+         * script and get back the result. This gateway is particularly
+         * useful in case of performing a task that is not provided by the core
+         * API
          *
          * @export
-         * @param {GenericObject<any>} d
-         * @param {boolean} ws
-         * @returns {Promise<any>}
+         * @param {GenericObject<any>} d execution indication, provided only when ws is `false`
+         * otherwise, `d` should be written directly to the websocket stream as JSON object.
+         * Two possible formats of `d`:
+         * ```text
+         * execute an server-side script file:
+         *
+         * {
+         *  path: [VFS path],
+         *  parameters: [parameters of the server-side script]
+         * }
+         *
+         * or, execute directly a snippet of server-side script:
+         *
+         * { code: [server-side script code snippet as string] }
+         *
+         * ```
+         *
+         * @param {boolean} ws flag indicate whether to use websocket for the connection
+         * to the gateway API. In case of streaming data, the websocket is preferred
+         * @returns {Promise<any>} a promise on the result object (any)
          */
         export function apigateway(
             d: GenericObject<any>,
@@ -1259,10 +1483,15 @@ namespace OS {
         }
 
         /**
+         * Perform the global search operation when user enter
+         * text in spotlight.
          *
+         * This function will call all the search handles stored
+         * in [[searchHandle]] and build the search result based
+         * on output of these handle
          *
          * @export
-         * @param {string} text
+         * @param {string} text text to search
          * @returns {any[]}
          */
         export function search(text: string): any[] {
@@ -1283,11 +1512,11 @@ namespace OS {
         }
 
         /**
-         *
+         * Register a search handle to the global [[searchHandle]]
          *
          * @export
-         * @param {string} name
-         * @param {(text: string) => any[]} fn
+         * @param {string} name handle name string
+         * @param {(text: string) => any[]} fn search handle
          */
         export function onsearch(
             name: string,
@@ -1299,10 +1528,14 @@ namespace OS {
         }
 
         /**
-         *
+         * Set the current system locale: This function will
+         * find and load the locale dictionary definition file in the
+         * system asset resource, then trigger the global event
+         * `systemlocalechange` to translated all translatable text
+         * to the target language
          *
          * @export
-         * @param {string} name
+         * @param {string} name locale name, e.g. `en_GB`
          * @returns {Promise<any>}
          */
         export function setLocale(name: string): Promise<any> {
@@ -1321,10 +1554,12 @@ namespace OS {
         }
 
         /**
-         *
+         * Return an error Object: AntOS use this function to
+         * collect information (stack trace) from user reported
+         * error.
          *
          * @export
-         * @param {(string | FormattedString)} n
+         * @param {(string | FormattedString)} n error string
          * @returns {Error}
          */
         export function throwe(n: string | FormattedString): Error {
@@ -1338,10 +1573,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Set value to the system clipboard
          *
          * @export
-         * @param {string} v
+         * @param {string} v clipboard value
          * @returns {boolean}
          */
         export function setClipboard(v: string): boolean {
@@ -1353,10 +1588,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Get the clipboard data
          *
          * @export
-         * @returns {Promise<any>}
+         * @returns {Promise<any>} Promise on the clipboard data
          */
         export function getClipboard(): Promise<any> {
             return new Promise(function (resolve, reject) {
@@ -1372,7 +1607,18 @@ namespace OS {
         }
 
         /**
+         * A switcher object is a special object in which
+         * each object's property is a boolean option. All object's
+         * properties are mutual exclusive. It means that when a property
+         * is set to true, all other properties will be reset to false.
          *
+         * Example:
+         *
+         * ```typescript
+         * let view = API.switcher("tree", "list", "icon")
+         * view.tree = true // view.list = false and view.icon = false
+         * view.list = true // view.tree = false and view.icon = false
+         * ```
          *
          * @export
          * @returns {*}

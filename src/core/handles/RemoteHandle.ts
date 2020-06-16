@@ -152,7 +152,7 @@ namespace OS {
              *
              * @export
              * @param {string} p a VFS file path e.g. home://test/
-             * @returns {Promise<RequestResult>} A promise on a [[RequestResult
+             * @returns {Promise<RequestResult>} A promise on a [[RequestResult]]
              * which contains an error or a list of FileInfoType
              */
             export function scandir(p: string): Promise<RequestResult> {
