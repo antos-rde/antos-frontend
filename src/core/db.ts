@@ -19,41 +19,63 @@
 namespace OS {
     export namespace API {
         /**
+         * Simple Virtual Database (VDB) application API.
          *
+         * This API abstracts and provides a standard way to
+         * connect to a server-side relational database (e.g. sqlite).
+         *
+         * Each user when connected has their own database previously
+         * created. All VDB operations related to that user will be
+         * performed on this database.
+         *
+         * The creation of user database need to be managed by the server-side API.
+         * The VDB API assumes that the database already exist. All operations
+         * is performed in tables level
          *
          * @export
          * @class DB
          */
         export class DB {
-            table: GenericObject<any>;
+            /**
+             * A table name on the user's database
+             *
+             * @private
+             * @type {string}
+             * @memberof DB
+             */
+            private table: string;
 
             /**
              *Creates an instance of DB.
-             * @param {GenericObject<any>} table
+             * @param {string} table table name
              * @memberof DB
              */
-            constructor(table: GenericObject<any>) {
+            constructor(table: string) {
                 this.table = table;
             }
 
             /**
+             * Save data to the current table. The input
+             * data must conform to the table record format.
              *
+             * On the server side, if the table doest not
+             * exist yet, it should be created automatically
+             * by inferring the data structure of the input
+             * object
              *
-             * @param {*} d
+             * @param {GenericObject<any>} d data object represents a current table record
              * @returns {Promise<API.RequestResult>}
              * @memberof DB
              */
-            save(d: any): Promise<API.RequestResult> {
+            save(d: GenericObject<any>): Promise<API.RequestResult> {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const r = await Ant.OS.API.handle.dbquery("save", {
+                        const r = await API.handle.dbquery("save", {
                             table: this.table,
                             data: d,
                         });
                         if (r.error) {
-                            return reject(
-                                Ant.OS.API.throwe(r.error.toString())
-                            );
+                            return reject(API.throwe(r.error.toString()));
                         }
                         return resolve(r);
                     } catch (e) {
@@ -63,29 +85,46 @@ namespace OS {
             }
 
             /**
+             * delete record(s) from the current table by
+             * a conditional object
              *
+             * @param {*} c conditional object, c can be:
              *
-             * @param {*} c
+             * * a `number`: the operation will delete the record with `id = c`
+             * * a `string`: The SQL string condition that selects record to delete
+             * * a conditional object represents a SQL condition statement as an object,
+             * example: `pid = 10 AND cid = 2` is represented by:
+             *
+             * ```typescript
+             *  {
+             *      exp: {
+             *          "and": {
+             *              pid: 10,
+             *              cid: 2
+             *          }
+             *  }
+             * ```
+             *
              * @returns {Promise<API.RequestResult>}
              * @memberof DB
              */
-            delete(c: any): Promise<API.RequestResult> {
+            delete(
+                c: GenericObject<any> | number | string
+            ): Promise<API.RequestResult> {
                 return new Promise(async (resolve, reject) => {
                     const rq: any = { table: this.table };
                     if (!c || c === "") {
-                        reject(Ant.OS.API.throwe("OS.DB: unkown condition"));
+                        reject(API.throwe("OS.DB: unknown condition"));
                     }
-                    if (isNaN(c)) {
+                    if (isNaN(c as number)) {
                         rq.cond = c;
                     } else {
                         rq.id = c;
                     }
                     try {
-                        const r = await Ant.OS.API.handle.dbquery("delete", rq);
+                        const r = await API.handle.dbquery("delete", rq);
                         if (r.error) {
-                            return reject(
-                                Ant.OS.API.throwe(r.error.toString())
-                            );
+                            return reject(API.throwe(r.error.toString()));
                         }
                         return resolve(r);
                     } catch (e) {
@@ -95,23 +134,21 @@ namespace OS {
             }
 
             /**
+             * Get a record in the table by its primary key
              *
-             *
-             * @param {number} id
-             * @returns {Promise<GenericObject<any>>}
+             * @param {number} id the primary key value
+             * @returns {Promise<GenericObject<any>>} Promise on returned record data
              * @memberof DB
              */
             get(id: number): Promise<GenericObject<any>> {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const r = await Ant.OS.API.handle.dbquery("get", {
+                        const r = await API.handle.dbquery("get", {
                             table: this.table,
                             id: id,
                         });
                         if (r.error) {
-                            return reject(
-                                Ant.OS.API.throwe(r.error.toString())
-                            );
+                            return reject(API.throwe(r.error.toString()));
                         }
                         return resolve(r.result as GenericObject<any>);
                     } catch (e) {
@@ -121,23 +158,38 @@ namespace OS {
             }
 
             /**
+             * Find records by a condition
              *
+             * @param {GenericObject<any>} cond conditional object
              *
-             * @param {GenericObject<any>} cond
+             * a conditional object represents a SQL condition statement as an object,
+             * example: `pid = 10 AND cid = 2 ORDER BY date DESC` is represented by:
+             *
+             * ```typescript
+             *  {
+             *      exp: {
+             *          "and": {
+             *              pid: 10,
+             *              cid: 2
+             *          }
+             *      },
+             *      order: {
+             *          date: "DESC"
+             *      }
+             *  }
+             * ```
              * @returns {Promise<GenericObject<any>[]>}
              * @memberof DB
              */
             find(cond: GenericObject<any>): Promise<GenericObject<any>[]> {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const r = await Ant.OS.API.handle.dbquery("select", {
+                        const r = await API.handle.dbquery("select", {
                             table: this.table,
                             cond,
                         });
                         if (r.error) {
-                            return reject(
-                                Ant.OS.API.throwe(r.error.toString())
-                            );
+                            return reject(API.throwe(r.error.toString()));
                         }
                         return resolve(r.result as GenericObject<any>[]);
                     } catch (e) {

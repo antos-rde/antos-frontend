@@ -66,6 +66,14 @@ interface String {
     unescape(): string;
 
     /**
+     * Escape the current string using backslash
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    escape(): string;
+
+    /**
      * Convert the current string to uint8 array
      *
      * @returns {Uint8Array}
@@ -372,6 +380,16 @@ namespace OS {
         }
 
         /**
+         * Escape the formatted string
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        escape(): string {
+            return this.__().escape();
+        }
+
+        /**
          * Convert the formatted string to uint8 array
          *
          * @returns {Uint8Array}
@@ -612,15 +630,47 @@ namespace OS {
             )
         );
     };
+    String.prototype.escape = function (): string {
+        return this.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (
+            c: string
+        ) {
+            switch (c) {
+                case "\0":
+                    return "\\0";
+                case "\x08":
+                    return "\\b";
+                case "\x09":
+                    return "\\t";
+                case "\x1a":
+                    return "\\z";
+                case "\n":
+                    return "\\n";
+                case "\r":
+                    return "\\r";
+                case '"':
+                case "'":
+                case "\\":
+                case "%":
+                    return "\\" + c; // prepends a backslash to backslash, percent,
+                // and double/single quotes
+                default:
+                    return c;
+            }
+        });
+    };
     String.prototype.unescape = function (): string {
         let d = this;
         d = d.replace(/\\\\/g, "\\");
         d = d.replace(/\\"/g, '"');
+        d = d.replace(/\\'/g, "'");
+        d = d.replace(/\\%/g, '%');
+        d = d.replace(/\\0/g, "\0");
         d = d.replace(/\\n/g, "\n");
         d = d.replace(/\\t/g, "\t");
         d = d.replace(/\\b/g, "\b");
         d = d.replace(/\\f/g, "\f");
         d = d.replace(/\\r/g, "\r");
+        d = d.replace(/\\z/g, "\x1a");
         return d;
     };
     String.prototype.asUint8Array = function (): Uint8Array {
@@ -915,6 +965,14 @@ namespace OS {
              * @memberof PackageMetaType
              */
             iconclass?: string;
+
+            /**
+             * VFS application icon path
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            icon?: string;
 
             /**
              * Package information

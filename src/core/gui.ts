@@ -1,10 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -21,8 +14,11 @@
 // General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-//along with this program. If not, see https://www.gnu.org/licenses/.
+// along with this program. If not, see https://www.gnu.org/licenses/.
 namespace OS {
+    /**
+     * 
+     */
     export namespace GUI {
         /**
          *
