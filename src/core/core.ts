@@ -659,19 +659,8 @@ namespace OS {
         });
     };
     String.prototype.unescape = function (): string {
-        let d = this;
-        d = d.replace(/\\\\/g, "\\");
-        d = d.replace(/\\"/g, '"');
-        d = d.replace(/\\'/g, "'");
-        d = d.replace(/\\%/g, '%');
-        d = d.replace(/\\0/g, "\0");
-        d = d.replace(/\\n/g, "\n");
-        d = d.replace(/\\t/g, "\t");
-        d = d.replace(/\\b/g, "\b");
-        d = d.replace(/\\f/g, "\f");
-        d = d.replace(/\\r/g, "\r");
-        d = d.replace(/\\z/g, "\x1a");
-        return d;
+        let json = JSON.parse(`{ "text": "${this}"}`)
+        return json.text;
     };
     String.prototype.asUint8Array = function (): Uint8Array {
         let bytes = [];
