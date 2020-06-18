@@ -217,7 +217,7 @@ namespace OS {
              * @param {string} t return data type:
              * - jsonp: the response is an json object
              * - script: the response is a javascript code
-             * - xm, html: the response is a XML/HTML object
+             * - xml, html: the response is a XML/HTML object
              * - text: plain text
              *
              * @returns {Promise<any>}  A promise on a [[RequestResult]]

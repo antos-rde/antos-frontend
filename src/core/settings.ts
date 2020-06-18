@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -23,134 +17,375 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 
 namespace OS {
+    /**
+     * This namespace is dedicated to everything related to the
+     * global system settings
+     */
     export namespace setting {
-
         /**
-         *
+         * User setting type definition
          *
          * @export
          * @interface UserSettingType
          */
         export interface UserSettingType {
+            /**
+             * User full name
+             *
+             * @type {string}
+             * @memberof UserSettingType
+             */
             name: string;
+
+            /**
+             * User name
+             *
+             * @type {string}
+             * @memberof UserSettingType
+             */
             username: string;
+
+            /**
+             * User id
+             *
+             * @type {number}
+             * @memberof UserSettingType
+             */
             id: number;
+
+            /**
+             * User groups
+             *
+             * @type {{ [index: number]: string }}
+             * @memberof UserSettingType
+             */
             group?: { [index: number]: string };
             [propName: string]: any;
         }
 
         /**
-         *
+         * Virtual desktop setting data type
          *
          * @export
          * @interface DesktopSettingType
          */
         export interface DesktopSettingType {
+            /**
+             * Desktop VFS path
+             *
+             * @type {string}
+             * @memberof DesktopSettingType
+             */
             path: string;
-            menu: any[];
+
+            /**
+             * Desktop menu, can be added automatically by applications
+             *
+             * @type {GUI.BasicItemType[]}
+             * @memberof DesktopSettingType
+             */
+            menu: GUI.BasicItemType[];
+
+            /**
+             * Show desktop hidden files
+             *
+             * @type {boolean}
+             * @memberof DesktopSettingType
+             */
             showhidden: boolean;
             [propName: string]: any;
         }
 
         /**
-         *
+         * Wallpaper setting data type
          *
          * @export
          * @interface WPSettingType
          */
         export interface WPSettingType {
+            /**
+             * Repeat wallpaper:
+             * - `repeat`
+             * - `repeat-x`
+             * - `repeat-y`
+             * - `no-repeat`
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
             repeat: string;
+
+            /**
+             * Wallpaper size
+             * - `contain`
+             * - `cover`
+             * - `auto`
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
             size: string;
+
+            /**
+             * VFS path to the wallpaper image
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
             url: string;
         }
 
         /**
-         *
+         * Theme setting data type
          *
          * @export
          * @interface ThemeSettingType
          */
         export interface ThemeSettingType {
+            /**
+             * Theme name, this value is used for looking
+             * theme file in system asset
+             *
+             * @type {string}
+             * @memberof ThemeSettingType
+             */
             name: string;
+
+            /**
+             * Theme user-friendly text
+             *
+             * @type {string}
+             * @memberof ThemeSettingType
+             */
             text: string;
         }
 
         /**
-         *
+         * Appearance setting data type
          *
          * @export
          * @interface AppearanceSettingType
          */
         export interface AppearanceSettingType {
+            /**
+             * Current theme name
+             *
+             * @type {string}
+             * @memberof AppearanceSettingType
+             */
             theme: string;
+
+            /**
+             * All themes available in the system
+             *
+             * @type {ThemeSettingType[]}
+             * @memberof AppearanceSettingType
+             */
             themes: ThemeSettingType[];
+
+            /**
+             * Current wallpaper setting
+             *
+             * @type {WPSettingType}
+             * @memberof AppearanceSettingType
+             */
             wp: WPSettingType;
+
+            /**
+             * All wallpapers available in the system
+             *
+             * @type {string[]}
+             * @memberof AppearanceSettingType
+             */
             wps: string[];
         }
 
         /**
-         *
+         * VFS Mount points setting data type
          *
          * @export
          * @interface VFSMountPointSettingType
          */
         export interface VFSMountPointSettingType {
+            /**
+             * Path to the mount point
+             *
+             * @type {string}
+             * @memberof VFSMountPointSettingType
+             */
             path: string;
+
+            /**
+             * User friendly mount point name
+             *
+             * @type {string}
+             * @memberof VFSMountPointSettingType
+             */
             text: string;
             [propName: string]: any;
         }
 
         /**
-         *
+         * VFS setting data type
          *
          * @export
          * @interface VFSSettingType
          */
         export interface VFSSettingType {
+            /**
+             * mount points setting
+             *
+             * @type {VFSMountPointSettingType[]}
+             * @memberof VFSSettingType
+             */
             mountpoints: VFSMountPointSettingType[];
             [propName: string]: any;
         }
 
         /**
-         *
+         * Global system setting data type
          *
          * @export
          * @interface SystemSettingType
          */
         export interface SystemSettingType {
+            /**
+             * System error report URL
+             *
+             * @type {string}
+             * @memberof SystemSettingType
+             */
             error_report: string;
+
+            /**
+             * Current system locale e.g. `en_GB`
+             *
+             * @type {string}
+             * @memberof SystemSettingType
+             */
             locale: string;
-            menu: any[];
+
+            /**
+             * System menus
+             *
+             * @type {API.PackageMetaType[]}
+             * @memberof API.PackageMetaType
+             */
+            menu: API.PackageMetaType[];
+
+            /**
+             * Packages meta-data
+             *
+             * @type {{ [index: string]: API.PackageMetaType }}
+             * @memberof SystemSettingType
+             */
             packages: { [index: string]: API.PackageMetaType };
+
+            /**
+             * Path to the installed packages
+             *
+             * @type {{
+             *                 user: string;
+             *                 system: string;
+             *             }}
+             * @memberof SystemSettingType
+             */
             pkgpaths: {
+                /**
+                 * User specific packages install location
+                 *
+                 * @type {string}
+                 */
                 user: string;
+
+                /**
+                 * System packages install location
+                 *
+                 * @type {string}
+                 */
                 system: string;
             };
+
+            /**
+             * Package repositories setting.
+             * This configuration is used by [[MarketPlace]]
+             * for package management
+             *
+             * @type {{
+             *                 text: string;
+             *                 url: string;
+             *             }[]}
+             * @memberof SystemSettingType
+             */
             repositories: {
+                /**
+                 * Repository name
+                 *
+                 * @type {string}
+                 */
                 text: string;
+
+                /**
+                 * Repository uri
+                 *
+                 * @type {string}
+                 */
                 url: string;
             }[];
+
+            /**
+             * Startup applications and services
+             *
+             * @type {{
+             *                 apps: string[];
+             *                 services: string[];
+             *             }}
+             * @memberof SystemSettingType
+             */
             startup: {
+                /**
+                 * List of application names
+                 *
+                 * @type {string[]}
+                 */
                 apps: string[];
+
+                /**
+                 * List of service names
+                 *
+                 * @type {string[]}
+                 */
                 services: string[];
             };
         }
-
+        /**
+         * User settings
+         */
         export var user: UserSettingType;
-
+        /**
+         * Application settings
+         */
         export var applications: GenericObject<any> = {};
-
+        /**
+         * Desktop settings
+         */
         export var desktop: DesktopSettingType;
-
+        /**
+         * Appearance settings
+         */
         export var appearance: AppearanceSettingType;
-
+        /**
+         * VFS settings
+         */
         export var VFS: VFSSettingType;
-
+        /**
+         * System settings
+         */
         export var system: SystemSettingType;
     }
 
     /**
-     *
+     * Reset the system settings to default values
      *
      * @export
      */
@@ -158,7 +393,7 @@ namespace OS {
         setting.desktop = {
             path: "home://.desktop",
             menu: [],
-            showhidden: false
+            showhidden: false,
         };
         setting.user = {
             name: undefined,
@@ -240,15 +475,15 @@ namespace OS {
             repositories: [],
             startup: {
                 apps: [],
-                services: [
-                    "Syslog/PushNotification", "Syslog/Calendar"
-                ],
+                services: ["Syslog/PushNotification", "Syslog/Calendar"],
             },
         };
     }
 
     /**
-     *
+     * Apply the input parameter object to system settings.
+     * This object could be an object loaded from
+     * setting JSON file saved on the server.
      *
      * @export
      * @param {*} conf
@@ -288,7 +523,7 @@ namespace OS {
         }
     }
 
-    //search for app
+    // Register handle for application search
     API.onsearch("__(Applications)", function (t) {
         const ar = [];
         const term = new RegExp(t, "i");

@@ -17,41 +17,118 @@
 // along with this program. If not, see https://www.gnu.org/licenses/.
 namespace OS {
     /**
-     * 
+     * This namespace is dedicated to all APIs related to AntOS UI system,
+     * these API are called AFX APIs which handle:
+     * - The mouse and keyboard interaction with the UI system
+     * - UI rendering
+     * - Custom tags definition
+     * - Load/unload system, applications and services UI
+     * - System dialogs definition
      */
     export namespace GUI {
         /**
-         *
+         * AntOS keyboard shortcut type definition
          *
          * @export
          * @interface ShortcutType
          */
         export interface ShortcutType {
+            /**
+             * Placeholder for all shortcut callbacks attached to `ALT` key, eg.
+             * ```typescript
+             *      ALT.c = function() {..}
+             *      // this function will be called when the hotkey `ALT-C` is triggered
+             * ```
+             *
+             * @memberof ShortcutType
+             */
             ALT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
+
+            /**
+             * Placeholder for all shortcut callbacks attached to `CTRL` key, eg.
+             * ```typescript
+             *      CTRL.c = function() {..}
+             *      // this function will be called when the hotkey `CTRL-C` is triggered
+             * ```
+             *
+             * @memberof ShortcutType
+             */
             CTRL: GenericObject<(e: JQuery.MouseDownEvent) => void>;
+
+            /**
+             * Placeholder for all shortcut callbacks attached to `SHIFT` key, eg.
+             * ```typescript
+             *      SHIFT.c = function() {..}
+             *      // this function will be called when the hotkey `SHIFT-C` is triggered
+             * ```
+             *
+             * @memberof ShortcutType
+             */
             SHIFT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
+            /**
+             * Placeholder for all shortcut callbacks attached to `META` key, eg.
+             * ```typescript
+             *      META[" "] = function() {..}
+             *      // this function will be called when the hotkey `META-[space]` is triggered
+             * ```
+             *
+             * @memberof ShortcutType
+             */
             META: GenericObject<(e: JQuery.MouseDownEvent) => void>;
         }
 
         /**
+         * Basic item type definition which is usually used by some UI element
+         * such as list view, tree view, menu and grid view
          *
          *
          * @export
          * @interface BasicItemType
          */
         export interface BasicItemType {
+            /**
+             * Item text
+             *
+             * @type {(string | FormattedString)}
+             * @memberof BasicItemType
+             */
             text: string | FormattedString;
+
+            /**
+             * Item children, usually used by tree view or menu item
+             * This property is keep for compatibility purposes only.
+             * Otherwise, the [[nodes]] property should be used
+             *
+             * @type {BasicItemType[]}
+             * @memberof BasicItemType
+             */
             children?: BasicItemType[];
+            /**
+             * Item children, usually used by tree view or menu item
+             *
+             * @type {BasicItemType[]}
+             * @memberof BasicItemType
+             */
             nodes?: BasicItemType[];
             [propName: string]: any;
         }
-
+        /**
+         * Element id of the virtual desktop, used by JQuery
+         */
         export var workspace: string = "#desktop";
-
+        /**
+         * Indicate whether the system is in fullscreen mode
+         */
         export var fullscreen = false;
-
+        /**
+         * Reference to the current system dialog, only one dialog
+         * is allowed at a time. A dialog may have sub dialog
+         */
         export var dialog: BaseDialog;
 
+        /**
+         * Placeholder for system shortcuts
+         */
         var shortcut: ShortcutType = {
             ALT: {},
             CTRL: {},
@@ -60,12 +137,18 @@ namespace OS {
         };
 
         /**
+         * Convert an application html scheme to
+         * UI elements, then insert this UI scheme to the DOM tree.
          *
+         * This function renders the UI of the application before calling the
+         * application's [[main]] function
          *
          * @export
-         * @param {string} html
-         * @param {BaseModel} app
+         * @param {string} html html scheme string
+         * @param {BaseModel} app reference to the target application
          * @param {(Element | string)} parent
+         * The parent HTML element where the application is rendered.
+         * This is usually the reference to the virtual desktop element.
          */
         export function htmlToScheme(
             html: string,
@@ -85,12 +168,13 @@ namespace OS {
         }
 
         /**
-         *
+         * Load an application scheme file then render
+         * it with [[htmlToScheme]]
          *
          * @export
-         * @param {string} path
-         * @param {BaseModel} app
-         * @param {(HTMLElement | string)} parent
+         * @param {string} path VFS path to the scheme file
+         * @param {BaseModel} app the target application
+         * @param {(HTMLElement | string)} parent The parent HTML element where the application is rendered.
          */
         export function loadScheme(
             path: string,
@@ -111,7 +195,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Clear the current system theme
          *
          * @export
          */
@@ -120,11 +204,12 @@ namespace OS {
         }
 
         /**
-         *
+         * Load a theme based on its name, then refresh the
+         * system UI theme
          *
          * @export
-         * @param {string} name
-         * @param {boolean} force
+         * @param {string} name name of the theme e.g. `antos_dark`
+         * @param {boolean} force force to clear the system theme before applying the new one
          */
         export function loadTheme(name: string, force: boolean): void {
             if (force) {
@@ -135,11 +220,14 @@ namespace OS {
         }
 
         /**
-         *
+         * Open a system dialog.
          *
          * @export
-         * @param {(string | BaseDialog)} d
-         * @param {GenericObject<any>} data
+         * @param {(BaseDialog | string)} d a dialog object or a dialog class name
+         * @param {GenericObject<any>} [data] input data of the dialog, refer to each
+         * dialog definition for the format of the input data
+         * @returns {Promise<any>} A promise on the callback data of the dialog, refer
+         * to each dialog definition for the format of the callback data
          * @returns {Promise<any>}
          */
         export function openDialog(
@@ -170,10 +258,11 @@ namespace OS {
         }
 
         /**
-         *
+         * Find a list of applications that support a specific mime
+         * type in the system packages meta-data
          *
          * @export
-         * @param {string} mime
+         * @param {string} mime the mime type
          * @returns {API.PackageMetaType[]}
          */
         export function appsByMime(mime: string): API.PackageMetaType[] {
@@ -223,17 +312,16 @@ namespace OS {
         }
 
         /**
-         *
+         * Find all applications that have services attached to it.
+         * This function allows to collect all the services available
+         * on the system. These services may or may not be running.
          *
          * @export
-         * @returns {{
-         *             [index: string]: API.PackageMetaType;
-         *         }}
+         * @returns {GenericObject<API.PackageMetaType>} result in forme of:
+         * `service_name:service-meta-data` key-value pairs
          */
-        export function appsWithServices(): {
-            [index: string]: API.PackageMetaType;
-        } {
-            const o: { [index: string]: API.PackageMetaType } = {};
+        export function appsWithServices(): GenericObject<API.PackageMetaType> {
+            const o: GenericObject<API.PackageMetaType> = {};
             for (let k in setting.system.packages) {
                 const v = setting.system.packages[k];
                 if (v && v.services && v.services.length > 0) {
@@ -244,10 +332,21 @@ namespace OS {
         }
 
         /**
+         * Find an launch an application using input application argument
+         * such as VFS file meta-data.
          *
+         * Based on the input application argument, the function will try
+         * to find all applications that is compatible with that argument.
+         * Three cases possible:
+         * - There is no application that can handle the argument, a message will
+         * be notified to user.
+         * - There is one application that can handle the argument, the application
+         * will be launched with the argument
+         * - There are many applications that can handle the arguments, a selection
+         * dialog will be popped up and allows user to select an application to launch.
          *
          * @export
-         * @param {AppArgumentsType} it
+         * @param {AppArgumentsType} it application argument
          * @returns {void}
          */
         export function openWith(it: AppArgumentsType): void {
@@ -283,11 +382,15 @@ namespace OS {
         }
 
         /**
+         * Kil all processes related to an application, reload the application
+         * prototype definition and launch a new process of this application.
          *
+         * This function is used only for debug purpose or used by
+         * AntOSDK during in-browser application development
          *
          * @export
-         * @param {string} app
-         * @param {AppArgumentsType[]} args
+         * @param {string} app the application class name
+         * @param {AppArgumentsType[]} args application arguments
          * @returns {void}
          */
         export function forceLaunch(
@@ -301,9 +404,13 @@ namespace OS {
             return launch(app, args);
         }
 
-        
         /**
+         * Kill an running processes of an application, then
+         * unregister the application prototype definition
+         * from the [[application]] namespace.
          *
+         * This process is similar to uninstall the application
+         * from the current system state
          *
          * @export
          * @param {string} app
@@ -317,9 +424,14 @@ namespace OS {
         }
 
         /**
+         * Load an application if the application is not registered yet
+         * in the system.
          *
+         * This function fist loads and registers the application prototype
+         * definition in the [[application]] namespace, then update
+         * the system packages meta-data
          *
-         * @param {string} app
+         * @param {string} app application class name
          * @returns {Promise<string>}
          */
         function loadApp(app: string): Promise<string> {
@@ -371,7 +483,10 @@ namespace OS {
         }
 
         /**
+         * Create a service process.
          *
+         * Services are singleton processes, there is only
+         * one process of a service at a time
          *
          * @export
          * @param {string} ph
@@ -417,10 +532,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Synchronously start a list of services
          *
          * @export
-         * @param {string[]} srvs
+         * @param {string[]} srvs list of service class names
          * @returns {Promise<any>}
          */
         export function pushServices(srvs: string[]): Promise<any> {
@@ -445,19 +560,22 @@ namespace OS {
         }
 
         /**
-         *
+         * Launch an application with arguments
          *
          * @export
-         * @param {string} app
-         * @param {AppArgumentsType[]} args
+         * @param {string} app application class name
+         * @param {AppArgumentsType[]} args application arguments
          */
         export function launch(app: string, args: AppArgumentsType[]): void {
             if (!application[app]) {
                 // first load it
                 loadApp(app)
                     .then((a) =>
-                        PM.createProcess(app, application[app], args)
-                            .catch((e) =>
+                        PM.createProcess(
+                            app,
+                            application[app],
+                            args
+                        ).catch((e) =>
                             announcer.osfail(
                                 __("Unable to launch: {0}", app),
                                 e
@@ -487,11 +605,11 @@ namespace OS {
         }
 
         /**
-         *
+         * Dock an application to the system application dock
          *
          * @export
-         * @param {BaseApplication} app
-         * @param {API.PackageMetaType} meta
+         * @param {BaseApplication} app reference to the application process
+         * @param {API.PackageMetaType} meta Application meta-data
          * @returns {void}
          */
         export function dock(
@@ -525,12 +643,12 @@ namespace OS {
                     "[data-id = 'appmenu']",
                     "#syspanel"
                 )[0] as tag.MenuTag;
-                    dock.newapp(data);
+                dock.newapp(data);
             });
         }
 
         /**
-         *
+         * Toggle system fullscreen
          *
          * @export
          */
@@ -566,7 +684,8 @@ namespace OS {
         }
 
         /**
-         *
+         * Remove an application process from the system application
+         * dock. This action will also exit the process
          *
          * @export
          * @param {BaseApplication} app
@@ -577,10 +696,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Attach a running service process to the system tray
          *
          * @export
-         * @param {BaseService} srv
+         * @param {BaseService} srv reference to the running service process
          * @returns {void}
          */
         export function attachservice(srv: application.BaseService): void {
@@ -589,10 +708,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Detach a running process from the system tray
          *
          * @export
-         * @param {BaseService} srv
+         * @param {BaseService} srv reference to the running service process
          * @returns {void}
          */
         export function detachservice(srv: application.BaseService): void {
@@ -600,20 +719,21 @@ namespace OS {
         }
 
         /**
+         * Bind a context menu event to an AntOS element.
          *
+         * This will find the fist element which defines a handle
+         * named [[contextMenuHandle]] and bind the context menu
+         * event to it.
          *
-         * @param {JQuery.MouseEventBase} event
+         * @param {JQuery.MouseEventBase} event mouse event
          * @returns {void}
          */
         function bindContextMenu(event: JQuery.MouseEventBase): void {
             var handle = function (e: HTMLElement) {
                 if (e.contextmenuHandle) {
                     const m = $("#contextmenu")[0] as tag.MenuTag;
-                    m.onmenuselect = () => {}
-                    return e.contextmenuHandle(
-                        event,
-                        m
-                    );
+                    m.onmenuselect = () => {};
+                    return e.contextmenuHandle(event, m);
                 } else {
                     const p = $(e).parent().get(0);
                     if (p !== $("#workspace").get(0)) {
@@ -626,11 +746,12 @@ namespace OS {
         }
 
         /**
-         *
+         * Register a hot key and its handle in the
+         * system  shortcut
          *
          * @export
-         * @param {string} k
-         * @param {(e: JQuery.MouseDownEvent) => void} f
+         * @param {string} k the hotkey e.g. `ALT-C`
+         * @param {(e: JQuery.MouseDownEvent) => void} f handle function
          * @returns {void}
          */
         export function bindKey(
@@ -650,10 +771,10 @@ namespace OS {
         }
 
         /**
-         *
+         * Load and apply system wallpaper from the setting object
          *
          * @export
-         * @param {setting.WPSettingType} obj
+         * @param {setting.WPSettingType} obj wallpaper setting object
          */
         export function wallpaper(obj?: setting.WPSettingType): void {
             if (obj) {
@@ -667,11 +788,11 @@ namespace OS {
         }
 
         /**
+         * Show tooltip at the current mouse position
          *
-         *
-         * @param {JQuery<HTMLElement>} el
-         * @param {string} text
-         * @param {JQuery.MouseEventBase} e
+         * @param {JQuery<HTMLElement>} el The target element that has the tooltip attribute
+         * @param {string} text The text to be displayed
+         * @param {JQuery.MouseEventBase} e mouse event
          * @returns {void}
          */
         function showTooltip(
@@ -720,7 +841,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Refresh the content of the virtual desktop
          *
          * @param {tag.FloatListTag} desktop
          */
@@ -764,8 +885,12 @@ namespace OS {
         }
 
         /**
+         * Init the virtual desktop on boot:
          *
-         *
+         * - Register listener for system hotkey
+         * - Bind the system context menu handle
+         * - Init and load the content of the virtual desktop
+         * - Init the system tooltip event handle
          */
         function initDM(): void {
             const scheme = $.parseHTML(schemes.ws);
@@ -806,9 +931,8 @@ namespace OS {
                     }
                     shortcut[fnk][c](event);
                     return event.preventDefault();
-                })
-            }
-            );
+                });
+            });
             // system menu and dock
             $("#syspanel")[0].uify(undefined);
             $("#sysdock")[0].uify(undefined);
@@ -840,11 +964,15 @@ namespace OS {
                     return e.calibrate();
                 };
 
-                desktop.onlistselect = function (d: TagEventType<tag.ListItemEventData>) {
+                desktop.onlistselect = function (
+                    d: TagEventType<tag.ListItemEventData>
+                ) {
                     ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
                 };
 
-                desktop.onlistdbclick = function (d: TagEventType<tag.ListItemEventData>) {
+                desktop.onlistdbclick = function (
+                    d: TagEventType<tag.ListItemEventData>
+                ) {
                     ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
                     const it = desktop.selectedItem;
                     return openWith(it.data as AppArgumentsType);
@@ -889,8 +1017,10 @@ namespace OS {
                         })()
                     );
                     m.items = menu;
-                    m.onmenuselect = function (evt: TagEventType<tag.MenuEventData>) {
-                        if(!evt.data || !evt.data.item) return;
+                    m.onmenuselect = function (
+                        evt: TagEventType<tag.MenuEventData>
+                    ) {
+                        if (!evt.data || !evt.data.item) return;
                         const item = evt.data.item.data;
                         switch (item.dataid) {
                             case "desktop-open":
@@ -934,7 +1064,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Refresh the virtual desktop
          *
          * @export
          */
@@ -943,7 +1073,9 @@ namespace OS {
         }
 
         /**
+         * Show the login screen and perform the login operation.
          *
+         * Once login successfully, the [[startAntOS]] will be called
          *
          * @export
          */
@@ -978,6 +1110,15 @@ namespace OS {
         }
 
         /**
+         * Start AntOS after a successful login.
+         *
+         * This function performs the following operations:
+         *
+         * - System cleanup
+         * - Apply system setting
+         * - Load desktop wallpaper and the current theme from the system setting
+         * - Load system package meta-data
+         * - Load and apply system locale and language
          *
          *
          * @export
@@ -1029,32 +1170,38 @@ namespace OS {
                         pushServices(
                             (() => {
                                 const result = [];
-                                for (let v of 
-                                    setting.system.startup.services
-                                ) {
+                                for (let v of setting.system.startup.services) {
                                     result.push(v);
                                 }
                                 return result;
                             })()
-                        ).then(function(){
+                        ).then(function () {
                             setting.system.startup.apps.map((a) => {
                                 launch(a, []);
                             });
-                        })
+                        });
                     });
                 }
             });
             //GUI.launch "DummyApp"
             // initDM
             API.setLocale(setting.system.locale).then(() => initDM());
-            Ant.OS.announcer.observable.on("error", function(d) {
-                console.log(d.data.e)
+            Ant.OS.announcer.observable.on("error", function (d) {
+                console.log(d.data.e);
             });
-            Ant.OS.announcer.observable.on("fail", function(d) {
-                console.log(d.data.e)
+            Ant.OS.announcer.observable.on("fail", function (d) {
+                console.log(d.data.e);
             });
         }
-
+        /**
+         * HTML schemes used by the system:
+         * - The login screen scheme
+         * - The workspace including:
+         *  - System panel
+         *  - Virtual desktop
+         *  - Context menu
+         *  - System tooltip
+         */
         export const schemes: GenericObject<string> = {};
         schemes.ws = `\
 <afx-sys-panel id = "syspanel"></afx-sys-panel>

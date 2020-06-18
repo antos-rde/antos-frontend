@@ -448,6 +448,14 @@ namespace OS {
             /**
              * A Calendar dialog allows user to select a date
              *
+             * Input data:
+             *
+             * ```typescript
+             * {
+             *      title: string // window title
+             * }
+             * ```
+             * 
              * @export
              * @class CalendarDialog
              * @extends {BasicDialog}
@@ -455,14 +463,6 @@ namespace OS {
             export class CalendarDialog extends BasicDialog {
                 /**
                  * Creates an instance of CalendarDialog.
-                 *
-                 * Input data:
-                 *
-                 * ```typescript
-                 * {
-                 *      title: string // window title
-                 * }
-                 * ```
                  *
                  * Callback data: a Date object represent the selected date
                  *

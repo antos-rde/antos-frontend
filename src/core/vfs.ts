@@ -17,13 +17,21 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 type VFSFileHandleClass = { new (...args: any[]): OS.API.VFS.BaseFileHandle };
 interface String {
+    /**
+     * Convert a string to VFS file handle.
+     *
+     * This function will create a file handle object from the string
+     * with the help of [[VFS.findHandles]]
+     *
+     * @returns {OS.API.VFS.BaseFileHandle}
+     * @memberof String
+     */
     asFileHandle(): OS.API.VFS.BaseFileHandle;
 }
 namespace OS {
     export namespace API {
-
         /**
-         *
+         * User permission data type
          *
          * @export
          * @interface UserPermissionType
@@ -35,31 +43,127 @@ namespace OS {
         }
 
         /**
-         *
+         * VFS file meta-data data type
          *
          * @export
          * @interface FileInfoType
          */
         export interface FileInfoType {
+            /**
+             * File mime type
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             mime: string;
+
+            /**
+             * File size
+             *
+             * @type {number}
+             * @memberof FileInfoType
+             */
             size: number;
+
+            /**
+             * File name
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             name: string;
+
+            /**
+             * File path
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             path: string;
+
+            /**
+             * File type:
+             * - `file`
+             * - `dir`
+             * - `app`
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             type: string;
+
+            /**
+             * File permission
+             *
+             * @type {{
+             *                 group: UserPermissionType;
+             *                 owner: UserPermissionType;
+             *                 other: UserPermissionType;
+             *             }}
+             * @memberof FileInfoType
+             */
             perm?: {
+                /**
+                 * Group permission
+                 *
+                 * @type {UserPermissionType}
+                 */
                 group: UserPermissionType;
+
+                /**
+                 * Owner permission
+                 *
+                 * @type {UserPermissionType}
+                 */
                 owner: UserPermissionType;
+
+                /**
+                 * Other permission
+                 *
+                 * @type {UserPermissionType}
+                 */
                 other: UserPermissionType;
             };
+
+            /**
+             * Creation time
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             ctime?: string;
+
+            /**
+             * Modification time
+             *
+             * @type {string}
+             * @memberof FileInfoType
+             */
             mtime?: string;
+
+            /**
+             * Group id
+             *
+             * @type {number}
+             * @memberof FileInfoType
+             */
             gid?: number;
+
+            /**
+             * User id
+             *
+             * @type {number}
+             * @memberof FileInfoType
+             */
             uid?: number;
             [propName: string]: any;
         }
 
+        /**
+         * This namespace is dedicated to all APIs related to
+         * AntOS Virtual File System (VFS)
+         */
         export namespace VFS {
-            
             String.prototype.asFileHandle = function (): BaseFileHandle {
                 const list = this.split("://");
                 const handles = API.VFS.findHandles(list[0]);
@@ -73,14 +177,18 @@ namespace OS {
                 return new handles[0](this);
             };
 
+            /**
+             * Placeholder stores VFS file protocol patterns and its attached file handle class.
+             *
+             */
             export const handles: GenericObject<VFSFileHandleClass> = {};
 
             /**
-             *
+             * Register a protocol to a handle class
              *
              * @export
-             * @param {string} protos
-             * @param {VFSFileHandleClass} cls
+             * @param {string} protos VFS protocol pattern
+             * @param {VFSFileHandleClass} cls handle class
              */
             export function register(
                 protos: string,
@@ -90,10 +198,18 @@ namespace OS {
             }
 
             /**
+             * Looking for a attached file handle class of a string protocol
              *
+             * When converting a string to file handle, the system will look
+             * for a protocol pattern in the string, if the protocol found,
+             * its attached handle class (found in [[VFS.handles]]) will be
+             * used to initialize a file handle object from the string
              *
+             * ```typescript
+             *  "home://data/test.txt".asFileHandle() // -> an instance of RemoteFileHandle
+             * ```
              * @export
-             * @param {string} proto
+             * @param {string} proto protocol string
              * @returns {VFSFileHandleClass[]}
              */
             export function findHandles(proto: string): VFSFileHandleClass[] {
@@ -111,26 +227,102 @@ namespace OS {
             }
 
             /**
+             * Abstract prototype of all all VFS file handle definition.
              *
+             * This prototype provides a standardized interface to access
+             * to different underlay file systems such as remote file,
+             * cloud file (Dropbox, Google drive, etc.), URL or memory-based file
              *
              * @export
              * @abstract
              * @class BaseFileHandle
              */
             export abstract class BaseFileHandle {
+                /**
+                 * Flag indicates whether the file is dirty
+                 *
+                 * @type {boolean}
+                 * @memberof BaseFileHandle
+                 */
                 dirty: boolean;
+
+                /**
+                 * Once read, file content will be cached in this placeholder
+                 *
+                 * @type {*}
+                 * @memberof BaseFileHandle
+                 */
                 cache: any;
+
+                /**
+                 * Flag indicated whether the file meta-data is loaded
+                 *
+                 * @type {boolean}
+                 * @memberof BaseFileHandle
+                 */
                 ready: boolean;
+
+                /**
+                 * File path
+                 *
+                 * @type {string}
+                 * @memberof BaseFileHandle
+                 */
                 path: string;
+
+                /**
+                 * File protocol e.g:
+                 * - `os://`
+                 * - `home://`
+                 *
+                 * @type {string}
+                 * @memberof BaseFileHandle
+                 */
                 protocol: string;
+
+                /**
+                 * List of path segments
+                 *
+                 * @type {string[]}
+                 * @memberof BaseFileHandle
+                 */
                 genealogy: string[];
+
+                /**
+                 * File base name
+                 *
+                 * @type {string}
+                 * @memberof BaseFileHandle
+                 */
                 basename: string;
+
+                /**
+                 * Once loaded, [[ready]] will be set to true and
+                 * file meta-data will be stored in this place holder
+                 *
+                 * @type {FileInfoType}
+                 * @memberof BaseFileHandle
+                 */
                 info: FileInfoType;
+
+                /**
+                 * File extension
+                 *
+                 * @type {string}
+                 * @memberof BaseFileHandle
+                 */
                 ext: string;
+
+                /**
+                 *
+                 * File type
+                 * @type {string}
+                 * @memberof BaseFileHandle
+                 */
                 type: string;
                 /**
                  *Creates an instance of BaseFileHandle.
-                 * @param {string} path
+                 * @param {string} path file path
                  * @memberof BaseFileHandle
                  */
                 constructor(path: string) {
@@ -140,7 +332,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Set a file path to the current file handle
                  *
                  * @param {string} p
                  * @returns {void}
@@ -176,7 +368,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Getter: Get the file basename
+                 * Setter: set the file name
                  *
                  * @returns {string}
                  * @memberof BaseFileHandle
@@ -187,20 +380,13 @@ namespace OS {
                     }
                     return this.basename;
                 }
-
-                /**
-                 *
-                 *
-                 * @memberof BaseFileHandle
-                 */
-                set filename(v: string)
-                {
+                set filename(v: string) {
                     this.basename = v;
                 }
                 /**
+                 * Set data to the file cache
                  *
-                 *
-                 * @param {*} v
+                 * @param {*} v data object
                  * @returns {BaseFileHandle}
                  * @memberof BaseFileHandle
                  */
@@ -210,7 +396,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Return the object itself
                  *
                  * @returns {BaseFileHandle}
                  * @memberof BaseFileHandle
@@ -220,7 +406,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Check whether the current file is the root of the file tree
                  *
                  * @returns {boolean}
                  * @memberof BaseFileHandle
@@ -230,22 +416,7 @@ namespace OS {
                 }
 
                 /**
-                 *
-                 *
-                 * @param {string} name
-                 * @returns {string}
-                 * @memberof BaseFileHandle
-                 */
-                child(name: string): string {
-                    if (this.isRoot()) {
-                        return this.path + name;
-                    } else {
-                        return this.path + "/" + name;
-                    }
-                }
-
-                /**
-                 *
+                 * Check whether the current file is a hidden file
                  *
                  * @returns {boolean}
                  * @memberof BaseFileHandle
@@ -258,7 +429,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get hash number of the current file path
                  *
                  * @returns {number}
                  * @memberof BaseFileHandle
@@ -271,13 +442,16 @@ namespace OS {
                 }
 
                 /**
+                 * Convert the current file cache to Base64
                  *
-                 *
-                 * @param {string} t
-                 * @returns {(Promise<string | ArrayBuffer>)}
+                 * @protected
+                 * @param {string} t type of the file cache:
+                 * - `object`
+                 * - `mime type`
+                 * @returns {(Promise<string | ArrayBuffer>)} promise on the converted data
                  * @memberof BaseFileHandle
                  */
-                b64(t: string): Promise<string | ArrayBuffer> {
+                protected b64(t: string): Promise<string | ArrayBuffer> {
                     // t is object or mime type
                     return new Promise((resolve, reject) => {
                         const m = t === "object" ? "text/plain" : t;
@@ -307,7 +481,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get the parent file handle of the current file
                  *
                  * @returns {BaseFileHandle}
                  * @memberof BaseFileHandle
@@ -326,9 +500,10 @@ namespace OS {
                 }
 
                 /**
+                 * Load the file meta-data before performing
+                 * any task
                  *
-                 *
-                 * @returns {Promise<FileInfoType>}
+                 * @returns {Promise<FileInfoType>} a promise on file meta-data
                  * @memberof BaseFileHandle
                  */
                 onready(): Promise<FileInfoType> {
@@ -348,10 +523,22 @@ namespace OS {
                 }
 
                 /**
+                 * Public read operation
                  *
+                 * This function calls the [[_rd]] function to perform the operation.
                  *
-                 * @param {string} [t]
-                 * @returns {Promise<any>}
+                 * If the current file is a directory, then the operation
+                 * will return the meta-data of all files inside of the directory.
+                 * Otherwise, file content will be returned
+                 *
+                 * @param {string} t data type
+                 * - jsonp: the response is an json object
+                 * - script: the response is a javascript code
+                 * - xml, html: the response is a XML/HTML object
+                 * - text: plain text
+                 * - binary
+                 * 
+                 * @returns {Promise<any>} a promise on the file content
                  * @memberof BaseFileHandle
                  */
                 read(t?: string): Promise<any> {
@@ -371,10 +558,16 @@ namespace OS {
                 }
 
                 /**
+                 * Write the file cache to the actual file
                  *
-                 *
-                 * @param {string} t
-                 * @returns {Promise<RequestResult>}
+                 * This function calls the [[_wr]] function to perform the operation
+                 * 
+                 * @param {string} t data type
+                 * - `base64`
+                 * - `object`
+                 * - `mime type`
+                 * 
+                 * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 write(t: string): Promise<RequestResult> {
@@ -393,10 +586,12 @@ namespace OS {
                 }
 
                 /**
+                 * Sub-directory creation
                  *
+                 * This function calls the [[_mk]] function to perform the operation
                  *
-                 * @param {string} d
-                 * @returns {Promise<RequestResult>}
+                 * @param {string} d sub directory name
+                 * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 mk(d: string): Promise<RequestResult> {
@@ -420,9 +615,11 @@ namespace OS {
                 }
 
                 /**
+                 * Delete the file
                  *
+                 * This function calls the [[_rm]] function to perform the operation
                  *
-                 * @returns {Promise<RequestResult>}
+                 * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 remove(): Promise<RequestResult> {
@@ -446,9 +643,13 @@ namespace OS {
                 }
 
                 /**
+                 * Upload a file to the current directory
                  *
+                 * Only work when the current file is a directory
                  *
-                 * @returns {Promise<RequestResult>}
+                 * This function calls the [[_up]] function to perform the operation
+                 *
+                 * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 upload(): Promise<RequestResult> {
@@ -472,9 +673,13 @@ namespace OS {
                 }
 
                 /**
+                 * Share the file by publish it.
                  *
+                 * Only work with file
                  *
-                 * @returns {Promise<RequestResult>}
+                 * This function calls the [[_pub]] function to perform the operation
+                 *
+                 * @returns {Promise<RequestResult>} promise on operation result
                  * @memberof BaseFileHandle
                  */
                 publish(): Promise<RequestResult> {
@@ -498,9 +703,13 @@ namespace OS {
                 }
 
                 /**
+                 * Download the file.
                  *
+                 * Only work with file
                  *
-                 * @returns {Promise<any>}
+                 * This function calls the [[_down]] function to perform the operation
+                 *
+                 * @returns {Promise<any>} Promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 download(): Promise<any> {
@@ -524,10 +733,12 @@ namespace OS {
                 }
 
                 /**
+                 * Move the current file to another location
                  *
+                 * This function calls the [[_mv]] function to perform the operation
                  *
-                 * @param {string} d
-                 * @returns {Promise<RequestResult>}
+                 * @param {string} d destination location
+                 * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
                 move(d: string): Promise<RequestResult> {
@@ -551,7 +762,11 @@ namespace OS {
                 }
 
                 /**
+                 * Execute the current file.
                  *
+                 * This action depends on each file protocol
+                 *
+                 * This function calls the [[_exec]] function to perform the operation
                  *
                  * @returns {Promise<any>}
                  * @memberof BaseFileHandle
@@ -577,7 +792,8 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Get an accessible link to the file
+                 * that can be accessed from the browser
                  *
                  * @returns {string}
                  * @memberof BaseFileHandle
@@ -587,13 +803,13 @@ namespace OS {
                 }
 
                 /**
+                 * Helper function returns a promise on unsupported action
                  *
-                 *
-                 * @param {string} t
+                 * @param {string} t action name
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                unsupported(t: string): Promise<RequestResult> {
+                protected unsupported(t: string): Promise<RequestResult> {
                     return new Promise((resolve, reject) => {
                         return reject(
                             API.throwe(
@@ -606,117 +822,168 @@ namespace OS {
                         );
                     });
                 }
-                // actions must be implemented by subclasses
 
                 /**
+                 * Low level protocol-specific read operation
                  *
+                 * This function should be overridden on the file handle class
+                 * that supports the operation
                  *
-                 * @param {string} t
+                 * @protected
+                 * @param {string} t data type, see [[read]]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _rd(t: string): Promise<RequestResult> {
+                protected _rd(t: string): Promise<RequestResult> {
                     return this.unsupported("read");
                 }
 
                 /**
+                 * Low level protocol-specific write operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
-                 * @param {string} t
+                 * @protected
+                 * @param {string} t data type, see [[write]]
                  * @param {*} [d]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _wr(t: string, d?: any): Promise<RequestResult> {
+                protected _wr(t: string, d?: any): Promise<RequestResult> {
                     return this.unsupported("write");
                 }
+
                 /**
+                 * Low level protocol-specific sub-directory creation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
-                 * @param {string} d
+                 * @protected
+                 * @param {string} d sub directory name
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _mk(d: string): Promise<RequestResult> {
+                protected _mk(d: string): Promise<RequestResult> {
                     return this.unsupported("mk");
                 }
                 /**
+                 * Low level protocol-specific delete operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _rm(): Promise<RequestResult> {
+                protected _rm(): Promise<RequestResult> {
                     return this.unsupported("remove");
                 }
 
                 /**
+                 * Low level protocol-specific move operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
+                 * @protected
                  * @param {string} d
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _mv(d: string): Promise<RequestResult> {
+                protected _mv(d: string): Promise<RequestResult> {
                     return this.unsupported("move");
                 }
 
                 /**
+                 * Low level protocol-specific upload operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _up(): Promise<RequestResult> {
+                protected _up(): Promise<RequestResult> {
                     return this.unsupported("upload");
                 }
 
                 /**
+                 * Low level protocol-specific download operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
                  * @returns {Promise<any>}
                  * @memberof BaseFileHandle
                  */
-                _down(): Promise<any> {
+                protected _down(): Promise<any> {
                     return this.unsupported("download");
                 }
 
                 /**
+                 * Low level protocol-specific execute operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _exec(): Promise<RequestResult> {
+                protected _exec(): Promise<RequestResult> {
                     return this.unsupported("execute");
                 }
 
                 /**
+                 * Low level protocol-specific share operation
                  *
+                 * This function should be overridden by the file handle class
+                 * that supports the operation
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                _pub(): Promise<RequestResult> {
+                protected _pub(): Promise<RequestResult> {
                     return this.unsupported("publish");
                 }
+
+                /**
+                 * Read the current file meta-data
+                 *
+                 * should be implemented by subclasses
+                 *
+                 * @abstract
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BaseFileHandle
+                 */
                 abstract meta(): Promise<RequestResult>;
             }
 
-            // Remote file handle
             /**
+             * Remote file handle allows to perform file operation
+             * on AntOS remote server files. Its protocol is defined
+             * by the following pattern:
              *
+             * ```
+             * ^(home|desktop|os|Untitled)$
+             * ```
              *
              * @class RemoteFileHandle
              * @extends {BaseFileHandle}
              */
             export class RemoteFileHandle extends BaseFileHandle {
+                /**
+                 *Creates an instance of RemoteFileHandle.
+                 * @param {string} path file path
+                 * @memberof RemoteFileHandle
+                 */
                 constructor(path: string) {
                     super(path);
                 }
 
                 /**
-                 *
+                 * Read remote file meta-data
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
@@ -724,9 +991,7 @@ namespace OS {
                 meta(): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            const d = await API.handle.fileinfo(
-                                this.path
-                            );
+                            const d = await API.handle.fileinfo(this.path);
                             if (d.error) {
                                 return reject(
                                     API.throwe(
@@ -742,7 +1007,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Remote file access link
                  *
                  * @returns {string}
                  * @memberof RemoteFileHandle
@@ -751,7 +1016,19 @@ namespace OS {
                     return API.handle.get + "/" + this.path;
                 }
 
-                _rd(t: string): Promise<any> {
+                /**
+                 * Read remote file content.
+                 *
+                 * If the current file is a directory, then the operation
+                 * will return the meta-data of all files inside of the directory.
+                 * Otherwise, file content will be returned
+                 *
+                 * @protected
+                 * @param {string} t data type see [[read]]
+                 * @returns {Promise<any>}
+                 * @memberof RemoteFileHandle
+                 */
+                protected _rd(t: string): Promise<any> {
                     // t: binary, text, any type
                     if (!this.info) {
                         return new Promise((resolve, reject) => {
@@ -772,20 +1049,18 @@ namespace OS {
                     if (t === "binary") {
                         return API.handle.fileblob(this.path);
                     }
-                    return API.handle.readfile(
-                        this.path,
-                        t ? t : "text"
-                    );
+                    return API.handle.readfile(this.path, t ? t : "text");
                 }
 
                 /**
+                 * Write file cache to the remote file
                  *
-                 *
-                 * @param {string} t
+                 * @protected
+                 * @param {string} t data type see [[write]]
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _wr(t: string): Promise<RequestResult> {
+                protected _wr(t: string): Promise<RequestResult> {
                     // t is base64 or undefined
                     return new Promise(async (resolve, reject) => {
                         if (t === "base64") {
@@ -836,13 +1111,16 @@ namespace OS {
                 }
 
                 /**
+                 * Create sub directory
                  *
+                 * Only work on directory file handle
                  *
-                 * @param {string} d
+                 * @protected
+                 * @param {string} d sub directory name
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _mk(d: string): Promise<RequestResult> {
+                protected _mk(d: string): Promise<RequestResult> {
                     return new Promise((resolve, reject) => {
                         if (!this.info) {
                             return reject(
@@ -878,12 +1156,13 @@ namespace OS {
                 }
 
                 /**
+                 * Delete file/folder
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _rm(): Promise<RequestResult> {
+                protected _rm(): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const d = await API.handle.remove(this.path);
@@ -902,19 +1181,17 @@ namespace OS {
                 }
 
                 /**
+                 * Move file/folder
                  *
-                 *
+                 * @protected
                  * @param {string} d
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _mv(d: string): Promise<RequestResult> {
+                protected _mv(d: string): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            const r = await API.handle.move(
-                                this.path,
-                                d
-                            );
+                            const r = await API.handle.move(this.path, d);
                             if (r.error) {
                                 return reject(
                                     API.throwe(
@@ -930,18 +1207,19 @@ namespace OS {
                 }
 
                 /**
+                 * Upload a file
                  *
+                 * Only work with directory file handle
                  *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _up(): Promise<RequestResult> {
+                protected _up(): Promise<RequestResult> {
                     return new Promise((resolve, reject) => {
                         if (this.info.type !== "dir") {
                             return reject(
-                                API.throwe(
-                                    __("{0} is not a file", this.path)
-                                )
+                                API.throwe(__("{0} is not a file", this.path))
                             );
                         }
                         return API.handle
@@ -961,12 +1239,15 @@ namespace OS {
                 }
 
                 /**
+                 * Download a file
                  *
+                 * only work with file
                  *
+                 * @protected
                  * @returns {Promise<any>}
                  * @memberof RemoteFileHandle
                  */
-                _down(): Promise<any> {
+                protected _down(): Promise<any> {
                     return new Promise((resolve, reject) => {
                         if (this.info.type === "dir") {
                             return API.throwe(
@@ -987,12 +1268,13 @@ namespace OS {
                 }
 
                 /**
+                 * Publish a file
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
-                _pub(): Promise<RequestResult> {
+                protected _pub(): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const d = await API.handle.sharefile(
@@ -1016,25 +1298,28 @@ namespace OS {
 
             register("^(home|desktop|os|Untitled)$", RemoteFileHandle);
 
-            // Application Handle
             /**
+             * Application file is an AntOS special file allowing to
+             * refer to an application as a regular file. Its protocol
+             * pattern is defined as:
              *
+             * ```typescript
+             * "^app$" // e.g. app://Setting
+             * ```
              *
              * @class ApplicationHandle
              * @extends {BaseFileHandle}
              */
             export class ApplicationHandle extends BaseFileHandle {
-
                 /**
                  *Creates an instance of ApplicationHandle.
-                 * @param {string} path
+                 * @param {string} path file path
                  * @memberof ApplicationHandle
                  */
                 constructor(path: string) {
                     super(path);
                     if (this.basename) {
-                        let v: any =
-                            OS.setting.system.packages[this.basename];
+                        let v: any = OS.setting.system.packages[this.basename];
                         v.type = "app";
                         v.mime = "antos/app";
                         v.size = 0;
@@ -1044,7 +1329,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Read application meta-data
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof ApplicationHandle
@@ -1059,13 +1344,17 @@ namespace OS {
                 }
 
                 /**
+                 * If the current file is root (e.g. `app://`), the operation
+                 * will return all system packages meta-data.
                  *
+                 * Otherwise, an error will be thrown
                  *
+                 * @protected
                  * @param {string} t
                  * @returns {Promise<any>}
                  * @memberof ApplicationHandle
                  */
-                _rd(t: string): Promise<any> {
+                protected _rd(t: string): Promise<any> {
                     return new Promise((resolve, reject) => {
                         if (this.info) {
                             return resolve({
@@ -1096,12 +1385,24 @@ namespace OS {
             register("^app$", ApplicationHandle);
 
             /**
+             * A buffer file handle represents a virtual file that is stored
+             * on the system memory. Its protocol pattern is defined as:
              *
+             * ```typescript
+             * "^mem$" // e.g. mem://test.txt
+             * ```
              *
              * @class BufferFileHandle
              * @extends {BaseFileHandle}
              */
             export class BufferFileHandle extends BaseFileHandle {
+                /**
+                 *Creates an instance of BufferFileHandle.
+                 * @param {string} path file path
+                 * @param {string} mime file mime-type
+                 * @param {*} data file data
+                 * @memberof BufferFileHandle
+                 */
                 constructor(path: string, mime: string, data: any) {
                     super(path);
                     if (data) {
@@ -1117,7 +1418,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Read the file meta-data
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
@@ -1132,27 +1433,29 @@ namespace OS {
                 }
 
                 /**
+                 * Read file content stored in the file cached
                  *
-                 *
-                 * @param {string} t
+                 * @protected
+                 * @param {string} t data type see [[read]]
                  * @returns {Promise<any>}
                  * @memberof BufferFileHandle
                  */
-                _rd(t: string): Promise<any> {
+                protected _rd(t: string): Promise<any> {
                     return new Promise((resolve, reject) => {
                         return resolve(this.cache);
                     });
                 }
 
                 /**
+                 * Write data to the file cache
                  *
-                 *
-                 * @param {string} t
-                 * @param {*} d
+                 * @protected
+                 * @param {string} t data type, see [[write]]
+                 * @param {*} d data
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
-                _wr(t: string, d: any): Promise<RequestResult> {
+                protected _wr(t: string, d: any): Promise<RequestResult> {
                     this.cache = d;
                     return new Promise((resolve, reject) =>
                         resolve({
@@ -1163,12 +1466,13 @@ namespace OS {
                 }
 
                 /**
+                 * Download the buffer file
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
-                _down(): Promise<RequestResult> {
+                protected _down(): Promise<RequestResult> {
                     return new Promise((resolve, reject) => {
                         const blob = new Blob([this.cache], {
                             type: "octet/stream",
@@ -1182,12 +1486,22 @@ namespace OS {
             API.VFS.register("^mem$", BufferFileHandle);
 
             /**
+             * URL file handle represents a HTTP/HTTPs link url
+             * as an AntOS VFS file handle. Its protocol is defined as
              *
+             * ```
+             * ^(http|https|ftp)$
+             * ```
              *
              * @class URLFileHandle
              * @extends {BaseFileHandle}
              */
             export class URLFileHandle extends BaseFileHandle {
+                /**
+                 *Creates an instance of URLFileHandle.
+                 * @param {string} path
+                 * @memberof URLFileHandle
+                 */
                 constructor(path: string) {
                     super(path);
                     this.ready = true;
@@ -1201,7 +1515,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Read file meta-data
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof URLFileHandle
@@ -1214,7 +1528,16 @@ namespace OS {
                         })
                     );
                 }
-                _rd(t: string): Promise<any> {
+
+                /**
+                 * Read URL content
+                 *
+                 * @protected
+                 * @param {string} t data type see [[read]]
+                 * @returns {Promise<any>}
+                 * @memberof URLFileHandle
+                 */
+                protected _rd(t: string): Promise<any> {
                     return API.get(this.path, t ? t : "text");
                 }
             }
@@ -1222,12 +1545,22 @@ namespace OS {
             API.VFS.register("^(http|https|ftp)$", URLFileHandle);
 
             /**
+             * Shared file handle represents all AntOS shared file.
+             * Its protocol is defined as:
              *
+             * ```
+             * ^shared$
+             * ```
              *
              * @class SharedFileHandle
              * @extends {API.VFS.BaseFileHandle}
              */
             export class SharedFileHandle extends API.VFS.BaseFileHandle {
+                /**
+                 *Creates an instance of SharedFileHandle.
+                 * @param {string} path file path
+                 * @memberof SharedFileHandle
+                 */
                 constructor(path: string) {
                     super(path);
                     if (this.isRoot()) {
@@ -1236,7 +1569,7 @@ namespace OS {
                 }
 
                 /**
-                 *
+                 * Read file meta-data
                  *
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
@@ -1246,44 +1579,37 @@ namespace OS {
                 }
 
                 /**
+                 * Read file content
                  *
-                 *
-                 * @param {string} t
+                 * @protected
+                 * @param {string} t data type, see [[read]]
                  * @returns {Promise<any>}
                  * @memberof SharedFileHandle
                  */
-                _rd(t: string): Promise<any> {
+                protected _rd(t: string): Promise<any> {
                     if (this.isRoot()) {
-                        return API.get(
-                            `${API.handle.shared}/all`,
-                            t
-                        );
+                        return API.get(`${API.handle.shared}/all`, t);
                     }
                     //read the file
                     if (t === "binary") {
                         return API.handle.fileblob(this.path);
                     }
-                    return API.handle.readfile(
-                        this.path,
-                        t ? t : "text"
-                    );
+                    return API.handle.readfile(this.path, t ? t : "text");
                 }
 
                 /**
+                 * write data to shared file
                  *
-                 *
-                 * @param {string} t
-                 * @param {string} d
+                 * @protected
+                 * @param {string} t data type, see [[write]]
+                 * @param {string} d file data
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                _wr(t: string, d: string): Promise<RequestResult> {
+                protected _wr(t: string, d: string): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            const r = await API.handle.write(
-                                this.path,
-                                d
-                            );
+                            const r = await API.handle.write(this.path, d);
                             if (r.error) {
                                 return reject(
                                     API.throwe(
@@ -1299,12 +1625,13 @@ namespace OS {
                 }
 
                 /**
+                 * Un-publish the file
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                _rm(): Promise<RequestResult> {
+                protected _rm(): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const d = await API.handle.sharefile(
@@ -1326,18 +1653,17 @@ namespace OS {
                 }
 
                 /**
+                 * Download shared file
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                _down(): Promise<RequestResult> {
+                protected _down(): Promise<RequestResult> {
                     return new Promise((resolve, reject) => {
                         if (this.info.type === "dir") {
                             return reject(
-                                API.throwe(
-                                    __("{0} is not a file", this.path)
-                                )
+                                API.throwe(__("{0} is not a file", this.path))
                             );
                         }
                         return API.handle
@@ -1354,12 +1680,13 @@ namespace OS {
                 }
 
                 /**
+                 * Un publish the file
                  *
-                 *
+                 * @protected
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                _pub(): Promise<RequestResult> {
+                protected _pub(): Promise<RequestResult> {
                     return new Promise((resolve, reject) =>
                         resolve({
                             result: this.basename,

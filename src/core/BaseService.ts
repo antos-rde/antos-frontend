@@ -27,6 +27,9 @@ namespace OS {
          * to access to service visual contents such as: options,
          * task performing based on user interaction, etc.
          *
+         * Services are singleton processes, there is only
+         * one process of a service at a time
+         * 
          * @export
          * @abstract
          * @class BaseService
