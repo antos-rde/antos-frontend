@@ -130,7 +130,7 @@ namespace OS {
                     try {
                         await this.mkfileAll(files, path, name);
                         this.app.currdir = rpath.asFileHandle();
-                        this.app.initSideBar();
+                        this.app.toggleSideBar();
                         return this.app.openFile(
                             `${rpath}/${name}.coffee`.asFileHandle() as application.CodePadFileHandle
                         );

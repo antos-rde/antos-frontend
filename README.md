@@ -12,6 +12,8 @@ development and deployment of user specific applications.
 This repository contains only the front-end API. To have fully functional VDE, AntOS need to connect
 to the corresponding server side API.
 
+![https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
+
 
 ## Demo
 A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.iohub.dev) using username: demo and password: demo
@@ -22,7 +24,7 @@ A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.ioh
 
 ## Documentation
 
-- API documentation: [https://doc.iohuv.dev/antos/api/](https://doc.iohuv.dev/antos/api/)
+- API documentation: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
 
 ## Licence
 

@@ -1,50 +1,219 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 var ace: any;
 namespace OS {
     export namespace application {
+        /**
+         * Extends the [[RemoteFileHandle]] interface with some useful
+         * properties used by [[CodePad]]
+         */
         export type CodePadFileHandle = API.VFS.RemoteFileHandle & {
+            /**
+             * The text will be displayed on the tab bar when opened
+             *
+             * @type {string}
+             */
             text: string;
+
+            /**
+             * ACE Undo manager of the current file, stores the
+             * modification history of the file
+             *
+             * @type {GenericObject<any>}
+             */
             um: GenericObject<any>;
+
+            /**
+             * Indicate whether the file is selected
+             *
+             * @type {boolean}
+             */
             selected: boolean;
+
+            /**
+             * Store the latest cursor position on the editor
+             * when editing the file
+             *
+             * @type {GenericObject<any>}
+             */
             cursor: GenericObject<any>;
+
+            /**
+             * Language mode setting of the file
+             *
+             * @type {GenericObject<string>}
+             */
             langmode: GenericObject<string>;
         };
+        /**
+         * [[CodePad]]'s [[CommandPalette]] action type definition
+         */
         type ActionType = CMDMenu | GenericObject<any>;
 
         /**
+         * A simple yet powerful code/text editor.
          *
+         * CodePad is the default text editor shipped with
+         * AntOS base system. It is based on the ACE editor.
+         *
+         * Features:
+         *
+         * - It includes all the features of the ACE editor
+         * - Text manipulation can be extended using the CodePad extension mechanism.
+         * - All extension actions can be accessed via the [[CommandPalette]] which
+         * is inspired by MS Visual Studio Code.
+         * - Default extensions shipped with CodePad:
+         *  - AntOSDK: allowing to create/develop/build/release an AntOS application
+         *  - CodePad extension maker: allowing to develop/release/install CodePad extensions.
          *
          * @export
          * @class CodePad
          * @extends {BaseApplication}
          */
         export class CodePad extends BaseApplication {
+            /**
+             * Reference to the current editing file handle
+             *
+             * @private
+             * @type {CodePadFileHandle}
+             * @memberof CodePad
+             */
             private currfile: CodePadFileHandle;
+
+            /**
+             * Reference to the current working directory
+             *
+             * @type {API.VFS.BaseFileHandle}
+             * @memberof CodePad
+             */
             currdir: API.VFS.BaseFileHandle;
+
+            /**
+             * Placeholder stores all extension actions loaded from
+             * extensions.json
+             *
+             * @type {GenericObject<any>}
+             * @memberof CodePad
+             */
             extensions: GenericObject<any>;
+
+            /**
+             * Reference to the sidebar file view UI
+             *
+             * @private
+             * @type {GUI.tag.FileViewTag}
+             * @memberof CodePad
+             */
             private fileview: GUI.tag.FileViewTag;
+
+            /**
+             * Reference to the sidebar
+             *
+             * @private
+             * @type {GUI.tag.VBoxTag}
+             * @memberof CodePad
+             */
             private sidebar: GUI.tag.VBoxTag;
+
+            /**
+             * Reference to the editor tab bar UI
+             *
+             * @private
+             * @type {GUI.tag.TabBarTag}
+             * @memberof CodePad
+             */
             private tabbar: GUI.tag.TabBarTag;
+
+            /**
+             * Reference to the language status bar
+             *
+             * @private
+             * @type {GUI.tag.LabelTag}
+             * @memberof CodePad
+             */
             private langstat: GUI.tag.LabelTag;
+
+            /**
+             * Reference to the editor status bar
+             *
+             * @private
+             * @type {GUI.tag.LabelTag}
+             * @memberof CodePad
+             */
             private editorstat: GUI.tag.LabelTag;
+
+            /**
+             * Reference to the editor instance
+             *
+             * @private
+             * @type {GenericObject<any>}
+             * @memberof CodePad
+             */
             private editor: GenericObject<any>;
+
+            /**
+             * Editor language modes
+             *
+             * @private
+             * @type {GenericObject<any>}
+             * @memberof CodePad
+             */
             private modes: GenericObject<any>;
+
+            /**
+             * Editor mutex
+             *
+             * @private
+             * @type {boolean}
+             * @memberof CodePad
+             */
             private editormux: boolean;
+
+            /**
+             * Reference to the CommandPalette's spotlight
+             *
+             * @type {CMDMenu}
+             * @memberof CodePad
+             */
             spotlight: CMDMenu;
+
+            /**
+             * Extension prototype definition will be stored
+             * in this class variable
+             *
+             * @static
+             * @type {GenericObject<any>}
+             * @memberof CodePad
+             */
             static extensions: GenericObject<any>;
+
+            /**
+             * Prototype definition of a [[CommandPalette]] action
+             *
+             * @static
+             * @type {typeof CMDMenu}
+             * @memberof CodePad
+             */
             static CMDMenu: typeof CMDMenu;
+
+            /**
+             * Prototype definition of CodePad CommandPalette
+             *
+             * @static
+             * @type {typeof CommandPalette}
+             * @memberof CodePad
+             */
             static CommandPalette: typeof CommandPalette;
+
+            /**
+             * Base abstract prototype of a CodePad extension
+             *
+             * @static
+             * @type {CodePadBaseExtension}
+             * @memberof CodePad
+             */
             static BaseExtension: CodePadBaseExtension;
             /**
              *Creates an instance of CodePad.
-             * @param {AppArgumentsType[]} args
+             * @param {AppArgumentsType[]} args application arguments
              * @memberof CodePad
              */
             constructor(args: AppArgumentsType[]) {
@@ -62,7 +231,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Main application entry point
              *
              * @returns {void}
              * @memberof CodePad
@@ -97,7 +266,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Set up the text editor
              *
              * @private
              * @returns {void}
@@ -272,14 +441,16 @@ namespace OS {
 
                 this.loadExtensionMetaData();
                 this.initCommandPalete();
-                this.initSideBar();
+                this.toggleSideBar();
                 return this.openFile(this.currfile);
             }
 
             /**
+             * Open a file in new tab. If the file is already opened,
+             * the just select the tab
              *
              *
-             * @param {CodePadFileHandle} file
+             * @param {CodePadFileHandle} file file to open
              * @returns {void}
              * @memberof CodePad
              */
@@ -309,10 +480,10 @@ namespace OS {
             }
 
             /**
-             *
+             * Find a tab on the tabbar corresponding to a file handle
              *
              * @private
-             * @param {CodePadFileHandle} file
+             * @param {CodePadFileHandle} file then file handle to search
              * @returns {number}
              * @memberof CodePad
              */
@@ -335,7 +506,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Create new tab when opening a file
              *
              * @private
              * @param {CodePadFileHandle} file
@@ -354,10 +525,10 @@ namespace OS {
             }
 
             /**
-             *
+             * Close a tab when a file is closed
              *
              * @private
-             * @param {GUI.tag.ListViewItemTag} it
+             * @param {GUI.tag.ListViewItemTag} it reference to the tab to close
              * @returns {boolean}
              * @memberof CodePad
              */
@@ -376,10 +547,10 @@ namespace OS {
             }
 
             /**
-             *
+             * Select a tab by its index
              *
              * @private
-             * @param {number} i
+             * @param {number} i tab index
              * @returns {void}
              * @memberof CodePad
              */
@@ -433,7 +604,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Update the editor status bar
              *
              * @private
              * @memberof CodePad
@@ -451,11 +622,11 @@ namespace OS {
             }
 
             /**
-             *
+             * Show or hide the SideBar
              *
              * @memberof CodePad
              */
-            initSideBar(): void {
+            toggleSideBar(): void {
                 if (this.currdir) {
                     $(this.sidebar).show();
                     this.fileview.path = this.currdir.path;
@@ -466,7 +637,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Add an action to the [[CommandPalette]]'s spotlight
              *
              * @private
              * @param {ActionType} action
@@ -479,7 +650,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Add a list of actions to the [[CommandPalette]]'s spotlight
              *
              * @private
              * @param {ActionType[]} list
@@ -492,7 +663,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Init the editor command palette
              *
              * @private
              * @memberof CodePad
@@ -536,7 +707,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Load the extension meta data from `extension.json` file
              *
              * @memberof CodePad
              */
@@ -585,11 +756,11 @@ namespace OS {
             }
 
             /**
-             *
+             * Run an extension action from the command palette
              *
              * @private
-             * @param {string} name
-             * @param {string} action
+             * @param {string} name extension name
+             * @param {string} action action name
              * @returns {void}
              * @memberof CodePad
              */
@@ -611,7 +782,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Load extension then run an action
              *
              * @param {{
              *                 parent: { name: any };
@@ -620,7 +791,18 @@ namespace OS {
              * @memberof CodePad
              */
             loadAndRunExtensionAction(data: {
+                /**
+                 * Parent context of the current action
+                 *
+                 * @type {{ name: any }}
+                 */
                 parent: { name: any };
+
+                /**
+                 * Action name
+                 *
+                 * @type {*}
+                 */
                 name: any;
             }): void {
                 const { name } = data.parent;
@@ -644,7 +826,7 @@ namespace OS {
             }
 
             /**
-             *
+             * File menu definition
              *
              * @private
              * @returns {GUI.BasicItemType}
@@ -678,7 +860,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Context menu definition
              *
              * @private
              * @param {GUI.TagEventType} e
@@ -807,7 +989,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Save a file
              *
              * @private
              * @param {CodePadFileHandle} file
@@ -828,7 +1010,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Save the current file as another file
              *
              * @private
              * @memberof CodePad
@@ -848,7 +1030,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Menu action definition
              *
              * @private
              * @param {string} dataid
@@ -900,7 +1082,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Cleanup the editor before exiting.
              *
              * @param {BaseEvent} evt
              * @returns {void}
@@ -944,7 +1126,7 @@ namespace OS {
             }
 
             /**
-             *
+             * Application menu definition
              *
              * @returns {GUI.BasicItemType[]}
              * @memberof CodePad
