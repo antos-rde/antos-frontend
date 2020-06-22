@@ -182,7 +182,7 @@ namespace OS {
                     if (this.timer) {
                         clearTimeout(this.timer);
                     }
-                    return (this.timer = setTimeout(() => func(), t));
+                    return (this.timer = window.setTimeout(() => func(), t));
                 };
                 return func();
             }

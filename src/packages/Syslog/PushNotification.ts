@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 // AnTOS Web desktop is is licensed under the GNU General Public
@@ -211,7 +205,7 @@ namespace OS {
                 let timer: number;
                 this.mfeed.unshift(d);
                 $(this.fzone).show();
-                timer = setTimeout(() => {
+                timer = window.setTimeout(() => {
                     this.mfeed.delete(d.domel);
                     if (this.mfeed.data.length === 0) {
                         $(this.fzone).hide();
