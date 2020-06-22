@@ -1,11 +1,11 @@
 language: javascript
 node_js:
-  - 7
+  - 10
 install:
-  - npm install -g coffeescript
-  - npm install -g uglify-es
-  - npm install -g uglifycss
-  - npm install -g riot-cli
+  - npm install terser -g
+  - npm install uglifycss -g
+  - npm install typescript
+  - npm install @types/jquery
 script:
   - make
   - make release
