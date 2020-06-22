@@ -1,0 +1,5 @@
+afx-apps-dock{
+    float: left;
+    position: absolute;
+    overflow: hidden;
+}

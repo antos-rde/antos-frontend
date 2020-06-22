@@ -1,0 +1,17 @@
+afx-switch span{
+    width: 30px;
+    height:24px;
+    font-size: 24px;
+    font-family: "FontAwesome";
+}
+afx-switch span:before{
+    content: "\f204"; 
+    font-style: normal;
+    font-weight: normal;
+}
+afx-switch span.swon:before{
+    content: "\f205";
+    color: #116cd6;
+    font-style: normal;
+    font-weight: normal;
+}

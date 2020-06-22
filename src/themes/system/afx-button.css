@@ -1,0 +1,7 @@
+afx-button button{
+    outline: none;
+}
+
+afx-button i.icon-style {
+    float: left;
+}

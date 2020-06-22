@@ -1,0 +1,19 @@
+
+afx-slider div.container{
+    border-radius: 3px;
+    height: 5px;
+    background-color: #e6e6e6;
+}
+
+afx-slider div.progress {
+    background-color: #116cd6;
+    border-radius: 3px;
+}
+
+afx-slider div.dragpoint {
+    width: 15px;
+    height: 15px;
+    border:1px solid #6b6b6b;
+    border-radius: 15px;
+    background-color:#e6e6e6;
+}

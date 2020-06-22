@@ -1,0 +1,46 @@
+afx-file-view {
+    position: relative;
+}
+afx-file-view afx-label.status{
+    position: absolute;
+    bottom: 1px;
+    left:0px;
+    transform: translateZ(0);
+}
+afx-file-view afx-list-view > div.list-container > ul  li{
+    float:left;
+    display: block;
+}
+
+afx-file-view afx-list-view i{
+    display: block;
+}
+
+afx-file-view afx-grid-view i{
+    display: inline-block;
+}
+
+
+afx-file-view afx-tree-view{
+    margin:0;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+afx-file-view afx-tree-view .afx_tree_item_odd{
+    background-color: transparent;
+}
+
+afx-file-view afx-tree-view div{
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: transparent;
+    padding:0;
+}
+
+afx-file-view  div.treecontainer{
+    display: block;
+    overflow: auto;
+    padding:0;
+    margin:0;
+}

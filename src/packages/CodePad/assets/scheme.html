@@ -1,0 +1,21 @@
+<afx-app-window apptitle="Code" width="600" height="400" data-id="codepad">
+    <afx-vbox>
+        <afx-hbox>
+            <afx-vbox data-width = "155" min-width="155" data-id = "sidebar">
+                <div data-height="10"></div>
+                <afx-file-view chdir="false" data-id = "fileview" view="tree" status = "false">
+                </afx-file-view>
+            </afx-vbox>
+            <afx-resizer data-width = "3" ></afx-resizer>
+            <afx-vbox>
+                <afx-tab-bar closable="true" data-height="26" data-id = "tabbar"></afx-tab-bar>
+                <div data-id="datarea"></div>
+            </afx-vbox>
+        </afx-hbox>
+        <div data-height="20" data-id="statctn">
+            <afx-label text=" " ></afx-label>
+            <afx-label data-id="langstat" ></afx-label>
+            <afx-label data-id="editorstat" ></afx-label>
+        </div>
+    </afx-vbox>
+</afx-app-window>

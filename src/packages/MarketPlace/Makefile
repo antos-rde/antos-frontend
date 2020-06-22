@@ -1,6 +1,6 @@
-coffee_files = dialog.coffee main.coffee
+module_files = main.js dialog.js
 
-jsfiles =
+libfiles =
 
 cssfiles = main.css
 

@@ -1,0 +1,20 @@
+{
+    "app": "Syslog",
+    "pkgname": "Syslog",
+    "services": [
+        "Calendar",
+        "PushNotification"
+    ],
+    "name": "System log",
+    "description": "Core services and system log",
+    "info": {
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "credit": "dedicated to some one here",
+        "licences": "GPLv3"
+    },
+    "version": "0.0.1-a",
+    "category": "System",
+    "iconclass": "fa fa-bug",
+    "mimes": []
+}

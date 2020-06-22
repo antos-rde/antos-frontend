@@ -1,11 +1,11 @@
-coffee_files = main.coffee
+module_files = main.js
 
-jsfiles =
+libfiles =
 
 cssfiles = main.css
 
 copyfiles = scheme.html package.json
 
 
-PKG_NAME=ActivityFile
+PKG_NAME=Files
 include ../pkg.mk

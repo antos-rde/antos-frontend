@@ -1,0 +1,30 @@
+afx-nspinner{
+    display: flex;
+    flex-direction: row;
+}
+afx-nspinner ul{
+    padding:0;
+    margin: 0;
+    list-style: none;
+}
+afx-nspinner input{
+    margin: 0;
+}
+afx-nspinner ul li{
+    display: block;
+    padding:0;
+    margin: 0;
+}
+
+afx-nspinner ul li.incr i:before{
+    content: "\f0d8"; 
+    font-family: "FontAwesome";
+    font-style: normal;
+
+}
+afx-nspinner ul li.decr i:before{
+    content: "\f0d7"; 
+    font-family: "FontAwesome";
+    font-style: normal;
+
+}

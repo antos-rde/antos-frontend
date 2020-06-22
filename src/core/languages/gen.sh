@@ -20,7 +20,7 @@
 ord() {
   LC_CTYPE=C printf '%d' "'$1"
 }
-grep --include=\*.{coffee,tag} -roh "$1" -e '__("[^"]*"' | while read -r line ; do 
+grep --include=\*.coffee -roh "$1" -e '__("[^"]*"' | while read -r line ; do 
     SUBSTRING=$(echo $line| cut -d'"' -f 2)
     if  test -f "$2"   && [ ! -z "$(grep -F "\"$SUBSTRING\":" "$2")" ]
     then
@@ -29,7 +29,7 @@ grep --include=\*.{coffee,tag} -roh "$1" -e '__("[^"]*"' | while read -r line ; 
         echo -e "\t\"$SUBSTRING\":\"$SUBSTRING\"," >> "tmp.json"
     fi
 done
-grep --include=\*.{coffee,html,tag} -roh "$1" -e '\"__([^\"]*)\"' | while read -r line; do
+grep --include=\*.{coffee,html} -roh "$1" -e '\"__([^\"]*)\"' | while read -r line; do
     len=$(( ${#line} - 6 ))
     #echo $len
     #echo $line

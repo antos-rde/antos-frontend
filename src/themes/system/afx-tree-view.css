@@ -1,0 +1,35 @@
+afx-tree-view{
+    overflow: auto;
+    display: block;
+}
+afx-tree-view afx-tree-view{
+    padding:0;
+    overflow: hidden;
+    display: block;
+}
+afx-tree-view ul{
+    margin:0;
+    padding:0;
+}
+afx-tree-view li{
+    list-style: none;
+    margin:0;
+    padding: 0;
+}
+afx-tree-view div{
+    -webkit-user-select:none;
+    cursor:default;
+}
+afx-tree-view i.icon-style {
+    float:left;
+    margin-right: 3px;
+}
+
+afx-tree-view .afx-tree-view-folder-open:before{
+    content: "\f147"; 
+    font-family: "FontAwesome";
+}
+afx-tree-view .afx-tree-view-folder-close:before{
+    content: "\f196"; 
+    font-family: "FontAwesome";
+}

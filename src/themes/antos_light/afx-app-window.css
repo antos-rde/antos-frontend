@@ -1,0 +1,52 @@
+afx-app-window div.afx-window-wrapper{
+    border:1px solid #a6a6a6;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    border-radius: 5px;
+    background-color:#dfdfdf;
+}
+afx-app-window.unactive > div.afx-window-wrapper{
+    background-color: #f6f6f6;
+}
+
+afx-app-window ul.afx-window-top{
+    height: 20px;
+    border-bottom: 1px solid #a6a6a6;
+}
+afx-app-window ul.afx-window-top li{
+    margin-left: 3px;
+    margin-top:4px;
+    
+}
+afx-app-window ul.afx-window-top .afx-window-close,.afx-window-minimize,.afx-window-maximize{
+    width: 11px;
+    height: 11px;
+    border-radius: 10px;
+}
+afx-app-window ul li.afx-window-close{
+    background-color: #Fc605b;
+     float:left;
+}
+afx-app-window ul li.afx-window-minimize{
+    background-color: #fec041;
+     float:left;
+}
+afx-app-window ul li.afx-window-maximize{
+    background-color: #35cc4b;
+     float:left;
+}
+
+afx-app-window ul li.afx-window-title{
+    margin-top:1px;
+    text-align: center;
+}
+
+afx-app-window div.afx-window-content
+{
+    background-color: white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+afx-app-window.unactive div.afx-window-content
+{
+    background-color:white;
+}

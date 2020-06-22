@@ -1,0 +1,132 @@
+html,body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+body
+{
+    background-image: url("wp/wp2.jpg");
+    background-size: "cover";
+    background-repeat: "repeat";
+}
+#wrapper{
+    margin: 0;
+    padding: 0;
+    min-height:100%; 
+    overflow:hidden;
+}
+
+.afx-clear{
+    clear:both;
+    background-color: transparent;
+    border: 0;
+    height: 1px;
+}
+
+#workspace {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+#desktop{
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    right: 0;
+    user-select:none;
+    cursor: default;
+    padding:0px;
+}
+#desktop > div > ul afx-list-item {
+    display:block;
+    background-color:transparent;
+    text-align: center;
+}
+
+#desktop > div > ul afx-list-item li.selected {
+    display:block;
+    text-align: center;
+}
+
+#desktop > div > ul afx-list-item span{
+    width: 100%;
+    word-wrap: break-word;
+}
+
+#systooltip {
+    z-index: 1000000;
+}
+
+#login_form{
+    width:300px;
+    height: 180px;
+    display: block;
+    border:1px solid #262626;
+    border-radius: 6px;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    position: absolute;
+    margin: auto;
+    top:0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    background-color: #363636;
+    color: white;
+} 
+
+#login_form p{
+    display: inline-block;
+    /* background-color:#dfdfdf; */
+    border-bottom: 1px solid #262626;
+    padding:10px;
+    width: calc(100% - 20px);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    font-weight: bold;
+    margin:0;
+    
+}
+#login_form input {
+    width: 250px;
+    outline: none;
+    margin-top:10px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 13px;
+    padding: 5px;
+    color: white;
+    border: 1px solid #262626;
+    background-color: #464646;
+}
+#login_form button{
+    margin-top:10px;
+    width: 250px;
+    height: 30px;
+    background-color: #464646;
+    border: 1px solid #262626;
+    color: white;
+    border-radius: 6px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    padding:5px;
+    outline: none;
+}
+#login_error{
+    padding:3px;
+    color:chocolate;
+    font-weight: normal;
+}
+
+#clipboard {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    box-sizing: border-box;
+}

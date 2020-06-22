@@ -1,4 +1,4 @@
-afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-list-view > div > ul > li{
+afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-list-view > div > ul  li{
     float:none;
     border-radius: 0;
     font-weight: bold;
@@ -6,8 +6,8 @@ afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-lis
     padding-bottom: 3px;
     border:0;
 }
-afx-app-window[data-id = "setting-window"] afx-tab-container  div[data-ref="container"]{
-    border-left: 1px solid #cbcbcb;
+afx-app-window[data-id = "setting-window"] afx-tab-bar{
+    border-right: 1px solid #cbcbcb;
 }
 
 afx-app-window[data-id = "setting-window"] afx-label.header{
@@ -17,39 +17,39 @@ afx-app-window[data-id = "setting-window"] div.footer{
     border-right: 1px solid #cbcbcb;
 }
 /*APPEARANCE*/
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] div[data-id = "wp-preview"]{
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] div[data-id = "wp-preview"]{
     display: block;
     border:1px solid #cbcbcb;
     border-radius: 10px;
 }
 
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-list-view[data-id="wplist"]
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-list-view[data-id="wplist"]
 {
     border:1px solid #cbcbcb;
     padding:2px;
 }
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="appearance"] afx-resizer{
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-resizer{
     border:0;
     background-color: transparent;
 }
 /*VFS*/
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="vfs"] afx-list-view[data-id="mplist"]
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="vfs"] afx-list-view[data-id="mplist"]
 {
     border: 1px solid #cbcbcb;
 }
 
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="vfs"] afx-button.btnsel button{
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="vfs"] afx-button.btnsel button{
     border-radius: 0;
     padding-top:2px;
     padding-bottom: 2px;
 }
 /*LANGUAGES*/
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="locale"] afx-list-view[data-id="lglist"]
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="locale"] afx-list-view[data-id="lglist"]
 {
     border: 1px solid #cbcbcb;
 }
 /*STARTUP*/
-afx-app-window[data-id = "setting-window"] afx-vbox[data-id="startup"] afx-list-view
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="startup"] afx-list-view
 {
     border: 1px solid #cbcbcb;
 }

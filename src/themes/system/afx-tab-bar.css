@@ -1,0 +1,18 @@
+afx-tab-bar {
+    display: block;
+    width: 100%;
+    
+}
+afx-tab-bar afx-list-view {
+    padding:0;
+    margin:0;
+}
+afx-tab-bar afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li
+{
+    background-color: transparent;
+}
+
+
+afx-tab-bar afx-list-view  > div.list-container > ul  li{
+    float:left;
+}

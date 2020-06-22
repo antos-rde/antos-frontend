@@ -1,0 +1,53 @@
+afx-calendar-view  div{
+    text-align: center;
+
+}
+afx-calendar-view > div {
+    font-weight: bold;
+}
+
+afx-calendar-view i.prevmonth, afx-calendar-view i.nextmonth{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+afx-calendar-view i.prevmonth{
+    margin-right: 20px;
+}
+afx-calendar-view i.nextmonth{
+    margin-left: 20px;
+}
+
+afx-calendar-view i.prevmonth:before{
+    content: "\f104"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    /*position:absolute;
+    top:25%;
+    right:5px;*/
+}
+afx-calendar-view i.nextmonth:before{
+    content: "\f105"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    margin-left: 20px;
+    /*position:absolute;
+    top:25%;
+    right:5px;*/
+}
+
+
+afx-calendar-view afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
+{
+    background-color: transparent;
+}
+afx-calendar-view afx-grid-view  afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-selected
+{
+    background-color: #116cd6;
+    color:white;
+    border-radius: 6px;
+}
+

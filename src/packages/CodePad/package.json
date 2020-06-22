@@ -1,0 +1,20 @@
+{
+    "app":"CodePad",
+    "name": "Code",
+    "description":"Code editor",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "licences": "GPLv3"
+    },
+    "version":"0.0.2-a",
+    "category":"Developments",
+    "iconclass":"fa fa-pencil-square-o",
+    "mimes":[
+        "text/.*",
+        "[^/]*/json.*",
+        "[^/]*/.*ml",
+        "[^/]*/javascript",
+        "dir"
+    ]
+}

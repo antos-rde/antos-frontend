@@ -1,0 +1,16 @@
+afx-grid-view afx-grid-row afx-grid-cell{
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:default;
+}
+
+afx-grid-view .grid_row_header afx-grid-cell{
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:default;
+    font-weight: bold;
+}
+
+afx-grid-view {
+    display: block;
+}
