@@ -8,5 +8,6 @@ install:
   - npm install typescript
   - npm install @types/jquery
 script:
-  - make && make test
+  - make
+  - make test
   - make release

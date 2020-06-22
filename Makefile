@@ -21,7 +21,6 @@ javascripts= 	dist/core/core.js \
 				dist/core/BaseModel.js \
 				dist/core/BaseApplication.js \
 				dist/core/BaseService.js \
-				dist/core/BaseEvent.js \
 				dist/core/BaseDialog.js \
 				dist/core/tags/tag.js \
 				dist/core/tags/WindowTag.js \
