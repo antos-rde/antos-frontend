@@ -136,7 +136,7 @@ interface String {
      * @returns {string}
      * @memberof String
      */
-    trimLeft(arg: string): string;
+    trimFromLeft(arg: string): string;
 
     /**
      * Trim right of a string by a mask string
@@ -145,7 +145,7 @@ interface String {
      * @returns {string}
      * @memberof String
      */
-    trimRight(arg: string): string;
+    trimFromRight(arg: string): string;
 
     /**
      * Trim both left and right of a string by a mask string
@@ -706,19 +706,19 @@ namespace OS {
         }
         return API.lang[this];
     };
-    String.prototype.trimLeft = function(charlist: string): string {
+    String.prototype.trimFromLeft = function(charlist: string): string {
         if (charlist === undefined) charlist = "s";
 
         return this.replace(new RegExp("^[" + charlist + "]+"), "") as string;
     };
-    String.prototype.trimRight = function(charlist: string): string {
+    String.prototype.trimFromRight = function(charlist: string): string {
         if (charlist === undefined) charlist = "s";
 
         return this.replace(new RegExp("[" + charlist + "]+$"), "") as string;
     };
 
     String.prototype.trimBy = function(charlist: string): string {
-        return this.trimLeft(charlist).trimRight(charlist) as string;
+        return this.trimFromLeft(charlist).trimFromRight(charlist) as string;
     };
     Date.prototype.toString = function(): string {
         let dd = this.getDate();
