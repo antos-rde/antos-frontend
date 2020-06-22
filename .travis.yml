@@ -2,10 +2,12 @@ language: javascript
 node_js:
   - 10
 install:
-  - npm install terser -g
-  - npm install uglifycss -g
+  - npm install terser
+  - npm install uglifycss
   - npm install typescript
+  - npm install jest
   - npm install @types/jquery
 script:
   - make
+  - make test
   - make release
