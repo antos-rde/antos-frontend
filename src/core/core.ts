@@ -239,7 +239,7 @@ namespace OS {
         return range;
     }
 
-    Ant.__ = function (...args: any[]): FormattedString | string {
+    Ant.__ = function(...args: any[]): FormattedString | string {
         if (!(args.length > 0)) {
             return "Undefined";
         }
@@ -251,7 +251,7 @@ namespace OS {
         );
     };
 
-    Ant.__e = function (e: Error): Error {
+    Ant.__e = function(e: Error): Error {
         const reason = new Error(e.toString());
         reason.stack += "\nCaused By:\n" + e.stack;
         return reason;
@@ -611,7 +611,7 @@ namespace OS {
         writable: true,
     });
 
-    String.prototype.hash = function (): number {
+    String.prototype.hash = function(): number {
         let hash = 5381;
         let i = this.length;
         while (i) {
@@ -619,10 +619,10 @@ namespace OS {
         }
         return hash >>> 0;
     };
-    String.prototype.__v = function (): Version {
+    String.prototype.__v = function(): Version {
         return new Version(this);
     };
-    String.prototype.asBase64 = function (): string {
+    String.prototype.asBase64 = function(): string {
         const tmp = encodeURIComponent(this);
         return btoa(
             tmp.replace(/%([0-9A-F]{2})/g, (match, p1) =>
@@ -630,8 +630,8 @@ namespace OS {
             )
         );
     };
-    String.prototype.escape = function (): string {
-        return this.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (
+    String.prototype.escape = function(): string {
+        return this.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(
             c: string
         ) {
             switch (c) {
@@ -658,11 +658,11 @@ namespace OS {
             }
         });
     };
-    String.prototype.unescape = function (): string {
+    String.prototype.unescape = function(): string {
         let json = JSON.parse(`{ "text": "${this}"}`)
         return json.text;
     };
-    String.prototype.asUint8Array = function (): Uint8Array {
+    String.prototype.asUint8Array = function(): Uint8Array {
         let bytes = [];
         for (
             let i = 0, end = this.length - 1, asc = 0 <= end;
@@ -675,8 +675,8 @@ namespace OS {
     };
 
     if (!String.prototype.format) {
-        String.prototype.format = function (...args: any[]): string {
-            return this.replace(/{(\d+)}/g, function (
+        String.prototype.format = function(...args: any[]): string {
+            return this.replace(/{(\d+)}/g, function(
                 match: string,
                 number: number
             ) {
@@ -689,38 +689,38 @@ namespace OS {
         };
     }
 
-    String.prototype.f = function (...args: any[]): FormattedString {
+    String.prototype.f = function(...args: any[]): FormattedString {
         return new FormattedString(this, args);
     };
 
-    String.prototype.__ = function (): string {
+    String.prototype.__ = function(): string {
         const match = this.match(/^__\((.*)\)$/);
         if (match) {
             return match[1].l();
         }
         return this;
     };
-    String.prototype.l = function (): string {
+    String.prototype.l = function(): string {
         if (!API.lang[this]) {
             API.lang[this] = this;
         }
         return API.lang[this];
     };
-    String.prototype.trimLeft = function (charlist: string): string {
+    String.prototype.trimLeft = function(charlist: string): string {
         if (charlist === undefined) charlist = "s";
 
-        return this.replace(new RegExp("^[" + charlist + "]+"), "");
+        return this.replace(new RegExp("^[" + charlist + "]+"), "") as string;
     };
-    String.prototype.trimRight = function (charlist: string): string {
+    String.prototype.trimRight = function(charlist: string): string {
         if (charlist === undefined) charlist = "s";
 
-        return this.replace(new RegExp("[" + charlist + "]+$"), "");
+        return this.replace(new RegExp("[" + charlist + "]+$"), "") as string;
     };
 
-    String.prototype.trimBy = function (charlist: string) {
-        return this.trimLeft(charlist).trimRight(charlist);
+    String.prototype.trimBy = function(charlist: string): string {
+        return this.trimLeft(charlist).trimRight(charlist) as string;
     };
-    Date.prototype.toString = function (): string {
+    Date.prototype.toString = function(): string {
         let dd = this.getDate();
         let mm = this.getMonth() + 1;
         const yyyy = this.getFullYear();
@@ -746,7 +746,7 @@ namespace OS {
         return `${dd}/${mm}/${yyyy} ${hh}:${mi}:${se}`;
     };
 
-    Date.prototype.timestamp = function (): number {
+    Date.prototype.timestamp = function(): number {
         return (this.getTime() / 1000) | 0;
     };
 
@@ -825,7 +825,7 @@ namespace OS {
         console.log("Booting system");
         API.handle
             .auth()
-            .then(function (d: API.RequestResult) {
+            .then(function(d: API.RequestResult) {
                 // in case someone call it more than once :)
                 if (d.error) {
                     // show login screen
@@ -860,7 +860,7 @@ namespace OS {
         }
         API.handle
             .setting()
-            .then(function (r: any) {
+            .then(function(r: any) {
                 cleanup();
                 return API.handle.logout().then((d: any) => boot());
             })
@@ -1113,7 +1113,7 @@ namespace OS {
          * @returns {Promise<any>} a promise on the result data
          */
         export function post(p: string, d: any): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const q = announcer.getMID();
                 API.loading(q, p);
                 return $.ajax({
@@ -1122,7 +1122,7 @@ namespace OS {
                     contentType: "application/json",
                     data: JSON.stringify(
                         d,
-                        function (k, v) {
+                        function(k, v) {
                             if (k === "domel") {
                                 return undefined;
                             }
@@ -1133,11 +1133,11 @@ namespace OS {
                     dataType: "json",
                     success: null,
                 })
-                    .done(function (data) {
+                    .done(function(data) {
                         API.loaded(q, p, "OK");
                         return resolve(data);
                     })
-                    .fail(function (j, s, e) {
+                    .fail(function(j, s, e) {
                         API.loaded(q, p, "FAIL");
                         return reject(API.throwe(s));
                     });
@@ -1156,12 +1156,12 @@ namespace OS {
          * @returns {Promise<ArrayBuffer>} a promise on the returned binary data
          */
         export function blob(p: string): Promise<ArrayBuffer> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const q = announcer.getMID();
                 const r = new XMLHttpRequest();
                 r.open("GET", p, true);
                 r.responseType = "arraybuffer";
-                r.onload = function (e) {
+                r.onload = function(e) {
                     if (this.status === 200 && this.readyState === 4) {
                         API.loaded(q, p, "OK");
                         resolve(this.response);
@@ -1186,13 +1186,13 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function upload(p: string, d: string): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const q = announcer.getMID();
                 //insert a temporal file selector
                 const o = $("<input>")
                     .attr("type", "file")
                     .css("display", "none");
-                o.change(function () {
+                o.change(function() {
                     API.loading(q, p);
                     const formd = new FormData();
                     formd.append("path", d);
@@ -1206,12 +1206,12 @@ namespace OS {
                         contentType: false,
                         processData: false,
                     })
-                        .done(function (data) {
+                        .done(function(data) {
                             API.loaded(q, p, "OK");
                             resolve(data);
                             return o.remove();
                         })
-                        .fail(function (j, s, e) {
+                        .fail(function(j, s, e) {
                             API.loaded(q, p, "FAIL");
                             reject(API.throwe(s));
                             return o.remove();
@@ -1291,7 +1291,7 @@ namespace OS {
          * @returns {Promise<any>} a Promise on the requested data
          */
         export function get(p: string, t: string = undefined): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const conf: any = {
                     type: "GET",
                     url: p,
@@ -1302,11 +1302,11 @@ namespace OS {
                 const q = announcer.getMID();
                 API.loading(q, p);
                 return $.ajax(conf)
-                    .done(function (data) {
+                    .done(function(data) {
                         API.loaded(q, p, "OK");
                         return resolve(data);
                     })
-                    .fail(function (j, s, e) {
+                    .fail(function(j, s, e) {
                         API.loaded(q, p, "FAIL");
                         return reject(API.throwe(s));
                     });
@@ -1362,14 +1362,14 @@ namespace OS {
          * @returns {Promise<any>} a promise on the result data
          */
         export function requires(l: string): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 if (!API.shared[l]) {
                     const libfp = l.asFileHandle();
                     switch (libfp.ext) {
                         case "css":
                             return libfp
                                 .onready()
-                                .then(function () {
+                                .then(function() {
                                     $("<link>", {
                                         rel: "stylesheet",
                                         type: "text/css",
@@ -1383,7 +1383,7 @@ namespace OS {
                                 .catch((e: Error) => reject(__e(e)));
                         case "js":
                             return API.script(libfp.getlink())
-                                .then(function (data: any) {
+                                .then(function(data: any) {
                                     API.shared[l] = true;
                                     console.log("Loaded :", l);
                                     announcer.trigger("sharedlibraryloaded", l);
@@ -1411,11 +1411,11 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function require(libs: string[]): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 if (!(libs.length > 0)) {
                     return resolve();
                 }
-                announcer.observable.one("sharedlibraryloaded", async function (
+                announcer.observable.one("sharedlibraryloaded", async function(
                     l
                 ) {
                     libs.splice(0, 1);
@@ -1586,7 +1586,7 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function setLocale(name: string): Promise<any> {
-            return new Promise(async function (resolve, reject) {
+            return new Promise(async function(resolve, reject) {
                 const path = `resources/languages/${name}.json`;
                 try {
                     const d = await API.get(path, "json");
@@ -1641,7 +1641,7 @@ namespace OS {
          * @returns {Promise<any>} Promise on the clipboard data
          */
         export function getClipboard(): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const $el = $("#clipboard");
                 if (!navigator.clipboard) {
                     return resolve($el.val());
@@ -1685,7 +1685,7 @@ namespace OS {
                 enumerable: false,
                 value: p,
             });
-            const fn = function (o: any, v: any) {
+            const fn = function(o: any, v: any) {
                 return Object.defineProperty(o, v, {
                     enumerable: true,
                     set(value) {
