@@ -4,8 +4,9 @@ node_js:
 install:
   - npm install terser -g
   - npm install uglifycss -g
+  - npm install jest -g
   - npm install typescript
   - npm install @types/jquery
 script:
-  - make
+  - make && make test
   - make release
