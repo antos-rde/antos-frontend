@@ -62,7 +62,7 @@ lite: build_javascripts build_themes build_packages
 
 build_javascripts:
 	-rm -rf dist
-	tsc
+	tsc -p tsconfig.json
 	@echo "$(BLUE)Bundling javascript files$(NC)"
 	- mkdir $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
