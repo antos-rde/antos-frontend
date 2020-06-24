@@ -8,7 +8,7 @@ namespace OS {
              * @class SliderTag
              * @extends {AFXTag}
              */
-            class SliderTag extends AFXTag {
+            export class SliderTag extends AFXTag {
                 /**
                  * Slider max value placeholder
                  *
