@@ -598,7 +598,8 @@ namespace OS {
             $(this)
                 .children()
                 .each(function () {
-                    return this.update(d);
+                    if(this.update)
+                        return this.update(d);
                 });
         };
         HTMLElement.prototype.sync = function (): void {
