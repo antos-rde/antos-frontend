@@ -64,7 +64,7 @@ build_javascripts:
 	-rm -rf dist
 	tsc -p tsconfig.json
 	@echo "$(BLUE)Bundling javascript files$(NC)"
-	- mkdir $(BUILDDIR)/scripts
+	- mkdir -p $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
 	#echo "(function() {" > $(BUILDDIR)/scripts/antos.js
 	for f in $(javascripts); do \
