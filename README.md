@@ -25,7 +25,7 @@ A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.ioh
 
 ## Documentation
 
-- API documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
 
 ## Licence
 
