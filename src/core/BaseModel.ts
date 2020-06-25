@@ -342,8 +342,11 @@ namespace OS {
             const evt = new BaseEvent("exit", force);
             this.onexit(evt);
             if (!evt.prevent) {
-                this.observable.off("*");
-                delete this._observable;
+                if(this.observable)
+                {
+                    this.observable.off("*");
+                    delete this._observable;
+                }
                 if (this.dialog) {
                     this.dialog.quit();
                 }
