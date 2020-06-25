@@ -156,6 +156,10 @@ namespace OS {
                  * @memberof NSpinnerTag
                  */
                 set value(v: number) {
+                    if(this._value === v || isNaN(v))
+                    {
+                        return;
+                    }
                     this._value = v;
                     $(this.refs.holder).val(this._value);
                     const evt = { id: this.aid, data: v };
