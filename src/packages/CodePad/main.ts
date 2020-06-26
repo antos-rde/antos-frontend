@@ -273,7 +273,7 @@ namespace OS {
              * @memberof CodePad
              */
             private setup(): void {
-                ace.config.set("basePath", "/scripts/ace");
+                ace.config.set("basePath", "scripts/ace");
                 ace.require("ace/ext/language_tools");
                 this.editor = ace.edit(this.find("datarea"));
                 this.editor.setOptions({
