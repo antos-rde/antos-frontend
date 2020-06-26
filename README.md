@@ -1,6 +1,7 @@
 # antOS
 
-**This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system. The entire core API is also rewritten in TypeScript**
+**This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system.
+The entire core API is also rewritten in TypeScript**
 
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
@@ -24,7 +25,7 @@ A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.ioh
 
 ## Documentation
 
-- API documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
 
 ## Licence
 
