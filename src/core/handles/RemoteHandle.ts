@@ -126,7 +126,7 @@ namespace OS {
         /**
          * The base REST URI of the server-side API
          */
-        export var REST: string = `${loc.protocol}//${HOST}`;
+        export var REST: string = `${loc.protocol}//${HOST}${loc.pathname}`;
 
         /**
          * The namespace `handle` contains some low level API to
