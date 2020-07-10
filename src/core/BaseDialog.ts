@@ -281,7 +281,8 @@ namespace OS {
              * {
              *      title: string, // window title
              *      label: string, // label text
-             *      value: string   // user input text
+             *      value: string,   // user input text
+             *      type: string // input type: text or password
              * }
              * ```
              *
@@ -316,6 +317,11 @@ namespace OS {
                     }
                     if (this.data && this.data.value) {
                         $input.val(this.data.value);
+                    }
+
+                    if (this.data && this.data.type)
+                    {
+                        ($input[0] as HTMLInputElement).type = this.data.type
                     }
 
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
