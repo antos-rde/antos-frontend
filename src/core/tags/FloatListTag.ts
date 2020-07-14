@@ -217,13 +217,13 @@ namespace OS {
                             const h = $(e).height();
                             if (this.dir === "vertical") {
                                 ctop += h + 20;
-                                if (ctop > gh) {
+                                if (ctop + h > gh) {
                                     ctop = 20;
                                     cleft += w + 20;
                                 }
                             } else {
                                 cleft += w + 20;
-                                if (cleft > gw) {
+                                if (cleft + w > gw) {
                                     cleft = 20;
                                     ctop += h + 20;
                                 }

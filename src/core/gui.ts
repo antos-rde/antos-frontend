@@ -752,11 +752,13 @@ namespace OS {
          * @export
          * @param {string} k the hotkey e.g. `ALT-C`
          * @param {(e: JQuery.MouseDownEvent) => void} f handle function
+         * @param {boolean} force force to rebind the hotkey
          * @returns {void}
          */
         export function bindKey(
             k: string,
-            f: (e: JQuery.MouseDownEvent) => void
+            f: (e: JQuery.MouseDownEvent) => void,
+            force: boolean = true
         ): void {
             const arr = k.split("-");
             if (arr.length !== 2) {
@@ -767,6 +769,7 @@ namespace OS {
             if (!shortcut[fnk]) {
                 return;
             }
+            if (shortcut[fnk][c] && !force) return;
             shortcut[fnk][c] = f;
         }
 
