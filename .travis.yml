@@ -1,6 +1,6 @@
 language: javascript
-node_js:
-  - 10.19.0
+#node_js:
+#  - 10.19.0
 install:
   - npm install terser
   - npm install uglifycss
