@@ -275,7 +275,7 @@ namespace OS {
         export namespace dialogs {
             /**
              * Simple prompt dialog to get user input text.
-             * The input date of the dialog:
+             * The input data of the dialog:
              *
              * ```typescript
              * {

@@ -134,15 +134,15 @@ namespace OS {
                  */
                 protected mount() {
                     $(this.refs.button).click((e) => {
+                        if (this.toggle) {
+                            this.selected = !this.selected;
+                        }
                         const evt: TagEventType<JQuery.MouseEventBase> = {
                             id: this.aid,
                             data: e,
                         };
                         this._onbtclick(evt);
                         this.observable.trigger("btclick", evt);
-                        if (this.toggle) {
-                            return (this.selected = !this.selected);
-                        }
                     });
                 }
 
