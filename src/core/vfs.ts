@@ -1337,10 +1337,10 @@ namespace OS {
                     }
                     else {
                         // get the correct path of the package
-                        pkg_name = this.genealogy[0];
+                        pkg_name = this.genealogy.shift();
                         if(OS.setting.system.packages[pkg_name])
                         {
-                            this.setPath(OS.setting.system.packages[pkg_name].path);
+                            this.setPath(OS.setting.system.packages[pkg_name].path + "/" + this.genealogy.join("/"));
                         }
                         else
                         {
