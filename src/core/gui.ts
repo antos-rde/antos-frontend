@@ -571,16 +571,24 @@ namespace OS {
                 // first load it
                 loadApp(app)
                     .then((a) =>
-                        PM.createProcess(
-                            app,
-                            application[app],
-                            args
-                        ).catch((e) =>
-                            announcer.osfail(
-                                __("Unable to launch: {0}", app),
-                                e
+                        {
+                            if (!application[app]){
+                                return announcer.oserror(
+                                    __("{0} is not an application", app),
+                                    API.throwe(__("Application not found"))
+                                );
+                            }
+                            PM.createProcess(
+                                app,
+                                application[app],
+                                args
+                            ).catch((e) =>
+                                announcer.osfail(
+                                    __("Unable to launch: {0}", app),
+                                    e
+                                )
                             )
-                        )
+                        }
                     )
                     .catch((e) =>
                         announcer.osfail(__("Unable to launch: {0}", app), e)

@@ -1,4 +1,5 @@
 {
+    "pkgname": "{0}",
     "app":"{0}",
     "name":"{0}",
     "description":"{0}",

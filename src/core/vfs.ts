@@ -1298,6 +1298,61 @@ namespace OS {
 
             register("^(home|desktop|os|Untitled)$", RemoteFileHandle);
 
+            
+            /**
+             * Package file is remote file ([[RemoteFileHandle]]) located either in
+             * the local user packages location or system packages
+             * location, it should be in the following format:
+             * 
+             * ```
+             * pkg://PKG_NAME/path/to/file
+             * 
+             * ```
+             * 
+             * The system will locale the package name PKG_NAME either in the system domain
+             * or in user domain and return the correct path to the package
+             *
+             * @export
+             * @class PackageFileHandle
+             * @extends {RemoteFileHandle}
+             */
+            export class PackageFileHandle extends RemoteFileHandle
+            {
+
+                /**
+                 *Creates an instance of PackageFileHandle.
+                 * @param {string} pkg_path package path in string
+                 * @memberof PackageFileHandle
+                 */
+                constructor(pkg_path: string) {
+                    var error:FormattedString|string;
+                    var pkg_name: string;
+                    super(pkg_path);
+                    // now find the correct path
+                    if(!this.genealogy || this.genealogy.length == 0)
+                    {
+                        error = __("Invalid package path");
+                        announcer.oserror(error, API.throwe(error));
+                        throw new Error(error.__());
+                    }
+                    else {
+                        // get the correct path of the package
+                        pkg_name = this.genealogy[0];
+                        if(OS.setting.system.packages[pkg_name])
+                        {
+                            this.setPath(OS.setting.system.packages[pkg_name].path);
+                        }
+                        else
+                        {
+                            error = __("Package not found {0}", pkg_name);
+                            announcer.oserror(error,API.throwe(error));
+                            throw new Error(error.__());
+                        }
+                    }
+                }
+            }
+            register("^pkg$", PackageFileHandle);
+
             /**
              * Application file is an AntOS special file allowing to
              * refer to an application as a regular file. Its protocol
@@ -1372,7 +1427,10 @@ namespace OS {
                         const result = [];
                         for (let k in OS.setting.system.packages) {
                             const v = OS.setting.system.packages[k];
-                            result.push(v);
+                            if(v.app)
+                            {
+                                result.push(v);
+                            }
                         }
                         return resolve({
                             result: result,

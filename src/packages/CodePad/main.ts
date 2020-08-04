@@ -1038,14 +1038,14 @@ namespace OS {
              * @returns {void}
              * @memberof CodePad
              */
-            private menuAction(dataid: string, r?: CodePad): void {
-                let me: any = this;
+            private menuAction(dataid: string, r?: CodePad): any {
+                let me: CodePad = this;
                 if (r) {
                     me = r;
                 }
                 switch (dataid) {
                     case "new":
-                        return me.openFile("Untitled".asFileHandle());
+                        return me.openFile("Untitled".asFileHandle() as CodePadFileHandle);
                     case "open":
                         return me
                             .openDialog("FileDialog", {
@@ -1065,7 +1065,7 @@ namespace OS {
                             })
                             .then(function (f: API.FileInfoType) {
                                 me.currdir = f.file.path.asFileHandle();
-                                return me.initSideBar();
+                                return me.toggleSideBar();
                             });
                     case "save":
                         me.currfile.cache = me.editor.getValue();

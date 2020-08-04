@@ -393,7 +393,7 @@ namespace OS {
                                 .then((d: string) => {
                                     let name: string;
                                     const v = JSON.parse(d);
-                                    const pth = `${this.installdir}/${v.app}`;
+                                    const pth = `${this.installdir}/${v.pkgname?v.pkgname:v.app}`;
                                     const dir = [pth];
                                     const files = [];
                                     for (name in zip.files) {
@@ -408,13 +408,13 @@ namespace OS {
                                     return this.mkdirs(dir)
                                         .then(() => {
                                             return this.installFile(
-                                                v.app,
+                                                v.pkgname?v.pkgname:v.app,
                                                 zip,
                                                 files
                                             )
                                                 .then(() => {
                                                     const app_meta = {
-                                                        pkgname: v.app,
+                                                        pkgname: v.pkgname?v.pkgname:v.app,
                                                         name: v.name,
                                                         text: v.name,
                                                         icon: v.icon,
@@ -430,7 +430,7 @@ namespace OS {
                                                             : undefined,
                                                     };
                                                     v.text = v.name;
-                                                    v.filename = v.app;
+                                                    v.filename = v.pkgname?v.pkgname:v.app;
                                                     v.type = "app";
                                                     v.mime = "antos/app";
                                                     if (
@@ -442,7 +442,7 @@ namespace OS {
                                                     }
                                                     v.path = pth;
                                                     this.systemsetting.system.packages[
-                                                        v.app
+                                                        v.pkgname?v.pkgname:v.app
                                                     ] = v;
                                                     this.appDetail(app_meta);
                                                     return resolve(v.name);
