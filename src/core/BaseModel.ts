@@ -599,7 +599,7 @@ namespace OS {
         ): void {
             const mt = this.meta();
             let icon: string = undefined;
-            if (mt.icon) {
+            if (mt && mt.icon) {
                 icon = `${mt.path}/${mt.icon}`;
             }
             return announcer.trigger(t, {
@@ -608,7 +608,7 @@ namespace OS {
                 data: {
                     m: m,
                     icon: icon,
-                    iconclass: mt.iconclass,
+                    iconclass: mt?mt.iconclass:undefined,
                     e: e,
                 },
             });

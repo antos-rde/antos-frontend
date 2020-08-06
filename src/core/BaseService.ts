@@ -105,7 +105,7 @@ namespace OS {
             constructor(name: string, args: AppArgumentsType[]) {
                 super(name, args);
                 this.icon = undefined;
-                this.iconclass = "fa-paper-plane-o";
+                this.iconclass = "fa fa-paper-plane-o";
                 this.text = "";
                 this.timer = undefined;
                 this.holder = undefined;
