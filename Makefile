@@ -11,6 +11,28 @@ ifeq ($(UNAME_S),Darwin)
 	GSED=gsed
 endif
 
+tags = 	dist/core/tags/tag.js \
+		dist/core/tags/WindowTag.js \
+		dist/core/tags/TileLayoutTags.js \
+		dist/core/tags/ResizerTag.js \
+		dist/core/tags/LabelTag.js \
+		dist/core/tags/ButtonTag.js \
+		dist/core/tags/ListViewTag.js \
+		dist/core/tags/SwitchTag.js \
+		dist/core/tags/NSpinnerTag.js \
+		dist/core/tags/MenuTag.js \
+		dist/core/tags/GridViewTag.js \
+		dist/core/tags/TabBarTag.js \
+		dist/core/tags/TabContainerTag.js \
+		dist/core/tags/TreeViewTag.js \
+		dist/core/tags/SliderTag.js \
+		dist/core/tags/FloatListTag.js \
+		dist/core/tags/CalendarTag.js \
+		dist/core/tags/ColorPickerTag.js \
+		dist/core/tags/FileViewTag.js \
+		dist/core/tags/OverlayTag.js \
+		dist/core/tags/AppDockTag.js \
+		dist/core/tags/SystemPanelTag.js
 
 javascripts= 	dist/core/core.js \
 				dist/core/settings.js \
@@ -22,31 +44,13 @@ javascripts= 	dist/core/core.js \
 				dist/core/BaseApplication.js \
 				dist/core/BaseService.js \
 				dist/core/BaseDialog.js \
-				dist/core/tags/tag.js \
-				dist/core/tags/WindowTag.js \
-				dist/core/tags/TileLayoutTags.js \
-				dist/core/tags/ResizerTag.js \
-				dist/core/tags/LabelTag.js \
-				dist/core/tags/ButtonTag.js \
-				dist/core/tags/ListViewTag.js \
-				dist/core/tags/SwitchTag.js \
-				dist/core/tags/NSpinnerTag.js \
-				dist/core/tags/MenuTag.js \
-				dist/core/tags/GridViewTag.js \
-				dist/core/tags/TabBarTag.js \
-				dist/core/tags/TabContainerTag.js \
-				dist/core/tags/TreeViewTag.js \
-				dist/core/tags/SliderTag.js \
-				dist/core/tags/FloatListTag.js \
-				dist/core/tags/CalendarTag.js \
-				dist/core/tags/ColorPickerTag.js \
-				dist/core/tags/FileViewTag.js \
-				dist/core/tags/OverlayTag.js \
-				dist/core/tags/AppDockTag.js \
-				dist/core/tags/SystemPanelTag.js \
+				$(tags) \
 				dist/core/gui.js \
 				dist/core/pm.js \
 				dist/bootstrap.js
+
+antfx = $(tags) \
+		dist/core/Announcerment.js
  
 packages = Syslog CodePad Files MarketPlace  Setting
 
@@ -58,11 +62,42 @@ initd:
 
 lite: build_javascripts build_themes build_packages
 #%.js: %.coffee
-#		coffee --compile $< 
+#		coffee --compile $<
 
-build_javascripts:
+ts:
 	-rm -rf dist
 	tsc -p tsconfig.json
+
+standalone_tags: ts
+	@echo "$(BLUE)Bundling standalone tags files$(NC)"
+	- mkdir -p $(BUILDDIR)
+	- rm $(BUILDDIR)/afx*
+	#echo "(function() {" > $(BUILDDIR)/scripts/antos.js
+	for f in $(antfx); do \
+		(cat "$${f}"; echo) >> dist/afx.js;\
+		rm "$${f}";\
+	done
+	echo "var Ant=this;" >> dist/afx.js
+	terser dist/afx.js --compress --mangle --output $(BUILDDIR)/afx.js
+	# standalone theme
+
+	@for f in src/themes/system/afx-*.css; do \
+		if [ "$$f" != "src/themes/system/antos.css" ]; then \
+			echo "$$f"; \
+			(cat "$${f}"; echo) >> $(BUILDDIR)/afx.css; \
+		fi;\
+	done
+
+	@for f in src/themes/antos_light/afx-*.css; do \
+		if [ "$$f" != "src/themes/antos_light/antos.css" ]; then \
+			echo "$$f"; \
+			(cat "$${f}"; echo) >> $(BUILDDIR)/afx.css; \
+		fi;\
+	done
+	# uglifycss  --output $(BUILDDIR)/afx.css $(BUILDDIR)/afx.css
+	rm -r dist/core
+
+build_javascripts: ts
 	@echo "$(BLUE)Bundling javascript files$(NC)"
 	- mkdir -p $(BUILDDIR)/scripts
 	- rm $(BUILDDIR)/scripts/antos.js
