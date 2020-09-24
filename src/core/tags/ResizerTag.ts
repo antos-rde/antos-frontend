@@ -139,7 +139,8 @@ namespace OS {
                  *
                  * Getter:
                  * - get the resize event callback
-                 * @memberof GridViewTag
+                 *
+                 * @memberof ResizerTag
                  */
                 set onelresize(v: TagEventCallback<any>) {
                     this._onresize = v;

@@ -582,6 +582,7 @@ namespace OS {
                     };
                     const grid = this.refs.gridview as GridViewTag;
                     const list = this.refs.listview as ListViewTag;
+                    grid.resizable = true;
                     grid.header = this._header;
                     tree.dragndrop = true;
                     list.dragndrop = true;

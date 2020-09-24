@@ -443,6 +443,7 @@ namespace OS {
                     this._selectedRows = [];
                     this._selectedRow = undefined;
                     this._rows = [];
+                    this.resizable = false;
                     this._oncellselect = this._onrowselect = this._oncelldbclick = (
                         e: TagEventType<CellEventData>
                     ): void => {};
@@ -539,22 +540,24 @@ namespace OS {
                         element.data = item;
                         item.domel = element;
                         i++;
-                        if (i != v.length) {
-                            const rz = $(`<afx-resizer>`).appendTo(
-                                this.refs.header
-                            )[0] as ResizerTag;
-                            $(rz).css("width", "3px");
-                            let next_item = undefined;
-                            if (i < v.length) {
-                                next_item = v[i];
-                            }
-                            rz.onelresize = (e) => {
-                                item.width = e.data.w + 3;
-                                if (next_item) {
-                                    delete next_item.width;
+                        if (this.resizable) {
+                            if (i != v.length) {
+                                const rz = $(`<afx-resizer>`).appendTo(
+                                    this.refs.header
+                                )[0] as ResizerTag;
+                                $(rz).css("width", "3px");
+                                let next_item = undefined;
+                                if (i < v.length) {
+                                    next_item = v[i];
                                 }
-                            };
-                            rz.uify(this.observable);
+                                rz.onelresize = (e) => {
+                                    item.width = e.data.w + 3;
+                                    if (next_item) {
+                                        delete next_item.width;
+                                    }
+                                };
+                                rz.uify(this.observable);
+                            }
                         }
                     }
                     this.calibrate();
@@ -621,6 +624,20 @@ namespace OS {
                 }
                 get multiselect(): boolean {
                     return this.hasattr("multiselect");
+                }
+
+                /**
+                 * Set and Get the resizable attribute
+                 *
+                 * This allows to enable/disable column resize feature
+                 *
+                 * @memberof GridViewTag
+                 */
+                set resizable(v: boolean) {
+                    this.attsw(v, "resizable");
+                }
+                get resizable(): boolean {
+                    return this.hasattr("resizable");
                 }
 
                 /**
@@ -867,7 +884,7 @@ namespace OS {
                         template += `${v}px `;
                         i++;
                         template_header += `${v}px `;
-                        if (i < colssize.length) {
+                        if (i < colssize.length && this.resizable) {
                             template_header += "3px ";
                         }
                     }
