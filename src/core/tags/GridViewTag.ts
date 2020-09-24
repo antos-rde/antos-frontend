@@ -530,14 +530,32 @@ namespace OS {
                         return;
                     }
                     $(this.refs.header).empty();
+                    let i = 0;
                     for (let item of v) {
-                        const el = $(`<${this.headeritem}>`).appendTo(
+                        const element = $(`<${this.headeritem}>`).appendTo(
                             this.refs.header
-                        );
-                        const element = el[0] as GridCellPrototype;
+                        )[0] as GridCellPrototype;
                         element.uify(this.observable);
                         element.data = item;
                         item.domel = element;
+                        i++;
+                        if (i != v.length) {
+                            const rz = $(`<afx-resizer>`).appendTo(
+                                this.refs.header
+                            )[0] as ResizerTag;
+                            $(rz).css("width", "3px");
+                            let next_item = undefined;
+                            if (i < v.length) {
+                                next_item = v[i];
+                            }
+                            rz.onelresize = (e) => {
+                                item.width = e.data.w + 3;
+                                if (next_item) {
+                                    delete next_item.width;
+                                }
+                            };
+                            rz.uify(this.observable);
+                        }
                     }
                     this.calibrate();
                 }
@@ -843,11 +861,21 @@ namespace OS {
                         });
                     }
                     let template = "";
+                    let template_header = "";
+                    let i = 0;
                     for (let v of colssize) {
                         template += `${v}px `;
+                        i++;
+                        template_header += `${v}px `;
+                        if (i < colssize.length) {
+                            template_header += "3px ";
+                        }
                     }
                     $(this.refs.grid).css("grid-template-columns", template);
-                    $(this.refs.header).css("grid-template-columns", template);
+                    $(this.refs.header).css(
+                        "grid-template-columns",
+                        template_header
+                    );
                 }
 
                 /**

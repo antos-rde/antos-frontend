@@ -94,8 +94,8 @@ namespace OS {
                     this._onfileopen = this._onfileselect = (e) => {};
                     this._header = [
                         { text: "__(File name)" },
-                        { text: "__(Type)", width: 150 },
-                        { text: "__(Size)", width: 70 },
+                        { text: "__(Type)" },
+                        { text: "__(Size)" },
                     ];
                 }
 

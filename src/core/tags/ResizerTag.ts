@@ -31,6 +31,15 @@ namespace OS {
                 private _resizable_el: any;
 
                 /**
+                 * Reference to the resize event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<any>}
+                 * @memberof ResizerTag
+                 */
+                private _onresize: TagEventCallback<any>;
+
+                /**
                  * Reference to the parent tag of the current tag.
                  * The parent tag should be an instance of a [[TileLayoutTag]]
                  * such as [[VBoxTag]] or [[HBoxTag]]
@@ -66,7 +75,6 @@ namespace OS {
                  * @memberof ResizerTag
                  */
                 protected init(): void {
-                    this.dir = "hz";
                     this._resizable_el = undefined;
                     this._parent = $(this).parent().parent()[0];
                     this._minsize = 0;
@@ -82,22 +90,62 @@ namespace OS {
                 protected reload(d?: any): void {}
                 /**
                  * Setter:
-                 * 
+                 *
                  * Set resize direction, two possible values:
                  * - `hz` - horizontal direction, resize by width
                  * - `ve` - vertical direction, resize by height
-                 * 
+                 *
                  * Getter:
-                 * 
+                 *
                  * Get the resize direction
                  *
                  * @memberof ResizerTag
                  */
                 set dir(v: string) {
+                    let att: string;
                     $(this).attr("dir", v);
+                    $(this).unbind("mousedown", null);
+                    if (v === "hz") {
+                        $(this).css("cursor", "col-resize");
+                        $(this).addClass("horizontal");
+                        if (this._resizable_el) {
+                            att = $(this._resizable_el).attr("min-width");
+                            if (att) {
+                                this._minsize = parseInt(att);
+                            }
+                        }
+                    } else if (v === "ve") {
+                        $(this).css("cursor", "row-resize");
+                        $(this).addClass("vertical");
+                        if (this._resizable_el) {
+                            att = $(this._resizable_el).attr("min-height");
+                            if (att) {
+                                this._minsize = parseInt(att);
+                            }
+                        }
+                    }
+                    if (this._minsize === 0) {
+                        this._minsize = 10;
+                    }
+                    this.make_draggable();
                 }
                 get dir(): string {
                     return $(this).attr("dir");
+                }
+
+                /**
+                 * Setter:
+                 * - set the resize event callback
+                 *
+                 * Getter:
+                 * - get the resize event callback
+                 * @memberof GridViewTag
+                 */
+                set onelresize(v: TagEventCallback<any>) {
+                    this._onresize = v;
+                }
+                get onelresize(): TagEventCallback<any> {
+                    return this._onresize;
                 }
 
                 /**
@@ -107,7 +155,6 @@ namespace OS {
                  * @memberof ResizerTag
                  */
                 protected mount(): void {
-                    let att: string;
                     $(this).css(" display", "block");
                     const tagname = $(this._parent).prop("tagName");
                     this._resizable_el =
@@ -116,31 +163,11 @@ namespace OS {
                             : undefined;
                     if (tagname === "AFX-HBOX") {
                         this.dir = "hz";
-                        $(this).css("cursor", "col-resize");
-                        $(this).addClass("horizontal");
-                        if (this._resizable_el) {
-                            att = $(this._resizable_el).attr("min-width");
-                            if (att) {
-                                this._minsize = parseInt(att);
-                            }
-                        }
                     } else if (tagname === "AFX-VBOX") {
                         this.dir = "ve";
-                        $(this).css("cursor", "row-resize");
-                        $(this).addClass("vertical");
-                        if (this._resizable_el) {
-                            att = $(this._resizable_el).attr("min-height");
-                            if (att) {
-                                this._minsize = parseInt(att);
-                            }
-                        }
                     } else {
-                        this.dir = "none";
+                        this.dir = "hz";
                     }
-                    if (this._minsize === 0) {
-                        this._minsize = 10;
-                    }
-                    this.make_draggable();
                 }
 
                 /**
@@ -151,6 +178,9 @@ namespace OS {
                  */
                 private make_draggable(): void {
                     $(this).css("user-select", "none");
+                    if (!this.dir || this.dir == "none") {
+                        return;
+                    }
                     $(this).on("mousedown", (e) => {
                         e.preventDefault();
                         $(window).on("mousemove", (evt) => {
@@ -191,10 +221,14 @@ namespace OS {
                         w = this._minsize;
                     }
                     $(this._resizable_el).attr("data-width", w.toString());
-                    this.observable.trigger("resize", {
+                    let evt = {
                         id: this.aid,
                         data: { w },
-                    });
+                    };
+                    if (this.onelresize) {
+                        this.onelresize(evt);
+                    }
+                    this.observable.trigger("resize", evt);
                 }
 
                 /**
@@ -215,10 +249,14 @@ namespace OS {
                         h = this._minsize;
                     }
                     $(this._resizable_el).attr("data-height", h.toString());
-                    return this.observable.trigger("resize", {
+                    let evt = {
                         id: this.aid,
                         data: { h },
-                    });
+                    };
+                    if (this.onelresize) {
+                        this.onelresize(evt);
+                    }
+                    return this.observable.trigger("resize", evt);
                 }
 
                 /**

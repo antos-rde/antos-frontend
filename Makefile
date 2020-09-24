@@ -194,7 +194,7 @@ release: main uglify
 doc:
 	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS API" --out $(DOCDIR)
 
-test:
+test: build_javascripts
 	jest
 
 clean:
