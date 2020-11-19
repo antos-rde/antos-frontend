@@ -5,6 +5,8 @@ DOCDIR?=/opt/www/htdocs/doc/antos
 BLUE=\033[1;34m
 NC=\033[0m
 
+VERSION=1.0.0
+
 GSED=sed
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -188,6 +190,14 @@ uglify:
 		test -f $(BUILDDIR)/packages/$$d/main.js  &&  terser $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
 		test -f $(BUILDDIR)/packages/$$d/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
 	done
+
+ar:
+	-[ -d /tmp/antos-$(VERSION) ] && rm -r /tmp/antos-$(VERSION)
+	-[ -f /tmp/antos-$(VERSION).tar.gz ] && rm /tmp/antos-$(VERSION).tar.gz
+	mkdir /tmp/antos-$(VERSION)
+	BUILDDIR=/tmp/antos-$(VERSION) make release
+	cd /tmp/antos-$(VERSION) && tar cvzf ../antos-$(VERSION).tar.gz .
+	mv /tmp/antos-$(VERSION).tar.gz release/
 
 release: main uglify
 
