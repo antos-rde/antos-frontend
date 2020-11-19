@@ -123,10 +123,16 @@ namespace OS {
          */
         export var HOST: string =
             loc.hostname + (loc.port ? `:${loc.port}` : "");
+        
+        /**
+         * The base URI of the server-side API
+         */
+        export var BASE_URI: string = `${HOST}${loc.pathname}`;
+        
         /**
          * The base REST URI of the server-side API
          */
-        export var REST: string = `${loc.protocol}//${HOST}${loc.pathname}`;
+        export var REST: string = `${loc.protocol}//${BASE_URI}`;
 
         /**
          * The namespace `handle` contains some low level API to
@@ -344,7 +350,7 @@ namespace OS {
                 if (ws) {
                     return new Promise(function (resolve, reject) {
                         try {
-                            const path = `${API.HOST}/system/apigateway?ws=1`;
+                            const path = `${API.BASE_URI}/system/apigateway?ws=1`;
                             const proto =
                                 window.location.protocol === "https:"
                                     ? "wss://"
