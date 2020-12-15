@@ -87,7 +87,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof ResizerTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
                 /**
                  * Setter:
                  *
@@ -133,6 +133,23 @@ namespace OS {
                     return $(this).attr("dir");
                 }
 
+
+                /**
+                 * Getter : Check whether the resizer should attach to its next or previous element
+                 * 
+                 * Setter: if `v=true` select next element as attached element of the resizer, otherwise
+                 * select the previous element
+                 * @readonly
+                 * @type {boolean}
+                 * @memberof ResizerTag
+                 */
+                get attachnext(): boolean {
+                    return this.hasattr("attachnext");
+                }
+                set attachnext(v: boolean) {
+                    this.attsw(v, "attachnext");
+                }
+
                 /**
                  * Setter:
                  * - set the resize event callback
@@ -158,10 +175,19 @@ namespace OS {
                 protected mount(): void {
                     $(this).css(" display", "block");
                     const tagname = $(this._parent).prop("tagName");
-                    this._resizable_el =
-                        $(this).prev().length === 1
-                            ? $(this).prev()[0]
-                            : undefined;
+                    if (this.attachnext) {
+                        this._resizable_el =
+                            $(this).next().length === 1
+                                ? $(this).next()[0]
+                                : undefined;
+                    }
+                    else {
+                        this._resizable_el =
+                            $(this).prev().length === 1
+                                ? $(this).prev()[0]
+                                : undefined;
+                    }
+
                     if (tagname === "AFX-HBOX") {
                         this.dir = "hz";
                     } else if (tagname === "AFX-VBOX") {
@@ -217,7 +243,13 @@ namespace OS {
                         return;
                     }
                     const offset = $(this._resizable_el).offset();
-                    let w = Math.round(e.clientX - offset.left);
+                    let w = 0;
+                    if (this.attachnext) {
+                        w = Math.round(offset.left + $(this._resizable_el).width() - e.clientX);
+                    }
+                    else {
+                        w = Math.round(e.clientX - offset.left);
+                    }
                     if (w < this._minsize) {
                         w = this._minsize;
                     }
@@ -245,7 +277,13 @@ namespace OS {
                         return;
                     }
                     const offset = $(this._resizable_el).offset();
-                    let h = Math.round(e.clientY - offset.top);
+                    let h = 0;
+                    if (this.attachnext) {
+                        h = Math.round(offset.top + $(this._resizable_el).height() - e.clientY);
+                    }
+                    else {
+                        h = Math.round(e.clientY - offset.top);
+                    }
                     if (h < this._minsize) {
                         h = this._minsize;
                     }

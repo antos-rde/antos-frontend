@@ -22,6 +22,7 @@ namespace OS {
          * @memberof ExtensionMaker
          */
         create(): void {
+            this.logger().clear();
             this.app
                 .openDialog("FileDialog", {
                     title: "__(New CodePad extension at)",
@@ -39,6 +40,7 @@ namespace OS {
          * @memberof ExtensionMaker
          */
         buildnrun(): void {
+            this.logger().clear();
             this.metadata("extension.json")
                 .then(async (meta) => {
                     try {
@@ -46,13 +48,13 @@ namespace OS {
                         try {
                             return this.run(meta);
                         } catch (e) {
-                            return this.error(__("Unable to run extension"), e);
+                            return this.logger().error(__("Unable to run extension: {0}", e.stack));
                         }
                     } catch (e_1) {
-                        return this.error(__("Unable to build extension"), e_1);
+                        return this.logger().error(__("Unable to build extension: {0}", e_1.stack));
                     }
                 })
-                .catch((e) => this.error(__("Unable to read meta-data"), e));
+                .catch((e) => this.logger().error(__("Unable to read meta-data:{0}", e.stack)));
         }
 
         /**
@@ -61,6 +63,7 @@ namespace OS {
          * @memberof ExtensionMaker
          */
         release(): void {
+            this.logger().clear();
             this.metadata("extension.json")
                 .then(async (meta) => {
                     try {
@@ -71,16 +74,16 @@ namespace OS {
                                 `${meta.root}/build/release/${meta.meta.name}.zip`
                             );
                         } catch (e) {
-                            return this.error(
-                                __("Unable to create archive"),
-                                e
-                            );
+                            return this.logger().error(
+                                __("Unable to create archive: {0}",
+                                    e.stack
+                                ));
                         }
                     } catch (e_1) {
-                        return this.error(__("Unable to build extension"), e_1);
+                        return this.logger().error(__("Unable to build extension: {0}", e_1.stack));
                     }
                 })
-                .catch((e) => this.error(__("Unable to read meta-data"), e));
+                .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
         }
 
         /**
@@ -89,6 +92,7 @@ namespace OS {
          * @memberof ExtensionMaker
          */
         install(): void {
+            this.logger().clear();
             this.app
                 .openDialog("FileDialog", {
                     title: "__(Select extension archive)",
@@ -97,10 +101,10 @@ namespace OS {
                 .then(async (d) => {
                     try {
                         await this.installZip(d.file.path);
-                        this.notify(__("Extension installed"));
+                        this.logger().info(__("Extension installed"));
                         return this.app.loadExtensionMetaData();
                     } catch (e) {
-                        return this.error(__("Unable to install extension"), e);
+                        return this.logger().error(__("Unable to install extension: {0}", e.stack));
                     }
                 });
         }
@@ -135,14 +139,14 @@ namespace OS {
                             `${rpath}/${name}.coffee`.asFileHandle() as application.CodePadFileHandle
                         );
                     } catch (e) {
-                        return this.error(
-                            __("Unable to create extension template"),
-                            e
+                        return this.logger().error(
+                            __("Unable to create extension template: {0}",
+                                e.stack)
                         );
                     }
                 })
                 .catch((e) =>
-                    this.error(__("Unable to create extension directories"), e)
+                    this.logger().error(__("Unable to create extension directories: {0}", e.stack))
                 );
         }
 
@@ -160,7 +164,7 @@ namespace OS {
                     return resolve();
                 }
                 const file = list.splice(0, 1)[0].asFileHandle();
-                this.notify(__("Verifying: {0}", file.path));
+                this.logger().info(__("Verifying: {0}", file.path));
                 return file
                     .read()
                     .then((data) => {
@@ -193,11 +197,11 @@ namespace OS {
                         (v) => `${meta.root}/${v}`
                     );
                     try {
-                        await this.verify(list.map((x: string) =>x));
+                        await this.verify(list.map((x: string) => x));
                         try {
                             const code = await this.cat(list, "");
                             const jsrc = CoffeeScript.compile(code);
-                            this.notify(__("Compiled successful"));
+                            this.logger().info(__("Compiled successful"));
                             return resolve(jsrc);
                         } catch (e) {
                             return reject(__e(e));
@@ -406,9 +410,8 @@ namespace OS {
          */
         private installMeta(meta: GenericObject<any>): Promise<any> {
             return new Promise(async (resolve, reject) => {
-                const file = `${
-                    this.app.meta().path
-                }/extensions.json`.asFileHandle();
+                const file = `${this.app.meta().path
+                    }/extensions.json`.asFileHandle();
                 try {
                     const data = await file.read("json");
                     const names = [];

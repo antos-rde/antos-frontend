@@ -10,6 +10,14 @@
             <afx-vbox>
                 <afx-tab-bar closable="true" data-height="26" data-id = "tabbar"></afx-tab-bar>
                 <div data-id="datarea"></div>
+                <afx-resizer data-height = "3" dir = "ve" attachnext = "true" ></afx-resizer>
+                <afx-tab-container data-id = "bottombar" data-height="150" min-height="150" tabbarheight= "22">
+                    <afx-hbox tabname="__(Output)"  iconclass = "fa fa-file-text" class = "bottom-tab-content">
+                        <afx-button text = "" data-id="logger-clear" iconclass="fa fa-trash" data-width="21"></afx-button>
+                        <div  data-id="output-tab" iconclass = "fa fa-file-text" >
+                        </div>
+                    </afx-hbox>
+                </afx-tab-container>
             </afx-vbox>
         </afx-hbox>
         <div data-height="20" data-id="statctn">

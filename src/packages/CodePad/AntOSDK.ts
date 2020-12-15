@@ -37,6 +37,7 @@ namespace OS {
                     mimes: ["dir"],
                 })
                 .then((d) => {
+                    this.logger().clear();
                     return this.mktpl(d.file.path, d.name, true);
                 });
         }
@@ -48,16 +49,17 @@ namespace OS {
          * @memberof AntOSDK
          */
         init(): void {
+            this.logger().clear();
             const dir = this.app.currdir;
             if (!dir || !dir.basename) {
                 return this.create();
             }
             dir.read().then((d) => {
                 if (d.error) {
-                    return this.notify(__("Cannot read folder: {0}", dir.path));
+                    return this.logger().error(__("Cannot read folder: {0}", dir.path));
                 }
                 if (d.result.length !== 0) {
-                    return this.notify(
+                    return this.logger().error(
                         __("The folder is not empty: {0}", dir.path)
                     );
                 }
@@ -71,6 +73,7 @@ namespace OS {
          * @memberof AntOSDK
          */
         buildnrun(): void {
+            this.logger().clear();
             this.metadata("project.json")
                 .then(async (meta) => {
                     try {
@@ -78,13 +81,13 @@ namespace OS {
                         try {
                             return this.run(meta);
                         } catch (e) {
-                            return this.error(__("Unable to run project"), e);
+                            return this.logger().error(__("Unable to run project: {0}", e.stack));
                         }
                     } catch (e_1) {
-                        return this.error(__("Unable to build project"), e_1);
+                        return this.logger().error(__("Unable to build project: {0}", e_1.stack));
                     }
                 })
-                .catch((e) => this.error(__("Unable to read meta-data"), e));
+                .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
         }
 
         /**
@@ -93,6 +96,7 @@ namespace OS {
          * @memberof AntOSDK
          */
         release(): void {
+            this.logger().clear();
             this.metadata("project.json")
                 .then(async (meta) => {
                     try {
@@ -103,16 +107,16 @@ namespace OS {
                                 `${meta.root}/build/release/${meta.name}.zip`
                             );
                         } catch (e) {
-                            return this.error(
-                                __("Unable to create package archive"),
-                                e
+                            return this.logger().error(
+                                __("Unable to create package archive: {}",
+                                    e.stack)
                             );
                         }
                     } catch (e_1) {
-                        return this.error(__("Unable to build project"), e_1);
+                        return this.logger().error(__("Unable to build project: {0}", e_1.stack));
                     }
                 })
-                .catch((e) => this.error(__("Unable to read meta-data"), e));
+                .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
         }
 
         // private functions
@@ -153,14 +157,14 @@ namespace OS {
                             `${rpath}/README.md`.asFileHandle() as application.CodePadFileHandle
                         );
                     } catch (e) {
-                        return this.error(
-                            __("Unable to create template files"),
-                            e
+                        return this.logger().error(
+                            __("Unable to create template files: {0}",
+                                e.stack)
                         );
                     }
                 })
                 .catch((e) =>
-                    this.error(__("Unable to create project directory"), e)
+                    this.logger().error(__("Unable to create project directory: {0}", e.stack))
                 );
         }
 
@@ -178,7 +182,7 @@ namespace OS {
                     return resolve();
                 }
                 const file = list.splice(0, 1)[0].asFileHandle();
-                this.notify(__("Verifying: {0}", file.path));
+                this.logger().info(__("Verifying: {0}", file.path));
                 return file
                     .read()
                     .then((data) => {
@@ -214,11 +218,11 @@ namespace OS {
                         (v: string) => `${meta.root}/${v}`
                     );
                     try {
-                        await this.verify(list.map((x: string) =>x));
+                        await this.verify(list.map((x: string) => x));
                         try {
                             const code = await this.cat(list, "");
                             const jsrc = CoffeeScript.compile(code);
-                            this.notify(__("Compiled successful"));
+                            this.logger().info(__("Compiled successful"));
                             return resolve(jsrc);
                         } catch (e) {
                             return reject(__e(e));
@@ -282,7 +286,7 @@ namespace OS {
                                         options
                                     );
                                     if (result_1.error) {
-                                        this.notify(
+                                        this.logger().error(
                                             __(
                                                 "Unable to minify code: {0}",
                                                 result_1.error
@@ -372,9 +376,9 @@ namespace OS {
                     if (!v.iconclass && !v.icon) {
                         v.iconclass = "fa fa-adn";
                     }
-                    this.notify(__("Installing..."));
+                    this.logger().info(__("Installing..."));
                     setting.system.packages[meta.name] = v;
-                    this.notify(__("Running {0}...", meta.name));
+                    this.logger().info(__("Running {0}...", meta.name));
                     return GUI.forceLaunch(meta.name, []);
                 });
         }

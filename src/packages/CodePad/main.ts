@@ -114,6 +114,14 @@ namespace OS {
             private sidebar: GUI.tag.VBoxTag;
 
             /**
+             * Reference to the bottom bar
+             *
+             * @private
+             * @type {GUI.tag.TabContainerTag}
+             * @memberof CodePad
+             */
+            private bottombar: GUI.tag.TabContainerTag;
+            /**
              * Reference to the editor tab bar UI
              *
              * @private
@@ -175,6 +183,15 @@ namespace OS {
              */
             spotlight: CMDMenu;
 
+            
+            /**
+             * Reference to the editor logger
+             *
+             * @type {Logger}
+             * @memberof CodePad
+             */
+            logger: Logger;
+
             /**
              * Extension prototype definition will be stored
              * in this class variable
@@ -194,6 +211,14 @@ namespace OS {
              */
             static CMDMenu: typeof CMDMenu;
 
+            /**
+             * Prototype definition of a Logger
+             *
+             * @static
+             * @type {typeof Logger}
+             * @memberof CodePad
+             */
+            static Logger: typeof Logger;
             /**
              * Prototype definition of CodePad CommandPalette
              *
@@ -240,27 +265,29 @@ namespace OS {
                 this.extensions = {};
                 this.fileview = this.find("fileview") as GUI.tag.FileViewTag;
                 this.sidebar = this.find("sidebar") as GUI.tag.VBoxTag;
+                this.bottombar = this.find("bottombar") as GUI.tag.TabContainerTag;
                 this.tabbar = this.find("tabbar") as GUI.tag.TabBarTag;
                 this.langstat = this.find("langstat") as GUI.tag.LabelTag;
                 this.editorstat = this.find("editorstat") as GUI.tag.LabelTag;
-
+                this.logger = new Logger(this.find("output-tab"));
                 this.fileview.fetch = (path) =>
-                    new Promise(function (resolve, reject) {
+                    new Promise(async function (resolve, reject) {
                         let dir: API.VFS.BaseFileHandle;
                         if (typeof path === "string") {
                             dir = path.asFileHandle();
                         } else {
                             dir = path;
                         }
-                        return dir
-                            .read()
-                            .then(function (d) {
-                                if (d.error) {
-                                    return reject(d.error);
-                                }
-                                return resolve(d.result);
-                            })
-                            .catch((e) => reject(__e(e)));
+                        try {
+                            const d = await dir
+                                .read();
+                            if (d.error) {
+                                return reject(d.error);
+                            }
+                            return resolve(d.result);
+                        } catch (e) {
+                            return reject(__e(e));
+                        }
                     });
                 return this.setup();
             }
@@ -297,7 +324,7 @@ namespace OS {
                         pos: any,
                         prefix: any,
                         callback: any
-                    ) {},
+                    ) { },
                 });
                 this.editor.getSession().setUseWrapMode(true);
                 this.editormux = false;
@@ -416,13 +443,13 @@ namespace OS {
                                 e.data.to.update(p1);
                                 (e.data
                                     .from as GUI.tag.TreeViewTag).parent.update(
-                                    p2
-                                );
+                                        p2
+                                    );
                             } else {
                                 (e.data
                                     .from as GUI.tag.TreeViewTag).parent.update(
-                                    p2
-                                );
+                                        p2
+                                    );
                                 e.data.to.update(p1);
                             }
                         })
@@ -439,9 +466,19 @@ namespace OS {
                     return this.fileview.update(path);
                 });
 
+                (this.find("logger-clear") as GUI.tag.ButtonTag).onbtclick = () =>
+                {
+                    this.logger.clear()
+                }
+
+                if (this.setting.showBottomBar === undefined) {
+                    this.setting.showBottomBar = false;
+                }
+
                 this.loadExtensionMetaData();
                 this.initCommandPalete();
                 this.toggleSideBar();
+                this.applyAllSetting();
                 return this.openFile(this.currfile);
             }
 
@@ -634,6 +671,47 @@ namespace OS {
                     $(this.sidebar).hide();
                 }
                 this.trigger("resize");
+            }
+
+
+            /**
+             * Apply [[showBottomBar]] from user setting value
+             *
+             * @protected
+             * @param {string} k
+             * @memberof CodePad
+             */
+            protected applySetting(k: string): void {
+                if (k == "showBottomBar") {
+                    this.showBottomBar(this.setting.showBottomBar);
+                }
+            }
+
+            /**
+             * Show or hide the bottom bar and
+             * save the value to user setting
+             *
+             * @param {boolean} v
+             * @memberof CodePad
+             */
+            public showBottomBar(v: boolean): void {
+                this.setting.showBottomBar = v;
+                if (v) {
+                    $(this.bottombar).show();
+                }
+                else {
+                    $(this.bottombar).hide();
+                }
+                this.trigger("resize");
+            }
+
+            /**
+             * toggle the bottom bar
+             *
+             * @memberof CodePad
+             */
+            private toggleBottomBar(): void {
+                this.showBottomBar(!this.setting.showBottomBar);
             }
 
             /**
@@ -1142,12 +1220,26 @@ namespace OS {
                                 dataid: "cmdpalette",
                                 shortcut: "A-P",
                             },
+                            {
+                                text: "__(Toggle bottom bar)",
+                                dataid: "bottombar"
+                            }
                         ],
                         onchildselect: (
                             e: GUI.TagEventType<GUI.tag.MenuEventData>,
                             r: CodePadFileHandle
                         ) => {
-                            return this.spotlight.run(this);
+                            switch (e.data.item.data.dataid) {
+                                case "cmdpalette":
+                                    return this.spotlight.run(this);
+
+                                case "bottombar":
+                                    return this.toggleBottomBar();
+
+                                default:
+                                    break;
+                            }
+                            r
                         },
                     },
                 ];
@@ -1181,7 +1273,7 @@ namespace OS {
                 this.shortcut = shortcut;
                 this.nodes = [];
                 this.parent = undefined;
-                this.select = function (e) {};
+                this.select = function (e) { };
             }
 
             /**
@@ -1255,7 +1347,115 @@ namespace OS {
             return m;
         };
 
+
+        /**
+         * This class handles log output to the Editor output container
+         *
+         * @class Logger
+         */
+        class Logger {
+
+            /**
+             * Referent to the log container
+             *
+             * @private
+             * @type {HTMLElement}
+             * @memberof Logger
+             */
+            private target: HTMLElement;
+
+
+            /**
+             * Creates an instance of Logger.
+             * @param {HTMLElement} el target container
+             * @memberof Logger
+             */
+            constructor(el: HTMLElement) {
+                this.target = el;
+            }
+
+            /**
+             * Log level info
+             *
+             * @param {string|FormattedString} s
+             * @memberof Logger
+             */
+            info(s: string | FormattedString): void {
+                this.log("info", s, true);
+            }
+
+            /**
+             * Log level warning
+             *
+             * @param {string|FormattedString} s
+             * @memberof Logger
+             */
+            warn(s: string | FormattedString): void {
+                this.log("warn", s, true);
+            }
+
+            /**
+             * Log level error
+             *
+             * @param {string|FormattedString} s
+             * @memberof Logger
+             */
+            error(s: string|FormattedString): void {
+                this.log("error", s, true);
+            }
+
+
+            /**
+             * Log a string to target container
+             *
+             * @private
+             * @param {string} c class name of the appended log element
+             * @param {string|FormattedString} s log string
+             * @param {boolean} showtime define whether the logger should insert datetime prefix
+             * in the log string
+             * @memberof Logger
+             */
+            private log(c: string, s: string|FormattedString, showtime: boolean): void {
+                let el = $("<pre></pre>")
+                    .attr("class", `code-pad-log-${c}`);
+                if (showtime) {
+                    let date = new Date();
+                    let prefix = date.getDate() + "/"
+                        + (date.getMonth() + 1) + "/"
+                        + date.getFullYear() + " "
+                        + date.getHours() + ":"
+                        + date.getMinutes() + ":"
+                        + date.getSeconds();
+                    el.text(`[${prefix}]: ${s.__()}`);
+                }
+                else {
+                    el.text(s.__());
+                }
+                $(this.target).append(el);
+            }
+            
+            /**
+             * Print a log message without prefix
+             *
+             * @param {string|FormattedString} s text to print
+             * @memberof Logger
+             */
+            print(s: string|FormattedString): void {
+                this.log("info", s, false);
+            }
+
+            /**
+             * Empty the log container
+             *
+             * @memberof Logger
+             */
+            clear(): void {
+                $(this.target).empty();
+            }
+        }
+
         CodePad.CMDMenu = CMDMenu;
+        CodePad.Logger = Logger;
 
         CodePad.dependencies = [
             "os://scripts/ace/ace.js",

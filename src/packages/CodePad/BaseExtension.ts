@@ -74,6 +74,22 @@ namespace OS {
             return this.app.error(m, e);
         }
 
+
+        /**
+         *
+         *
+         * @protected
+         * @return {Logger} editor logger 
+         * @memberof BaseExtension
+         */
+        protected logger() {
+            if(!this.app.setting.showBottomBar)
+            {
+                this.app.showBottomBar(true);
+            }
+            return this.app.logger;
+        }
+
         /**
          *
          *
@@ -272,7 +288,7 @@ namespace OS {
          * @memberof BaseExtension
          */
         protected mkar(src: string, dest: string): Promise<any> {
-            this.notify(__("Preparing for release"));
+            this.logger().info(__("Preparing for release"));
             return new Promise((resolve, reject) => {
                 return new Promise(async (r, e) => {
                     try {
@@ -314,7 +330,7 @@ namespace OS {
                                     .write("base64")
                                     .then((r: any) => {
                                         resolve();
-                                        return this.notify(
+                                        return this.logger().info(
                                             __(
                                                 "Archive is generated at: {0}",
                                                 dest

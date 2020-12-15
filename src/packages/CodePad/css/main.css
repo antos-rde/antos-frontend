@@ -1,3 +1,6 @@
+afx-app-window[data-id = "codepad"] .ace_editor {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container
 {
     /*border-top: 1px solid #272822;*/
@@ -34,8 +37,14 @@ afx-app-window[data-id = "codepad"]  div.afx-window-content {
 }
 afx-app-window[data-id = "codepad"] afx-resizer {
     background-color:#272822;
-    border-right: 1px solid #37373d;
+    border-right: 1px solid #656565;
+    border-bottom: 1px solid #656565;
 }
+
+afx-app-window[data-id = "codepad"] .bottom-tab-content {
+    background-color:#272822;
+}
+
 afx-app-window[data-id = "codepad"] .afx-window-wrapper afx-tree-view{
     color: white;
     padding: 0;
@@ -105,4 +114,32 @@ afx-app-window[data-id = "cmd-win"] input{
 
 afx-app-window[data-id = "cmd-win"] .afx-window-content{
     background-color:#272822;
+}
+
+afx-app-window[data-id = "codepad"] div[data-id="output-tab"] {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre {
+    margin: 3px;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    font-family: monospace;
+}
+
+afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre.code-pad-log-error {
+    color: red;
+}
+
+afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre.code-pad-log-warn {
+    color: orange;
+}
+
+afx-app-window[data-id = "codepad"] afx-button[ data-id="logger-clear" ] button{
+    border: 0;
+    background: transparent;
 }

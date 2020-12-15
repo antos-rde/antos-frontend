@@ -57,7 +57,7 @@ namespace OS {
                  */
                 constructor() {
                     super();
-                    this._ontabselect = (e) => {};
+                    this._ontabselect = (e) => { };
                 }
 
                 /**
@@ -77,7 +77,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof TabContainerTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * Set the tab select event handle
@@ -167,6 +167,50 @@ namespace OS {
                 }
 
                 /**
+                 * Add a new tab with container to the container
+                 * 
+                 * item should be in the following format:
+                 * 
+                 * ```ts
+                 * {
+                 *  text: string,
+                 *  icon?: string,
+                 *  iconclass?: string,
+                 *  container: HTMLElement
+                 * }
+                 * ```
+                 *
+                 * @param {GenericObject<any>} item tab descriptor
+                 * @param {boolean} insert insert the tab content to the container ?
+                 * @memberof TabContainerTag
+                 */
+                public addTab(item: GenericObject<any>, insert: boolean): void {
+                    if (insert) {
+                        $(this.refs.yield).append(item.container);
+                    }
+                    $(item.container)
+                        .css("width", "100%")
+                        .css("height", "100%")
+                        .hide();
+                    const el = (this.refs.bar as TabBarTag).push(
+                        item
+                    );
+                    el.selected = true;
+                }
+
+                /**
+                 * Remove a tab from the container
+                 *
+                 * @param {ListViewItemTag} tab the tab item to be removed
+                 * @memberof TabContainerTag
+                 */
+                public removeTab(tab: ListViewItemTag): void {
+                    if (tab.data.container) {
+                        $(tab.data.container).remove();
+                    }
+                    (this.refs.bar as TabBarTag).delete(tab);
+                }
+                /**
                  * Mount the tag and bind basic events
                  *
                  * @protected
@@ -194,14 +238,7 @@ namespace OS {
                                     item.iconclass = $(e).attr("iconclass");
                                 }
                                 item.container = e;
-                                $(e)
-                                    .css("width", "100%")
-                                    .css("height", "100%")
-                                    .hide();
-                                const el = (this.refs.bar as TabBarTag).push(
-                                    item
-                                );
-                                el.selected = true;
+                                this.addTab(item, false);
                             });
                     });
 
