@@ -1440,6 +1440,7 @@ namespace OS {
                     el.text(s.__());
                 }
                 $(this.target).append(el);
+                $(this.target).scrollTop($(this.target)[0].scrollHeight);
             }
 
             /**

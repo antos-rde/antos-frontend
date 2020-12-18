@@ -11,5 +11,6 @@
     "category":"Other",
     "iconclass":"fa fa-adn",
     "mimes":["none"],
+    "dependencies":[],
     "locale": {}
 }
