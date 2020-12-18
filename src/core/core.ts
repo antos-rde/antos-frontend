@@ -1059,6 +1059,25 @@ namespace OS {
              * @memberof PackageMetaType
              */
             version: string;
+            
+            /**
+             * Package dependencies, each entry is in the following format
+             * 
+             * `package_name@version`
+             * 
+             * Example:
+             * 
+             * ```json
+             * [
+             *  "File@0.1.5-b"
+             * ]
+             * ```
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
+            dependencies: string[];
+
             [propName: string]: any;
         }
         /**
@@ -1359,11 +1378,12 @@ namespace OS {
          *
          * @export
          * @param {string} l VFS path to the library
+         * @param {string} force force reload library
          * @returns {Promise<any>} a promise on the result data
          */
-        export function requires(l: string): Promise<any> {
+        export function requires(l: string, force: boolean = false): Promise<any> {
             return new Promise(function(resolve, reject) {
-                if (!API.shared[l]) {
+                if (!API.shared[l] || force) {
                     const libfp = l.asFileHandle();
                     switch (libfp.ext) {
                         case "css":
@@ -1427,7 +1447,7 @@ namespace OS {
                     }
                     return resolve(r);
                 });
-                return API.requires(libs[0]).catch((e: Error) =>
+                return API.requires(libs[0], false).catch((e: Error) =>
                     reject(__e(e))
                 );
             });

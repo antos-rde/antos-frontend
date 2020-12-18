@@ -99,7 +99,7 @@ namespace OS {
         }
     
         protected onexit(e: BaseEvent): void{
-            (this.parent as OS.application.MarketPlace).refreshRepoList();
+            (this.parent as OS.application.MarketPlace).fetchApps();
             return super.onexit(e);
         }
     }

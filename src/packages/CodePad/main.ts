@@ -183,7 +183,7 @@ namespace OS {
              */
             spotlight: CMDMenu;
 
-            
+
             /**
              * Reference to the editor logger
              *
@@ -311,7 +311,7 @@ namespace OS {
                     highlightSelectedWord: true,
                     behavioursEnabled: true,
                     wrap: true,
-                    fontSize: "11pt",
+                    fontSize: "10pt",
                     showInvisibles: true,
                 });
                 //themes = ace.require "ace/ext/themelist"
@@ -466,8 +466,7 @@ namespace OS {
                     return this.fileview.update(path);
                 });
 
-                (this.find("logger-clear") as GUI.tag.ButtonTag).onbtclick = () =>
-                {
+                (this.find("logger-clear") as GUI.tag.ButtonTag).onbtclick = () => {
                     this.logger.clear()
                 }
 
@@ -837,23 +836,32 @@ namespace OS {
              * Run an extension action from the command palette
              *
              * @private
-             * @param {string} name extension name
+             * @param { GenericObject<any>} extmeta extension name
              * @param {string} action action name
              * @returns {void}
              * @memberof CodePad
              */
-            private runExtensionAction(name: string, action: string): void {
-                if (!CodePad.extensions[name]) {
-                    return this.error(
-                        __("Unable to find extension: {0}", name)
-                    );
+            private runExtensionAction(extmeta: GenericObject<any>, action: string): void {
+                let ext = undefined;
+                if (extmeta.ext) {
+                    if (!extmeta.ext[action]) {
+                        return this.error(__("Unknown extension action: {0}", action));
+                    }
                 }
-                const ext = new CodePad.extensions[name](this);
-                if (!ext[action]) {
-                    return this.error(__("Unable to find action: {0}", action));
+                else {
+                    if (!CodePad.extensions[extmeta.name]) {
+                        return this.error(
+                            __("Unable to find extension: {0}", extmeta.name)
+                        );
+                    }
+                    extmeta.ext = new CodePad.extensions[extmeta.name](this);
+                    if (!extmeta.ext[action]) {
+                        return this.error(__("Unable to find action: {0}", action));
+                    }
                 }
-                ext.preload()
-                    .then(() => ext[action]())
+
+                extmeta.ext.preload()
+                    .then(() => extmeta.ext[action]())
                     .catch((e: Error) => {
                         return this.error(__("Unable to preload extension"), e);
                     });
@@ -872,9 +880,9 @@ namespace OS {
                 /**
                  * Parent context of the current action
                  *
-                 * @type {{ name: any }}
+                 * @type {{ name: any, ext: any }}
                  */
-                parent: { name: any };
+                parent: { name: any, ext: any };
 
                 /**
                  * Action name
@@ -883,15 +891,15 @@ namespace OS {
                  */
                 name: any;
             }): void {
-                const { name } = data.parent;
+                const name = data.parent.name;
                 const action = data.name;
                 //verify if the extension is load
                 if (!CodePad.extensions[name]) {
                     //load the extension
                     const path = `${this.meta().path}/${name}.js`;
                     this._api
-                        .requires(path)
-                        .then(() => this.runExtensionAction(name, action))
+                        .requires(path, true)
+                        .then(() => this.runExtensionAction(data.parent, action))
                         .catch((e) => {
                             return this.error(
                                 __("unable to load extension: {0}", name),
@@ -899,7 +907,7 @@ namespace OS {
                             );
                         });
                 } else {
-                    this.runExtensionAction(name, action);
+                    this.runExtensionAction(data.parent, action);
                 }
             }
 
@@ -1400,7 +1408,7 @@ namespace OS {
              * @param {string|FormattedString} s
              * @memberof Logger
              */
-            error(s: string|FormattedString): void {
+            error(s: string | FormattedString): void {
                 this.log("error", s, true);
             }
 
@@ -1415,7 +1423,7 @@ namespace OS {
              * in the log string
              * @memberof Logger
              */
-            private log(c: string, s: string|FormattedString, showtime: boolean): void {
+            private log(c: string, s: string | FormattedString, showtime: boolean): void {
                 let el = $("<pre></pre>")
                     .attr("class", `code-pad-log-${c}`);
                 if (showtime) {
@@ -1433,14 +1441,14 @@ namespace OS {
                 }
                 $(this.target).append(el);
             }
-            
+
             /**
              * Print a log message without prefix
              *
              * @param {string|FormattedString} s text to print
              * @memberof Logger
              */
-            print(s: string|FormattedString): void {
+            print(s: string | FormattedString): void {
                 this.log("info", s, false);
             }
 
@@ -1461,7 +1469,7 @@ namespace OS {
             "os://scripts/ace/ace.js",
             "os://scripts/ace/ext-language_tools.js",
             "os://scripts/ace/ext-modelist.js",
-            "os://scripts/ace/ext-themelist.js",
+            "os://scripts/ace/ext-themelist.js"
         ];
 
         /**
@@ -1513,6 +1521,7 @@ namespace OS {
                     this.cmdlist.data = this.data.nodes;
                 }
                 $(this.cmdlist).click((e) => {
+                    $(document).unbind("mousedown", cb);
                     return this.selectCommand();
                 });
 
@@ -1585,11 +1594,11 @@ namespace OS {
                 if (!el) {
                     return;
                 }
+                this.quit();
                 el.selected = false;
                 if (this.handle) {
                     this.handle({ data: { item: el } });
                 }
-                return this.quit();
             }
         }
 

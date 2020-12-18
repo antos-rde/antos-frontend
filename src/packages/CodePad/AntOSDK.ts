@@ -108,7 +108,7 @@ namespace OS {
                             );
                         } catch (e) {
                             return this.logger().error(
-                                __("Unable to create package archive: {}",
+                                __("Unable to create package archive: {0}",
                                     e.stack)
                             );
                         }

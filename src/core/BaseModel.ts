@@ -565,7 +565,6 @@ namespace OS {
                 this.dialog.handle = resolve;
                 this.dialog.pid = this.pid;
                 this.dialog.data = data;
-
                 return this.dialog.init();
             });
         }

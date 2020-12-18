@@ -63,7 +63,6 @@ namespace OS {
              */
             quit(): void {
                 const evt = new BaseEvent("exit", false);
-                this.onexit(evt);
                 if (!evt.prevent) {
                     delete this._observable;
                     if (this.scheme) {
@@ -72,6 +71,7 @@ namespace OS {
                     if (this.dialog) {
                         return this.dialog.quit();
                     }
+                    this.onexit(evt);
                 }
             }
 
@@ -117,6 +117,9 @@ namespace OS {
             show(): void {
                 this.trigger("focus");
                 $(this.scheme).css("z-index", GUI.zindex + 2);
+                if (this.dialog) {
+                    this.dialog.show();
+                }
             }
 
             /**
@@ -406,7 +409,10 @@ namespace OS {
                     if (this.data && this.data.value) {
                         $input.val(this.data.value);
                     }
-
+                    if(this.data && this.data.disable)
+                    {
+                        $input.prop('disabled', true);
+                    }
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
                         const value = $input.val();
                         if (!value || value === "") {

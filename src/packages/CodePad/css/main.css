@@ -5,7 +5,29 @@ afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-contai
 {
     /*border-top: 1px solid #272822;*/
     overflow: hidden;
+    overflow-x: auto;
     font-size: 12px;
+    scrollbar-width: none;
+    /*scrollbar-color: #656565 transparent;*/
+}
+
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar {
+    height: 0;
+}
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar-thumb {
+    background-color: #656565;
+    border: 0;
+  }
+
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container > ul
+{
+    width: intrinsic;
+    width: -moz-max-content;
+    width: -webkit-max-content;
+    width: max-content;
 }
 
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li.selected,

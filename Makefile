@@ -5,7 +5,7 @@ DOCDIR?=/opt/www/htdocs/doc/antos
 BLUE=\033[1;34m
 NC=\033[0m
 
-VERSION=1.0.0
+VERSION=1.1.2
 
 GSED=sed
 UNAME_S := $(shell uname -s)

@@ -301,7 +301,7 @@ namespace OS {
              * @memberof BaseApplication
              */
             show(): void {
-                return this.trigger("focus", undefined);
+                this.trigger("focus", undefined);
             }
 
             /**
