@@ -135,7 +135,7 @@ namespace OS {
                         await this.mkfileAll(files, path, name);
                         this.app.currdir = rpath.asFileHandle();
                         this.app.toggleSideBar();
-                        return this.app.openFile(
+                        return this.app.eum.active.openFile(
                             `${rpath}/${name}.coffee`.asFileHandle() as application.CodePadFileHandle
                         );
                     } catch (e) {
@@ -155,10 +155,10 @@ namespace OS {
          *
          * @private
          * @param {string[]} list
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof ExtensionMaker
          */
-        private verify(list: string[]): Promise<any> {
+        private verify(list: string[]): Promise<void> {
             return new Promise((resolve, reject) => {
                 if (list.length === 0) {
                     return resolve();
@@ -220,10 +220,10 @@ namespace OS {
          *
          * @private
          * @param {GenericObject<any>} meta
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof ExtensionMaker
          */
-        private build(meta: GenericObject<any>): Promise<any> {
+        private build(meta: GenericObject<any>): Promise<void> {
             return new Promise(async (resolve, reject) => {
                 try {
                     const src = await this.compile(meta);
@@ -239,7 +239,7 @@ namespace OS {
                             })(),
                             src
                         );
-                        await new Promise((r, e) =>
+                        await new Promise<void>((r, e) =>
                             `${meta.root}/build/debug/${meta.meta.name}.js`
                                 .asFileHandle()
                                 .setCache(jsrc)
@@ -280,10 +280,10 @@ namespace OS {
          *
          * @private
          * @param {GenericObject<any>} meta
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof ExtensionMaker
          */
-        private run(meta: GenericObject<any>): Promise<any> {
+        private run(meta: GenericObject<any>): Promise<void> {
             return new Promise(async (resolve, reject) => {
                 const path = `${meta.root}/build/debug/${meta.meta.name}.js`;
                 if (API.shared[path]) {
@@ -331,10 +331,10 @@ namespace OS {
          * @private
          * @param {string[]} files
          * @param {*} zip
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof ExtensionMaker
          */
-        private installExtension(files: string[], zip: any): Promise<any> {
+        private installExtension(files: string[], zip: any): Promise<void> {
             return new Promise((resolve, reject) => {
                 const idx = files.indexOf("extension.json");
                 if (idx < 0) {
@@ -370,8 +370,8 @@ namespace OS {
         private installFiles(
             files: string[],
             zip: any,
-            meta: GenericObject<any>
-        ): Promise<any> {
+            meta: GenericObject<void>
+        ): Promise<void> {
             if (files.length === 0) {
                 return this.installMeta(meta);
             }
@@ -405,10 +405,10 @@ namespace OS {
          *
          * @private
          * @param {GenericObject<any>} meta
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof ExtensionMaker
          */
-        private installMeta(meta: GenericObject<any>): Promise<any> {
+        private installMeta(meta: GenericObject<any>): Promise<void> {
             return new Promise(async (resolve, reject) => {
                 const file = `${this.app.meta().path
                     }/extensions.json`.asFileHandle();
@@ -443,7 +443,7 @@ namespace OS {
          * @returns {Promise<any>}
          * @memberof ExtensionMaker
          */
-        private installZip(path: string): Promise<any> {
+        private installZip(path: string): Promise<void> {
             return new Promise((resolve, reject) => {
                 this.import(["os://scripts/jszip.min.js"])
                     .then(() => {

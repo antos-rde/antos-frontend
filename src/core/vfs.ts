@@ -1244,10 +1244,10 @@ namespace OS {
                  * only work with file
                  *
                  * @protected
-                 * @returns {Promise<any>}
+                 * @returns {Promise<void>}
                  * @memberof RemoteFileHandle
                  */
-                protected _down(): Promise<any> {
+                protected _down(): Promise<void> {
                     return new Promise((resolve, reject) => {
                         if (this.info.type === "dir") {
                             return API.throwe(
@@ -1527,10 +1527,10 @@ namespace OS {
                  * Download the buffer file
                  *
                  * @protected
-                 * @returns {Promise<RequestResult>}
+                 * @returns {Promise<void>}
                  * @memberof BufferFileHandle
                  */
-                protected _down(): Promise<RequestResult> {
+                protected _down(): Promise<void> {
                     return new Promise((resolve, reject) => {
                         const blob = new Blob([this.cache], {
                             type: "octet/stream",
@@ -1714,10 +1714,10 @@ namespace OS {
                  * Download shared file
                  *
                  * @protected
-                 * @returns {Promise<RequestResult>}
+                 * @returns {Promise<void>}
                  * @memberof SharedFileHandle
                  */
-                protected _down(): Promise<RequestResult> {
+                protected _down(): Promise<void> {
                     return new Promise((resolve, reject) => {
                         if (this.info.type === "dir") {
                             return reject(

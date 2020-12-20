@@ -137,8 +137,8 @@ namespace OS {
          * @returns {Promise<any>}
          * @memberof BaseExtension
          */
-        protected copy(files: string[], to: string): Promise<any> {
-            return new Promise((resolve, reject) => {
+        protected copy(files: string[], to: string): Promise<void> {
+            return new Promise((resolve, reject) =>{
                 if (files.length === 0) {
                     return resolve();
                 }
@@ -287,7 +287,7 @@ namespace OS {
          * @returns {Promise<any>}
          * @memberof BaseExtension
          */
-        protected mkar(src: string, dest: string): Promise<any> {
+        protected mkar(src: string, dest: string): Promise<void> {
             this.logger().info(__("Preparing for release"));
             return new Promise((resolve, reject) => {
                 return new Promise(async (r, e) => {
@@ -352,7 +352,7 @@ namespace OS {
          * @returns {Promise<any>}
          * @memberof BaseExtension
          */
-        protected mkdirAll(list: string[]): Promise<any> {
+        protected mkdirAll(list: string[]): Promise<void> {
             return new Promise((resolve, reject) => {
                 if (list.length === 0) {
                     return resolve();
@@ -388,7 +388,7 @@ namespace OS {
             list: Array<string[]>,
             path: string,
             name: string
-        ): Promise<any> {
+        ): Promise<void> {
             return new Promise((resolve, reject) => {
                 if (list.length === 0) {
                     return resolve();

@@ -166,10 +166,10 @@ namespace OS {
              *
              * @protected
              * @param {Promise<any>} promise the promise on a task to be performed
-             * @returns {Promise<any>}
+             * @returns {Promise<void>}
              * @memberof BaseApplication
              */
-            protected load(promise: Promise<any>): Promise<any> {
+            protected load(promise: Promise<any>): Promise<void> {
                 const q = this._api.mid();
                 return new Promise(async (resolve, reject) => {
                     this._api.loading(q, this.name);

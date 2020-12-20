@@ -1,4 +1,4 @@
-module_files =  main.js BaseExtension.js
+module_files =  main.js BaseExtension.js BaseEditorModel.js ACEModel.js
 
 libfiles =
 

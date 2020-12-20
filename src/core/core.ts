@@ -1379,9 +1379,9 @@ namespace OS {
          * @export
          * @param {string} l VFS path to the library
          * @param {string} force force reload library
-         * @returns {Promise<any>} a promise on the result data
+         * @returns {Promise<void>} a promise on the result data
          */
-        export function requires(l: string, force: boolean = false): Promise<any> {
+        export function requires(l: string, force: boolean = false): Promise<void> {
             return new Promise(function(resolve, reject) {
                 if (!API.shared[l] || force) {
                     const libfp = l.asFileHandle();
@@ -1428,9 +1428,9 @@ namespace OS {
          *
          * @export
          * @param {string[]} libs list of shared libraries
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          */
-        export function require(libs: string[]): Promise<any> {
+        export function require(libs: string[]): Promise<void> {
             return new Promise(function(resolve, reject) {
                 if (!(libs.length > 0)) {
                     return resolve();

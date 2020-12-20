@@ -153,7 +153,7 @@ namespace OS {
                         await this.mkfileAll(files, path, name);
                         this.app.currdir = rpath.asFileHandle();
                         this.app.toggleSideBar();
-                        return this.app.openFile(
+                        return this.app.eum.active.openFile(
                             `${rpath}/README.md`.asFileHandle() as application.CodePadFileHandle
                         );
                     } catch (e) {
@@ -173,10 +173,10 @@ namespace OS {
          *
          * @private
          * @param {string[]} list
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof AntOSDK
          */
-        private verify(list: string[]): Promise<any> {
+        private verify(list: string[]): Promise<void> {
             return new Promise((resolve, reject) => {
                 if (list.length === 0) {
                     return resolve();
@@ -242,10 +242,10 @@ namespace OS {
          * @private
          * @param {GenericObject<any>} meta
          * @param {boolean} debug
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          * @memberof AntOSDK
          */
-        private build(meta: GenericObject<any>, debug: boolean): Promise<any> {
+        private build(meta: GenericObject<any>, debug: boolean): Promise<void> {
             const dirs = [
                 `${meta.root}/build`,
                 `${meta.root}/build/debug`,
@@ -268,7 +268,7 @@ namespace OS {
                                 })(),
                                 src
                             );
-                            await new Promise(async function (r, e) {
+                            await new Promise<void>(async function (r, e) {
                                 let code = jsrc;
                                 if (!debug) {
                                     const options = {
@@ -306,7 +306,7 @@ namespace OS {
                                     return e(__e(ex));
                                 }
                             });
-                            await new Promise(async (r, e) => {
+                            await new Promise<void>(async (r, e) => {
                                 const txt = await this.cat(
                                     (() => {
                                         const result1 = [];

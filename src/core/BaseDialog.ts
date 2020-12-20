@@ -1001,7 +1001,7 @@ namespace OS {
                     fileview.fetch = (path: string) =>
                         new Promise(function (resolve, reject) {
                             if (!path) {
-                                return resolve();
+                                return resolve(undefined);
                             }
                             return path
                                 .asFileHandle()

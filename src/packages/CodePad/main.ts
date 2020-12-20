@@ -1,4 +1,3 @@
-var ace: any;
 namespace OS {
     export namespace application {
         /**
@@ -69,14 +68,16 @@ namespace OS {
          * @extends {BaseApplication}
          */
         export class CodePad extends BaseApplication {
+
+
             /**
-             * Reference to the current editing file handle
+             * Reference to the editor manager instance
              *
              * @private
-             * @type {CodePadFileHandle}
+             * @type {EditorModelManager}
              * @memberof CodePad
              */
-            private currfile: CodePadFileHandle;
+            eum: EditorModelManager;
 
             /**
              * Reference to the current working directory
@@ -121,14 +122,7 @@ namespace OS {
              * @memberof CodePad
              */
             private bottombar: GUI.tag.TabContainerTag;
-            /**
-             * Reference to the editor tab bar UI
-             *
-             * @private
-             * @type {GUI.tag.TabBarTag}
-             * @memberof CodePad
-             */
-            private tabbar: GUI.tag.TabBarTag;
+
 
             /**
              * Reference to the language status bar
@@ -149,31 +143,13 @@ namespace OS {
             private editorstat: GUI.tag.LabelTag;
 
             /**
-             * Reference to the editor instance
+             * Reference to the file status bar
              *
              * @private
-             * @type {GenericObject<any>}
+             * @type {GUI.tag.LabelTag}
              * @memberof CodePad
              */
-            private editor: GenericObject<any>;
-
-            /**
-             * Editor language modes
-             *
-             * @private
-             * @type {GenericObject<any>}
-             * @memberof CodePad
-             */
-            private modes: GenericObject<any>;
-
-            /**
-             * Editor mutex
-             *
-             * @private
-             * @type {boolean}
-             * @memberof CodePad
-             */
-            private editormux: boolean;
+            private filestat: GUI.tag.LabelTag;
 
             /**
              * Reference to the CommandPalette's spotlight
@@ -183,6 +159,15 @@ namespace OS {
              */
             spotlight: CMDMenu;
 
+
+            /**
+             * Is the split mode enabled
+             *
+             * @private
+             * @type {boolean}
+             * @memberof CodePad
+             */
+            private split_mode: boolean;
 
             /**
              * Reference to the editor logger
@@ -243,16 +228,7 @@ namespace OS {
              */
             constructor(args: AppArgumentsType[]) {
                 super("CodePad", args);
-                this.currfile = "Untitled".asFileHandle() as CodePadFileHandle;
                 this.currdir = undefined;
-                if (this.args && this.args.length > 0) {
-                    if (this.args[0].type === "dir") {
-                        this.currdir = this.args[0].path.asFileHandle() as CodePadFileHandle;
-                    } else {
-                        this.currfile = this.args[0].path.asFileHandle() as CodePadFileHandle;
-                        this.currdir = this.currfile.parent();
-                    }
-                }
             }
 
             /**
@@ -263,13 +239,31 @@ namespace OS {
              */
             main(): void {
                 this.extensions = {};
+                this.eum = new EditorModelManager();
                 this.fileview = this.find("fileview") as GUI.tag.FileViewTag;
                 this.sidebar = this.find("sidebar") as GUI.tag.VBoxTag;
                 this.bottombar = this.find("bottombar") as GUI.tag.TabContainerTag;
-                this.tabbar = this.find("tabbar") as GUI.tag.TabBarTag;
                 this.langstat = this.find("langstat") as GUI.tag.LabelTag;
                 this.editorstat = this.find("editorstat") as GUI.tag.LabelTag;
+                this.filestat = this.find("current-file-lbl") as GUI.tag.LabelTag;
                 this.logger = new Logger(this.find("output-tab"));
+
+                this.split_mode = true;
+
+                // add editor instance
+                this.eum
+                    .add(new CodePadACEModel(
+                        this,
+                        this.find("left-tabbar") as GUI.tag.TabBarTag,
+                        this.find("left-editorarea")) as CodePadBaseEditorModel)
+                    .add(new CodePadACEModel(
+                        this,
+                        this.find("right-tabbar") as GUI.tag.TabBarTag,
+                        this.find("right-editorarea")) as CodePadBaseEditorModel);
+
+                this.eum.onstatuschange = (st) =>
+                    this.updateStatus(st)
+
                 this.fileview.fetch = (path) =>
                     new Promise(async function (resolve, reject) {
                         let dir: API.VFS.BaseFileHandle;
@@ -289,7 +283,17 @@ namespace OS {
                             return reject(__e(e));
                         }
                     });
-                return this.setup();
+                let file = "Untitled".asFileHandle() as CodePadFileHandle;
+                if (this.args && this.args.length > 0) {
+                    if (this.args[0].type === "dir") {
+                        this.currdir = this.args[0].path.asFileHandle() as CodePadFileHandle;
+                    } else {
+                        file = this.args[0].path.asFileHandle() as CodePadFileHandle;
+                        this.currdir = file.parent();
+                    }
+                }
+                this.setup();
+                return this.eum.active.openFile(file);
             }
 
             /**
@@ -300,73 +304,6 @@ namespace OS {
              * @memberof CodePad
              */
             private setup(): void {
-                ace.config.set("basePath", "scripts/ace");
-                ace.require("ace/ext/language_tools");
-                this.editor = ace.edit(this.find("datarea"));
-                this.editor.setOptions({
-                    enableBasicAutocompletion: true,
-                    enableSnippets: true,
-                    enableLiveAutocompletion: true,
-                    highlightActiveLine: true,
-                    highlightSelectedWord: true,
-                    behavioursEnabled: true,
-                    wrap: true,
-                    fontSize: "10pt",
-                    showInvisibles: true,
-                });
-                //themes = ace.require "ace/ext/themelist"
-                this.editor.setTheme("ace/theme/monokai");
-                this.modes = ace.require("ace/ext/modelist");
-                this.editor.completers.push({
-                    getCompletions(
-                        editor: any,
-                        session: any,
-                        pos: any,
-                        prefix: any,
-                        callback: any
-                    ) { },
-                });
-                this.editor.getSession().setUseWrapMode(true);
-                this.editormux = false;
-                this.editor.on("input", () => {
-                    if (this.editormux) {
-                        this.editormux = false;
-                        return false;
-                    }
-                    if (!this.currfile.dirty) {
-                        this.currfile.dirty = true;
-                        this.currfile.text += "*";
-                        return this.tabbar.update(undefined);
-                    }
-                });
-                this.editor
-                    .getSession()
-                    .selection.on("changeCursor", (e: any) => {
-                        return this.updateStatus();
-                    });
-
-                this.tabbar.ontabselect = (e) => {
-                    return this.selecteTab($(e.data.item).index());
-                };
-                this.tabbar.ontabclose = (e) => {
-                    const it = e.data.item;
-                    if (!it) {
-                        return false;
-                    }
-                    if (!it.data.dirty) {
-                        return this.closeTab(it);
-                    }
-                    this.openDialog("YesNoDialog", {
-                        title: __("Close tab"),
-                        text: __("Close without saving ?"),
-                    }).then((d) => {
-                        if (d) {
-                            return this.closeTab(it);
-                        }
-                        return this.editor.focus();
-                    });
-                    return false;
-                };
                 this.fileview.onfileopen = (e) => {
                     if (!e.data || !e.data.path) {
                         return;
@@ -374,7 +311,7 @@ namespace OS {
                     if (e.data.type === "dir") {
                         return;
                     }
-                    return this.openFile(
+                    return this.eum.active.openFile(
                         e.data.path.asFileHandle() as CodePadFileHandle
                     );
                 };
@@ -386,19 +323,14 @@ namespace OS {
                     if (e.data.type === "dir") {
                         return;
                     }
-                    const i = this.findTabByFile(
-                        e.data.path.asFileHandle() as CodePadFileHandle
-                    );
-                    if (i !== -1) {
-                        return (this.tabbar.selected = i);
-                    }
+                    this.eum.active.selectFile(e.data.path);
                 };
 
-                this.on("resize", () => this.editor.resize());
-                this.on("focus", () => this.editor.focus());
+                this.on("resize", () => this.eum.resize());
+                this.on("focus", () => this.eum.active.focus());
                 this.spotlight = new CMDMenu(__("Command palette"));
                 this.bindKey("ALT-P", () => this.spotlight.run(this));
-                this.find("datarea").contextmenuHandle = (e, m) => {
+                this.eum.contextmenuHandle = (e, m) => {
                     m.items = [
                         {
                             text: __("Command palete"),
@@ -477,166 +409,8 @@ namespace OS {
                 this.loadExtensionMetaData();
                 this.initCommandPalete();
                 this.toggleSideBar();
+                this.toggleSplitMode();
                 this.applyAllSetting();
-                return this.openFile(this.currfile);
-            }
-
-            /**
-             * Open a file in new tab. If the file is already opened,
-             * the just select the tab
-             *
-             *
-             * @param {CodePadFileHandle} file file to open
-             * @returns {void}
-             * @memberof CodePad
-             */
-            openFile(file: CodePadFileHandle): void {
-                //find tab
-                const i = this.findTabByFile(file);
-                if (i !== -1) {
-                    this.tabbar.selected = i;
-                    return;
-                }
-                if (file.path.toString() === "Untitled") {
-                    this.newTab(file);
-                    return;
-                }
-
-                file.read()
-                    .then((d) => {
-                        file.cache = d || "";
-                        return this.newTab(file);
-                    })
-                    .catch((e) => {
-                        return this.error(
-                            __("Unable to open: {0}", file.path),
-                            e
-                        );
-                    });
-            }
-
-            /**
-             * Find a tab on the tabbar corresponding to a file handle
-             *
-             * @private
-             * @param {CodePadFileHandle} file then file handle to search
-             * @returns {number}
-             * @memberof CodePad
-             */
-            private findTabByFile(file: CodePadFileHandle): number {
-                const lst = this.tabbar.items;
-                const its = (() => {
-                    const result = [];
-                    for (let i = 0; i < lst.length; i++) {
-                        const d = lst[i];
-                        if (d.hash() === file.hash()) {
-                            result.push(i);
-                        }
-                    }
-                    return result;
-                })();
-                if (its.length === 0) {
-                    return -1;
-                }
-                return its[0];
-            }
-
-            /**
-             * Create new tab when opening a file
-             *
-             * @private
-             * @param {CodePadFileHandle} file
-             * @memberof CodePad
-             */
-            private newTab(file: CodePadFileHandle): void {
-                file.text = file.basename ? file.basename : file.path;
-                if (!file.cache) {
-                    file.cache = "";
-                }
-                file.um = new ace.UndoManager();
-                this.currfile.selected = false;
-                file.selected = true;
-                //console.log cnt
-                this.tabbar.push(file);
-            }
-
-            /**
-             * Close a tab when a file is closed
-             *
-             * @private
-             * @param {GUI.tag.ListViewItemTag} it reference to the tab to close
-             * @returns {boolean}
-             * @memberof CodePad
-             */
-            private closeTab(it: GUI.tag.ListViewItemTag): boolean {
-                this.tabbar.delete(it);
-                const cnt = this.tabbar.items.length;
-
-                if (cnt === 0) {
-                    this.openFile(
-                        "Untitled".asFileHandle() as CodePadFileHandle
-                    );
-                    return false;
-                }
-                this.tabbar.selected = cnt - 1;
-                return false;
-            }
-
-            /**
-             * Select a tab by its index
-             *
-             * @private
-             * @param {number} i tab index
-             * @returns {void}
-             * @memberof CodePad
-             */
-            private selecteTab(i: number): void {
-                //return if i is @tabbar.get "selidx"
-                const file = this.tabbar.items[i] as CodePadFileHandle;
-                if (!file) {
-                    return;
-                }
-                (this
-                    .scheme as GUI.tag.WindowTag).apptitle = file.text.toString();
-                //return if file is @currfile
-                if (this.currfile !== file) {
-                    this.currfile.cache = this.editor.getValue();
-                    this.currfile.cursor = this.editor.selection.getCursor();
-                    this.currfile.selected = false;
-                    this.currfile = file;
-                }
-
-                if (!file.langmode) {
-                    if (file.path.toString() !== "Untitled") {
-                        const m = this.modes.getModeForPath(file.path);
-                        file.langmode = { caption: m.caption, mode: m.mode };
-                    } else {
-                        file.langmode = {
-                            caption: "Text",
-                            mode: "ace/mode/text",
-                        };
-                    }
-                }
-                this.editormux = true;
-                this.editor.getSession().setUndoManager(new ace.UndoManager());
-                this.editor.setValue(file.cache, -1);
-                this.editor.getSession().setMode(file.langmode.mode);
-                if (file.cursor) {
-                    this.editor.renderer.scrollCursorIntoView(
-                        {
-                            row: file.cursor.row,
-                            column: file.cursor.column,
-                        },
-                        0.5
-                    );
-                    this.editor.selection.moveTo(
-                        file.cursor.row,
-                        file.cursor.column
-                    );
-                }
-                this.editor.getSession().setUndoManager(file.um);
-                this.updateStatus();
-                this.editor.focus();
             }
 
             /**
@@ -645,16 +419,17 @@ namespace OS {
              * @private
              * @memberof CodePad
              */
-            private updateStatus(): void {
-                const c = this.editor.session.selection.getCursor();
-                const l = this.editor.session.getLength();
+            private updateStatus(stat: GenericObject<any> = undefined): void {
+                if (!stat)
+                    stat = this.eum.active.getEditorStatus();
                 this.editorstat.text = __(
                     "Row {0}, col {1}, lines: {2}",
-                    c.row + 1,
-                    c.column + 1,
-                    l
+                    stat.row + 1,
+                    stat.column + 1,
+                    stat.line
                 );
-                this.langstat.text = this.currfile.langmode.caption;
+                this.langstat.text = stat.langmode.text;
+                this.filestat.text = stat.file
             }
 
             /**
@@ -713,6 +488,33 @@ namespace OS {
                 this.showBottomBar(!this.setting.showBottomBar);
             }
 
+            private toggleSplitMode():void {
+                const right_pannel = this.find("right-panel");
+                const right_editor = this.eum.editors[1];
+                const left_editor = this.eum.editors[0];
+                if(this.split_mode)
+                {
+                    // before hide check if there is dirty files
+                    if(right_editor.isDirty())
+                    {
+                        this.notify(__("Unable to disable split view: Please save changes of modified files on the right panel"));
+                        return;
+                    }
+                    right_editor.closeAll();
+                    $(right_pannel).hide();
+                    this.split_mode = false;
+                    left_editor.focus();
+                }
+                else
+                {
+                    $(right_pannel).show();
+                    this.split_mode = true;
+                    right_editor.openFile("Untitled".asFileHandle() as CodePadFileHandle);
+                    right_editor.focus();
+                }
+                this.trigger("resize");
+            }
+
             /**
              * Add an action to the [[CommandPalette]]'s spotlight
              *
@@ -758,26 +560,22 @@ namespace OS {
                     r: CodePad
                 ) {
                     const data = d.data.item.data;
-                    r.editor.setTheme(data.theme);
-                    return r.editor.focus();
+                    r.eum.active.setTheme(data.theme);
+                    return r.eum.active.focus();
                 });
                 this.spotlight.addAction(cmdtheme);
                 const cmdmode = new CMDMenu(__("Change language mode"));
-                for (v of Array.from(this.modes.modes)) {
-                    cmdmode.addAction({ text: v.caption, mode: v.mode });
+                for (v of Array.from(this.eum.active.getModes())) {
+                    cmdmode.addAction({ text: v.text, mode: v.mode });
                 }
                 cmdmode.onchildselect(function (
                     d: GUI.TagEventType<GUI.tag.ListItemEventData>,
                     r: CodePad
                 ) {
                     const data = d.data.item.data;
-                    r.editor.session.setMode(data.mode);
-                    r.currfile.langmode = {
-                        caption: data.text,
-                        mode: data.mode,
-                    };
+                    r.eum.active.setMode(data);
                     r.updateStatus();
-                    r.editor.focus();
+                    r.eum.active.focus();
                 });
                 this.spotlight.addAction(cmdmode);
                 this.addAction(CMDMenu.fromMenu(this.fileMenu()));
@@ -1074,46 +872,9 @@ namespace OS {
                 }
             }
 
-            /**
-             * Save a file
-             *
-             * @private
-             * @param {CodePadFileHandle} file
-             * @memberof CodePad
-             */
-            private save(file: CodePadFileHandle): void {
-                file.write("text/plain")
-                    .then((d) => {
-                        file.dirty = false;
-                        file.text = file.basename;
-                        this.tabbar.update(undefined);
-                        (this
-                            .scheme as GUI.tag.WindowTag).apptitle = `${this.currfile.basename}`;
-                    })
-                    .catch((e) =>
-                        this.error(__("Unable to save file: {0}", file.path), e)
-                    );
-            }
 
-            /**
-             * Save the current file as another file
-             *
-             * @private
-             * @memberof CodePad
-             */
-            private saveAs(): void {
-                this.openDialog("FileDialog", {
-                    title: __("Save as"),
-                    file: this.currfile,
-                }).then((f) => {
-                    let d = f.file.path.asFileHandle();
-                    if (f.file.type === "file") {
-                        d = d.parent();
-                    }
-                    this.currfile.setPath(`${d.path}/${f.name}`);
-                    this.save(this.currfile);
-                });
-            }
+
+
 
             /**
              * Menu action definition
@@ -1131,7 +892,7 @@ namespace OS {
                 }
                 switch (dataid) {
                     case "new":
-                        return me.openFile("Untitled".asFileHandle() as CodePadFileHandle);
+                        return me.eum.active.openFile("Untitled".asFileHandle() as CodePadFileHandle);
                     case "open":
                         return me
                             .openDialog("FileDialog", {
@@ -1141,7 +902,7 @@ namespace OS {
                                 ),
                             })
                             .then((f: API.FileInfoType) =>
-                                me.openFile(f.file.path.asFileHandle())
+                                me.eum.active.openFile(f.file.path.asFileHandle())
                             );
                     case "opendir":
                         return me
@@ -1154,14 +915,10 @@ namespace OS {
                                 return me.toggleSideBar();
                             });
                     case "save":
-                        me.currfile.cache = me.editor.getValue();
-                        if (me.currfile.basename) {
-                            return me.save(me.currfile);
-                        }
-                        return me.saveAs();
+                        return me.eum.active.save();
+
                     case "saveas":
-                        me.currfile.cache = me.editor.getValue();
-                        return me.saveAs();
+                        return me.eum.active.saveAs();
                     default:
                         return console.log(dataid);
                 }
@@ -1176,15 +933,7 @@ namespace OS {
              */
             cleanup(evt: BaseEvent): void {
                 let v: GenericObject<any>;
-                const dirties = (() => {
-                    const result = [];
-                    for (v of Array.from(this.tabbar.items)) {
-                        if (v.dirty) {
-                            result.push(v);
-                        }
-                    }
-                    return result;
-                })();
+                const dirties = this.eum.dirties();
                 if (dirties.length === 0) {
                     return;
                 }
@@ -1231,6 +980,10 @@ namespace OS {
                             {
                                 text: "__(Toggle bottom bar)",
                                 dataid: "bottombar"
+                            },
+                            {
+                                text: "__(Toggle split view)",
+                                dataid: "splitview"
                             }
                         ],
                         onchildselect: (
@@ -1243,6 +996,10 @@ namespace OS {
 
                                 case "bottombar":
                                     return this.toggleBottomBar();
+                                
+                                case "splitview":
+                                    return this.toggleSplitMode();
+                                    break;
 
                                 default:
                                     break;
@@ -1355,7 +1112,102 @@ namespace OS {
             return m;
         };
 
+        /**
+         * Helper class to manager several instances
+         * of editor models
+         *
+         * @class EditorModelManager
+         */
+        class EditorModelManager {
 
+            /**
+             * Referent to the active editor model
+             *
+             * @private
+             * @type {CodePadBaseEditorModel}
+             * @memberof EditorModelManager
+             */
+            private active_editor: CodePadBaseEditorModel;
+
+            /**
+             * Store a list of editor models
+             *
+             * @private
+             * @type {CodePadBaseEditorModel[]}
+             * @memberof EditorModelManager
+             */
+            private models: CodePadBaseEditorModel[];
+
+            /**
+             * Creates an instance of EditorModelManager.
+             * @memberof EditorModelManager
+             */
+            constructor() {
+                this.active_editor = undefined;
+                this.models = [];
+            }
+
+            get editors(): CodePadBaseEditorModel[]{
+                return this.models;
+            }
+            set contextmenuHandle(cb: (e: any, m: any) => void) {
+                for (let ed of this.models) {
+                    ed.contextmenuHandle = cb;
+                }
+            }
+
+            /**
+             * Get the active editor model
+             *
+             * @readonly
+             * @type {CodePadBaseEditorModel}
+             * @memberof EditorModelManager
+             */
+            get active(): CodePadBaseEditorModel {
+                return this.active_editor;
+            }
+
+            /**
+             * Add a model to the manager
+             *
+             * @param {CodePadBaseEditorModel} model
+             * @memberof EditorModelManager
+             */
+            add(model: CodePadBaseEditorModel): EditorModelManager {
+                this.models.push(model);
+                if (!this.active_editor)
+                    this.active_editor = model;
+                model.on("focus", () => {
+                    this.active_editor = model;
+                });
+                return this;
+            }
+
+            set onstatuschange(cb: (stat: GenericObject<any>) => void) {
+                for (let ed of this.models) {
+                    ed.onstatuschange = cb;
+                }
+            }
+
+            dirties(): CodePadFileHandle[] {
+                let list = [];
+                for (let ed of this.models) {
+                    list = list.concat(ed.dirties());
+                }
+                return list;
+            }
+
+            /**
+             * Resize all editor
+             *
+             * @memberof EditorModelManager
+             */
+            resize(): void {
+                for (let ed of this.models) {
+                    ed.resize();
+                }
+            }
+        }
         /**
          * This class handles log output to the Editor output container
          *

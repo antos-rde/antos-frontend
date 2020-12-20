@@ -228,7 +228,6 @@ namespace OS {
          * dialog definition for the format of the input data
          * @returns {Promise<any>} A promise on the callback data of the dialog, refer
          * to each dialog definition for the format of the callback data
-         * @returns {Promise<any>}
          */
         export function openDialog(
             d: string | BaseDialog,
@@ -237,7 +236,7 @@ namespace OS {
             return new Promise(function (resolve, reject) {
                 if (dialog) {
                     dialog.show();
-                    return resolve();
+                    return resolve(undefined);
                 }
                 if (typeof d === "string") {
                     if (!dialogs[d]) {
@@ -536,9 +535,9 @@ namespace OS {
          *
          * @export
          * @param {string[]} srvs list of service class names
-         * @returns {Promise<any>}
+         * @returns {Promise<void>}
          */
-        export function pushServices(srvs: string[]): Promise<any> {
+        export function pushServices(srvs: string[]): Promise<void> {
             return new Promise(function (resolve, reject) {
                 if (!(srvs.length > 0)) {
                     return resolve();

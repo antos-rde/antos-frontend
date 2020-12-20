@@ -8,8 +8,17 @@
             </afx-vbox>
             <afx-resizer data-width = "3" ></afx-resizer>
             <afx-vbox>
-                <afx-tab-bar closable="true" data-height="26" data-id = "tabbar"></afx-tab-bar>
-                <div data-id="datarea"></div>
+                <afx-hbox>
+                    <afx-vbox data-id="left-panel">
+                        <afx-tab-bar closable="true" data-height="26" data-id = "left-tabbar"></afx-tab-bar>
+                        <div data-id="left-editorarea"></div>
+                    </afx-vbox>
+                    <afx-resizer data-width="3"></afx-resizer>
+                    <afx-vbox data-id="right-panel">
+                        <afx-tab-bar closable="true" data-height="26" data-id = "right-tabbar"></afx-tab-bar>
+                        <div data-id="right-editorarea"></div>
+                    </afx-vbox>
+                </afx-hbox>
                 <afx-resizer data-height = "3" dir = "ve" attachnext = "true" ></afx-resizer>
                 <afx-tab-container data-id = "bottombar" data-height="150" min-height="150" tabbarheight= "22">
                     <afx-hbox tabname="__(Output)"  iconclass = "fa fa-file-text" class = "bottom-tab-content">
@@ -21,9 +30,9 @@
             </afx-vbox>
         </afx-hbox>
         <div data-height="20" data-id="statctn">
-            <afx-label text=" " ></afx-label>
-            <afx-label data-id="langstat" ></afx-label>
-            <afx-label data-id="editorstat" ></afx-label>
+            <afx-label text=" " data-id = "current-file-lbl" style="float:left;"></afx-label>
+            <afx-label data-id="langstat" style="float:right; padding-right: 10px;"></afx-label>
+            <afx-label data-id="editorstat" style="float:right;"></afx-label>
         </div>
     </afx-vbox>
 </afx-app-window>

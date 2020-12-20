@@ -91,7 +91,6 @@ afx-app-window[data-id = "codepad"] .afx-window-wrapper div[data-id="statctn"]{
 }
 
 afx-app-window[data-id = "codepad"] .afx-window-wrapper div[data-id="statctn"] afx-label {
-    float: right;
     padding-left: 10px;
 }
 
@@ -159,6 +158,10 @@ afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre.code-pad-log-e
 
 afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre.code-pad-log-warn {
     color: orange;
+}
+
+afx-app-window[data-id = "codepad"] div[data-id="output-tab"] pre.code-pad-log-info {
+    color: white;
 }
 
 afx-app-window[data-id = "codepad"] afx-button[ data-id="logger-clear" ] button{
