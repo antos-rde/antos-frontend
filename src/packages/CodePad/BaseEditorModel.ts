@@ -11,6 +11,14 @@ namespace OS {
              */
             protected currfile: CodePadFileHandle;
 
+
+            /**
+             * Referent to the parent app
+             *
+             * @private
+             * @type {CodePad}
+             * @memberof CodePadBaseEditorModel
+             */
             private app: CodePad;
 
             /**
@@ -22,6 +30,14 @@ namespace OS {
              */
             private tabbar: GUI.tag.TabBarTag;
 
+
+            /**
+             * Referent to the editor container
+             *
+             * @private
+             * @type {HTMLElement}
+             * @memberof CodePadBaseEditorModel
+             */
             private container: HTMLElement;
 
             onstatuschange: (stat: GenericObject<any>) => void;
@@ -35,6 +51,15 @@ namespace OS {
              */
             private editormux: boolean;
 
+
+            /**
+             * Creates an instance of CodePadBaseEditorModel.
+             * 
+             * @param {CodePad} app parent app
+             * @param {GUI.tag.TabBarTag} tabbar tabbar DOM element
+             * @param {HTMLElement} editorarea editor container DOM element
+             * @memberof CodePadBaseEditorModel
+             */
             constructor(app: CodePad, tabbar: GUI.tag.TabBarTag, editorarea: HTMLElement) {
                 this.container = editorarea;
                 this.currfile = "Untitled".asFileHandle() as CodePadFileHandle;
@@ -44,8 +69,8 @@ namespace OS {
                 this.editormux = false;
                 this.onstatuschange = undefined;
 
-                this.on("focus", () =>{
-                    if(this.onstatuschange)
+                this.on("focus", () => {
+                    if (this.onstatuschange)
                         this.onstatuschange(this.getEditorStatus());
                 });
                 this.on("input", () => {
@@ -202,6 +227,13 @@ namespace OS {
                 this.focus();
             }
 
+
+            /**
+             * Select an opened file, this will select the corresponding tab
+             *
+             * @param {(CodePadFileHandle | string)} file
+             * @memberof CodePadBaseEditorModel
+             */
             selectFile(file: CodePadFileHandle | string): void {
                 const i = this.findTabByFile(
                     file.asFileHandle() as CodePadFileHandle
@@ -264,6 +296,13 @@ namespace OS {
                     );
             }
 
+
+            /**
+             * Save the current opened file
+             *
+             * @return {*}  {void}
+             * @memberof CodePadBaseEditorModel
+             */
             save(): void {
                 this.currfile.cache = this.getValue();
                 if (this.currfile.basename) {
@@ -292,6 +331,12 @@ namespace OS {
                 });
             }
 
+            /**
+             * Get all dirty file handles in the editor
+             *
+             * @return {*}  {CodePadFileHandle[]}
+             * @memberof CodePadBaseEditorModel
+             */
             dirties(): CodePadFileHandle[] {
                 const result = [];
                 for (let v of Array.from(this.tabbar.items)) {
@@ -302,37 +347,219 @@ namespace OS {
                 return result;
             }
 
-            set contextmenuHandle(cb:(e: any,m: any)=>void)
-            {
+            /**
+             * Context menu handle for the editor
+             *
+             * @memberof CodePadBaseEditorModel
+             */
+            set contextmenuHandle(cb: (e: any, m: any) => void) {
                 this.container.contextmenuHandle = cb;
             }
 
-            closeAll(): void
-            {
+
+            /**
+             * Close all opened files
+             *
+             * @memberof CodePadBaseEditorModel
+             */
+            closeAll(): void {
                 this.tabbar.items = [];
                 this.setValue("");
                 this.setUndoManager(this.newUndoManager());
             }
 
-            isDirty(): boolean
-            {
+            /**
+             * Check whether the editor is dirty
+             *
+             * @return {*}  {boolean}
+             * @memberof CodePadBaseEditorModel
+             */
+            isDirty(): boolean {
                 return this.dirties().length > 0;
             }
 
+
+            /**
+             * Set up the editor instance
+             * Should be implemented by subclass
+             *
+             * @protected
+             * @abstract
+             * @param {HTMLElement} el
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract editorSetup(el: HTMLElement): void;
+
+
+            /**
+             * Listen to editor event
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @param {string} evt_str
+             * @param {() => void} callback
+             * @memberof CodePadBaseEditorModel
+             */
             abstract on(evt_str: string, callback: () => void): void;
+
+
+            /**
+             * Resize the editor
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @memberof CodePadBaseEditorModel
+             */
             abstract resize(): void;
+
+
+            /**
+             * Make the editor focused
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @memberof CodePadBaseEditorModel
+             */
             abstract focus(): void;
+
+
+            /**
+             * Get language mode from file extension
+             * 
+             * Should be implemented by subclasses
+             *
+             * @protected
+             * @abstract
+             * @param {string} path
+             * @return {*}  {GenericObject<any>}
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract getModeForPath(path: string): GenericObject<any>;
+
+
+            /**
+             * Query the editor status
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @return {*}  {GenericObject<any>}
+             * @memberof CodePadBaseEditorModel
+             */
             abstract getEditorStatus(): GenericObject<any>;
+
+
+            /**
+             * Get the editor value
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @return {*}  {string}
+             * @memberof CodePadBaseEditorModel
+             */
             abstract getValue(): string;
+
+
+            /**
+             * Set the editor value
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @param {string} value
+             * @memberof CodePadBaseEditorModel
+             */
             abstract setValue(value: string): void;
+
+
+            /**
+             * Get the current editor position
+             * 
+             * Should be implemented by subclasses
+             *
+             * @protected
+             * @abstract
+             * @return {*}  {GenericObject<any>}
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract getCursor(): GenericObject<any>;
+
+
+            /**
+             * Create new instance of UndoManager
+             * 
+             * This is specific to each editor, so
+             * it should be implemented by subclasses
+             *
+             * @protected
+             * @abstract
+             * @return {*}  {GenericObject<any>}
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract newUndoManager(): GenericObject<any>;
+
+
+            /**
+             * Set the editor UndoManager
+             * 
+             * Should be implemented by subclasses
+             *
+             * @protected
+             * @abstract
+             * @param {GenericObject<any>} um
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract setUndoManager(um: GenericObject<any>): void;
+
+
+            /**
+             * Set the editor language mode
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @param {GenericObject<any>} m
+             * @memberof CodePadBaseEditorModel
+             */
             abstract setMode(m: GenericObject<any>): void;
+
+
+            /**
+             * Set current editor cursor position
+             * 
+             * Should be implemented by subclasses
+             *
+             * @protected
+             * @abstract
+             * @param {GenericObject<any>} c
+             * @memberof CodePadBaseEditorModel
+             */
             protected abstract setCursor(c: GenericObject<any>): void;
+
+
+            /**
+             * Set the current editor theme
+             * 
+             * Should be implemented by subclasses
+             *
+             * @abstract
+             * @param {string} theme
+             * @memberof CodePadBaseEditorModel
+             */
             abstract setTheme(theme: string): void;
+
+
+            /**
+             * Get all language modes supported by the editor
+             *
+             * @abstract
+             * @return {*}  {GenericObject<any>[]}
+             * @memberof CodePadBaseEditorModel
+             */
             abstract getModes(): GenericObject<any>[];
         }
     }
