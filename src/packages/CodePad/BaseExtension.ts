@@ -435,7 +435,13 @@ namespace OS {
                 `${this.app.currdir.path}/${file}`
                     .asFileHandle()
                     .read("json")
-                    .then((data) => resolve(data))
+                    .then((data) => {
+                        if(!data.root && this.app.currdir)
+                        {
+                            data.root = this.app.currdir.path;
+                        }
+                        resolve(data);
+                    })
                     .catch((e) => {
                         return reject(
                             API.throwe(__("Unable to read meta-data"))

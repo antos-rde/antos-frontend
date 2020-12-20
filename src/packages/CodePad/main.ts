@@ -428,7 +428,8 @@ namespace OS {
                     stat.column + 1,
                     stat.line
                 );
-                this.langstat.text = stat.langmode.text;
+                if(stat.langmode)
+                    this.langstat.text = stat.langmode.text;
                 this.filestat.text = stat.file
             }
 

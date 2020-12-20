@@ -293,7 +293,9 @@ namespace OS {
                     await API.requires(path);
                     let v: GenericObject<any>;
                     if (this.app.extensions[meta.meta.name]) {
-                        this.app.extensions[meta.meta.name].child = [];
+                        this.app.extensions[meta.meta.name].text = meta.meta.text;
+                        this.app.extensions[meta.meta.name].nodes = [];
+                        this.app.extensions[meta.meta.name].ext =  new App.extensions[meta.meta.name](this.app); 
                         for (v of meta.meta.actions) {
                             this.app.extensions[meta.meta.name].addAction(v);
                         }

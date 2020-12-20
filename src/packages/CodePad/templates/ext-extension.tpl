@@ -1,5 +1,4 @@
 {
-    "root": "{1}",
     "javascripts": [],
     "coffees": ["{0}.coffee"],
     "copies": [],
