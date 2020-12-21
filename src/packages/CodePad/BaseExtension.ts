@@ -85,7 +85,11 @@ namespace OS {
         protected logger() {
             if(!this.app.setting.showBottomBar)
             {
-                this.app.showBottomBar(true);
+                this.app.showOutput(true);
+            }
+            else
+            {
+                this.app.showOutput(false);
             }
             return this.app.logger;
         }

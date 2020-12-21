@@ -88,6 +88,28 @@ namespace OS {
                     this._ontabselect = f;
                 }
 
+
+                /**
+                 * Get all tab items in the container
+                 *
+                 * @readonly
+                 * @type {TabContainerTabType[]}
+                 * @memberof TabContainerTag
+                 */
+                get tabs(): TabContainerTabType[]
+                {
+                    return (this.refs.bar as TabBarTag).items as TabContainerTabType[];
+                }
+
+                /**
+                 * Select a tab by its index
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set selectedIndex(i: number) {
+                    (this.refs.bar as TabBarTag).selected = i;
+                }
+
                 /**
                  * Setter:
                  * 
@@ -135,6 +157,7 @@ namespace OS {
                     }
                     $(v.container).show();
                     this.observable.trigger("resize", undefined);
+                    $(v.container).attr("tabindex",-1).css("outline", "none").trigger("focus");
                 }
                 get selectedTab(): TabContainerTabType {
                     return this._selectedTab;
@@ -182,9 +205,10 @@ namespace OS {
                  *
                  * @param {GenericObject<any>} item tab descriptor
                  * @param {boolean} insert insert the tab content to the container ?
+                 * @returns {ListViewItemTag} the tab DOM element
                  * @memberof TabContainerTag
                  */
-                public addTab(item: GenericObject<any>, insert: boolean): void {
+                public addTab(item: GenericObject<any>, insert: boolean): ListViewItemTag {
                     if (insert) {
                         $(this.refs.yield).append(item.container);
                     }
@@ -196,6 +220,7 @@ namespace OS {
                         item
                     );
                     el.selected = true;
+                    return el;
                 }
 
                 /**
@@ -210,6 +235,7 @@ namespace OS {
                     }
                     (this.refs.bar as TabBarTag).delete(tab);
                 }
+
                 /**
                  * Mount the tag and bind basic events
                  *

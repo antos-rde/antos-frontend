@@ -91,6 +91,31 @@ namespace OS {
          *
          * @memberof ExtensionMaker
          */
+        installFromURL(): void
+        {
+            this.logger().clear();
+            this.app
+                .openDialog("PromptDialog", {
+                    title: __("Enter URI"),
+                    label: __("Please enter extension URI:")
+                })
+                .then(async (v) => {
+                    if(!v) return;
+                    try {
+                        await this.installZip(v);
+                        this.logger().info(__("Extension installed"));
+                        return this.app.loadExtensionMetaData();
+                    } catch (e) {
+                        return this.app.error(__("Unable to install extension: {0}", v));
+                    }
+
+                });
+        }
+        /**
+         *
+         *
+         * @memberof ExtensionMaker
+         */
         install(): void {
             this.logger().clear();
             this.app
@@ -295,6 +320,10 @@ namespace OS {
                     if (this.app.extensions[meta.meta.name]) {
                         this.app.extensions[meta.meta.name].text = meta.meta.text;
                         this.app.extensions[meta.meta.name].nodes = [];
+                        if(this.app.extensions[meta.meta.name].ext && this.app.extensions[meta.meta.name].ext.cleanup)
+                        {
+                            this.app.extensions[meta.meta.name].ext.cleanup();
+                        }
                         this.app.extensions[meta.meta.name].ext =  new App.extensions[meta.meta.name](this.app); 
                         for (v of meta.meta.actions) {
                             this.app.extensions[meta.meta.name].addAction(v);

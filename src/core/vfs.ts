@@ -1596,6 +1596,11 @@ namespace OS {
                  * @memberof URLFileHandle
                  */
                 protected _rd(t: string): Promise<any> {
+                    //read the file
+                    if (t === "binary") {
+                        //return API.handle.fileblob(this.path);
+                        return API.blob(this.path+ "?_=" + new Date().getTime());
+                    }
                     return API.get(this.path, t ? t : "text");
                 }
             }

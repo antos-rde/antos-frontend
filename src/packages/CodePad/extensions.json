@@ -40,8 +40,12 @@
                 "name": "release"
             },
             {
-                "text": "__(Install extension)",
+                "text": "__(Install extension from file)",
                 "name": "install"
+            },
+            {
+                "text": "__(Install extension from URL)",
+                "name": "installFromURL"
             }
         ]
     }

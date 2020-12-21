@@ -448,6 +448,11 @@ namespace OS {
                 this.trigger("resize");
             }
 
+            showOutput(toggle:boolean = false): void {
+                if(toggle)
+                    this.showBottomBar(true);
+                this.bottombar.selectedIndex = 0;
+            }
 
             /**
              * Apply [[showBottomBar]] from user setting value
@@ -936,6 +941,14 @@ namespace OS {
                 let v: GenericObject<any>;
                 const dirties = this.eum.dirties();
                 if (dirties.length === 0) {
+                    // cleanup all extension
+                    for(let k in this.extensions)
+                    {
+                        if(this.extensions[k].ext && this.extensions[k].ext.cleanup)
+                        {
+                            this.extensions[k].ext.cleanup();
+                        }
+                    }
                     return;
                 }
                 evt.preventDefault();
