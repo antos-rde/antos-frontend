@@ -14,7 +14,6 @@ namespace OS {
         constructor(app: application.CodePad) {
             super(app);
         }
-
         // public functions
         /**
          *
@@ -134,6 +133,10 @@ namespace OS {
                 });
         }
 
+        get ext_dir(): string
+        {
+            return "home://.codepad";
+        }
         /**
          *
          *
@@ -408,7 +411,7 @@ namespace OS {
             }
             return new Promise((resolve, reject) => {
                 const file = files.splice(0, 1)[0];
-                const path = `${this.basedir()}/${file}`;
+                const path = `${this.ext_dir}/${file}`;
                 return zip
                     .file(file)
                     .async("uint8array")
@@ -441,8 +444,7 @@ namespace OS {
          */
         private installMeta(meta: GenericObject<any>): Promise<void> {
             return new Promise(async (resolve, reject) => {
-                const file = `${this.app.meta().path
-                    }/extensions.json`.asFileHandle();
+                const file = `${this.ext_dir}/extensions.json`.asFileHandle();
                 try {
                     const data = await file.read("json");
                     const names = [];
@@ -461,7 +463,13 @@ namespace OS {
                         return reject(__e(e));
                     }
                 } catch (e_1) {
-                    return reject(__e(e_1));
+                    // try to create new file
+                    try {
+                        await file.setCache([meta]).write("object");
+                        return resolve();
+                    } catch (e_2) {
+                        return reject(__e(e_2));
+                    }
                 }
             });
         }
@@ -483,8 +491,8 @@ namespace OS {
                             .then((data) => {
                                 JSZip.loadAsync(data)
                                     .then((zip: any) => {
-                                        const pth = this.basedir();
-                                        const dir = [];
+                                        const pth = this.ext_dir;
+                                        const dir = [this.ext_dir];
                                         const files = [];
                                         for (let name in zip.files) {
                                             const file = zip.files[name];

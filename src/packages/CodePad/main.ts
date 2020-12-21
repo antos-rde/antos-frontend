@@ -428,7 +428,7 @@ namespace OS {
                     stat.column + 1,
                     stat.line
                 );
-                if(stat.langmode)
+                if (stat.langmode)
                     this.langstat.text = stat.langmode.text;
                 this.filestat.text = stat.file
             }
@@ -448,8 +448,8 @@ namespace OS {
                 this.trigger("resize");
             }
 
-            showOutput(toggle:boolean = false): void {
-                if(toggle)
+            showOutput(toggle: boolean = false): void {
+                if (toggle)
                     this.showBottomBar(true);
                 this.bottombar.selectedIndex = 0;
             }
@@ -494,15 +494,13 @@ namespace OS {
                 this.showBottomBar(!this.setting.showBottomBar);
             }
 
-            private toggleSplitMode():void {
+            private toggleSplitMode(): void {
                 const right_pannel = this.find("right-panel");
                 const right_editor = this.eum.editors[1];
                 const left_editor = this.eum.editors[0];
-                if(this.split_mode)
-                {
+                if (this.split_mode) {
                     // before hide check if there is dirty files
-                    if(right_editor.isDirty())
-                    {
+                    if (right_editor.isDirty()) {
                         this.notify(__("Unable to disable split view: Please save changes of modified files on the right panel"));
                         return;
                     }
@@ -511,8 +509,7 @@ namespace OS {
                     this.split_mode = false;
                     left_editor.focus();
                 }
-                else
-                {
+                else {
                     $(right_pannel).show();
                     this.split_mode = true;
                     right_editor.openFile("Untitled".asFileHandle() as CodePadFileHandle);
@@ -588,45 +585,70 @@ namespace OS {
             }
 
             /**
+             * Load extension meta-data from specific file
+             *
+             * @private
+             * @param {string} path
+             * @return {*}  {Promise<void>}
+             * @memberof CodePad
+             */
+            private loadExtensionMetaFromFile(path: string| API.VFS.BaseFileHandle): Promise<void> {
+                return new Promise((resolve, reject) => {
+                    path
+                        .asFileHandle()
+                        .read("json")
+                        .then((d: GenericObject<any>[]) => {
+                            for (var ext of Array.from(d)) {
+                                if (this.extensions[ext.name]) {
+                                    this.extensions[ext.name].nodes = [];
+                                    for (let v of Array.from(ext.actions)) {
+                                        this.extensions[ext.name].addAction(v);
+                                    }
+                                } else {
+                                    this.extensions[ext.name] = new CMDMenu(
+                                        ext.text
+                                    );
+                                    this.extensions[ext.name].name = ext.name;
+                                    for (let v of Array.from(ext.actions)) {
+                                        this.extensions[ext.name].addAction(v);
+                                    }
+                                    this.spotlight.addAction(
+                                        this.extensions[ext.name]
+                                    );
+                                    this.extensions[ext.name].onchildselect(
+                                        (
+                                            e: GUI.TagEventType<
+                                                GUI.tag.ListItemEventData
+                                            >
+                                        ) => {
+                                            return this.loadAndRunExtensionAction(
+                                                e.data.item.data as any
+                                            );
+                                        }
+                                    );
+                                    this.extensions[ext.name].rootpath = path.asFileHandle().parent().path;
+                                }
+                            }
+                            resolve();
+                        })
+                        .catch((e) => {
+                            reject(__e(e));
+                        });
+                });
+            }
+            /**
              * Load the extension meta data from `extension.json` file
              *
              * @memberof CodePad
              */
             loadExtensionMetaData(): void {
-                `${this.meta().path}/extensions.json`
-                    .asFileHandle()
-                    .read("json")
-                    .then((d: GenericObject<any>[]) => {
-                        for (var ext of Array.from(d)) {
-                            if (this.extensions[ext.name]) {
-                                this.extensions[ext.name].nodes = [];
-                                for (let v of Array.from(ext.actions)) {
-                                    this.extensions[ext.name].addAction(v);
-                                }
-                            } else {
-                                this.extensions[ext.name] = new CMDMenu(
-                                    ext.text
-                                );
-                                this.extensions[ext.name].name = ext.name;
-                                for (let v of Array.from(ext.actions)) {
-                                    this.extensions[ext.name].addAction(v);
-                                }
-                                this.spotlight.addAction(
-                                    this.extensions[ext.name]
-                                );
-                                this.extensions[ext.name].onchildselect(
-                                    (
-                                        e: GUI.TagEventType<
-                                            GUI.tag.ListItemEventData
-                                        >
-                                    ) => {
-                                        return this.loadAndRunExtensionAction(
-                                            e.data.item.data as any
-                                        );
-                                    }
-                                );
-                            }
-                        }
+                this.loadExtensionMetaFromFile(`${this.meta().path}/extensions.json`)
+                    .then(() => {
+                        // try to load local extension
+                        this.loadExtensionMetaFromFile("home://.codepad/extensions.json")
+                        .catch((e)=>{
+                            // ignore any error
+                        });
                     })
                     .catch((e) => {
                         return this.error(
@@ -684,9 +706,9 @@ namespace OS {
                 /**
                  * Parent context of the current action
                  *
-                 * @type {{ name: any, ext: any }}
+                 * @type {{ name: any, ext: any, rootpath?:string }}
                  */
-                parent: { name: any, ext: any };
+                parent: { name: any, ext: any, rootpath?:string };
 
                 /**
                  * Action name
@@ -700,7 +722,9 @@ namespace OS {
                 //verify if the extension is load
                 if (!CodePad.extensions[name]) {
                     //load the extension
-                    const path = `${this.meta().path}/${name}.js`;
+                    let path = `${this.meta().path}/${name}.js`;
+                    if(data.parent.rootpath)
+                        path = `${data.parent.rootpath}/${name}.js`;
                     this._api
                         .requires(path, true)
                         .then(() => this.runExtensionAction(data.parent, action))
@@ -942,10 +966,8 @@ namespace OS {
                 const dirties = this.eum.dirties();
                 if (dirties.length === 0) {
                     // cleanup all extension
-                    for(let k in this.extensions)
-                    {
-                        if(this.extensions[k].ext && this.extensions[k].ext.cleanup)
-                        {
+                    for (let k in this.extensions) {
+                        if (this.extensions[k].ext && this.extensions[k].ext.cleanup) {
                             this.extensions[k].ext.cleanup();
                         }
                     }
@@ -1010,7 +1032,7 @@ namespace OS {
 
                                 case "bottombar":
                                     return this.toggleBottomBar();
-                                
+
                                 case "splitview":
                                     return this.toggleSplitMode();
                                     break;
@@ -1035,6 +1057,7 @@ namespace OS {
             private shortcut: string;
             nodes: GenericObject<any>[];
             parent: CMDMenu;
+            rootpath: string;
             private select: (
                 e: GUI.TagEventType<GUI.tag.ListItemEventData>,
                 r: CodePad
@@ -1052,6 +1075,7 @@ namespace OS {
                 this.shortcut = shortcut;
                 this.nodes = [];
                 this.parent = undefined;
+                this.rootpath = undefined;
                 this.select = function (e) { };
             }
 
@@ -1161,7 +1185,7 @@ namespace OS {
                 this.models = [];
             }
 
-            get editors(): CodePadBaseEditorModel[]{
+            get editors(): CodePadBaseEditorModel[] {
                 return this.models;
             }
             set contextmenuHandle(cb: (e: any, m: any) => void) {
