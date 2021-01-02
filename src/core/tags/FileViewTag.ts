@@ -91,7 +91,7 @@ namespace OS {
                     this.showhidden = false;
                     this.chdir = true;
                     this.view = "list";
-                    this._onfileopen = this._onfileselect = (e) => {};
+                    this._onfileopen = this._onfileselect = (e) => { };
                     this._header = [
                         { text: "__(File name)" },
                         { text: "__(Type)" },
@@ -106,7 +106,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof FileViewTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * set the function that allows to fetch file entries.
@@ -265,31 +265,8 @@ namespace OS {
                             if (!data) {
                                 return;
                             }
-                            // sort file by type, then by name
-                            data
-                                .sort(function(a:API.FileInfoType,b:API.FileInfoType): number{
-                                    if(a.filename)
-                                    {
-                                        a.name = a.filename;
-                                    }
-                                    if(b.filename)
-                                    {
-                                        b.name = b.filename;
-                                    }
-                                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-                                })
-                                .sort(function(a:API.FileInfoType,b:API.FileInfoType): number{
-                                    if(!a.type)
-                                    {
-                                        a.type = "none";
-                                    }
-                                    if(!b.type)
-                                    {
-                                        b.type = "none";
-                                    }
-                                    return a.type.toLowerCase().localeCompare(b.type.toLowerCase());
-                                });
-                            this.data = data;
+
+                            this.data = data.sort(this.sortByName).sort(this.sortByType);
                             if (this.status) {
                                 (this.refs.status as LabelTag).text = " ";
                             }
@@ -336,25 +313,47 @@ namespace OS {
                 }
 
                 /**
-                 * sort file by it type
+                 * Sort file by its type
                  *
                  * @private
-                 * @param {API.FileInfoType} a first file meta-data
-                 * @param {API.FileInfoType} b second file meta-data
-                 * @returns {(0|-1|1)}
+                 * @param {API.FileInfoType} a
+                 * @param {API.FileInfoType} b
+                 * @return {*}  {number}
                  * @memberof FileViewTag
                  */
                 private sortByType(
                     a: API.FileInfoType,
                     b: API.FileInfoType
-                ): 0 | -1 | 1 {
-                    if (a.type < b.type) {
-                        return -1;
-                    } else if (a.type > b.type) {
-                        return 1;
-                    } else {
-                        return 0;
+                ): number {
+                    if (!a.type) {
+                        a.type = "none";
                     }
+                    if (!b.type) {
+                        b.type = "none";
+                    }
+                    return a.type.toLowerCase().localeCompare(b.type.toLowerCase());
+                }
+                /**
+                 * sort file by its name
+                 *
+                 * @private
+                 * @param {API.FileInfoType} a first file meta-data
+                 * @param {API.FileInfoType} b second file meta-data
+                 * @returns {number}
+                 * @memberof FileViewTag
+                 */
+                private sortByName(
+                    a: API.FileInfoType,
+                    b: API.FileInfoType
+                ): number {
+                    // sort file by type, then by name
+                    if (a.filename) {
+                        a.name = a.filename;
+                    }
+                    if (b.filename) {
+                        b.name = b.filename;
+                    }
+                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
                 }
 
                 /**
@@ -491,7 +490,7 @@ namespace OS {
                     if (!this.data) {
                         return;
                     }
-                    this.data.sort(this.sortByType);
+                    this.data.sort(this.sortByName).sort(this.sortByType);
                     switch (this.view) {
                         case "icon":
                             return this.refreshList();
@@ -597,7 +596,7 @@ namespace OS {
                                 .then((d: API.FileInfoType[]) =>
                                     resolve(
                                         this.getTreeData(
-                                            d.sort(this.sortByType)
+                                            d.sort(this.sortByName).sort(this.sortByType)
                                         )
                                     )
                                 )
