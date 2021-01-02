@@ -265,6 +265,30 @@ namespace OS {
                             if (!data) {
                                 return;
                             }
+                            // sort file by type, then by name
+                            data
+                                .sort(function(a:API.FileInfoType,b:API.FileInfoType): number{
+                                    if(a.filename)
+                                    {
+                                        a.name = a.filename;
+                                    }
+                                    if(b.filename)
+                                    {
+                                        b.name = b.filename;
+                                    }
+                                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                                })
+                                .sort(function(a:API.FileInfoType,b:API.FileInfoType): number{
+                                    if(!a.type)
+                                    {
+                                        a.type = "none";
+                                    }
+                                    if(!b.type)
+                                    {
+                                        b.type = "none";
+                                    }
+                                    return a.type.toLowerCase().localeCompare(b.type.toLowerCase());
+                                });
                             this.data = data;
                             if (this.status) {
                                 (this.refs.status as LabelTag).text = " ";
