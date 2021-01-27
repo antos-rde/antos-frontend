@@ -16,8 +16,7 @@ steps:
 - name: build
   commands:
   - cd ./antos
-  - npm install typedoc
-  - npm link typescript jest @types/jest ts-jest 
+  - npm link typescript jest @types/jest ts-jest typedoc
   - npm link @types/jquery
   #- make test
   - BUILDDIR=/opt/cloud/cuser/os make release
