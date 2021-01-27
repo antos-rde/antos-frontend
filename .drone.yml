@@ -15,10 +15,11 @@ steps:
   - cd ./antos && git checkout master
 - name: build
   commands:
-  - cd ./antos && npm install --save-dev jest @types/jest ts-jest @types/jquery typescript
-  - cd ./antos && make test
-  - BUILDDIR=/opt/cloud/cuser/os cd ./antos && make release
-  - DOCDIR=/opt/cloud/cuser/os/doc cd ./antos && make doc
+  - cd ./antos
+  - npm link typescript jest @types/jest  ts-jest @types/jquery
+  - make test
+  - BUILDDIR=/opt/cloud/cuser/os make release
+  - DOCDIR=/opt/cloud/cuser/os/doc make doc
 trigger:
   branch:
   - master
