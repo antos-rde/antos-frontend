@@ -10,14 +10,14 @@ clone:
 steps:
 - name: clone
   commands:
+  - pwd
   - git clone git@iohub.dev:lxsang/antos.git
-  - git checkout master
+  - cd ./antos && git checkout master
 - name: build
   commands:
-  - make test
-  - BUILDDIR=/opt/cloud/cuser/os make release
-  - DOCDIR=/opt/cloud/cuser/os/doc make doc
-  - make install
+  - cd ./antos && make test
+  - BUILDDIR=/opt/cloud/cuser/os cd ./antos && make release
+  - DOCDIR=/opt/cloud/cuser/os/doc cd ./antos && make doc
 trigger:
   branch:
   - master
