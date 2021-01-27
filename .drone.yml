@@ -15,7 +15,7 @@ steps:
   - cd ./antos && git checkout master
 - name: build
   commands:
-  - npm install @types/jquery @types/jest ts-jest
+  - npm install @types/jquery @types/jest ts-jest -g
   - cd ./antos && make test
   - BUILDDIR=/opt/cloud/cuser/os cd ./antos && make release
   - DOCDIR=/opt/cloud/cuser/os/doc cd ./antos && make doc
