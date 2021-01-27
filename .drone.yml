@@ -1,0 +1,23 @@
+---
+kind: pipeline
+type: exec
+name: default
+platform:
+  os: linux
+  arch: arm64
+clone:
+  disable: true
+steps:
+- name: clone
+  commands:
+  - git git@iohub.dev:lxsang/antos.git .
+  - git checkout master
+- name: build
+  commands:
+  - make test
+  - BUILDDIR=/opt/cloud/cuser/os make release
+  - DOCDIR=/opt/cloud/cuser/os/doc make doc
+  - make install
+trigger:
+  branch:
+  - master
