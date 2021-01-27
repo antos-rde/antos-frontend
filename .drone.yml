@@ -10,7 +10,7 @@ clone:
 steps:
 - name: clone
   commands:
-  - git git@iohub.dev:lxsang/antos.git .
+  - git clone git@iohub.dev:lxsang/antos.git
   - git checkout master
 - name: build
   commands:
