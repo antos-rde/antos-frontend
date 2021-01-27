@@ -20,7 +20,7 @@ steps:
   - npm link @types/jquery
   #- make test
   - BUILDDIR=/opt/cloud/cuser/os make release
-  - DOCDIR=/opt/cloud/cuser/os/doc make doc
+  # - DOCDIR=/opt/cloud/cuser/os/doc make doc
 trigger:
   branch:
   - master
