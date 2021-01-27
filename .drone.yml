@@ -16,7 +16,8 @@ steps:
 - name: build
   commands:
   - cd ./antos
-  #- npm link typescript jest @types/jest  ts-jest @types/jquery
+  #- npm link typescript jest @types/jest  ts-jest 
+  - npm link @types/jquery
   #- make test
   - BUILDDIR=/opt/cloud/cuser/os make release
   - DOCDIR=/opt/cloud/cuser/os/doc make doc
