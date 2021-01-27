@@ -18,7 +18,7 @@ steps:
   - cd ./antos
   - npm link typescript jest @types/jest ts-jest typedoc
   - npm link @types/jquery
-  #- make test
+  - make test
   - BUILDDIR=/opt/cloud/cuser/os make release
   - DOCDIR=/opt/cloud/cuser/os/doc make doc
 trigger:
