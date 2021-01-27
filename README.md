@@ -3,7 +3,8 @@
 **This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system.
 The entire core API is also rewritten in TypeScript**
 
-[![Build Status](https://ci.iohub.dev/api/badges/lxsang/ant-http/status.svg)](https://ci.iohub.dev/lxsang/ant-http)
+[![Build Status](https://ci.iohub.dev/api/badges/lxsang/ant-http/status.svg)](https://ci.iohub.dev/lxsang/antos)
+[![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
 AntOS is a front-end API that mimics the traditional desktop environment on the web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). The original purpose of AntOS is to provide visual tools to access and control resource on remote server
