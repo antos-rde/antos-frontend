@@ -19,7 +19,7 @@ steps:
   - npm link typescript jest @types/jest ts-jest typedoc
   - npm link @types/jquery
   #- make test
-  - BUILDDIR=/opt/cloud/cuser/os make release
+  - BUILDDIR=//opt/www/htdocs/os make release
   # - DOCDIR=/opt/cloud/cuser/os/doc make doc
 trigger:
   branch:
