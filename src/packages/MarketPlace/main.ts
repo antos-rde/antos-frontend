@@ -96,6 +96,9 @@ namespace OS {
                 this.bindKey("CTRL-R", () => {
                     return this.menuOptionsHandle("repos");
                 });
+                this.bindKey("CTRL-I", () => {
+                    return this.menuOptionsHandle("install");
+                });
 
                 $(this.searchbox).keyup((e) => this.search(e));
 

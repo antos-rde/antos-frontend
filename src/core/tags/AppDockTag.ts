@@ -224,8 +224,9 @@ namespace OS {
                         const bt = ($(e.target).closest(
                             "afx-button"
                         )[0] as any) as ButtonTag;
-                        const app = bt.data;
+                        const app = bt.data as application.BaseApplication;
                         m.items = [
+                            { text: "__(New window)", dataid: "new" },
                             { text: "__(Show)", dataid: "show" },
                             { text: "__(Hide)", dataid: "hide" },
                             { text: "__(Close)", dataid: "quit" },
@@ -234,6 +235,17 @@ namespace OS {
                             const item = evt.data.item.data;
                             if (app[item.dataid]) {
                                 return app[item.dataid]();
+                            }
+                            else
+                            {
+                                switch (item.dataid) {
+                                    case "new":
+                                        GUI.launch(app.name, []);
+                                        break;
+                                
+                                    default:
+                                        break;
+                                }
                             }
                         };
                         return m.show(e);

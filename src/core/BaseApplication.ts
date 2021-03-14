@@ -82,12 +82,7 @@ namespace OS {
                     setting.applications[this.name] = {};
                 }
                 this.setting = setting.applications[this.name];
-                this.keycomb = {
-                    ALT: {},
-                    CTRL: {},
-                    SHIFT: {},
-                    META: {},
-                };
+                this.keycomb = {};
                 this.subscribe("appregistry", (m) => {
                     if (m.name === this.name) {
                         this.applySetting(m.data.m);
@@ -199,14 +194,29 @@ namespace OS {
                 k: string,
                 f: (e: JQuery.KeyboardEventBase) => void
             ): void {
-                const arr = k.split("-");
-                if (arr.length !== 2) {
+                const arr = k.toUpperCase().split("-");
+                const c = arr.pop();
+                let fnk = "";
+                if (arr.includes("META")) {
+                    fnk += "META";
+                }
+                if (arr.includes("CTRL")) {
+                    fnk += "CTRL";
+                }
+                if (arr.includes("ALT")) {
+                    fnk += "ALT";
+                }
+                if (arr.includes("SHIFT")) {
+                    fnk += "SHIFT";
+                } 
+
+                if ( fnk == "") {
                     return;
                 }
-                const fnk = arr[0].toUpperCase();
-                const c = arr[1].toUpperCase();
+                fnk = `fn_${fnk.hash()}`;
+
                 if (!this.keycomb[fnk]) {
-                    return;
+                    this.keycomb[fnk] = {};
                 }
                 this.keycomb[fnk][c] = f;
             }
@@ -246,7 +256,7 @@ namespace OS {
              * @returns {boolean} return whether the shortcut is executed
              * @memberof BaseApplication
              */
-            shortcut(fnk: string, c: string, e: JQuery.KeyDownEvent): boolean {
+            shortcut(fnk: string, c: string, e: JQuery.KeyUpEvent): boolean {
                 if (!this.keycomb[fnk]) {
                     return true;
                 }

@@ -285,6 +285,7 @@ namespace OS {
                     });
                 let file = "Untitled".asFileHandle() as CodePadFileHandle;
                 if (this.args && this.args.length > 0) {
+                    this.addRecent(this.args[0].path);
                     if (this.args[0].type === "dir") {
                         this.currdir = this.args[0].path.asFileHandle() as CodePadFileHandle;
                     } else {
@@ -311,6 +312,7 @@ namespace OS {
                     if (e.data.type === "dir") {
                         return;
                     }
+                    this.addRecent(e.data.path);
                     return this.eum.active.openFile(
                         e.data.path.asFileHandle() as CodePadFileHandle
                     );
@@ -359,7 +361,7 @@ namespace OS {
 
                 this.bindKey("ALT-N", () => this.menuAction("new"));
                 this.bindKey("ALT-O", () => this.menuAction("open"));
-                this.bindKey("ALT-F", () => this.menuAction("opendir"));
+                this.bindKey("CTRL-ALT-F", () => this.menuAction("opendir"));
                 this.bindKey("CTRL-S", () => this.menuAction("save"));
                 this.bindKey("ALT-W", () => this.menuAction("saveas"));
 
@@ -432,7 +434,7 @@ namespace OS {
                     this.langstat.text = stat.langmode.text;
                 this.filestat.text = stat.file
                 let win = this.scheme as GUI.tag.WindowTag;
-                if(win.apptitle != stat.file)
+                if (win.apptitle != stat.file)
                     win.apptitle = stat.file;
             }
 
@@ -595,7 +597,7 @@ namespace OS {
              * @return {*}  {Promise<void>}
              * @memberof CodePad
              */
-            private loadExtensionMetaFromFile(path: string| API.VFS.BaseFileHandle): Promise<void> {
+            private loadExtensionMetaFromFile(path: string | API.VFS.BaseFileHandle): Promise<void> {
                 return new Promise((resolve, reject) => {
                     path
                         .asFileHandle()
@@ -613,7 +615,13 @@ namespace OS {
                                     );
                                     this.extensions[ext.name].name = ext.name;
                                     for (let v of Array.from(ext.actions)) {
+                                        const action = v as any;
                                         this.extensions[ext.name].addAction(v);
+                                        if (action.shortcut) {
+                                            this.bindKey(action.shortcut, (e) => {
+                                                return this.loadAndRunExtensionAction(action);
+                                            })
+                                        }
                                     }
                                     this.spotlight.addAction(
                                         this.extensions[ext.name]
@@ -649,9 +657,9 @@ namespace OS {
                     .then(() => {
                         // try to load local extension
                         this.loadExtensionMetaFromFile("home://.codepad/extensions.json")
-                        .catch((e)=>{
-                            // ignore any error
-                        });
+                            .catch((e) => {
+                                // ignore any error
+                            });
                     })
                     .catch((e) => {
                         return this.error(
@@ -711,7 +719,7 @@ namespace OS {
                  *
                  * @type {{ name: any, ext: any, rootpath?:string }}
                  */
-                parent: { name: any, ext: any, rootpath?:string };
+                parent: { name: any, ext: any, rootpath?: string };
 
                 /**
                  * Action name
@@ -726,7 +734,7 @@ namespace OS {
                 if (!CodePad.extensions[name]) {
                     //load the extension
                     let path = `${this.meta().path}/${name}.js`;
-                    if(data.parent.rootpath)
+                    if (data.parent.rootpath)
                         path = `${data.parent.rootpath}/${name}.js`;
                     this._api
                         .requires(path, true)
@@ -750,15 +758,41 @@ namespace OS {
              * @memberof CodePad
              */
             private fileMenu(): GUI.BasicItemType {
+                const recent = this.setting.recent.map((i: string) => {
+                    return { text: i };
+                });
                 return {
                     text: __("File"),
                     nodes: [
                         { text: __("New"), dataid: "new", shortcut: "A-N" },
+                        {
+                            text: __("Open Recent"),
+                            dataid: "recent",
+                            nodes: recent,
+                            onchildselect: (
+                                e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                                r: CodePad
+                            ) => {
+                                const handle = e.data.item.data.text.asFileHandle();
+                                handle.onready().then((meta: any) => {
+                                    if (!meta) {
+                                        return;
+                                    }
+                                    if (meta.type == "dir") {
+                                        this.currdir = handle;
+                                        this.toggleSideBar();
+                                    }
+                                    else {
+                                        this.eum.active.openFile(handle);
+                                    }
+                                });
+                            }
+                        },
                         { text: __("Open"), dataid: "open", shortcut: "A-O" },
                         {
                             text: __("Open Folder"),
                             dataid: "opendir",
-                            shortcut: "A-F",
+                            shortcut: "C-A-F",
                         },
                         { text: __("Save"), dataid: "save", shortcut: "C-S" },
                         {
@@ -906,8 +940,22 @@ namespace OS {
             }
 
 
-
-
+            /**
+             * Add a file to recent files setting
+             *
+             * @private
+             * @param {string} file
+             * @memberof CodePad
+             */
+            private addRecent(file: string): void {
+                if (!this.setting.recent)
+                    this.setting.recent = [];
+                if (this.setting.recent.includes(file)) {
+                    return;
+                }
+                this.setting.recent.push(file);
+                this.setting.recent.slice(0, 10);
+            }
 
             /**
              * Menu action definition
@@ -934,9 +982,10 @@ namespace OS {
                                     (v) => v !== "dir"
                                 ),
                             })
-                            .then((f: API.FileInfoType) =>
-                                me.eum.active.openFile(f.file.path.asFileHandle())
-                            );
+                            .then((f: API.FileInfoType) => {
+                                this.addRecent(f.file.path);
+                                me.eum.active.openFile(f.file.path.asFileHandle());
+                            });
                     case "opendir":
                         return me
                             .openDialog("FileDialog", {
@@ -944,6 +993,7 @@ namespace OS {
                                 mimes: ["dir"],
                             })
                             .then(function (f: API.FileInfoType) {
+                                me.addRecent(f.file.path);
                                 me.currdir = f.file.path.asFileHandle();
                                 return me.toggleSideBar();
                             });
@@ -1057,7 +1107,7 @@ namespace OS {
          */
         class CMDMenu {
             text: string | FormattedString;
-            private shortcut: string;
+            shortcut: string;
             nodes: GenericObject<any>[];
             parent: CMDMenu;
             rootpath: string;
@@ -1075,6 +1125,9 @@ namespace OS {
              */
             constructor(text: string | FormattedString, shortcut?: string) {
                 this.text = text;
+                if (shortcut) {
+                    this.text += `(${shortcut})`;
+                }
                 this.shortcut = shortcut;
                 this.nodes = [];
                 this.parent = undefined;
@@ -1091,6 +1144,9 @@ namespace OS {
              */
             addAction(v: ActionType): CMDMenu {
                 v.parent = this;
+                if (v.shortcut) {
+                    v.text = `${v.text.__()} (${v.shortcut})`;
+                }
                 this.nodes.push(v);
                 return this;
             }
@@ -1140,7 +1196,7 @@ namespace OS {
         }
 
         CMDMenu.fromMenu = function (mn): CMDMenu {
-            const m = new CMDMenu(mn.text, mn.shortcut);
+            const m = new CMDMenu(mn.text, undefined);
             m.onchildselect(mn.onchildselect);
             for (let it of Array.from(mn.nodes)) {
                 let v = it as ActionType;

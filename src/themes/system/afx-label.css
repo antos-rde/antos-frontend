@@ -5,4 +5,5 @@ afx-label  i.label-text{
     font-weight: normal;
     font-style: normal;
     margin-left: 3px;
+    user-select:text;
 }

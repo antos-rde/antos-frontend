@@ -34,47 +34,16 @@ namespace OS {
          */
         export interface ShortcutType {
             /**
-             * Placeholder for all shortcut callbacks attached to `ALT` key, eg.
+             * Placeholder for all shortcut callbacks, example:
              * ```typescript
-             *      ALT.c = function() {..}
+             *      fn_193462204.c = function() {..}
              *      // this function will be called when the hotkey `ALT-C` is triggered
+             *      // fn_${"ALT".hash()} is fn_193462204
              * ```
              *
              * @memberof ShortcutType
              */
-            ALT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-
-            /**
-             * Placeholder for all shortcut callbacks attached to `CTRL` key, eg.
-             * ```typescript
-             *      CTRL.c = function() {..}
-             *      // this function will be called when the hotkey `CTRL-C` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            CTRL: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-
-            /**
-             * Placeholder for all shortcut callbacks attached to `SHIFT` key, eg.
-             * ```typescript
-             *      SHIFT.c = function() {..}
-             *      // this function will be called when the hotkey `SHIFT-C` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            SHIFT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-            /**
-             * Placeholder for all shortcut callbacks attached to `META` key, eg.
-             * ```typescript
-             *      META[" "] = function() {..}
-             *      // this function will be called when the hotkey `META-[space]` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            META: GenericObject<(e: JQuery.MouseDownEvent) => void>;
+             [propName: string]: GenericObject<(e: JQuery.KeyUpEvent) => void>;
         }
 
         /**
@@ -129,12 +98,7 @@ namespace OS {
         /**
          * Placeholder for system shortcuts
          */
-        var shortcut: ShortcutType = {
-            ALT: {},
-            CTRL: {},
-            SHIFT: {},
-            META: {},
-        };
+        var shortcut: ShortcutType = {};
 
         /**
          * Convert an application html scheme to
@@ -764,17 +728,32 @@ namespace OS {
          */
         export function bindKey(
             k: string,
-            f: (e: JQuery.MouseDownEvent) => void,
+            f: (e: JQuery.KeyUpEvent) => void,
             force: boolean = true
         ): void {
-            const arr = k.split("-");
-            if (arr.length !== 2) {
+            const arr = k.toUpperCase().split("-");
+            const c = arr.pop();
+            let fnk = "";
+            if (arr.includes("META")) {
+                fnk += "META";
+            }
+            if (arr.includes("CTRL")) {
+                fnk += "CTRL";
+            }
+            if (arr.includes("ALT")) {
+                fnk += "ALT";
+            }
+            if (arr.includes("SHIFT")) {
+                fnk += "SHIFT";
+            } 
+
+            if ( fnk == "") {
                 return;
             }
-            const fnk = arr[0].toUpperCase();
-            const c = arr[1].toUpperCase();
+            fnk = `fn_${fnk.hash()}`;
+
             if (!shortcut[fnk]) {
-                return;
+                shortcut[fnk] = {};
             }
             if (shortcut[fnk][c] && !force) return;
             shortcut[fnk][c] = f;
@@ -907,7 +886,7 @@ namespace OS {
             $("#wrapper").append(scheme);
 
             announcer.observable.one("sysdockloaded", () => {
-                $(window).bind("keydown", function (event) {
+                $(window).on("keyup", function (event) {
                     const dock = $("#sysdock")[0] as tag.AppDockTag;
                     if (!dock) {
                         return;
@@ -915,20 +894,24 @@ namespace OS {
                     const app = dock.selectedApp;
                     //return true unless app
                     const c = String.fromCharCode(event.which).toUpperCase();
-                    let fnk = undefined;
-                    if (event.ctrlKey) {
-                        fnk = "CTRL";
-                    } else if (event.metaKey) {
-                        fnk = "META";
-                    } else if (event.shiftKey) {
-                        fnk = "SHIFT";
-                    } else if (event.altKey) {
-                        fnk = "ALT";
+                    let fnk = "";
+                    if (event.metaKey) {
+                        fnk += "META";
                     }
-
-                    if (!fnk) {
+                    if (event.ctrlKey) {
+                        fnk += "CTRL";
+                    }
+                    if (event.altKey) {
+                        fnk += "ALT";
+                    }
+                    if (event.shiftKey) {
+                        fnk += "SHIFT";
+                    } 
+                    
+                    if ( fnk == "") {
                         return;
                     }
+                    fnk = `fn_${fnk.hash()}`;
                     const r = app ? app.shortcut(fnk, c, event) : true;
                     if (!r) {
                         return event.preventDefault();

@@ -6,19 +6,23 @@
         "actions" : [
             {
                 "text": "__(New Project)",
-                "name": "create"
+                "name": "create",
+                "shortcut": "CTRL-ALT-N"
             },
             {
                 "text": "__(New project from current folder)",
-                "name": "init"
+                "name": "init",
+                "shortcut": "CTRL-ALT-C"
             },
             {
                 "text": "__(Build and Run)",
-                "name": "buildnrun"
+                "name": "buildnrun",
+                "shortcut": "CTRL-ALT-B"
             },
             {
                 "text": "__(Build release)",
-                "name": "release"
+                "name": "release",
+                "shortcut": "CTRL-ALT-R"
             }
         ]
     },
