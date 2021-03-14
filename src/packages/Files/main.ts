@@ -152,6 +152,7 @@ namespace OS {
                                 }
                                 this.currdir = dir;
                                 $(this.navinput).val(dir.path);
+                                (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;
                                 return resolve(d.result);
                             })
                             .catch((e) => reject(__e(e)));

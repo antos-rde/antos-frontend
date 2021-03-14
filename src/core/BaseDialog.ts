@@ -173,11 +173,11 @@ namespace OS {
              * Function called when dialog exits
              *
              * @protected
-             * @param {BaseEvent} e
+             * @param {BaseEvent} _e
              * @returns {void}
              * @memberof BaseDialog
              */
-            protected onexit(e: BaseEvent): void {
+            protected onexit(_e: BaseEvent): void {
                 if (this.parent) {
                     return (this.parent.dialog = undefined);
                 }
@@ -199,11 +199,11 @@ namespace OS {
              * be either the string definition of the scheme or
              * the VFS file handle of the scheme file
              *
-             * @private
+             * @protected
              * @type {(string | OS.API.VFS.BaseFileHandle)}
              * @memberof BasicDialog
              */
-            private markup: string | OS.API.VFS.BaseFileHandle;
+            protected markup: string | OS.API.VFS.BaseFileHandle;
 
             /**
              * If the `markup` variable is not provided, then
@@ -322,12 +322,11 @@ namespace OS {
                         $input.val(this.data.value);
                     }
 
-                    if (this.data && this.data.type)
-                    {
+                    if (this.data && this.data.type) {
                         ($input[0] as HTMLInputElement).type = this.data.type
                     }
 
-                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         if (this.handle) {
                             this.handle($input.val());
                         }
@@ -335,7 +334,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ) => {
                         return this.quit();
                     };
@@ -409,11 +408,10 @@ namespace OS {
                     if (this.data && this.data.value) {
                         $input.val(this.data.value);
                     }
-                    if(this.data && this.data.disable)
-                    {
+                    if (this.data && this.data.disable) {
                         $input.prop('disabled', true);
                     }
-                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         const value = $input.val();
                         if (!value || value === "") {
                             return;
@@ -425,7 +423,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -493,7 +491,7 @@ namespace OS {
                 main(): void {
                     super.main();
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         const date = (this.find("cal") as tag.CalendarTag)
                             .selectedDate;
@@ -507,7 +505,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -571,7 +569,7 @@ namespace OS {
                 main(): void {
                     super.main();
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         const color = (this.find(
                             "cpicker"
@@ -586,7 +584,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -666,7 +664,7 @@ namespace OS {
                     ];
                     grid.rows = rows;
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -736,7 +734,7 @@ namespace OS {
                         (this.find("lbl") as tag.LabelTag).set(this.data);
                     }
                     (this.find("btnYes") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         if (this.handle) {
                             this.handle(true);
@@ -744,7 +742,7 @@ namespace OS {
                         return this.quit();
                     };
                     (this.find("btnNo") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         if (this.handle) {
                             this.handle(false);
@@ -819,7 +817,7 @@ namespace OS {
                     if (this.data && this.data.data) {
                         listview.data = this.data.data;
                     }
-                    const fn = (e: TagEventType<GUI.tag.ListItemEventData>) => {
+                    const fn = (_e: TagEventType<GUI.tag.ListItemEventData>) => {
                         const data = listview.selectedItem;
                         if (!data) {
                             return this.notify(__("Please select an item"));
@@ -833,7 +831,7 @@ namespace OS {
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = fn;
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -916,7 +914,7 @@ namespace OS {
                     grid.header = [{ text: "", width: 100 }, { text: "" }];
                     grid.rows = rows;
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -988,11 +986,20 @@ namespace OS {
                 }
 
                 /**
+                 * Store the last opened directory
+                 *
+                 * @static
+                 * @type {string}
+                 * @memberof FileDialog
+                 */
+                static last_opened: string;
+                /**
                  *
                  *
                  * @returns {void}
                  * @memberof FileDialog
                  */
+
                 main(): void {
                     super.main();
                     const fileview = this.find("fileview") as tag.FileViewTag;
@@ -1003,12 +1010,19 @@ namespace OS {
                             if (!path) {
                                 return resolve(undefined);
                             }
-                            return path
-                                .asFileHandle()
+                            let dir = path.asFileHandle();
+                            return dir
                                 .read()
                                 .then(function (d) {
                                     if (d.error) {
                                         return reject(d);
+                                    }
+                                    FileDialog.last_opened = path;
+                                    if (!dir.isRoot()) {
+                                        const p = dir.parent();
+                                        p.filename = "[..]";
+                                        p.type = "dir";
+                                        d.result.unshift(p);
                                     }
                                     return resolve(d.result);
                                 })
@@ -1033,9 +1047,18 @@ namespace OS {
                         };
                         location.data = this.systemsetting.VFS.mountpoints.filter(
                             (i) => i.type !== "app"
+                        ).map(
+                            (i) => {
+                                if (FileDialog.last_opened)
+                                    i.selected = false;
+                                return i;
+                            }
                         );
-                        if (location.selectedItem === undefined) {
+                        if (location.selectedItem === undefined && !FileDialog.last_opened) {
                             location.selected = 0;
+                        }
+                        else if (FileDialog.last_opened) {
+                            setroot(FileDialog.last_opened);
                         }
                     } else {
                         $(location).hide();
@@ -1047,7 +1070,7 @@ namespace OS {
                             return $(filename).val(e.data.filename);
                         }
                     };
-                    (this.find("bt-ok") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("bt-ok") as tag.ButtonTag).onbtclick = (_e) => {
                         const f = fileview.selectedFile;
                         if (!f) {
                             return this.notify(
@@ -1096,7 +1119,7 @@ namespace OS {
                     };
 
                     (this.find("bt-cancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ) => {
                         return this.quit();
                     };
@@ -1112,6 +1135,8 @@ namespace OS {
                     }
                 }
             }
+
+            FileDialog.last_opened = undefined;
             /**
              * Scheme definition
              */
@@ -1133,6 +1158,153 @@ namespace OS {
     </afx-hbox>
 </afx-app-window>\
             `;
+
+            /**
+             * Generic & dynamic key-value dialog. The content
+             * of the dialog consist of an array of label and input elements
+             * which are generated based on the input model
+             * 
+             * The input data of the dialog should be:
+             *
+             * ```typescript
+             * {
+             *      title: string, // window title
+             *      model: {
+             *          [propName:string]: string
+             *      },
+             *      data: {
+             *          [propName:string]: string
+             *      },
+             *      allow_empty: boolean
+             * }
+             * ```
+             * Where:
+             * - keys of `model` are data fields, each key correspond to an input element
+             * - values of `model` are description texts of fields, each value correspond to a label text
+             * - data is the input data object in the format of model (optional)
+             * 
+             * ```
+             * Example:
+             * {
+             *      title: "Greeting",
+             *      model: {
+             *          name: "Your name",
+             *          email: "Your email"
+             *      },
+             *      allow_empty: false
+             * }
+             *```
+
+             * The data passing from the dialog to the callback function is
+             * the user input data corresponding to the input model
+             * 
+             * Example of callback data for the above model:
+             * 
+             * ```
+             * {
+             *      name: "John Doe",
+             *      email: "jd@mail.com"
+             * }
+             * ```
+             *
+             * @export
+             * @class MultiInputDialog
+             * @extends {BasicDialog}
+             */
+            export class MultiInputDialog extends BasicDialog {
+
+                /**
+                 * References to all the input fields in the
+                 * dialog
+                 *
+                 * @private
+                 * @type {HTMLElement[]}
+                 * @memberof MultiInputDialog
+                 */
+                private inputs: JQuery<HTMLElement>;
+
+                /**
+                 *Creates an instance of MultiInputDialog.
+                 * @memberof MultiInputDialog
+                 */
+                constructor() {
+                    super("MultiInputDialog");
+                }
+
+                /**
+                 * Generate the scheme before rendering
+                 *
+                 * @memberof MultiInputDialog
+                 */
+                init(): void {
+                    let height = 60;
+                    let html = "";
+                    if (this.data && this.data.model) {
+                        const model = this.data.model;
+                        for (const key in model) {
+                            html += `\
+                            <afx-label data-height="25" text="{0}" />
+                            <input data-height="25" type="text" name="{1}" />
+                            <div data-height="10" />
+                            `.format(model[key], key);
+                            height += 60;
+                        }
+                    }
+                    this.markup = MultiInputDialog.scheme.format(height, html);
+                    super.init();
+                }
+                /**
+                 * Main entry point
+                 *
+                 * @memberof MultiInputDialog
+                 */
+                main(): void {
+                    super.main();
+                    this.inputs = $("input", this.scheme);
+                    if (this.data && this.data.data) {
+                        const that = this;
+                        this.inputs.each(function (_i) {
+                            const input = this as HTMLInputElement;
+                            input.value = that.data.data[input.name];
+                        });
+                    }
+                    (this.find("btnCancel") as tag.ButtonTag).onbtclick = (_e) => this.quit();
+
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
+                        let cdata: GenericObject<string> = {};
+                        for (const el of this.inputs) {
+                            let input = el as HTMLInputElement;
+                            if (!this.data.allow_empty && input.value.trim() == "") {
+                                return this.notify(__("All fields should be filled"));
+                            }
+                            cdata[input.name] = input.value.trim();
+                        }
+                        if (this.handle)
+                            this.handle(cdata);
+                        this.quit();
+                    }
+                }
+            }
+            /**
+             * Scheme definition
+             */
+            MultiInputDialog.scheme = `\
+<afx-app-window width='350' height='{0}'>
+    <afx-hbox>
+        <div data-width="10" />
+        <afx-vbox>
+            <div data-height="5" />
+            {1}
+            <afx-hbox data-height="30">
+                <div />
+                <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+            </afx-hbox>
+            <div data-height="5" />
+        </afx-vbox>
+        <div data-width="10" />
+    </afx-hbox>
+</afx-app-window>`;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace OS {
                 this.btexec = this.find("bt-exec") as GUI.tag.ButtonTag;
                 this.searchbox = this.find("searchbox") as HTMLInputElement;
                 $(this.container).css("visibility", "hidden");
-                this.btexec.onbtclick = (e) => {
+                this.btexec.onbtclick = (_e) => {
                     const el = this.applist.selectedItem;
                     if (!el) {
                         return;
@@ -99,7 +99,7 @@ namespace OS {
 
                 $(this.searchbox).keyup((e) => this.search(e));
 
-                this.fetchApps().then((d) => {
+                this.fetchApps().then((_d) => {
                     //console.log(d);
                 });
             }
@@ -191,7 +191,7 @@ namespace OS {
              * @memberof MarketPlace
              */
             private loadRemoteRepositories(list: string[]): Promise<GenericObject<any>[]> {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, _reject) => {
                     if (list.length == 0) {
                         let app_list = [];
                         for (let k in this.apps_meta) {
@@ -233,7 +233,7 @@ namespace OS {
             }
 
             fetchApps(): Promise<GenericObject<any>> {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, _reject) => {
                     let v: API.PackageMetaType;
                     this.apps_meta = {};
                     const pkgcache = this.systemsetting.system.packages;
@@ -260,7 +260,16 @@ namespace OS {
                     }
                     this.loadRemoteRepositories(list)
                         .then((apps_list) => {
-                            this.applist.data = apps_list;
+                            this.applist.data = apps_list.sort(
+                                function (a: GenericObject<any>, b: GenericObject<any>): number {
+                                    if (a.text > b.text) {
+                                        return 1;
+                                    }
+                                    if (b.text > a.text) {
+                                        return -1;
+                                    }
+                                    return 0;
+                                });
                             resolve(this.apps_meta);
                         });
                 });
@@ -275,13 +284,13 @@ namespace OS {
                     d.description
                         .asFileHandle()
                         .read()
-                        .then((text) => {
+                        .then((text: string) => {
                             const converter = new showdown.Converter();
                             return $(this.appdesc).html(
                                 converter.makeHtml(text)
                             );
                         })
-                        .catch((e) => {
+                        .catch((_e) => {
                             this.notify(
                                 __("Unable to read package description")
                             );
@@ -404,8 +413,7 @@ namespace OS {
                         if (installed_pkgs[arr[0]]) {
                             let name = `${arr[0]}@${installed_pkgs[arr[0]].version}`;
                             dep_list.uninstall.add(name);
-                            if(list[k] != pkgname)
-                            {
+                            if (list[k] != pkgname) {
                                 let subdep = this.checkDependencies(name, true);
                                 dep_list.uninstall = new Set([...dep_list.uninstall, ...subdep.uninstall]);
                             }
@@ -432,8 +440,7 @@ namespace OS {
                             if (this.apps_meta[list[k]]) {
                                 // new package should be installed
                                 dep_list.install.add(list[k]);
-                                if(list[k] != pkgname)
-                                {
+                                if (list[k] != pkgname) {
                                     let subdep = this.checkDependencies(list[k], false);
                                     dep_list.uninstall = new Set([...dep_list.uninstall, ...subdep.uninstall]);
                                     dep_list.notfound = new Set([...dep_list.notfound, ...subdep.notfound]);
@@ -449,12 +456,10 @@ namespace OS {
                 }
                 return dep_list;
             }
-            private installPkg(pkgname:string): Promise<string>
-            {
-                return new Promise(async (resolve, reject) =>{
+            private installPkg(pkgname: string): Promise<string> {
+                return new Promise(async (resolve, reject) => {
                     const meta = this.apps_meta[pkgname];
-                    if(!meta || !meta.download)
-                    {
+                    if (!meta || !meta.download) {
                         return reject(this._api.throwe(__("Unable to find package: {0}", pkgname)));
                     }
                     try {
@@ -472,25 +477,23 @@ namespace OS {
                     }
                 });
             }
-            private bulkInstall(list:string[]): Promise<any>
-            {
-                return new Promise((resolve, reject)=>{
-                    if(list.length == 0)
-                    {
+            private bulkInstall(list: string[]): Promise<any> {
+                return new Promise((resolve, reject) => {
+                    if (list.length == 0) {
                         return resolve(true);
                     }
-                    const pkgname = list.splice(0,1)[0];
+                    const pkgname = list.splice(0, 1)[0];
                     this.installPkg(pkgname)
-                        .then((meta) =>{
+                        .then((_meta) => {
                             this.bulkInstall(list)
-                                .then((b) =>{
+                                .then((b) => {
                                     resolve(b);
                                 })
-                                .catch((e) =>{
+                                .catch((e) => {
                                     reject(e);
                                 })
                         })
-                        .catch((err) =>{
+                        .catch((err) => {
                             reject(err);
                         })
                 });
@@ -518,7 +521,7 @@ namespace OS {
                                 [...dep.notfound].join("\n")
                             )
                         })
-                            .then((v) => {
+                            .then((_v) => {
                                 reject(__("Unresolved dependencies on: {0}", pkgname))
                             });
                     }
@@ -532,18 +535,18 @@ namespace OS {
                             dep.install.size.toString(),
                             [...dep.install].join("\n")
                         )
-                    }).then((v) => {
+                    }).then((_v) => {
                         this.bulkUninstall([...dep.uninstall])
-                            .then((b)=>{
+                            .then((_b) => {
                                 this.bulkInstall([...dep.install])
-                                    .then((b1)=>{
+                                    .then((_b1) => {
                                         resolve(pkgname);
                                     })
-                                    .catch((e1) =>{
+                                    .catch((e1) => {
                                         reject(e1);
                                     })
                             })
-                            .catch((e2) =>{
+                            .catch((e2) => {
                                 reject(e2);
                             })
                     })
@@ -655,40 +658,35 @@ namespace OS {
                         .catch((e: Error) => reject(__e(e)));
                 });
             }
-            private bulkUninstall(list: string[]): Promise<any>
-            {
+            private bulkUninstall(list: string[]): Promise<any> {
                 return new Promise(async (resolve, reject) => {
-                    if(list.length == 0)
-                    {
+                    if (list.length == 0) {
                         return resolve(true);
                     }
-                    const pkgname = list.splice(0,1)[0];
+                    const pkgname = list.splice(0, 1)[0];
                     this.uninstallPkg(pkgname)
-                        .then((meta) =>{
+                        .then((_meta) => {
                             this.bulkUninstall(list)
-                                .then((b)=>{
+                                .then((b) => {
                                     resolve(b);
                                 })
-                                .catch((e)=>{
+                                .catch((e) => {
                                     reject(e);
                                 })
                         })
-                        .catch((err) =>{
+                        .catch((err) => {
                             reject(err);
                         })
                 });
             }
-            private uninstallPkg(pkgname: string): Promise<any>
-            {
+            private uninstallPkg(pkgname: string): Promise<any> {
                 return new Promise(async (resolve, reject) => {
                     const meta = this.apps_meta[pkgname];
-                    if(!meta)
-                    {
+                    if (!meta) {
                         return reject(this._api.throwe(__("Unable to find application meta-data: {0}", pkgname)));
                     }
                     const app = this.systemsetting.system.packages[meta.pkgname];
-                    if(!app)
-                    {
+                    if (!app) {
                         return reject(this._api.throwe(__("Application {0} is not installed", pkgname)));
                     }
                     // got the app meta
@@ -712,7 +710,7 @@ namespace OS {
                             this.appDetail(meta);
                         }
                         else {
-                            if(meta.domel)
+                            if (meta.domel)
                                 this.applist.delete(meta.domel);
                             $(this.container).css("visibility", "hidden");
                         }
@@ -724,7 +722,7 @@ namespace OS {
                 });
             }
             private uninstall(): Promise<any> {
-                return new Promise(async (resolve, reject) => {
+                return new Promise(async (_resolve, reject) => {
                     const el = this.applist.selectedItem;
                     if (!el) {
                         return;
@@ -750,10 +748,10 @@ namespace OS {
                             return;
                         }
                         this.bulkUninstall([...dep.uninstall])
-                            .then((b)=>{
+                            .then((_b) => {
                                 this.notify(__("Uninstall successfully"));
                             })
-                            .catch((err)=>{
+                            .catch((err) => {
                                 this.error(__("Unable to uninstall package(s): {0}", err.toString()), err);
                             });
                     }
@@ -782,9 +780,8 @@ namespace OS {
                         const meta = this.apps_meta[`${sel.pkgname}@${app.version}`];
                         await this.remoteInstall();
                         try {
-                            if(meta)
-                            {
-                                if(meta.domel)
+                            if (meta) {
+                                if (meta.domel)
                                     this.applist.delete(meta.domel);
                             }
                             return resolve(true);
@@ -792,7 +789,7 @@ namespace OS {
                         catch (e) {
                             return reject(__e(e));
                         }
-                        
+
                     }
                     catch (e_1) {
                         return reject(__e(e_1));

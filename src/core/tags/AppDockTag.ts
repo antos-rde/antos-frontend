@@ -171,7 +171,9 @@ namespace OS {
                     el[0].uify(this.observable);
                     bt.set(item);
                     bt.data = item.app;
-                    el.attr("tooltip", `cr:${item.app.title()}`);
+                    $(el).on("mouseover", (e) =>{
+                        el.attr("tooltip", `cr:${item.app.title()}`);
+                    });
                     item.domel = bt;
                     bt.onbtclick = (e) => {
                         e.id = this.aid;

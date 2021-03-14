@@ -423,7 +423,7 @@ namespace OS {
 
         setting.VFS = {
             mountpoints: [
-                //TODO: multi app try to write to this object, it neet to be cloned
+                //TODO: multi app try to write to this object, it need to be cloned
                 {
                     text: "__(Applications)",
                     path: "app://",

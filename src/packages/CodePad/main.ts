@@ -431,6 +431,9 @@ namespace OS {
                 if (stat.langmode)
                     this.langstat.text = stat.langmode.text;
                 this.filestat.text = stat.file
+                let win = this.scheme as GUI.tag.WindowTag;
+                if(win.apptitle != stat.file)
+                    win.apptitle = stat.file;
             }
 
             /**
