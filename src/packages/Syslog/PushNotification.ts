@@ -140,7 +140,7 @@ namespace OS {
              * @memberof PushNotification
              */
             private showLogReport(): void {
-                return this._gui.launch("Syslog", []);
+                this._gui.launch("Syslog", []);
             }
 
             /**

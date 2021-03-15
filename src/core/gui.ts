@@ -43,7 +43,7 @@ namespace OS {
              *
              * @memberof ShortcutType
              */
-             [propName: string]: GenericObject<(e: JQuery.KeyUpEvent) => void>;
+            [propName: string]: GenericObject<(e: JQuery.KeyUpEvent) => void>;
         }
 
         /**
@@ -317,7 +317,8 @@ namespace OS {
                 return;
             }
             if (it.type === "app" && it.app) {
-                return launch(it.app, []);
+                launch(it.app, []);
+                return;
             }
             if (it.type === "app") {
                 return announcer.osinfo(
@@ -331,7 +332,8 @@ namespace OS {
                 );
             }
             if (apps.length === 1) {
-                return launch(apps[0].app, [it]);
+                launch(apps[0].app, [it]);
+                return;
             }
             const list = apps.map((e) => ({
                 text: e.app,
@@ -364,7 +366,7 @@ namespace OS {
                 "This method is used for developing only, please use the launch method instead"
             );
             unloadApp(app);
-            return launch(app, args);
+            launch(app, args);
         }
 
         /**
@@ -529,50 +531,61 @@ namespace OS {
          * @param {string} app application class name
          * @param {AppArgumentsType[]} args application arguments
          */
-        export function launch(app: string, args: AppArgumentsType[]): void {
-            if (!application[app]) {
-                // first load it
-                loadApp(app)
-                    .then((a) =>
-                        {
-                            if (!application[app]){
-                                return announcer.oserror(
+        export function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType> {
+            return new Promise((resolve, reject) => {
+                if (!application[app]) {
+                    // first load it
+                    loadApp(app)
+                        .then((a) => {
+                            if (!application[app]) {
+                                const e = API.throwe(__("Application not found"));
+                                announcer.oserror(
                                     __("{0} is not an application", app),
-                                    API.throwe(__("Application not found"))
-                                );
+                                    e);
+                                return reject(e);
                             }
                             PM.createProcess(
                                 app,
                                 application[app],
                                 args
-                            ).catch((e) =>
+                            ).catch((e) => {
                                 announcer.osfail(
                                     __("Unable to launch: {0}", app),
                                     e
-                                )
-                            )
+                                );
+                                return reject(e);
+                            }
+                            ).then((p: PM.ProcessType) => resolve(p));
                         }
-                    )
-                    .catch((e) =>
-                        announcer.osfail(__("Unable to launch: {0}", app), e)
-                    );
-            } else {
-                // now launch it
-                if (application[app]) {
-                    PM.createProcess(
-                        app,
-                        application[app],
-                        args
-                    ).catch((e: Error) =>
-                        announcer.osfail(__("Unable to launch: {0}", app), e)
-                    );
+                        )
+                        .catch((e) => {
+                            announcer.osfail(__("Unable to launch: {0}", app), e);
+                            reject(e);
+                        }
+                        );
                 } else {
-                    announcer.osfail(
-                        __("Unable to find: {0}", app),
-                        API.throwe("Application not found")
-                    );
+                    // now launch it
+                    if (application[app]) {
+                        PM.createProcess(
+                            app,
+                            application[app],
+                            args
+                        ).catch((e: Error) => {
+                            announcer.osfail(__("Unable to launch: {0}", app), e);
+                            return reject(e);
+                        }
+
+                        );
+                    } else {
+                        const e = API.throwe(__("Application not found"));
+                        announcer.osfail(
+                            __("Unable to find: {0}", app),
+                            e
+                        );
+                        return reject(e);
+                    }
                 }
-            }
+            });
         }
 
         /**
@@ -703,7 +716,7 @@ namespace OS {
             var handle = function (e: HTMLElement) {
                 if (e.contextmenuHandle) {
                     const m = $("#contextmenu")[0] as tag.MenuTag;
-                    m.onmenuselect = () => {};
+                    m.onmenuselect = () => { };
                     return e.contextmenuHandle(event, m);
                 } else {
                     const p = $(e).parent().get(0);
@@ -745,9 +758,9 @@ namespace OS {
             }
             if (arr.includes("SHIFT")) {
                 fnk += "SHIFT";
-            } 
+            }
 
-            if ( fnk == "") {
+            if (fnk == "") {
                 return;
             }
             fnk = `fn_${fnk.hash()}`;
@@ -906,9 +919,9 @@ namespace OS {
                     }
                     if (event.shiftKey) {
                         fnk += "SHIFT";
-                    } 
-                    
-                    if ( fnk == "") {
+                    }
+
+                    if (fnk == "") {
                         return;
                     }
                     fnk = `fn_${fnk.hash()}`;
