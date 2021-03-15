@@ -53,3 +53,8 @@ afx-app-window[data-id = "setting-window"] afx-hbox[data-id="startup"] afx-list-
 {
     border: 1px solid #cbcbcb;
 }
+
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="app-services"] afx-list-view
+{
+    border: 1px solid #cbcbcb;
+}

@@ -209,6 +209,7 @@ namespace OS {
                     $(this).attr("apptitle", v.__());
                     if (v) {
                         (this.refs["txtTitle"] as LabelTag).text = v;
+                        this.observable.trigger("apptitlechange", this);
                     }
                 }
                 get apptitle(): string | FormattedString {

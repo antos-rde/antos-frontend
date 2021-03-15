@@ -134,7 +134,7 @@ namespace OS {
                             return this.trigger("exit", undefined);
                     }
                 });
-                this.on("apptitlechange", () => this.sysdock.update(undefined));
+                this.on("apptitlechange", () => this.sysdock.update(this));
                 this.updateLocale(this.systemsetting.system.locale);
                 return this.loadScheme();
             }

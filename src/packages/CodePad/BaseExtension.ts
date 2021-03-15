@@ -83,12 +83,10 @@ namespace OS {
          * @memberof BaseExtension
          */
         protected logger() {
-            if(!this.app.setting.showBottomBar)
-            {
+            if (!this.app.setting.showBottomBar) {
                 this.app.showOutput(true);
             }
-            else
-            {
+            else {
                 this.app.showOutput(false);
             }
             return this.app.logger;
@@ -142,7 +140,7 @@ namespace OS {
          * @memberof BaseExtension
          */
         protected copy(files: string[], to: string): Promise<void> {
-            return new Promise((resolve, reject) =>{
+            return new Promise((resolve, reject) => {
                 if (files.length === 0) {
                     return resolve();
                 }
@@ -232,8 +230,8 @@ namespace OS {
                                 .then(
                                     (d: {
                                         result:
-                                            | Iterable<unknown>
-                                            | ArrayLike<unknown>;
+                                        | Iterable<unknown>
+                                        | ArrayLike<unknown>;
                                     }) => {
                                         const l = (d.result as API.FileInfoType[]).map(
                                             (v) => v.path
@@ -440,16 +438,33 @@ namespace OS {
                     .asFileHandle()
                     .read("json")
                     .then((data) => {
-                        if(!data.root && this.app.currdir)
-                        {
+                        if (!data.root && this.app.currdir) {
                             data.root = this.app.currdir.path;
                         }
                         resolve(data);
                     })
                     .catch((e) => {
-                        return reject(
-                            API.throwe(__("Unable to read meta-data"))
-                        );
+                        // try to ask user to select a folder
+                        this.app.openDialog("FileDialog", {
+                            title: __("Select build directory"),
+                            root: this.app.currdir.path,
+                            mimes: ["dir"]
+                        })
+                            .then((d) => {
+                                `${d.file.path}/${file}`
+                                    .asFileHandle()
+                                    .read("json")
+                                    .then((data) => {
+                                        if (!data.root) {
+                                            data.root = d.file.path;
+                                        }
+                                        resolve(data);
+                                    })
+                                    .catch((e1) => reject(e1))
+                            })
+                            .catch(
+                                (e1) => reject(API.throwe(__("Unable to read meta-data"))
+                                ))
                     });
             });
         }

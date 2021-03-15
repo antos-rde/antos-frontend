@@ -57,7 +57,7 @@ namespace OS {
                  * @protected
                  * @memberof SystemPanelTag
                  */
-                protected init(): void {}
+                protected init(): void { }
 
                 /**
                  * Do nothing
@@ -66,7 +66,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof SystemPanelTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * Attach a service to the system tray on the pannel,
@@ -177,6 +177,11 @@ namespace OS {
                                     el: "afx-menu",
                                     ref: "osmenu",
                                     class: "afx-panel-os-menu",
+                                },
+                                {
+                                    el: "afx-menu",
+                                    ref: "pinned",
+                                    class: "afx-panel-os-pinned-app",
                                 },
                                 {
                                     el: "afx-menu",
@@ -305,9 +310,30 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 calibrate(): void {
-                    (this.refs.overlay as OverlayTag).height = `${
-                        $(window).height() - $(this.refs.panel).height()
-                    }px`;
+                    (this.refs.overlay as OverlayTag).height = `${$(window).height() - $(this.refs.panel).height()
+                        }px`;
+                }
+
+
+                /**
+                 * Refresh the pinned applications menu
+                 *
+                 * @private
+                 * @memberof SystemPanelTag
+                 */
+                private RefreshPinnedApp(): void
+                {
+                    if(!setting.system.startup.pinned)
+                            return;
+                    (this.refs.pinned as GUI.tag.MenuTag).items = setting.system.startup.pinned.map((name) => {
+                        const app = setting.system.packages[name];
+                        return { 
+                            icon: app.icon,
+                            iconclass: app.iconclass,
+                            app: app.app,
+                            tooltip: `cb:${app.name}`
+                        };
+                    });
                 }
 
                 /**
@@ -358,11 +384,11 @@ namespace OS {
                         return this.toggle(true);
                     };
 
-                    $(this.refs.search).on("keyup",(e) => {
+                    $(this.refs.search).on("keyup", (e) => {
                         return this.search(e);
                     });
 
-                    $(this.refs.applist).on("click",(e) => {
+                    $(this.refs.applist).on("click", (e) => {
                         return this.open();
                     });
                     Ant.OS.GUI.bindKey("CTRL- ", (e) => {
@@ -378,6 +404,32 @@ namespace OS {
                         .css("top", `${$(this.refs.panel).height()}px`)
                         .css("bottom", "0")
                         .hide();
+                    (this.refs.pinned as GUI.tag.MenuTag).onmenuselect = (e) => {
+                        const app = e.data.item.data.app;
+                        if(!app)
+                            return;
+                        GUI.launch(app, []);
+                    };
+                    this.refs.appmenu.contextmenuHandle = (e, m) => { }
+                    this.refs.osmenu.contextmenuHandle = (e, m) => { }
+                    this.refs.systray.contextmenuHandle = (e, m) => { }
+                    this.refs.pinned.contextmenuHandle = (e, m) => { }
+                    this.refs.panel.contextmenuHandle = (e, m) => {
+                        let menu = [
+                            { text: __("Applications and services setting"), dataid: "app&srv" }
+                        ];
+                        m.items = menu;
+                        m.onmenuselect = function (
+                            evt: TagEventType<tag.MenuEventData>
+                        ) {
+                            GUI.launch("Setting",[]);
+                        }
+                        m.show(e);
+                    };
+                    announcer.observable.on("app-pinned", (d) => {
+                        this.RefreshPinnedApp();
+                    });
+                    this.RefreshPinnedApp();
                 }
             }
 

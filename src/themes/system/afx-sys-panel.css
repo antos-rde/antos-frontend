@@ -21,6 +21,10 @@ afx-sys-panel .afx-panel-os-stray{
     position: relative;
 }
 
+afx-sys-panel .afx-panel-os-pinned-app afx-menu-entry{
+    display: inline-block;
+}
+
 afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  {
     right: 0;
     position: absolute;

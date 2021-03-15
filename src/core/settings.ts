@@ -356,6 +356,13 @@ namespace OS {
                  * @type {string[]}
                  */
                 services: string[];
+
+                /**
+                 * List of pinned applications
+                 *
+                 * @type {string[]}
+                 */
+                pinned: string[];
             };
         }
         /**
@@ -476,6 +483,7 @@ namespace OS {
             startup: {
                 apps: [],
                 services: ["Syslog/PushNotification", "Syslog/Calendar"],
+                pinned: [],
             },
         };
     }
@@ -530,7 +538,7 @@ namespace OS {
         for (let k in setting.system.packages) {
             const v = setting.system.packages[k];
             if (v.app) {
-                var e, k1, v1;
+                var e: any, k1: string, v1: { [x: string]: any; detail?: any; path?: any; complex?: any; };
                 if (
                     v.name.match(term) ||
                     (v.description && v.description.match(term))

@@ -619,9 +619,9 @@ namespace OS {
                 data.iconclass = "fa fa-cogs";
             }
             const dock = $("#sysdock")[0] as tag.AppDockTag;
+            app.sysdock = dock;
             app.init();
             app.observable.one("rendered", function () {
-                app.sysdock = dock;
                 app.appmenu = $(
                     "[data-id = 'appmenu']",
                     "#syspanel"
@@ -815,6 +815,7 @@ namespace OS {
             if (arr.length > 1) {
                 tip = arr[1];
             }
+            console.log(el);
             const offset = $(el).offset();
             const w = $(el).width();
             const h = $(el).height();
@@ -828,6 +829,10 @@ namespace OS {
                 case "ct": //ceter top
                     left = offset.left + w / 2 - $(label).width() / 2;
                     top = offset.top - $(label).height() - 5;
+                    break;
+                case "cb": // center bottom
+                    left = offset.left + w / 2 - $(label).width() / 2;
+                    top = offset.top + $(label).height() + 10;
                     break;
                 default:
                     if (!e) {
@@ -944,7 +949,7 @@ namespace OS {
             $("#systooltip")[0].uify(undefined);
             $("#contextmenu")[0].uify(undefined);
 
-            $("#workspace").on("contextmenu",(e) => bindContextMenu(e));
+            $("#wrapper").on("contextmenu",(e) => bindContextMenu(e));
             // tooltip
             $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");

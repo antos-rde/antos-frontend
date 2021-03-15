@@ -8,7 +8,7 @@
     },
     "version":"0.2.2-a",
     "category":"System",
-    "iconclass":"fa fa-adn",
+    "iconclass":"fa  fa-shopping-bag",
     "mimes":["none"],
     "locales": {}
 }

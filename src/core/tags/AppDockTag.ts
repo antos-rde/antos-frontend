@@ -83,7 +83,25 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof AppDockTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void {
+                    let app: application.BaseApplication = d as application.BaseApplication;
+                    if(!app)
+                    {
+                        return;
+                    }
+                    let i = -1;
+                    const iterable = this.items;
+                    for (let k = 0; k < iterable.length; k++) {
+                        const v = iterable[k];
+                        if (v.app.pid === app.pid) {
+                            i = k;
+                            break;
+                        }
+                    }
+                    if (i !== -1) {
+                        $(this.items[i].domel).attr("tooltip", `cr:${app.title()}`);
+                    }
+                }
 
                 /**
                  * Init the tag before mounting
@@ -171,10 +189,8 @@ namespace OS {
                     el[0].uify(this.observable);
                     bt.set(item);
                     bt.data = item.app;
-                    $(el).on("mouseover", (e) =>{
-                        el.attr("tooltip", `cr:${item.app.title()}`);
-                    });
                     item.domel = bt;
+                    $(bt).attr("tooltip", `cr:${item.app.title()}`);
                     bt.onbtclick = (e) => {
                         e.id = this.aid;
                         //e.data.item = item;

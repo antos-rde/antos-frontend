@@ -28,62 +28,61 @@ namespace OS {
     /**
      *
      *
-     * @class StartupHandle
+     * @class AppAndServiceHandle
      * @extends {App.SettingHandle}
      */
-    class StartupHandle extends App.SettingHandle {
+    class AppAndServiceHandle extends App.SettingHandle {
         private srvlist: GUI.tag.ListViewTag;
         private applist: GUI.tag.ListViewTag;
 
         /**
-         *Creates an instance of StartupHandle.
+         *Creates an instance of AppAndServiceHandle.
          * @param {HTMLElement} scheme
          * @param {OS.application.Setting} parent
-         * @memberof StartupHandle
+         * @memberof AppAndServiceHandle
          */
         constructor(scheme: HTMLElement, parent: OS.application.Setting) {
             super(scheme, parent);
-            this.srvlist = this.find("srvlist") as GUI.tag.ListViewTag;
-            this.applist = this.find("applist") as GUI.tag.ListViewTag;
+            this.srvlist = this.find("sys-srvlist") as GUI.tag.ListViewTag;
+            this.applist = this.find("sys-applist") as GUI.tag.ListViewTag;
+            let services = [];
+            for (var k in setting.system.packages) {
+                const v = setting.system.packages[k];
+                if (v.services) {
+                    const srvs = v.services.map((x) => {
+                        return {
+                            text: `${k}/${x}`,
+                            iconclass: "fa fa-tasks",
+                        }
+                    }
+                    );
+                    services = services.concat(srvs);
+                }
+            }
+            this.srvlist.data = services;
             this.srvlist.buttons = [
                 {
-                    text: "+",
-                    onbtclick: () => {
-                        let services = [];
-                        for (var k in setting.system.packages) {
-                            const v = setting.system.packages[k];
-                            if (v.services) {
-                                const srvs = v.services.map((x) => ({
-                                    text: `${k}/${x}`,
-                                    iconclass: "fa fa-tasks",
-                                }));
-                                services = services.concat(srvs);
-                            }
-                        }
-                        this.parent
-                            .openDialog("SelectionDialog", {
-                                title: "__(Add service)",
-                                data: services,
-                            })
-                            .then((d) => {
-                                if(!setting.system.startup.services.includes(d.text))
-                                {
-                                    setting.system.startup.services.push(d.text);
-                                    return this.refresh();
-                                }
-                            });
-                    },
-                },
-                {
-                    text: "-",
+                    text: "Start",
                     onbtclick: () => {
                         const item = this.srvlist.selectedItem;
                         if (!item) {
                             return;
                         }
-                        const selidx = $(item).index();
-                        setting.system.startup.services.splice(selidx, 1);
-                        return this.refresh();
+                        GUI
+                            .pushService(item.data.text)
+                            .catch((e) => this.parent.error(e.toString(), e));
+                    },
+                },
+                {
+                    text: "Stop",
+                    onbtclick: () => {
+                        const item = this.srvlist.selectedItem;
+                        if (!item) {
+                            return;
+                        }
+                        const arr = item.data.text.split("/");
+                        const srv = arr[1];
+                        PM.killAll(srv, true);
                     },
                 },
             ];
@@ -117,9 +116,11 @@ namespace OS {
                                 data: apps,
                             })
                             .then((d) => {
-                                if(!setting.system.startup.apps.includes(d.app))
-                                {
-                                    setting.system.startup.apps.push(d.app);
+                                if (!setting.system.startup.pinned) {
+                                    setting.system.startup.pinned = [];
+                                }
+                                if (!setting.system.startup.pinned.includes(d.app)) {
+                                    setting.system.startup.pinned.push(d.app);
                                     return this.refresh();
                                 }
                             });
@@ -133,7 +134,7 @@ namespace OS {
                             return;
                         }
                         const selidx = $(item).index();
-                        setting.system.startup.apps.splice(selidx, 1);
+                        setting.system.startup.pinned.splice(selidx, 1);
                         return this.refresh();
                     },
                 },
@@ -145,25 +146,22 @@ namespace OS {
          *
          *
          * @private
-         * @memberof StartupHandle
+         * @memberof AppAndServiceHandle
          */
         private refresh(): void {
             let v;
-            this.srvlist.data = (() => {
-                const result = [];
-                for (v of setting.system.startup.services) {
-                    result.push({ text: v});
-                }
-                return result;
-            })();
+            if (!setting.system.startup.pinned) {
+                return;
+            }
             this.applist.data = (() => {
                 const result1 = [];
-                for (v of Array.from(setting.system.startup.apps)) {
-                    result1.push({ text: v });
+                for (v of Array.from(setting.system.startup.pinned)) {
+                    result1.push({ text: v, iconclass: "fa fa-adn" });
                 }
                 return result1;
             })();
+            announcer.ostrigger("app-pinned", this.applist.data);
         }
     }
-    App.StartupHandle = StartupHandle;
+    App.AppAndServiceHandle = AppAndServiceHandle;
 }
