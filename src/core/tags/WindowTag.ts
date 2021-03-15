@@ -241,17 +241,17 @@ namespace OS {
                  */
                 protected mount(): void {
                     this.contextmenuHandle = function (e) {};
-                    $(this.refs["minbt"]).click((e) => {
+                    $(this.refs["minbt"]).on("click",(e) => {
                         return this.observable.trigger("hide", {
                             id: this.aid,
                         });
                     });
 
-                    $(this.refs["maxbt"]).click((e) => {
+                    $(this.refs["maxbt"]).on("click",(e) => {
                         return this.toggle_window();
                     });
 
-                    $(this.refs["closebt"]).click((e) => {
+                    $(this.refs["closebt"]).on("click",(e) => {
                         return this.observable.trigger("exit", {
                             id: this.aid,
                         });
@@ -272,7 +272,7 @@ namespace OS {
                         });
                     });
 
-                    $(this.refs["dragger"]).dblclick((e) => {
+                    $(this.refs["dragger"]).on("dblclick",(e) => {
                         return this.toggle_window();
                     });
 
@@ -381,8 +381,8 @@ namespace OS {
                                 .css("left", `${left}px`);
                         });
                         return $(window).on("mouseup", function (e) {
-                            $(window).unbind("mousemove", null);
-                            return $(window).unbind("mouseup", null);
+                            $(window).off("mousemove", null);
+                            return $(window).off("mouseup", null);
                         });
                     });
                 }
@@ -420,8 +420,8 @@ namespace OS {
                         });
 
                         $(window).on("mouseup", function (e) {
-                            $(window).unbind("mousemove", null);
-                            return $(window).unbind("mouseup", null);
+                            $(window).off("mousemove", null);
+                            return $(window).off("mouseup", null);
                         });
                     });
                 }

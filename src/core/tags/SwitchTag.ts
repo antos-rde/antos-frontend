@@ -66,7 +66,7 @@ namespace OS {
                  * @memberof SwitchTag
                  */
                 protected mount(): void {
-                    $(this.refs.switch).click((e) => {
+                    $(this.refs.switch).on("click",(e) => {
                         return this.makechange(e);
                     });
                 }

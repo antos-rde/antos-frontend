@@ -120,7 +120,6 @@ namespace OS {
             parent: Element | string
         ): void {
             const scheme = $.parseHTML(html);
-
             if (app.scheme) {
                 $(app.scheme).remove();
             }
@@ -945,9 +944,9 @@ namespace OS {
             $("#systooltip")[0].uify(undefined);
             $("#contextmenu")[0].uify(undefined);
 
-            $("#workspace").contextmenu((e) => bindContextMenu(e));
+            $("#workspace").on("contextmenu",(e) => bindContextMenu(e));
             // tooltip
-            $(document).mouseover(function (e) {
+            $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");
                 if (!(el.length > 0)) {
                     return;
@@ -1088,7 +1087,7 @@ namespace OS {
         export function login(): void {
             const scheme = $.parseHTML(schemes.login);
             $("#wrapper").append(scheme);
-            $("#btlogin").click(async function () {
+            $("#btlogin").on("click", async function () {
                 const data: API.UserLoginType = {
                     username: $("#txtuser").val() as string,
                     password: $("#txtpass").val() as string,
@@ -1103,14 +1102,14 @@ namespace OS {
                     return $("#login_error").html("Login: server error");
                 }
             });
-            $("#txtpass").keyup(function (e) {
+            $("#txtpass").on("keyup", function (e) {
                 if (e.which === 13) {
-                    return $("#btlogin").click();
+                    return $("#btlogin").trigger("click");
                 }
             });
             $("#txtuser").keyup(function (e) {
                 if (e.which === 13) {
-                    return $("#btlogin").click();
+                    return $("#btlogin").trigger("click");
                 }
             });
         }
@@ -1223,8 +1222,8 @@ namespace OS {
         schemes.login = `\
 <div id = "login_form">
     <p>Welcome to AntOS, please login</p>
-    <input id = "txtuser" type = "text" value = "demo" />
-    <input id = "txtpass" type = "password" value = "demo" />
+    <input id = "txtuser" type = "text" value = "demo" ></input>
+    <input id = "txtpass" type = "password" value = "demo" ></input>
     <button id = "btlogin">Login</button>
     <div id = "login_error"></div>
 </div>\

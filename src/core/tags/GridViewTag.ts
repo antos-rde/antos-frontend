@@ -237,11 +237,11 @@ namespace OS {
                     ): void => {};
                     this.selected = false;
                     $(this).css("display", "block");
-                    $(this).click((e) => {
+                    $(this).on("click",(e) => {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, false);
                     });
-                    $(this).dblclick((e) => {
+                    $(this).on("dblclick", (e) => {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, true);
                     });

@@ -173,18 +173,18 @@ namespace OS {
                  */
                 protected mount(): void {
                     $(this.refs.item).attr("dataref", "afx-list-item");
-                    $(this.refs.item).contextmenu((e) => {
+                    $(this.refs.item).on("contextmenu", (e) => {
                         this._onctxmenu({ id: this.aid, data: this });
                     });
 
-                    $(this.refs.item).click((e) => {
+                    $(this.refs.item).on("click",(e) => {
                         this._onclick({ id: this.aid, data: this });
                     });
 
-                    $(this.refs.item).dblclick((e) => {
+                    $(this.refs.item).on("dblclick",(e) => {
                         this._ondbclick({ id: this.aid, data: this });
                     });
-                    $(this.refs.btcl).click((e) => {
+                    $(this.refs.btcl).on("click",(e) => {
                         this._onclose({ id: this.aid, data: this });
                         e.preventDefault();
                         e.stopPropagation();
@@ -788,7 +788,7 @@ namespace OS {
                  * @returns {ListViewItemTag} the added list item element
                  * @memberof ListViewTag
                  */
-                unshift(item: GenericObject<any>) {
+                unshift(item: GenericObject<any>): ListViewItemTag {
                     return this.push(item, true);
                 }
 

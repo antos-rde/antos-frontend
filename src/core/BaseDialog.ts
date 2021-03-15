@@ -339,7 +339,7 @@ namespace OS {
                         return this.quit();
                     };
 
-                    $input.keyup((e) => {
+                    $input.on("keyup",(e) => {
                         if (e.which !== 13) {
                             return;
                         }
@@ -349,7 +349,7 @@ namespace OS {
                         return this.quit();
                     });
 
-                    $input.focus();
+                    $input.trigger("focus");
                 }
             }
             /**
@@ -359,19 +359,19 @@ namespace OS {
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label data-id = "lbl" />
-                <input type = "text" data-id= "txtInput" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label data-id = "lbl" ></afx-label>
+                <input type = "text" data-id= "txtInput" ></input>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -438,18 +438,18 @@ namespace OS {
 <afx-app-window data-id = "TextDialog" width='400' height='300'>
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <textarea data-id= "txtInput" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <textarea data-id= "txtInput" ></textarea>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -518,19 +518,19 @@ namespace OS {
 <afx-app-window  width='300' height='230' apptitle = "Calendar" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-calendar-view data-id = "cal" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-calendar-view data-id = "cal" ></afx-calendar-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -597,19 +597,19 @@ namespace OS {
 <afx-app-window  width='320' height='250' apptitle = "Color picker" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-color-picker data-id = "cpicker" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-color-picker data-id = "cpicker" ></afx-color-picker>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -677,18 +677,18 @@ namespace OS {
 <afx-app-window  width='250' height='300' apptitle = "Info" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-grid-view data-id = "grid" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-grid-view data-id = "grid" ></afx-grid-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -758,18 +758,18 @@ namespace OS {
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label data-id = "lbl" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label data-id = "lbl" ></afx-label>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" />
-                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" />
+                    <div ></div>
+                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -844,18 +844,18 @@ namespace OS {
 <afx-app-window  width='250' height='300' apptitle = "Selection">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-list-view data-id = "list" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-list-view data-id = "list" ></afx-list-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -938,10 +938,10 @@ namespace OS {
         </afx-hbox>
         
         <afx-hbox data-height="30">
-            <div />
-            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" />
+            <div ></div>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" ></afx-button>
         </afx-hbox>
-        <div data-height = "10"/>
+        <div data-height = "10"></div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -1146,7 +1146,7 @@ namespace OS {
         <afx-list-view data-id = "location" dropdown = "false" data-width = "120"></afx-list-view>
         <afx-vbox>
             <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
-            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" /> 
+            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
             <afx-hbox data-height = '30'>
                 <div style=' text-align:right;'>
                     <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
@@ -1243,9 +1243,9 @@ namespace OS {
                         const model = this.data.model;
                         for (const key in model) {
                             html += `\
-                            <afx-label data-height="25" text="{0}" />
-                            <input data-height="25" type="text" name="{1}" />
-                            <div data-height="10" />
+                            <afx-label data-height="25" text="{0}" ></afx-label>
+                            <input data-height="25" type="text" name="{1}" ></input>
+                            <div data-height="10" ></div>
                             `.format(model[key], key);
                             height += 60;
                         }
@@ -1291,18 +1291,18 @@ namespace OS {
             MultiInputDialog.scheme = `\
 <afx-app-window width='350' height='{0}'>
     <afx-hbox>
-        <div data-width="10" />
+        <div data-width="10" ></div>
         <afx-vbox>
-            <div data-height="5" />
+            <div data-height="5" ></div>
             {1}
             <afx-hbox data-height="30">
-                <div />
-                <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                <div ></div>
+                <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
             </afx-hbox>
-            <div data-height="5" />
+            <div data-height="5" ></div>
         </afx-vbox>
-        <div data-width="10" />
+        <div data-width="10" ></div>
     </afx-hbox>
 </afx-app-window>`;
         }

@@ -113,8 +113,8 @@ namespace OS {
                  * @memberof CalendarTag
                  */
                 protected mount(): void {
-                    $(this.refs.prev).click((e) => this.prevmonth());
-                    $(this.refs.next).click((e) => this.nextmonth());
+                    $(this.refs.prev).on("click",(e) => this.prevmonth());
+                    $(this.refs.next).on("click",(e) => this.nextmonth());
                     const grid = this.refs.grid as GridViewTag;
                     grid.header = [
                         { text: "__(Sun)" },

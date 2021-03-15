@@ -1557,7 +1557,7 @@ namespace OS {
     apptitle="" minimizable="false"
     resizable = "false" width="200" height="200">
     <afx-vbox>
-        <input data-height="25" type = "text" data-id="searchbox"/>
+        <input data-height="25" type = "text" data-id="searchbox"></input>
         <afx-list-view data-id="container"></afx-list-view>
     </afx-vbox>
 </afx-app-window>\

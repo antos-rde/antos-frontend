@@ -184,8 +184,8 @@ namespace OS {
                             };
 
                             var mouse_up = function (e: JQuery.MouseEventBase) {
-                                $(window).unbind("mousemove", mouse_move);
-                                return $(window).unbind("mouseup", mouse_up);
+                                $(window).off("mousemove", mouse_move);
+                                return $(window).off("mouseup", mouse_up);
                             };
                             $(window).on("mousemove", mouse_move);
                             return $(window).on("mouseup", mouse_up);

@@ -377,10 +377,10 @@ namespace OS {
                         .css("margin", 0)
                         .css("white-space", "nowrap");
                     $(this.refs.itemholder).css("display", "inline-block");
-                    $(this.refs.wrapper).click((e) => {
+                    $(this.refs.wrapper).on("click",(e) => {
                         this.selected = true;
                     });
-                    $(this.refs.wrapper).dblclick((e) => {
+                    $(this.refs.wrapper).on("dblclick", (e) => {
                         this._evt.data.dblclick = true;
                         this.selected = true;
                     });
@@ -389,7 +389,7 @@ namespace OS {
                         .css("display", "inline-block")
                         .css("width", "15px")
                         .addClass("afx-tree-view-item")
-                        .click((e) => {
+                        .on("click",(e) => {
                             this.open = !this.open;
                             e.preventDefault();
                             return e.stopPropagation();

@@ -292,10 +292,10 @@ namespace OS {
                         this.calibrate();
                         $(document).on("click", this._cb);
                         (this.refs.search as HTMLInputElement).value = "";
-                        $(this.refs.search).focus();
+                        $(this.refs.search).trigger("focus");
                     } else {
                         $(this.refs.overlay).hide();
-                        $(document).unbind("click", this._cb);
+                        $(document).off("click", this._cb);
                     }
                 }
 
@@ -325,7 +325,7 @@ namespace OS {
                         ) {
                             return this.toggle(false);
                         } else {
-                            return $(this.refs.search).focus();
+                            return $(this.refs.search).trigger("focus");
                         }
                     };
                     $(this.refs.appmenu).css("z-index", 1000000);
@@ -358,11 +358,11 @@ namespace OS {
                         return this.toggle(true);
                     };
 
-                    $(this.refs.search).keyup((e) => {
+                    $(this.refs.search).on("keyup",(e) => {
                         return this.search(e);
                     });
 
-                    $(this.refs.applist).click((e) => {
+                    $(this.refs.applist).on("click",(e) => {
                         return this.open();
                     });
                     Ant.OS.GUI.bindKey("CTRL- ", (e) => {

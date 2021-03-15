@@ -1211,7 +1211,7 @@ namespace OS {
                 const o = $("<input>")
                     .attr("type", "file")
                     .css("display", "none");
-                o.change(function() {
+                o.on("change",function() {
                     API.loading(q, p);
                     const formd = new FormData();
                     formd.append("path", d);
@@ -1236,7 +1236,7 @@ namespace OS {
                             return o.remove();
                         });
                 });
-                return o.click();
+                return o.trigger("click");
             });
         }
 

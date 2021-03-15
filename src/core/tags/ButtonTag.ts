@@ -133,7 +133,7 @@ namespace OS {
                  * @memberof ButtonTag
                  */
                 protected mount() {
-                    $(this.refs.button).click((e) => {
+                    $(this.refs.button).on("click", (e) => {
                         if (this.toggle) {
                             this.selected = !this.selected;
                         }
