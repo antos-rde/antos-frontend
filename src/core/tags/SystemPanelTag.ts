@@ -325,15 +325,21 @@ namespace OS {
                 {
                     if(!setting.system.startup.pinned)
                             return;
-                    (this.refs.pinned as GUI.tag.MenuTag).items = setting.system.startup.pinned.map((name) => {
-                        const app = setting.system.packages[name];
-                        return { 
-                            icon: app.icon,
-                            iconclass: app.iconclass,
-                            app: app.app,
-                            tooltip: `cb:${app.name}`
-                        };
-                    });
+                    (this.refs.pinned as GUI.tag.MenuTag).items = 
+                    setting.system.startup.pinned
+                        .filter((el) =>{
+                            const app = setting.system.packages[el];
+                            return app && app.app
+                        })
+                        .map((name) => {
+                            const app = setting.system.packages[name];
+                            return { 
+                                icon: app.icon,
+                                iconclass: app.iconclass,
+                                app: app.app,
+                                tooltip: `cb:${app.name}`
+                            };
+                        });
                 }
 
                 /**

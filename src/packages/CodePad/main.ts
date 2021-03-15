@@ -361,7 +361,7 @@ namespace OS {
 
                 this.bindKey("ALT-N", () => this.menuAction("new"));
                 this.bindKey("ALT-O", () => this.menuAction("open"));
-                this.bindKey("CTRL-ALT-F", () => this.menuAction("opendir"));
+                this.bindKey("ALT-F", () => this.menuAction("opendir"));
                 this.bindKey("CTRL-S", () => this.menuAction("save"));
                 this.bindKey("ALT-W", () => this.menuAction("saveas"));
 
@@ -792,7 +792,7 @@ namespace OS {
                         {
                             text: __("Open Folder"),
                             dataid: "opendir",
-                            shortcut: "C-A-F",
+                            shortcut: "A-F",
                         },
                         { text: __("Save"), dataid: "save", shortcut: "C-S" },
                         {

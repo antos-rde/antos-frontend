@@ -63,6 +63,7 @@ namespace OS {
              */
             quit(): void {
                 const evt = new BaseEvent("exit", false);
+                this.onexit(evt);
                 if (!evt.prevent) {
                     delete this._observable;
                     if (this.scheme) {
@@ -71,7 +72,6 @@ namespace OS {
                     if (this.dialog) {
                         return this.dialog.quit();
                     }
-                    this.onexit(evt);
                 }
             }
 

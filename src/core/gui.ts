@@ -43,7 +43,7 @@ namespace OS {
              *
              * @memberof ShortcutType
              */
-            [propName: string]: GenericObject<(e: JQuery.KeyUpEvent) => void>;
+            [propName: string]: GenericObject<(e: JQuery.KeyDownEvent) => void>;
         }
 
         /**
@@ -734,13 +734,13 @@ namespace OS {
          *
          * @export
          * @param {string} k the hotkey e.g. `ALT-C`
-         * @param {(e: JQuery.MouseDownEvent) => void} f handle function
+         * @param {(e: JQuery.KeyPressEvent) => void} f handle function
          * @param {boolean} force force to rebind the hotkey
          * @returns {void}
          */
         export function bindKey(
             k: string,
-            f: (e: JQuery.KeyUpEvent) => void,
+            f: (e: JQuery.KeyDownEvent) => void,
             force: boolean = true
         ): void {
             const arr = k.toUpperCase().split("-");
@@ -815,7 +815,6 @@ namespace OS {
             if (arr.length > 1) {
                 tip = arr[1];
             }
-            console.log(el);
             const offset = $(el).offset();
             const w = $(el).width();
             const h = $(el).height();
@@ -903,7 +902,7 @@ namespace OS {
             $("#wrapper").append(scheme);
 
             announcer.observable.one("sysdockloaded", () => {
-                $(window).on("keyup", function (event) {
+                $(window).on("keydown", function (event) {
                     const dock = $("#sysdock")[0] as tag.AppDockTag;
                     if (!dock) {
                         return;
@@ -924,7 +923,7 @@ namespace OS {
                     if (event.shiftKey) {
                         fnk += "SHIFT";
                     }
-
+                    console.log(fnk, c);
                     if (fnk == "") {
                         return;
                     }

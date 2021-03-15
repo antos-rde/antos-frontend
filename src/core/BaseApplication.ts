@@ -252,11 +252,11 @@ namespace OS {
              *
              * @param {string} fnk meta or modifier key e.g. `CTRL`, `ALT`, `SHIFT` or `META`
              * @param {string} c a regular key
-             * @param {JQuery.KeyboardEventBase} e JQuery keyboard event
+             * @param {JQuery.KeyDownEvent} e JQuery keyboard event
              * @returns {boolean} return whether the shortcut is executed
              * @memberof BaseApplication
              */
-            shortcut(fnk: string, c: string, e: JQuery.KeyUpEvent): boolean {
+            shortcut(fnk: string, c: string, e: JQuery.KeyDownEvent): boolean {
                 if (!this.keycomb[fnk]) {
                     return true;
                 }
