@@ -923,7 +923,7 @@ namespace OS {
                     if (event.shiftKey) {
                         fnk += "SHIFT";
                     }
-                    console.log(fnk, c);
+                    //console.log(fnk, c);
                     if (fnk == "") {
                         return;
                     }

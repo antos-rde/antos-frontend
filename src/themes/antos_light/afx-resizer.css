@@ -6,3 +6,7 @@ afx-resizer.horizontal {
     background-color: transparent;
     border-left: 1px solid #cbcbcb;
 }
+afx-resizer.horizontal:hover, afx-resizer.vertical:hover
+{
+    background-color: #116cd6;
+}
