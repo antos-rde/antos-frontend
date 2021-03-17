@@ -305,6 +305,8 @@ namespace OS {
              * @memberof CodePad
              */
             private setup(): void {
+                if (!this.setting.recent)
+                    this.setting.recent = [];
                 this.fileview.onfileopen = (e) => {
                     if (!e.data || !e.data.path) {
                         return;
