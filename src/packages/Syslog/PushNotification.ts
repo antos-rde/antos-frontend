@@ -28,7 +28,6 @@ namespace OS {
          * @extends {BaseService}
          */
         export class PushNotification extends BaseService {
-            private pending: number[];
             private cb: (e: JQuery.ClickEvent) => void;
             private view: boolean;
             private mlist: TAG.ListViewTag;
@@ -48,7 +47,6 @@ namespace OS {
                 super("PushNotification", args);
                 this.iconclass = "fa fa-bars";
                 this.cb = undefined;
-                this.pending = [];
                 this.logs = [];
                 this.logmon = undefined;
             }
@@ -62,23 +60,6 @@ namespace OS {
             init(): void {
                 this.view = false;
                 return this._gui.htmlToScheme(scheme, this, this.host);
-            }
-
-            /**
-             *
-             *
-             * @private
-             * @param {boolean} b
-             * @memberof PushNotification
-             */
-            private spin(b: boolean): void {
-                if (b && this.iconclass === "fa fa-bars") {
-                    this.iconclass = "fa fa-spinner fa-spin";
-                    this.update();
-                } else if (!b && this.iconclass === "fa fa-spinner fa-spin") {
-                    this.iconclass = "fa fa-bars";
-                    this.update();
-                }
             }
 
             /**
@@ -99,21 +80,6 @@ namespace OS {
                 this.subscribe("fail", (o) => this.pushout("FAIL", o));
                 this.subscribe("error", (o) => this.pushout("ERROR", o));
                 this.subscribe("info", (o) => this.pushout("INFO", o));
-
-                this.subscribe("loading", (o) => {
-                    this.pending.push(o.id);
-                    return this.spin(true);
-                });
-
-                this.subscribe("loaded", (o) => {
-                    const i = this.pending.indexOf(o.id);
-                    if (i >= 0) {
-                        this.pending.splice(i, 1);
-                    }
-                    if (this.pending.length === 0) {
-                        return this.spin(false);
-                    }
-                });
 
                 this.nzone.height = "100%";
                 this.fzone.height = "100%";
