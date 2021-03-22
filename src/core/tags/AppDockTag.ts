@@ -61,10 +61,10 @@ namespace OS {
                  * process in the dock
                  *
                  * @private
-                 * @type {application.BaseApplication}
+                 * @type {AppDockItemType}
                  * @memberof AppDockTag
                  */
-                private _selectedApp: application.BaseApplication;
+                private _selectedItem: AppDockItemType;
 
                 /**
                  *Creates an instance of AppDockTag.
@@ -152,24 +152,39 @@ namespace OS {
                  * @memberof AppDockTag
                  */
                 set selectedApp(v: application.BaseApplication) {
-                    this._selectedApp = v;
                     let el = undefined;
                     for (let it of this.items) {
                         it.app.blur();
                         $(it.domel).removeClass();
                         if (v && v === it.app) {
-                            el = it.domel;
+                            el = it;
                         }
                     }
+                    this._selectedItem = el;
                     if (!el) {
                         return;
                     }
-                    $(el).addClass("selected");
+                    $(el.domel).addClass("selected");
                     ($(Ant.OS.GUI.workspace)[0] as FloatListTag).unselect();
                 }
 
                 get selectedApp(): application.BaseApplication {
-                    return this._selectedApp;
+                    if(!this._selectedItem)
+                        return undefined;
+                    return this._selectedItem.app;
+                }
+
+
+                /**
+                 * Get selected item of the dock
+                 *
+                 * @readonly
+                 * @type {AppDockItemType}
+                 * @memberof AppDockTag
+                 */
+                get selectedItem(): AppDockItemType
+                {
+                    return this._selectedItem;
                 }
 
                 /**
@@ -267,6 +282,41 @@ namespace OS {
                         return m.show(e);
                     };
                     announcer.trigger("sysdockloaded", undefined);
+                    GUI.bindKey("CTRL-ALT-2", (e) =>{
+                        if(!this.items || this.items.length === 0)
+                        {
+                            return;
+                        }
+                        let index = this.items.indexOf(this.selectedItem);
+                        if(index < 0)
+                        {
+                            index = 0;
+                        }
+                        else
+                        {
+                            index++;
+                        }
+                        if(index >= this.items.length)
+                            index = 0;
+                        this.items[index].app.trigger("focus");
+                    });
+                    GUI.bindKey("CTRL-ALT-1", (e) =>{
+                        if(!this.items || this.items.length === 0)
+                        {
+                            return;
+                        }
+                        let index = this.items.indexOf(this.selectedItem);
+                        index--;
+                        if(index < 0)
+                        {
+                            index = this.items.length - 1;
+                        }
+                        if(index < 0)
+                        {
+                            return;
+                        }
+                        this.items[index].app.trigger("focus");
+                    });
                 }
             }
             define("afx-apps-dock", AppDockTag);

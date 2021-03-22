@@ -75,11 +75,9 @@ namespace OS {
                 if (b && this.iconclass === "fa fa-bars") {
                     this.iconclass = "fa fa-spinner fa-spin";
                     this.update();
-                    $(this._gui.workspace).css("cursor", "wait");
                 } else if (!b && this.iconclass === "fa fa-spinner fa-spin") {
                     this.iconclass = "fa fa-bars";
                     this.update();
-                    $(this._gui.workspace).css("cursor", "auto");
                 }
             }
 

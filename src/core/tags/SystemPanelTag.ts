@@ -31,6 +31,21 @@ namespace OS {
                 private _view: boolean;
 
                 /**
+                 * Store pending loading task
+                 *
+                 * @private
+                 * @type {number[]}
+                 * @memberof SystemPanelTag
+                 */
+                private _pending_task: number[];
+
+                /**
+                 * Loading animation check timeout
+                 *
+                 * @memberof SystemPanelTag
+                 */
+                private _loading_toh: any;
+                /**
                  * Place holder for a private callback function
                  *
                  * @private
@@ -49,6 +64,8 @@ namespace OS {
                         iconclass: "fa fa-circle",
                     };
                     this._view = false;
+                    this._pending_task = [];
+                    this._loading_toh = undefined;
                 }
 
                 /**
@@ -343,6 +360,23 @@ namespace OS {
                 }
 
                 /**
+                 * Check if the loading tasks ended,
+                 * if it the case, stop the animation
+                 *
+                 * @private
+                 * @memberof SystemPanelTag
+                 */
+                private animation_check(): void {
+                    if(this._pending_task.length === 0)
+                    {
+                         $(this.refs.panel).removeClass("loading");
+                        $(GUI.workspace).css("cursor", "auto");
+                    }
+                    if(this._loading_toh)
+                        clearTimeout(this._loading_toh);
+                    this._loading_toh = undefined;
+                }
+                /**
                  * Mount the tag bind some basic event
                  *
                  * @protected
@@ -434,6 +468,24 @@ namespace OS {
                     };
                     announcer.observable.on("app-pinned", (d) => {
                         this.RefreshPinnedApp();
+                    });
+                    announcer.observable.on("loading", (o) => {
+                        this._pending_task.push(o.id);
+                        if(!$(this.refs.panel).hasClass("loading"))
+                            $(this.refs.panel).addClass("loading");
+                        $(GUI.workspace).css("cursor", "wait");
+                    });
+    
+                    announcer.observable.on("loaded", (o) => {
+                        const i = this._pending_task.indexOf(o.id);
+                        if (i >= 0) {
+                            this._pending_task.splice(i, 1);
+                        }
+                        if (this._pending_task.length === 0) {
+                            // set time out
+                            if(!this._loading_toh)
+                                this._loading_toh = setTimeout(() => this.animation_check(),1000);
+                        }
                     });
                     this.RefreshPinnedApp();
                 }
