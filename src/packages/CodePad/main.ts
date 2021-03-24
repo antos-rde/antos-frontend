@@ -956,7 +956,9 @@ namespace OS {
                     return;
                 }
                 this.setting.recent.push(file);
-                this.setting.recent.slice(0, 10);
+                if(this.setting.recent.length > 10)
+                    this.setting.recent = this.setting.recent.slice(0, 10);
+                
             }
 
             /**
