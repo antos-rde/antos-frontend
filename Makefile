@@ -198,7 +198,7 @@ ar:
 	BUILDDIR=/tmp/antos-$(VERSION) make release
 	cd /tmp/antos-$(VERSION) && tar cvzf ../antos-$(VERSION).tar.gz .
 	mv /tmp/antos-$(VERSION).tar.gz release/
-	echo $(VERSION) > release/latest
+	echo -n $(VERSION) > release/latest
 
 release: main uglify
 
