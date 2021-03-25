@@ -18,10 +18,9 @@ to the corresponding server side API.
 
 
 ## Demo
-A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.iohub.dev) using username: demo and password: demo.
-
-If one want to run AntOS VDE locally in their system, a docker image (~24Mb) is available at:
-[https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
+A demo of the VDE is available at my page  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo. In the demo, the VDE run in a docker image available at:
+- [https://hub.docker.com/repository/docker/xsangle/antosaio](https://hub.docker.com/repository/docker/xsangle/antosaio)
+- Instruction: [https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
 
 ## AntOS applications
 [https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
