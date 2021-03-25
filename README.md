@@ -12,12 +12,22 @@ development and deployment of user specific applications.
 
 ![https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
 
-Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos) branch antos-1.0.0a
+Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
-Demo: [https://os.iohub.dev](https://os.iohub.dev) using user  name and password: demo/demo
+## Demo
+A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.iohub.dev) using username: demo and password: demo.
 
-Documentation (WIP): [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+The demo use the **antosaio** docker image available at:
+- [https://hub.docker.com/repository/docker/xsangle/antosaio](https://hub.docker.com/repository/docker/xsangle/antosaio)
+- Instruction: [https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
 
+## AntOS applications
+[https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
+
+## Documentation
+
+- API Documentation: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
+- Documentation : [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
 
 -----
 
@@ -36,11 +46,6 @@ It has been a long time since version 0.x.x and now AntOS hits a major changes i
 * Other applications are now developed with **CodePad** using **AntOSDK** and are hosted in a [separated repository](https://github.com/lxsang/antosdk-apps)
 * System errors are reported in **Syslog**
 
-## Documentation
-
-- API Documentation: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
-- Documentation : [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
-
 ## Credits
 
 The core of AntOS is based on some open source libraries:
@@ -57,7 +62,7 @@ The core of AntOS is based on some open source libraries:
 
 ## Licence
 
-Copyright 2017-2020 Xuan Sang LE <xsang.le AT gmail DOT com>
+Copyright 2017-2021 Xuan Sang LE <xsang.le AT gmail DOT com>
 
 AnTOS is is licensed under the GNU General Public License v3.0, see the LICENCE file for more information
 
