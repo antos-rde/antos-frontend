@@ -1,6 +1,5 @@
-# antOS
 
-# Welcome to AntOS v1.0.0-alpha
+# AntOS v1.0.0-alpha
 
 **This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system. The entire core API is also rewritten in TypeScript**
 
