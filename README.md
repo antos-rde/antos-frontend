@@ -1,9 +1,9 @@
 # antOS
 
-**This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system.
-The entire core API is also rewritten in TypeScript**
+# Welcome to AntOS v1.0.0-alpha
 
-[![Build Status](https://ci.iohub.dev/api/badges/lxsang/ant-http/status.svg)](https://ci.iohub.dev/lxsang/antos)
+**This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system. The entire core API is also rewritten in TypeScript**
+
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
@@ -11,23 +11,50 @@ AntOS is a front-end API that mimics the traditional desktop environment on the 
 and embedded linux environment. With its application API and the provided SDK, AntOS facilitates the
 development and deployment of user specific applications.
 
-This repository contains only the front-end API. To have fully functional VDE, AntOS need to connect
-to the corresponding server side API.
-
 ![https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
 
+Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos) branch antos-1.0.0a
 
-## Demo
-A demo of the VDE is available at my page  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo. In the demo, the VDE run in a docker image available at:
-- [https://hub.docker.com/repository/docker/xsangle/antosaio](https://hub.docker.com/repository/docker/xsangle/antosaio)
-- Instruction: [https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
+Demo: [https://os.iohub.dev](https://os.iohub.dev) using user  name and password: demo/demo
 
-## AntOS applications
-[https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
+Documentation (WIP): [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+
+
+-----
+
+## Change logs
+It has been a long time since version 0.x.x and now AntOS hits a major changes in its API. From version 1.0.0, AntOS no longer depends on **Riot.js**  in its core UI API. This version introduces a brand new AntOS UI API called **AFX** API which is rewritten from bottom up. The entire AntOS core API is rewritten in Typescript (from Coffeescript)  for better debugging, code maintenance and documenting.
+
+**Browser support**: tested on Chrome, Firefox and partly Safari. Any browser that supports custom elements API should work. May have problem with Microsoft Edge
+
+* Say goodbye to Riot.js and welcome **Afx**, the brand new AntOS UI API
+* Rewrite the entire core system in **Typescript** for better maintenance
+* Core API now has Unit test using **jest**
+* Introduce **AntOS dark** and **AntOS light** theme
+* Default core applications are: **Files**, **CodePad**, **Setting**, **Syslog**, and **MarketPlace**
+* More application can be install via **MarketPlace**
+* **AntOSDK** is now integrated into **CodePad**
+* Other applications are now developed with **CodePad** using **AntOSDK** and are hosted in a [separated repository](https://github.com/lxsang/antosdk-apps)
+* System errors are reported in **Syslog**
 
 ## Documentation
 
-- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+- API Documentation: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
+- Documentation : [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+
+## Credits
+
+The core of AntOS is based on some open source libraries:
+* Mandatory
+    *  JQuery: [https://jquery.com/](https://jquery.com)
+    
+* Optional
+    *  ACE editor library : [https://ace.c9.io/](https://ace.c9.io/)
+    *  Font Awesome for default icon: [https://fontawesome.com](https://fontawesome.com)
+    *  Showdown JS for markdown rendering: [https://github.com/showdownjs/showdown](https://github.com/showdownjs/showdown)
+    *  Simple MDE for default Markdown editor: [https://simplemde.com/](https://simplemde.com/)
+    *  JSZIP for in browser Zip file handle : [https://stuk.github.io/jszip/](https://stuk.github.io/jszip/)
+    *  Other opensource libraries used by different application (see in each application README)..
 
 ## Licence
 
