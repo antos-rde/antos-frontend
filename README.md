@@ -15,7 +15,7 @@ development and deployment of user specific applications.
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
 ## Demo
-A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.iohub.dev) using username: demo and password: demo.
+A demo of the VDE is available at  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo.
 
 The demo use the **antosaio** docker image available at:
 - [https://hub.docker.com/r/xsangle/antosaio](https://hub.docker.com/r/xsangle/antosaio)
