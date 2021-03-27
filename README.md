@@ -18,7 +18,7 @@ Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 A demo of the VDE is available at my page  [https://os.iohub.dev](https://os.iohub.dev) using username: demo and password: demo.
 
 The demo use the **antosaio** docker image available at:
-- [https://hub.docker.com/repository/docker/xsangle/antosaio](https://hub.docker.com/repository/docker/xsangle/antosaio)
+- [https://hub.docker.com/r/xsangle/antosaio](https://hub.docker.com/r/xsangle/antosaio)
 - Instruction: [https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
 
 ## AntOS applications
