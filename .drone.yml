@@ -8,19 +8,13 @@ platform:
 clone:
   disable: true
 steps:
-- name: clone
+- name: download
   commands:
-  - pwd
-  - git clone git@iohub.dev:lxsang/antos.git
-  - cd ./antos && git checkout master
+  - cd /opt/www/htdocs/os && wget https://github.com/lxsang/antos/raw/next-1.2.0/release/antos-1.2.0.tar.gz
 - name: build
   commands:
-  - cd ./antos
-  - npm link typescript jest @types/jest ts-jest typedoc
-  - npm link @types/jquery
-  #- make test
-  - BUILDDIR=//opt/www/htdocs/os make release
-  # - DOCDIR=/opt/cloud/cuser/os/doc make doc
+  - cd cd /opt/www/htdocs/os && tar xvzf antos-1.2.0.tar.gz
+  - rm /opt/www/htdocs/os/antos-1.2.0.tar.gz
 trigger:
   branch:
-  - master
+  - next-1.2.0
