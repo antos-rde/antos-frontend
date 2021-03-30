@@ -275,7 +275,9 @@ namespace OS {
                 this.bindKey("CTRL-P", () =>
                     this.actionEdit(`${this.name}-paste`)
                 );
-
+                this.bindKey("CTRL-ALT-R", ()=>{
+                    this.view.path = this.currdir.path;
+                });
                 (this.find("btgrid") as GUI.tag.ButtonTag).onbtclick = (e) => {
                     this.view.view = "icon";
                     this.viewType.icon = true;
@@ -384,6 +386,7 @@ namespace OS {
                             {
                                 text: "__(Refresh)",
                                 dataid: `${this.name}-refresh`,
+                                shortcut: "C-A-R"
                             },
                             {
                                 text: "__(Sidebar)",

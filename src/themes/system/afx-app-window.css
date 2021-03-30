@@ -1,3 +1,6 @@
+afx-app-window {
+    outline: none;
+}
 afx-app-window div.afx-window-wrapper{
     padding:0;
     display: flex;

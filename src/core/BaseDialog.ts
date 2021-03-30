@@ -238,6 +238,7 @@ namespace OS {
              * @memberof BasicDialog
              */
             init(): void {
+                //this._onenter = undefined;
                 if (this.markup) {
                     if (typeof this.markup === "string") {
                         return GUI.htmlToScheme(this.markup, this, this.host);
@@ -263,11 +264,27 @@ namespace OS {
              */
             main(): void {
                 const win = this.scheme as tag.WindowTag;
+                $(win).attr("tabindex", 0);
+                $(win).on('keydown', (e) => {
+                    switch (e.which) {
+                        case 27:
+                            return this.quit();
+                        case 13:
+                            const btn = $("afx-button", win).filter(function () {
+                                const did = $(this).attr('data-id').toLowerCase();
+                                return did === "btnok" || did === "btnyes";
+                            });
+                            return $("button", btn).trigger("click");
+                        default:
+                            return;
+                    }
+                });
                 if (this.data && this.data.title) {
                     win.apptitle = this.data.title;
                 }
                 win.resizable = false;
                 win.minimizable = false;
+                $(win).trigger("focus");
             }
         }
 
@@ -339,7 +356,7 @@ namespace OS {
                         return this.quit();
                     };
 
-                    $input.on("keyup",(e) => {
+                    $input.on("keyup", (e) => {
                         if (e.which !== 13) {
                             return;
                         }
@@ -411,7 +428,7 @@ namespace OS {
                     if (this.data && this.data.disable) {
                         $input.prop('disabled', true);
                     }
-                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
+                    (this.find("btn-Ok") as tag.ButtonTag).onbtclick = (_e) => {
                         const value = $input.val();
                         if (!value || value === "") {
                             return;
@@ -445,7 +462,7 @@ namespace OS {
                 <div data-height="10" ></div>
                 <afx-hbox data-height="30">
                     <div ></div>
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btn-Ok" text = "__(Ok)" data-width = "40" ></afx-button>
                     <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
@@ -1070,7 +1087,7 @@ namespace OS {
                             return $(filename).val(e.data.filename);
                         }
                     };
-                    (this.find("bt-ok") as tag.ButtonTag).onbtclick = (_e) => {
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         const f = fileview.selectedFile;
                         if (!f) {
                             return this.notify(
@@ -1149,7 +1166,7 @@ namespace OS {
             <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
             <afx-hbox data-height = '30'>
                 <div style=' text-align:right;'>
-                    <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                    <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
                     <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
                 </div>
                 <div data-width="5"></div>
@@ -1305,6 +1322,151 @@ namespace OS {
         <div data-width="10" ></div>
     </afx-hbox>
 </afx-app-window>`;
+
+
+            /**
+             * Generic dynamic key-value dialog
+             * 
+             * Allow user to input any data key-value based object:
+             * 
+             * {
+             *      [prop:string]: string;
+             * }
+             *
+             * @export
+             * @class KeyValueDialog
+             * @extends {BasicDialog}
+             */
+            export class KeyValueDialog extends BasicDialog {
+
+                /**
+                 * Reference to the form container
+                 *
+                 * @private
+                 * @type {HTMLDivElement}
+                 * @memberof KeyValueDialog
+                 */
+                private container: HTMLDivElement;
+
+                /**
+                 * Creates an instance of KeyValueDialog.
+                 * @memberof KeyValueDialog
+                 */
+                constructor() {
+                    super("KeyValueDialog");
+                }
+
+                /**
+                 * Main entry point
+                 *
+                 * @memberof KeyValueDialog
+                 */
+                main(): void {
+                    super.main();
+                    this.container = this.find("container") as HTMLDivElement;
+                    (this.find("btnCancel") as tag.ButtonTag).onbtclick = (e) => this.quit();
+                    (this.find("btnAdd") as tag.ButtonTag).onbtclick = (e) => this.addField("", "", true);
+                    $(this.find("wrapper"))
+                    $(this.container)
+                        .css("overflow-y", "auto");
+                    if (this.data && this.data.data) {
+                        for (const key in this.data.data) {
+                            const value = this.data.data[key];
+                            this.addField(key, value, false);
+                        }
+                    }
+                    else {
+                        this.addField("key", "value", false);
+                    }
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                        const inputs = $("input", this.scheme) as JQuery<HTMLInputElement>;
+                        let cdata: GenericObject<string> = {};
+                        for (let i = 0; i < inputs.length; i += 2) {
+                            const key = inputs[i].value.trim();
+                            if (key === "") {
+                                return this.notify(__("Key cannot be empty"));
+                            }
+                            if (cdata[key]) {
+                                return this.notify(__("Duplicate key: {0}", key));
+                            }
+                            cdata[key] = inputs[i + 1].value.trim();
+                        }
+                        if (this.handle)
+                            this.handle(cdata);
+                        this.quit();
+                    }
+                }
+
+
+                /**
+                 * Add new input key-value field to the dialog
+                 *
+                 * @private
+                 * @memberof KeyValueDialog
+                 */
+                private addField(key: string, value: string, removable: boolean): void {
+                    const div = $("<div>")
+                        .css("width", "100%")
+                        .css("display", "flex")
+                        .css("flex-direction", "row")
+                        .appendTo(this.container);
+                    $("<input>")
+                        .attr("type", "text")
+                        .css("width", "120px")
+                        .css("height", "23px")
+                        .val(key)
+                        .appendTo(div);
+                    $("<input>")
+                        .attr("type", "text")
+                        .css("width", "200px")
+                        .css("height", "23px")
+                        .val(value)
+                        .appendTo(div);
+                    if (removable) {
+                        const btn = $("<afx-button>");
+                        btn[0].uify(undefined);
+                        $("button", btn)
+                            .css("width", "23px")
+                            .css("height", "23px");
+                        (btn[0] as tag.ButtonTag).iconclass = "fa fa-minus";
+                        btn
+                            .on("click", () => {
+                                div.remove();
+                            })
+                            .appendTo(div);
+                    }
+                    else {
+                        $("<div>")
+                            .css("width", "23px")
+                            .appendTo(div);
+                    }
+
+                }
+
+            }
+
+            /**
+             * Scheme definition
+             */
+            KeyValueDialog.scheme = `\
+             <afx-app-window width='350' height='300'>
+                 <afx-hbox>
+                    <div data-width="10" ></div>
+                    <afx-vbox>
+                        <div data-height="5" ></div>
+                        <afx-label text="__(Enter key-value data)" data-height="30"></afx-label>
+                        <div data-id="container"></div>
+                        <afx-hbox data-height="30">
+                            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "30" ></afx-button>
+                            <div ></div>
+                            <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
+                        </afx-hbox>
+                        <div data-height="5" ></div>
+                    </afx-vbox>
+                    <div data-width="10" ></div>
+                 </afx-hbox>
+             </afx-app-window>`;
         }
     }
 }
