@@ -13,7 +13,7 @@ steps:
   - cd /opt/www/htdocs/os && wget https://github.com/lxsang/antos/raw/next-1.2.0/release/antos-1.2.0.tar.gz
 - name: build
   commands:
-  - cd cd /opt/www/htdocs/os && tar xvzf antos-1.2.0.tar.gz
+  - cd /opt/www/htdocs/os && tar xvzf antos-1.2.0.tar.gz
   - rm /opt/www/htdocs/os/antos-1.2.0.tar.gz
 trigger:
   branch:
