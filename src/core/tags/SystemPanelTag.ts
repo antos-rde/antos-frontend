@@ -338,10 +338,7 @@ namespace OS {
                         .forEach((v) =>{
                             if(catlist.has(v.text.__()))
                             {
-                                cat_list_data.push({
-                                    text: v.text,
-                                    iconclass: v.iconclass
-                                });
+                                cat_list_data.push(v);
                                 catlist.delete(v.text.__());
                             }
                         })
