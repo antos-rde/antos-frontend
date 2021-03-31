@@ -534,10 +534,6 @@ namespace OS {
         {
             setting.applications.categories = [
                 {
-                    text: "__(All)",
-                    iconclass: "bi bi-gear-wide"
-                },
-                {
                     text: "__(Media)",
                     iconclass: "bi bi-disc"
                 },
