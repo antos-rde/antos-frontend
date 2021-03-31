@@ -53,6 +53,16 @@ namespace OS {
                  */
                 private _cb: (e: JQuery.MouseEventBase) => void;
 
+
+                /**
+                 * Place holder for system app list
+                 *
+                 * @private
+                 * @type {GenericObject<any>[]}
+                 * @memberof SystemPanelTag
+                 */
+                private app_list: GenericObject<any>[];
+
                 /**
                  *Creates an instance of SystemPanelTag.
                  * @memberof SystemPanelTag
@@ -66,6 +76,7 @@ namespace OS {
                     this._view = false;
                     this._pending_task = [];
                     this._loading_toh = undefined;
+                    this.app_list= [];
                 }
 
                 /**
@@ -131,6 +142,8 @@ namespace OS {
                  */
                 private search(e: JQuery.KeyboardEventBase): void {
                     const applist = this.refs.applist as ListViewTag;
+                    const catlist = this.refs.catlist as ListViewTag;
+                    catlist.selected = 0;
                     switch (e.which) {
                         case 27:
                             // escape key
@@ -153,7 +166,9 @@ namespace OS {
                             var text = (this.refs.search as HTMLInputElement)
                                 .value;
                             if (!(text.length >= 3)) {
-                                return this.refreshAppList();
+                                (this.refs.applist as ListViewTag).data = this.app_list;
+                                (this.refs.applist as ListViewTag).selected = -1;
+                                return;
                             }
                             var result = Ant.OS.API.search(text);
                             if (result.length === 0) {
@@ -232,9 +247,24 @@ namespace OS {
                                     ],
                                 },
                                 {
-                                    el: "afx-list-view",
-                                    id: "applist",
-                                    ref: "applist",
+                                    el: "afx-hbox",
+                                    children: [
+                                        {
+                                            el: "afx-list-view",
+                                            id: "catlist",
+                                            ref: "catlist",
+                                            width:"40%"
+                                        },
+                                        {
+                                            el: "afx-resizer",
+                                            width: 3,
+                                        },
+                                        {
+                                            el: "afx-list-view",
+                                            id: "applist",
+                                            ref: "applist",
+                                        }
+                                    ]
                                 },
                                 {
                                     el: "afx-hbox",
@@ -274,19 +304,22 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private refreshAppList(): void {
+                    let catlist_el = (this.refs.catlist as tag.ListViewTag);
                     let k: string, v: API.PackageMetaType;
-                    const list = [];
+                    const catlist = new Set();
+                    this.app_list = [];
                     for (k in Ant.OS.setting.system.packages) {
                         v = Ant.OS.setting.system.packages[k];
                         if (v && v.app) {
-                            list.push(v);
+                            this.app_list.push(v);
+                            catlist.add(v.category.__());
                         }
                     }
                     for (k in Ant.OS.setting.system.menu) {
                         v = Ant.OS.setting.system.menu[k];
-                        list.push(v);
+                        this.app_list.push(v);
                     }
-                    list.sort(function (a, b) {
+                    this.app_list.sort(function (a, b) {
                         if (a.text < b.text) {
                             return -1;
                         } else if (a.text > b.text) {
@@ -295,7 +328,26 @@ namespace OS {
                             return 0;
                         }
                     });
-                    (this.refs.applist as ListViewTag).data = list;
+                    // build up the category menu
+                    const cat_list_data = [];
+                    cat_list_data.push(OS.setting.applications.categories[0]);
+                    (OS.setting.applications.categories as Array<GenericObject<any>>)
+                        .forEach((v) =>{
+                            if(catlist.has(v.text.__()))
+                            {
+                                cat_list_data.push(v);
+                                catlist.delete(v.text.__());
+                            }
+                        })
+                    // put the remainder to the data
+                    catlist.forEach((c) => {
+                        cat_list_data.push({
+                            text: c,
+                            iconclass: "bi bi-gear-wide"
+                        });
+                    });
+                    catlist_el.data = cat_list_data;
+                    catlist_el.selected = 0;
                 }
 
                 /**
@@ -438,7 +490,22 @@ namespace OS {
                             return this.toggle(false);
                         }
                     });
-                    Ant.OS.announcer.trigger("syspanelloaded", undefined);
+                    const catlist = (this.refs.catlist as tag.ListViewTag);
+                    catlist.onlistselect = (e) => {
+                        const applist = (this.refs.applist as ListViewTag);
+                        if(catlist.selected === 0)
+                        {
+                            applist.data = this.app_list;
+                        }
+                        else
+                        {
+                            // filter app by data
+                            applist.data = this.app_list.filter((el) =>{
+                                return el.category.__() === e.data.item.data.text.__();
+                            })
+                        }
+                        applist.selected = -1;
+                    };
                     $(this.refs.overlay)
                         .css("left", 0)
                         .css("top", `${$(this.refs.panel).height()}px`)
@@ -488,6 +555,7 @@ namespace OS {
                         }
                     });
                     this.RefreshPinnedApp();
+                    Ant.OS.announcer.trigger("syspanelloaded", undefined);
                 }
             }
 

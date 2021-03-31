@@ -7,8 +7,8 @@
         "email": "xsang.le@gmail.com",
         "licences": "GPLv3"
     },
-    "version":"0.1.3-b",
-    "category":"Developments",
+    "version":"0.1.4-b",
+    "category":"Development",
     "iconclass":"fa fa-pencil-square-o",
     "mimes":[
         "text/.*",

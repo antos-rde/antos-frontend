@@ -529,6 +529,52 @@ namespace OS {
                 SCOPES: "https://www.googleapis.com/auth/drive",
             };
         }
+
+        if(!setting.applications.categories)
+        {
+            setting.applications.categories = [
+                {
+                    text: __("All"),
+                    iconclass: "bi bi-gear-wide"
+                },
+                {
+                    text: __("Media"),
+                    iconclass: "bi bi-disc"
+                },
+                {
+                    text: __("Development"),
+                    iconclass: "bi bi-hammer"
+                },
+                {
+                    text: __("Education"),
+                    iconclass: "fa fa-graduation-cap"
+                },
+                {
+                    text: __("Game"),
+                    iconclass: "fa fa-gamepad"
+                },
+                {
+                    text: __("Graphics"),
+                    iconclass: "bi bi-palette-fill"
+                },
+                {
+                    text: __("Network"),
+                    iconclass: "fa fa-globe"
+                },
+                {
+                    text: __("Office"),
+                    iconclass: "bi bi-building"
+                },
+                {
+                    text: __("System"),
+                    iconclass: "fa bi-gear-wide-connected"
+                },
+                {
+                    text: __("Utility"),
+                    iconclass: "bi bi-tools"
+                },
+            ]
+        }
     }
 
     // Register handle for application search
