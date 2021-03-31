@@ -558,7 +558,7 @@ namespace OS {
                     iconclass: "bi bi-palette-fill"
                 },
                 {
-                    text: __("Network"),
+                    text: __("Internet"),
                     iconclass: "fa fa-globe"
                 },
                 {
