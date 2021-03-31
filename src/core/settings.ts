@@ -534,43 +534,43 @@ namespace OS {
         {
             setting.applications.categories = [
                 {
-                    text: __("All"),
+                    text: "__(All)",
                     iconclass: "bi bi-gear-wide"
                 },
                 {
-                    text: __("Media"),
+                    text: "__(Media)",
                     iconclass: "bi bi-disc"
                 },
                 {
-                    text: __("Development"),
+                    text: "__(Development)",
                     iconclass: "bi bi-hammer"
                 },
                 {
-                    text: __("Education"),
+                    text: "__(Education)",
                     iconclass: "fa fa-graduation-cap"
                 },
                 {
-                    text: __("Game"),
+                    text: "__(Game)",
                     iconclass: "fa fa-gamepad"
                 },
                 {
-                    text: __("Graphics"),
+                    text: "__(Graphics)",
                     iconclass: "bi bi-palette-fill"
                 },
                 {
-                    text: __("Internet"),
+                    text: "__(Internet)",
                     iconclass: "fa fa-globe"
                 },
                 {
-                    text: __("Office"),
+                    text: "__(Office)",
                     iconclass: "bi bi-building"
                 },
                 {
-                    text: __("System"),
+                    text: "__(System)",
                     iconclass: "fa bi-gear-wide-connected"
                 },
                 {
-                    text: __("Utility"),
+                    text: "__(Utility)",
                     iconclass: "bi bi-tools"
                 },
             ]
