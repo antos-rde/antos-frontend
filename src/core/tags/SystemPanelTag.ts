@@ -143,7 +143,6 @@ namespace OS {
                 private search(e: JQuery.KeyboardEventBase): void {
                     const applist = this.refs.applist as ListViewTag;
                     const catlist = this.refs.catlist as ListViewTag;
-                    catlist.selected = 0;
                     switch (e.which) {
                         case 27:
                             // escape key
@@ -163,6 +162,7 @@ namespace OS {
                             e.preventDefault();
                             return this.open();
                         default:
+                            catlist.selected = 0;
                             var text = (this.refs.search as HTMLInputElement)
                                 .value;
                             if (!(text.length >= 3)) {
