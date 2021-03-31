@@ -330,12 +330,18 @@ namespace OS {
                     });
                     // build up the category menu
                     const cat_list_data = [];
-                    cat_list_data.push(OS.setting.applications.categories[0]);
+                    cat_list_data.push({
+                        text: "__(All)",
+                        iconclass: "bi bi-gear-wide"
+                    });
                     (OS.setting.applications.categories as Array<GenericObject<any>>)
                         .forEach((v) =>{
                             if(catlist.has(v.text.__()))
                             {
-                                cat_list_data.push(v);
+                                cat_list_data.push({
+                                    text: v.text,
+                                    iconclass: v.iconclass
+                                });
                                 catlist.delete(v.text.__());
                             }
                         })
