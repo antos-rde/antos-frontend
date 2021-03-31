@@ -336,13 +336,14 @@ namespace OS {
             }
             const list = apps.map((e) => ({
                 text: e.name,
+                app: e.app,
                 icon: e.icon,
                 iconclass: e.iconclass,
             }));
             openDialog("SelectionDialog", {
                 title: __("Open with"),
                 data: list,
-            }).then((d) => launch(d.text, [it]));
+            }).then((d) => launch(d.app, [it]));
         }
 
         /**
