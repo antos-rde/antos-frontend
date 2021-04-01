@@ -12,6 +12,9 @@ afx-app-window ul.afx-window-top{
     height: 20px;
     border-bottom: 1px solid #a6a6a6;
 }
+afx-app-window div.afx-window-overlay {
+    top: 22px;
+}
 afx-app-window ul.afx-window-top li{
     margin-left: 3px;
     margin-top:4px;

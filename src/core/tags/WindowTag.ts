@@ -361,6 +361,7 @@ namespace OS {
                         offset.top = e.clientY - offset.top;
                         offset.left = e.clientX - offset.left;
                         $(window).on("mousemove", (e) => {
+                            $(this.refs.win_overlay).show();
                             let left: number, top: number;
                             if (this._isMaxi) {
                                 this.toggle_window();
@@ -385,7 +386,8 @@ namespace OS {
                                 .css("top", `${top}px`)
                                 .css("left", `${left}px`);
                         });
-                        return $(window).on("mouseup", function (e) {
+                        return $(window).on("mouseup", (e) => {
+                            $(this.refs.win_overlay).hide();
                             $(window).off("mousemove", null);
                             return $(window).off("mouseup", null);
                         });
