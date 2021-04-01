@@ -405,6 +405,7 @@ namespace OS {
                     const mouse_move_hdl = (e) => {
                         let w = $(this).width();
                         let h = $(this).height();
+                        $(this.refs.win_overlay).show();
                         if(target != this.refs.grip_bottom)
                         {
                             w +=  e.clientX - offset.left;
@@ -421,6 +422,7 @@ namespace OS {
                         this.setsize({ w, h });
                     }
                     const mouse_up_hdl = (e) => {
+                        $(this.refs.win_overlay).hide();
                         $(window).off("mousemove", mouse_move_hdl);
                         return $(window).off("mouseup", mouse_up_hdl);
                     }
@@ -552,6 +554,11 @@ namespace OS {
                                     el: "div",
                                     ref: "grip_right",
                                     class: "afx-window-grip-right",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "win_overlay",
+                                    class: "afx-window-overlay",
                                 },
                             ],
                         },

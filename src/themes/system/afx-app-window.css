@@ -62,3 +62,12 @@ afx-app-window div.afx-window-grip-right{
     cursor: ew-resize;
     background-color: transparent;
 }
+afx-app-window div.afx-window-overlay {
+    background-color: transparent;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 5px;
+    right: 5px;
+}
