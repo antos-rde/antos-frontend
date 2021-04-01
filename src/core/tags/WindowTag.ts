@@ -189,9 +189,13 @@ namespace OS {
                     if (v) {
                         $(this.refs["maxbt"]).show();
                         $(this.refs["grip"]).show();
+                        $(this.refs["grip_bottom"]).show();
+                        $(this.refs["grip_right"]).show();
                     } else {
                         $(this.refs["maxbt"]).hide();
                         $(this.refs["grip"]).hide();
+                        $(this.refs["grip_bottom"]).hide();
+                        $(this.refs["grip_right"]).hide();
                     }
                 }
                 get resizable(): boolean {
@@ -396,37 +400,55 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 private enable_resize(): void {
-                    $(this.refs["grip"])
-                        .css("user-select", "none")
-                        .css("cursor", "default")
-                        .css("position", "absolute")
-                        .css("bottom", "0")
-                        .css("right", "0")
-                        .css("cursor", "nwse-resize");
-
-                    $(this.refs["grip"]).on("mousedown", (e) => {
-                        e.preventDefault();
-                        const offset = { top: 0, left: 0 };
+                    const offset = { top: 0, left: 0 };
+                    let target = undefined;
+                    const mouse_move_hdl = (e) => {
+                        let w = $(this).width();
+                        let h = $(this).height();
+                        if(target != this.refs.grip_bottom)
+                        {
+                            w +=  e.clientX - offset.left;
+                        }
+                        if(target != this.refs.grip_right)
+                        {
+                            h += e.clientY - offset.top;
+                        }
+                        w = w < 100 ? 100 : w;
+                        h = h < 100 ? 100 : h;
                         offset.top = e.clientY;
                         offset.left = e.clientX;
-                        $(window).on("mousemove", (e) => {
-                            let w = $(this).width() + e.clientX - offset.left;
-                            let h = $(this).height() + e.clientY - offset.top;
-                            w = w < 100 ? 100 : w;
-                            h = h < 100 ? 100 : h;
-                            offset.top = e.clientY;
-                            offset.left = e.clientX;
-                            this._isMaxi = false;
-                            this.setsize({ w, h });
-                        });
-
-                        $(window).on("mouseup", function (e) {
-                            $(window).off("mousemove", null);
-                            return $(window).off("mouseup", null);
-                        });
+                        this._isMaxi = false;
+                        this.setsize({ w, h });
+                    }
+                    const mouse_up_hdl = (e) => {
+                        $(window).off("mousemove", mouse_move_hdl);
+                        return $(window).off("mouseup", mouse_up_hdl);
+                    }
+                    $(this.refs["grip"]).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
+                    });
+                    $(this.refs.grip_bottom).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip_bottom;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
+                    });
+                    $(this.refs.grip_right).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip_right;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
                     });
                 }
-
                 /**
                  * Maximize the window or restore its previous width, height,
                  * and position
@@ -520,6 +542,16 @@ namespace OS {
                                     el: "div",
                                     ref: "grip",
                                     class: "afx-window-grip",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_bottom",
+                                    class: "afx-window-grip-bottom",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_right",
+                                    class: "afx-window-grip-right",
                                 },
                             ],
                         },
