@@ -92,11 +92,15 @@ afx-sys-panel afx-list-view[data-id="applist"] afx-label.search-header {
     font-weight: bold;
 
 }
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i,
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i::before {
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i {
     margin-right: 10px;
     width: 16px;
     height: 16px;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i.bi::before
+{
+    width: 16px;
 }
 
 afx-sys-panel div[data-id="searchicon"]:before{
