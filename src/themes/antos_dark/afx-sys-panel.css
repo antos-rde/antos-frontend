@@ -95,7 +95,10 @@ afx-sys-panel afx-list-view[data-id="applist"] afx-label.search-header {
 afx-sys-panel afx-list-view[data-id="applist"] afx-label  i,
 afx-sys-panel afx-list-view[data-id="applist"] afx-label  i::before {
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
 }
+
 
 afx-sys-panel div[data-id="searchicon"]:before{
     content: "\f002";
