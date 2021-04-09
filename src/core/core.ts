@@ -1243,6 +1243,7 @@ namespace OS {
                     });
                 });
                 ($("#antos_upload_form")[0] as HTMLFormElement).reset();
+                (o[0] as HTMLInputElement).value = "";
                 return o.trigger("click");
             });
         }
