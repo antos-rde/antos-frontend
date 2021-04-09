@@ -1208,7 +1208,10 @@ namespace OS {
             return new Promise(function (resolve, reject) {
                 const q = announcer.getMID();
                 //insert a temporal file selector
-                const o = $("#antos_upload_files");
+                const o = 
+                    $("<input>")
+                        .attr("type","file")
+                        .attr("multiple","true");
                 o.on("change", function () {
                     const files = (o[0] as HTMLInputElement).files;
                     const n_files = files.length;
@@ -1232,18 +1235,20 @@ namespace OS {
                                 {
                                     API.loaded(q, p, "OK");
                                     resolve(data);
+                                    o.remove();
                                 }
                             })
                             .fail(function (j, s, e) {
                                 tasks.push("FAIL");
                                 if (tasks.length == n_files)
+                                {
                                     API.loaded(q, p, "FAIL");
+                                    o.remove();
+                                }
                                 reject(API.throwe(s));
                             });
                     });
                 });
-                ($("#antos_upload_form")[0] as HTMLFormElement).reset();
-                (o[0] as HTMLInputElement).value = "";
                 return o.trigger("click");
             });
         }
