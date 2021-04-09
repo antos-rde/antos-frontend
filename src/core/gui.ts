@@ -1222,7 +1222,9 @@ namespace OS {
 <afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>
 <textarea id="clipboard"></textarea>\
-<input type="file" id="antos_upload_files" name="files" multiple style="display: none;">\
+<form id="antos_upload_form" style="display: none;">\
+    <input type="file" id="antos_upload_files" name="files" multiple>\
+</form>\
 `;
 
         schemes.login = `\

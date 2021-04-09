@@ -1242,6 +1242,7 @@ namespace OS {
                             });
                     });
                 });
+                ($("#antos_upload_form")[0] as HTMLFormElement).reset();
                 return o.trigger("click");
             });
         }
