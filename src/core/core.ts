@@ -1410,7 +1410,6 @@ namespace OS {
                                     }).appendTo("head");
                                     API.shared[l] = true;
                                     console.log("Loaded :", l);
-                                    announcer.trigger("sharedlibraryloaded", l);
                                     return resolve(undefined);
                                 })
                                 .catch((e: Error) => reject(__e(e)));
@@ -1419,7 +1418,6 @@ namespace OS {
                                 .then(function (data: any) {
                                     API.shared[l] = true;
                                     console.log("Loaded :", l);
-                                    announcer.trigger("sharedlibraryloaded", l);
                                     return resolve(data);
                                 })
                                 .catch((e: Error) => reject(__e(e)));
@@ -1430,7 +1428,6 @@ namespace OS {
                     }
                 } else {
                     console.log(l, "Library exist, no need to load");
-                    announcer.trigger("sharedlibraryloaded", l);
                     return resolve();
                 }
             });
@@ -1448,21 +1445,14 @@ namespace OS {
                 if (!(libs.length > 0)) {
                     return resolve();
                 }
-                announcer.observable.one("sharedlibraryloaded", async function (
-                    l
-                ) {
-                    libs.splice(0, 1);
-                    let r: void;
-                    try {
-                        r = await API.require(libs);
-                    } catch (e) {
-                        r = reject(__e(e));
-                    }
-                    return resolve(r);
-                });
-                return API.requires(libs[0], false).catch((e: Error) =>
-                    reject(__e(e))
-                );
+                const l = libs.splice(0, 1)[0];
+                return API.requires(l, false)
+                    .catch((e: Error) => reject(__e(e)))
+                    .then((_l) => {
+                        API.require(libs)
+                            .then(() => resolve())
+                            .catch((e) => reject(__e(e)))
+                    });
             });
         }
         /**
