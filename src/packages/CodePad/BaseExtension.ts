@@ -38,6 +38,39 @@ namespace OS {
             return API.require(libs);
         }
 
+
+        /**
+         * Get content of a file compressed in a zip archive
+         *
+         * @param {*} file
+         * @memberof BaseExtension
+         */
+        loadzip(file: string, type:string): Promise<any>
+        {
+            return new Promise(async (resolve, reject) =>{
+                try {
+                    const data = await file.asFileHandle().read("binary");
+                    try {
+                        const zip = await JSZip.loadAsync(data);
+                        let file_name = "";
+                        for (let name in zip.files) {
+                            file_name = name;
+                            break;
+                        }
+                        try {
+                            const udata = await zip.file(file_name).async(type);
+                            resolve(udata);
+                        } catch (e_2) {
+                            return reject(__e(e_2));
+                        }
+                    } catch (e_1) {
+                        return reject(__e(e_1));
+                    }
+                } catch (e) {
+                    return reject(__e(e));
+                }
+            });
+        }
         /**
          *
          *
@@ -82,7 +115,7 @@ namespace OS {
          * @return {Logger} editor logger 
          * @memberof BaseExtension
          */
-        protected logger() {
+        protected logger(): any {
             if (!this.app.setting.showBottomBar) {
                 this.app.showOutput(true);
             }
@@ -104,7 +137,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Cat all files to a single output string
          *
          * @protected
          * @param {string[]} list
@@ -123,6 +156,37 @@ namespace OS {
                     .then((text: string) => {
                         data = data + "\n" + text;
                         return this.cat(list, data)
+                            .then((d) => resolve(d))
+                            .catch((e) => reject(__e(e)));
+                    })
+                    .catch((e: Error) => reject(__e(e)));
+            });
+        }
+
+
+        /**
+         * Read all file content in the list
+         *
+         * @protected
+         * @param {string[]} list
+         * @return {*}  {Promise<GenericObject<string>>}
+         * @memberof BaseExtension
+         */
+        protected read_files(list:string[], contents: GenericObject<string>[]): Promise<GenericObject<string>[]>
+        {
+            return new Promise((resolve, reject) => {
+                if (list.length === 0) {
+                    return resolve(contents);
+                }
+                const file = list.splice(0, 1)[0].asFileHandle();
+                return file
+                    .read()
+                    .then((text: string) => {
+                        contents.push({
+                            path: file.path,
+                            content: text
+                        });
+                        return this.read_files(list, contents)
                             .then((d) => resolve(d))
                             .catch((e) => reject(__e(e)));
                     })

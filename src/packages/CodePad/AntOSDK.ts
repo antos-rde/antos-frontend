@@ -5,7 +5,7 @@ namespace OS {
     declare var CoffeeScript: any;
     declare var JSZip: any;
     declare var Terser: any;
-
+    declare var ts: any;
     /**
      *
      *
@@ -13,6 +13,17 @@ namespace OS {
      * @extends {App.BaseExtension}
      */
     class AntOSDK extends App.BaseExtension {
+
+
+        /**
+         * Core library for the transpiler stored here
+         *
+         * @static
+         * @type {GenericObject<any>}
+         * @memberof AntOSDK
+         */
+        static corelib: GenericObject<any>;
+
         /**
          *Creates an instance of AntOSDK.
          * @param {application.CodePad} app
@@ -121,7 +132,7 @@ namespace OS {
 
         // private functions
         /**
-         *
+         * Create project template
          *
          * @private
          * @param {string} path
@@ -135,13 +146,15 @@ namespace OS {
                 `${rpath}/javascripts`,
                 `${rpath}/css`,
                 `${rpath}/coffees`,
+                `${rpath}/ts`,
                 `${rpath}/assets`,
             ];
             if (flag) {
                 dirs.unshift(rpath);
             }
             const files = [
-                ["templates/sdk-main.tpl", `${rpath}/coffees/main.coffee`],
+                ["templates/sdk-main-coffee.tpl", `${rpath}/coffees/main.coffee`],
+                ["templates/sdk-main-ts.tpl", `${rpath}/ts/main.ts`],
                 ["templates/sdk-package.tpl", `${rpath}/package.json`],
                 ["templates/sdk-project.tpl", `${rpath}/project.json`],
                 ["templates/sdk-README.tpl", `${rpath}/README.md`],
@@ -169,14 +182,14 @@ namespace OS {
         }
 
         /**
-         *
+         * Check coffeescript file validity
          *
          * @private
          * @param {string[]} list
          * @returns {Promise<void>}
          * @memberof AntOSDK
          */
-        private verify(list: string[]): Promise<void> {
+        private verify_coffee(list: string[]): Promise<void> {
             return new Promise((resolve, reject) => {
                 if (list.length === 0) {
                     return resolve();
@@ -188,7 +201,7 @@ namespace OS {
                     .then((data) => {
                         try {
                             CoffeeScript.nodes(data);
-                            return this.verify(list)
+                            return this.verify_coffee(list)
                                 .then(() => resolve())
                                 .catch((e) => reject(__e(e)));
                         } catch (ex) {
@@ -200,36 +213,124 @@ namespace OS {
         }
 
         /**
-         *
+         * load typescript core lib
          *
          * @private
-         * @param {GenericObject<any>} meta
-         * @returns {Promise<any>}
+         * @param {string} path
+         * @return {*}  {Promise<any>}
          * @memberof AntOSDK
          */
+        private load_corelib(path: string): Promise<any> {
+            return new Promise(async (resolve, reject) => {
+                if (AntOSDK.corelib["ts"]) {
+                    return resolve(AntOSDK.corelib["ts"]);
+                }
+                try {
+                    const code = await this.loadzip(`${path}.zip`, "text");
+                    AntOSDK.corelib["ts"] = ts.createSourceFile(path, code, ts.ScriptTarget.Latest);
+                    return resolve(AntOSDK.corelib["ts"]);
+                } catch (e) {
+                    return reject(__e(e));
+                }
+            });
+        }
+
+        /**
+         * Compile typescript to javascript
+         *
+         * @private
+         * @param {string[]} files
+         * @return {*}  {Promise<string>}
+         * @memberof AntOSDK
+         */
+        private compile_ts(files: string[]): Promise<string> {
+            return new Promise(async (resolve, reject) => {
+                if (files.length == 0) {
+                    return resolve(undefined);
+                }
+                const core_lib = "os://packages/CodePad/libs/corelib.d.ts";
+                try {
+                    await this.load_corelib(core_lib);
+                    const arr = [];
+                    this.read_files(files, arr).then((_result) => {
+                        const libs: string[] = arr.map((e) => e.path)
+                        libs.unshift(core_lib);
+                        const src_files: GenericObject<any> = {};
+                        src_files[core_lib] = AntOSDK.corelib["ts"];
+                        for (const el of arr) {
+                            src_files[el.path] = ts.createSourceFile(el.path, el.content, ts.ScriptTarget.Latest);
+                        }
+                        let js_code = "";
+                        const host = {
+                            fileExists: (path: string) => {
+                                return src_files[path] != undefined;
+                            },
+                            directoryExists: (path: string) => {
+                                return true;
+                            },
+                            getCurrentDirectory: () => "/",
+                            getDirectories: () => [],
+                            getCanonicalFileName: (path: string) => path,
+                            getNewLine: () => "\n",
+                            getDefaultLibFileName: () => "",
+                            getSourceFile: (path: string) => src_files[path],
+                            readFile: (path: string) => undefined,
+                            useCaseSensitiveFileNames: () => true,
+                            writeFile: (path: string, data: string) => js_code = `${js_code}\n${data}`,
+                        };
+                        const program = ts.createProgram(libs, {
+                            "target": "es6",
+                            "skipLibCheck": true,
+                        }, host);
+                        const result = program.emit();
+                        const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));
+                        if (diagnostics.length > 0) {
+                            diagnostics.forEach(diagnostic => {
+                                if (diagnostic.file) {
+                                    let { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!);
+                                    let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
+                                    this.logger().error(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+                                } else {
+                                    this.logger().error(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
+                                }
+                            });
+                            return reject(API.throwe(__("Typescript compile error")));
+                        }
+                        resolve(js_code);
+                    })
+                        .catch((e) => { reject(__e(e)) });
+                } catch (e) {
+                    return reject(__e(e));
+                }
+            })
+        }
+
         private compile(meta: GenericObject<any>): Promise<any> {
             return new Promise(async (resolve, reject) => {
+                const libs = [
+                    `${this.basedir()}/libs/terser.min.js`,
+                ];
+                if (meta.coffees.length > 0) {
+                    libs.push(`${this.basedir()}/libs/coffeescript.js`);
+                }
+                if (meta.ts.length > 0) {
+                    libs.push("os://scripts/jszip.min.js");
+                    libs.push(`${this.basedir()}/libs/typescript.min.js`)
+                }
                 try {
-                    await this.import([
-                        `${this.basedir()}/libs/coffeescript.js`,
-                        `${this.basedir()}/libs/terser.min.js`,
-                    ]);
-                    const list = meta.coffees.map(
-                        (v: string) => `${meta.root}/${v}`
+                    await this.import(libs);
+                    const coffee_list = meta.coffees.map(
+                        (v: string) => `${meta.root.trimBy("/")}/${v}`
                     );
-                    try {
-                        await this.verify(list.map((x: string) => x));
-                        try {
-                            const code = await this.cat(list, "");
-                            const jsrc = CoffeeScript.compile(code);
-                            this.logger().info(__("Compiled successful"));
-                            return resolve(jsrc);
-                        } catch (e) {
-                            return reject(__e(e));
-                        }
-                    } catch (e_1) {
-                        return reject(__e(e_1));
-                    }
+                    const ts_list = meta.ts.map(
+                        (v: string) => `${meta.root.trimBy("/")}/${v}`
+                    );
+                    Promise.all([
+                        this.compile_ts(ts_list),
+                        this.compile_coffee(coffee_list)
+                    ]).then((js_codes: string[]) => {
+                        resolve(js_codes.join("\n"));
+                    }).catch((e_1) => reject(__e(e_1)));
                 } catch (e_2) {
                     return reject(__e(e_2));
                 }
@@ -237,7 +338,33 @@ namespace OS {
         }
 
         /**
+         * Compile coffeescript to javascript
          *
+         * @private
+         * @param {GenericObject<any>} meta
+         * @returns {Promise<string>}
+         * @memberof AntOSDK
+         */
+        private compile_coffee(list: string[]): Promise<string> {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await this.verify_coffee(list.map((x: string) => x));
+                    try {
+                        const code = await this.cat(list, "");
+                        const jsrc = CoffeeScript.compile(code);
+                        this.logger().info(__("Compiled successful"));
+                        return resolve(jsrc);
+                    } catch (e) {
+                        return reject(__e(e));
+                    }
+                } catch (e_1) {
+                    return reject(__e(e_1));
+                }
+            });
+        }
+
+        /**
+         * Build the project
          *
          * @private
          * @param {GenericObject<any>} meta
@@ -354,7 +481,7 @@ namespace OS {
         }
 
         /**
-         *
+         * Run the built project
          *
          * @private
          * @param {GenericObject<any>} meta
@@ -383,5 +510,6 @@ namespace OS {
                 });
         }
     }
+    AntOSDK.corelib = {};
     App.extensions.AntOSDK = AntOSDK;
 }
