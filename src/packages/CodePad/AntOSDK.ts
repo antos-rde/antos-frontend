@@ -347,6 +347,10 @@ namespace OS {
          */
         private compile_coffee(list: string[]): Promise<string> {
             return new Promise(async (resolve, reject) => {
+                if(list.length == 0)
+                {
+                    return resolve("");
+                }
                 try {
                     await this.verify_coffee(list.map((x: string) => x));
                     try {
