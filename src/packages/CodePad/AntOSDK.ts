@@ -113,7 +113,7 @@ namespace OS {
                     try {
                         await this.build(meta, false);
                         try {
-                            return this.mkar(
+                            return API.VFS.mkar(
                                 `${meta.root}/build/debug`,
                                 `${meta.root}/build/release/${meta.name}.zip`
                             );
@@ -160,14 +160,16 @@ namespace OS {
                 ["templates/sdk-README.tpl", `${rpath}/README.md`],
                 ["templates/sdk-scheme.tpl", `${rpath}/assets/scheme.html`],
             ];
-            this.mkdirAll(dirs)
+            API.VFS.mkdirAll(dirs)
                 .then(async () => {
                     try {
-                        await this.mkfileAll(files, path, name);
+                        await API.VFS.mktpl(files, this.basedir(), (data) => {
+                            return data.format(name, `${path}/${name}`);
+                        });
                         this.app.currdir = rpath.asFileHandle();
                         this.app.toggleSideBar();
                         return this.app.eum.active.openFile(
-                            `${rpath}/README.md`.asFileHandle() as application.CodePadFileHandle
+                            `${rpath}/README.md`.asFileHandle() as application.EditorFileHandle
                         );
                     } catch (e) {
                         return this.logger().error(
@@ -226,7 +228,7 @@ namespace OS {
                     return resolve(AntOSDK.corelib["ts"]);
                 }
                 try {
-                    const code = await this.loadzip(`${path}.zip`, "text");
+                    const code = await API.VFS.readFileFromZip(`${path}.zip`, "text");
                     AntOSDK.corelib["ts"] = ts.createSourceFile(path, code, ts.ScriptTarget.Latest);
                     return resolve(AntOSDK.corelib["ts"]);
                 } catch (e) {
@@ -252,7 +254,7 @@ namespace OS {
                 try {
                     await this.load_corelib(core_lib);
                     const arr = [];
-                    this.read_files(files, arr).then((_result) => {
+                    API.VFS.read_files(files, arr).then((_result) => {
                         const libs: string[] = arr.map((e) => e.path)
                         libs.unshift(core_lib);
                         const src_files: GenericObject<any> = {};
@@ -310,10 +312,14 @@ namespace OS {
                 const libs = [
                     `${this.basedir()}/libs/terser.min.js`,
                 ];
+                if (!meta.coffees)
+                    meta.coffees = [];
                 if (meta.coffees.length > 0) {
                     libs.push(`${this.basedir()}/libs/coffeescript.js`);
                 }
-                if (meta.ts.length > 0) {
+                if (!meta.ts)
+                    meta.ts = [];
+                if (meta.ts && meta.ts.length > 0) {
                     libs.push("os://scripts/jszip.min.js");
                     libs.push(`${this.basedir()}/libs/typescript.min.js`)
                 }
@@ -347,14 +353,13 @@ namespace OS {
          */
         private compile_coffee(list: string[]): Promise<string> {
             return new Promise(async (resolve, reject) => {
-                if(list.length == 0)
-                {
+                if (list.length == 0) {
                     return resolve("");
                 }
                 try {
                     await this.verify_coffee(list.map((x: string) => x));
                     try {
-                        const code = await this.cat(list, "");
+                        const code = await API.VFS.cat(list, "");
                         const jsrc = CoffeeScript.compile(code);
                         this.logger().info(__("Compiled successful"));
                         return resolve(jsrc);
@@ -384,12 +389,12 @@ namespace OS {
             ];
             return new Promise(async (resolve, reject) => {
                 try {
-                    await this.mkdirAll(dirs);
+                    await API.VFS.mkdirAll(dirs);
                     try {
                         const src = await this.compile(meta);
                         let v: string;
                         try {
-                            let jsrc = await this.cat(
+                            let jsrc = await API.VFS.cat(
                                 (() => {
                                     const result = [];
                                     for (v of meta.javascripts) {
@@ -438,7 +443,7 @@ namespace OS {
                                 }
                             });
                             await new Promise<void>(async (r, e) => {
-                                const txt = await this.cat(
+                                const txt = await API.VFS.cat(
                                     (() => {
                                         const result1 = [];
                                         for (v of meta.css) {
@@ -461,7 +466,7 @@ namespace OS {
                                     return e(__e(ex_1));
                                 }
                             });
-                            await this.copy(
+                            await API.VFS.copy(
                                 (() => {
                                     const result1_1 = [];
                                     for (v of meta.copies) {

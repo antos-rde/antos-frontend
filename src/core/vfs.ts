@@ -15,7 +15,7 @@
 
 // You should have received a copy of the GNU General Public License
 //along with this program. If not, see https://www.gnu.org/licenses/.
-type VFSFileHandleClass = { new (...args: any[]): OS.API.VFS.BaseFileHandle };
+type VFSFileHandleClass = { new(...args: any[]): OS.API.VFS.BaseFileHandle };
 interface String {
     /**
      * Convert a string to VFS file handle.
@@ -164,6 +164,8 @@ namespace OS {
          * AntOS Virtual File System (VFS)
          */
         export namespace VFS {
+            declare var JSZip: any;
+
             String.prototype.asFileHandle = function (): BaseFileHandle {
                 const list = this.split("://");
                 const handles = API.VFS.findHandles(list[0]);
@@ -1298,7 +1300,7 @@ namespace OS {
 
             register("^(home|desktop|os|Untitled)$", RemoteFileHandle);
 
-            
+
             /**
              * Package file is remote file ([[RemoteFileHandle]]) located either in
              * the local user packages location or system packages
@@ -1316,8 +1318,7 @@ namespace OS {
              * @class PackageFileHandle
              * @extends {RemoteFileHandle}
              */
-            export class PackageFileHandle extends RemoteFileHandle
-            {
+            export class PackageFileHandle extends RemoteFileHandle {
 
                 /**
                  *Creates an instance of PackageFileHandle.
@@ -1325,12 +1326,11 @@ namespace OS {
                  * @memberof PackageFileHandle
                  */
                 constructor(pkg_path: string) {
-                    var error:FormattedString|string;
+                    var error: FormattedString | string;
                     var pkg_name: string;
                     super(pkg_path);
                     // now find the correct path
-                    if(!this.genealogy || this.genealogy.length == 0)
-                    {
+                    if (!this.genealogy || this.genealogy.length == 0) {
                         error = __("Invalid package path");
                         announcer.oserror(error, API.throwe(error));
                         throw new Error(error.__());
@@ -1338,14 +1338,12 @@ namespace OS {
                     else {
                         // get the correct path of the package
                         pkg_name = this.genealogy.shift();
-                        if(OS.setting.system.packages[pkg_name])
-                        {
+                        if (OS.setting.system.packages[pkg_name]) {
                             this.setPath(OS.setting.system.packages[pkg_name].path + "/" + this.genealogy.join("/"));
                         }
-                        else
-                        {
+                        else {
                             error = __("Package not found {0}", pkg_name);
-                            announcer.oserror(error,API.throwe(error));
+                            announcer.oserror(error, API.throwe(error));
                             throw new Error(error.__());
                         }
                     }
@@ -1427,8 +1425,7 @@ namespace OS {
                         const result = [];
                         for (let k in OS.setting.system.packages) {
                             const v = OS.setting.system.packages[k];
-                            if(v.app)
-                            {
+                            if (v.app) {
                                 result.push(v);
                             }
                         }
@@ -1599,7 +1596,7 @@ namespace OS {
                     //read the file
                     if (t === "binary") {
                         //return API.handle.fileblob(this.path);
-                        return API.blob(this.path+ "?_=" + new Date().getTime());
+                        return API.blob(this.path + "?_=" + new Date().getTime());
                     }
                     return API.get(this.path, t ? t : "text");
                 }
@@ -1760,6 +1757,399 @@ namespace OS {
             }
 
             API.VFS.register("^shared$", SharedFileHandle);
+
+            /**Utilities global functions */
+
+            /**
+             * Read a file content from a zip archive
+             *
+             * The content type should be:
+             * - base64 : the result will be a string, the binary in a base64 form.
+             * - text (or string): the result will be an unicode string.
+             * - binarystring: the result will be a string in “binary” form, using 1 byte per char (2 bytes).
+             * - array: the result will be an Array of bytes (numbers between 0 and 255).
+             * - uint8array : the result will be a Uint8Array. This requires a compatible browser.
+             * - arraybuffer : the result will be a ArrayBuffer. This requires a compatible browser.
+             * - blob : the result will be a Blob. This requires a compatible browser.
+             * - nodebuffer : the result will be a nodejs Buffer. This requires nodejs.
+             * 
+             * If file_name is not specified, the first file_name in the zip archive will be read
+             * @export
+             * @param {string} file zip file
+             * @param {string} type content type to read
+             * @param {string} [file_name] the file should be read from the zip archive 
+             * @return {*}  {Promise<any>}
+             */
+            export function readFileFromZip(file: string, type: string, file_name?: string): Promise<any> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        try {
+                            const data = await file.asFileHandle().read("binary");
+                            try {
+                                const zip = await JSZip.loadAsync(data);
+                                if (!file_name) {
+                                    for (let name in zip.files) {
+                                        file_name = name;
+                                        break;
+                                    }
+                                }
+
+                                try {
+                                    const udata = await zip.file(file_name).async(type);
+                                    resolve(udata);
+                                } catch (e_2) {
+                                    return reject(__e(e_2));
+                                }
+                            } catch (e_1) {
+                                return reject(__e(e_1));
+                            }
+                        } catch (e) {
+                            return reject(__e(e));
+                        }
+                    } catch (e_3) {
+                        return reject(__e(e_3));
+                    }
+
+                });
+            }
+
+
+            /**
+             * Cat al file to a single out-put
+             *
+             * @export
+             * @param {string[]} list list of VFS files
+             * @param {string} data input data string that will be cat to the files content
+             * @return {*}  {Promise<string>}
+             */
+            export function cat(list: string[], data: string): Promise<string> {
+                return new Promise((resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve(data);
+                    }
+                    const file = list.splice(0, 1)[0].asFileHandle();
+                    return file
+                        .read()
+                        .then((text: string) => {
+                            data = data + "\n" + text;
+                            return cat(list, data)
+                                .then((d) => resolve(d))
+                                .catch((e) => reject(__e(e)));
+                        })
+                        .catch((e: Error) => reject(__e(e)));
+                });
+            }
+
+
+            /**
+             * Read all files content to on the list
+             *
+             * @export
+             * @param {string[]} list list of VFS files
+             * @param {GenericObject<string>[]} contents content array
+             * @return {*}  {Promise<GenericObject<string>[]>}
+             */
+            export function read_files(list: string[], contents: GenericObject<string>[]): Promise<GenericObject<string>[]> {
+                return new Promise((resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve(contents);
+                    }
+                    const file = list.splice(0, 1)[0].asFileHandle();
+                    return file
+                        .read()
+                        .then((text: string) => {
+                            contents.push({
+                                path: file.path,
+                                content: text
+                            });
+                            return read_files(list, contents)
+                                .then((d) => resolve(d))
+                                .catch((e) => reject(__e(e)));
+                        })
+                        .catch((e: Error) => reject(__e(e)));
+                });
+            }
+
+
+            /**
+             * Copy files to a folder
+             *
+             * @export
+             * @param {string[]} files list of files
+             * @param {string} to destination folder
+             * @return {*}  {Promise<void>}
+             */
+            export function copy(files: string[], to: string): Promise<void> {
+                return new Promise((resolve, reject) => {
+                    if (files.length === 0) {
+                        return resolve();
+                    }
+                    const file = files.splice(0, 1)[0].asFileHandle();
+                    const tof = `${to}/${file.basename}`.asFileHandle();
+                    return file
+                        .onready()
+                        .then((meta: { type: string }) => {
+                            if (meta.type === "dir") {
+                                // copy directory
+                                const desdir = to.asFileHandle();
+                                return desdir
+                                    .mk(file.basename)
+                                    .then(() => {
+                                        // read the dir content
+                                        return file
+                                            .read()
+                                            .then((data: API.RequestResult) => {
+                                                const list = (data.result as API.FileInfoType[]).map(
+                                                    (v) => v.path
+                                                );
+                                                return copy(
+                                                    list,
+                                                    `${desdir.path}/${file.basename}`
+                                                )
+                                                    .then(() => {
+                                                        return copy(files, to)
+                                                            .then(() => resolve())
+                                                            .catch((e) =>
+                                                                reject(__e(e))
+                                                            );
+                                                    })
+                                                    .catch((e) => reject(__e(e)));
+                                            })
+                                            .catch((e: Error) => reject(__e(e)));
+                                    })
+                                    .catch((e: Error) => reject(__e(e)));
+                            } else {
+                                // copy file
+                                return file
+                                    .read("binary")
+                                    .then(async (data: ArrayBuffer) => {
+                                        const d = await tof
+                                            .setCache(
+                                                new Blob([data], {
+                                                    type: file.info.mime,
+                                                })
+                                            )
+                                            .write(file.info.mime);
+                                        try {
+                                            await copy(files, to);
+                                            return resolve();
+                                        } catch (e) {
+                                            return reject(__e(e));
+                                        }
+                                    })
+                                    .catch((e: Error) => reject(__e(e)));
+                            }
+                        })
+                        .catch((e: Error) => reject(__e(e)));
+                });
+            }
+
+            /**
+             * Add a list of files to the zip archive
+             *
+             * @param {string[]} list list of VFS files
+             * @param {*} zip JSZip handle
+             * @param {string} base root path of all added files in the zip
+             * @return {*}  {Promise<any>}
+             */
+            function aradd(list: string[], zip: any, base: string): Promise<any> {
+                return new Promise((resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve(zip);
+                    }
+                    const path = list.splice(0, 1)[0];
+                    const file = path.asFileHandle();
+                    return file
+                        .onready()
+                        .then((meta: { type: string }) => {
+                            if (meta.type === "dir") {
+                                return file
+                                    .read()
+                                    .then(
+                                        (d: {
+                                            result:
+                                            | Iterable<unknown>
+                                            | ArrayLike<unknown>;
+                                        }) => {
+                                            const l = (d.result as API.FileInfoType[]).map(
+                                                (v) => v.path
+                                            );
+                                            return aradd(
+                                                l,
+                                                zip,
+                                                `${base}${file.basename}/`
+                                            )
+                                                .then(() => {
+                                                    return aradd(
+                                                        list,
+                                                        zip,
+                                                        base
+                                                    )
+                                                        .then(() => resolve(zip))
+                                                        .catch((e) =>
+                                                            reject(__e(e))
+                                                        );
+                                                })
+                                                .catch((e) => reject(__e(e)));
+                                        }
+                                    )
+                                    .catch((e: Error) => reject(__e(e)));
+                            } else {
+                                return file
+                                    .read("binary")
+                                    .then(async (d: any) => {
+                                        const zpath = `${base}${file.basename}`.replace(
+                                            /^\/+|\/+$/g,
+                                            ""
+                                        );
+                                        zip.file(zpath, d, { binary: true });
+                                        try {
+                                            await aradd(list, zip, base);
+                                            return resolve(zip);
+                                        }
+                                        catch (e) {
+                                            return reject(__e(e));
+                                        }
+                                    })
+                                    .catch((e: Error) => reject(__e(e)));
+                            }
+                        })
+                        .catch((e: Error) => reject(__e(e)));
+                });
+            }
+
+
+            /**
+             * Create a zip archive from a folder
+             *
+             * @export
+             * @param {string} src source folder
+             * @param {string} dest destination archive
+             * @return {*}  {Promise<void>}
+             */
+            export function mkar(src: string, dest: string): Promise<void> {
+                return new Promise((resolve, reject) => {
+                    return new Promise(async (r, e) => {
+                        try {
+                            await API.requires("os://scripts/jszip.min.js");
+                            try {
+                                const d = await src.asFileHandle().read();
+                                return r(d.result);
+                            } catch (ex) {
+                                return e(__e(ex));
+                            }
+                        } catch (ex_1) {
+                            return e(__e(ex_1));
+                        }
+                    })
+                        .then((files: API.FileInfoType[]) => {
+                            return new Promise(async (r, e) => {
+                                const zip = new JSZip();
+                                try {
+                                    const z = await aradd(
+                                        files.map((v: { path: any }) => v.path),
+                                        zip,
+                                        "/"
+                                    );
+                                    return r(z);
+                                } catch (ex) {
+                                    return e(__e(ex));
+                                }
+                            });
+                        })
+                        .then((zip: any) => {
+                            return zip
+                                .generateAsync({ type: "base64" })
+                                .then((data: string) => {
+                                    return dest
+                                        .asFileHandle()
+                                        .setCache(
+                                            "data:application/zip;base64," + data
+                                        )
+                                        .write("base64")
+                                        .then((r: any) => {
+                                            resolve();
+                                        })
+                                        .catch((e: Error) => reject(__e(e)));
+                                });
+                        })
+                        .catch((e) => reject(__e(e)));
+                });
+            }
+
+            /**
+             * Create a list of directories
+             *
+             * @export
+             * @param {string[]} list of directories to be created
+             * @return {*}  {Promise<void>}
+             */
+            export function mkdirAll(list: string[]): Promise<void> {
+                return new Promise((resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve();
+                    }
+                    const path = list.splice(0, 1)[0].asFileHandle();
+                    return path
+                        .parent()
+                        .mk(path.basename)
+                        .then((d: any) => {
+                            return mkdirAll(list)
+                                .then(() => resolve())
+                                .catch((e) => reject(__e(e)));
+                        })
+                        .catch((e: Error) => reject(__e(e)));
+                });
+            }
+
+            /**
+             * 
+             *
+             * @export
+             * @param {Array<string[]>} list of templates mapping files
+             * @param {string} path path stored create files
+             * @param {string} name
+             * @return {*}  {Promise<void>}
+             */
+
+            /**
+             * Make files from a set of template files
+             *
+             * @export
+             * @param {Array<string[]>} list mapping paths between templates files and created files
+             * @param {string} path files destination
+             * @param {(data: string) => string} callback: pre-processing files content before writing to destination files
+             * @return {*}  {Promise<void>}
+             */
+            export function mktpl(
+                list: Array<string[]>,
+                path: string,
+                callback: (data: string) => string
+            ): Promise<void> {
+                return new Promise((resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve();
+                    }
+                    const item = list.splice(0, 1)[0];
+                    return `${path}/${item[0]}`
+                        .asFileHandle()
+                        .read()
+                        .then((data) => {
+                            const file = item[1].asFileHandle();
+                            return file
+                                .setCache(callback(data))
+                                .write("text/plain")
+                                .then(() => {
+                                    return mktpl(list, path, callback)
+                                        .then(() => resolve())
+                                        .catch((e) => reject(__e(e)));
+                                })
+                                .catch((e: Error) => reject(__e(e)));
+                        })
+                        .catch((e) => reject(__e(e)));
+                });
+            }
         }
     }
 }

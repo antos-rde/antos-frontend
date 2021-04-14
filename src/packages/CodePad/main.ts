@@ -1,48 +1,6 @@
 namespace OS {
     export namespace application {
         /**
-         * Extends the [[RemoteFileHandle]] interface with some useful
-         * properties used by [[CodePad]]
-         */
-        export type CodePadFileHandle = API.VFS.RemoteFileHandle & {
-            /**
-             * The text will be displayed on the tab bar when opened
-             *
-             * @type {string}
-             */
-            text: string;
-
-            /**
-             * ACE Undo manager of the current file, stores the
-             * modification history of the file
-             *
-             * @type {GenericObject<any>}
-             */
-            um: GenericObject<any>;
-
-            /**
-             * Indicate whether the file is selected
-             *
-             * @type {boolean}
-             */
-            selected: boolean;
-
-            /**
-             * Store the latest cursor position on the editor
-             * when editing the file
-             *
-             * @type {GenericObject<any>}
-             */
-            cursor: GenericObject<any>;
-
-            /**
-             * Language mode setting of the file
-             *
-             * @type {GenericObject<string>}
-             */
-            langmode: GenericObject<string>;
-        };
-        /**
          * [[CodePad]]'s [[CommandPalette]] action type definition
          */
         type ActionType = CMDMenu | GenericObject<any>;
@@ -252,14 +210,14 @@ namespace OS {
 
                 // add editor instance
                 this.eum
-                    .add(new CodePadACEModel(
+                    .add(new ACEModel(
                         this,
                         this.find("left-tabbar") as GUI.tag.TabBarTag,
-                        this.find("left-editorarea")) as CodePadBaseEditorModel)
-                    .add(new CodePadACEModel(
+                        this.find("left-editorarea")) as BaseEditorModel)
+                    .add(new ACEModel(
                         this,
                         this.find("right-tabbar") as GUI.tag.TabBarTag,
-                        this.find("right-editorarea")) as CodePadBaseEditorModel);
+                        this.find("right-editorarea")) as BaseEditorModel);
 
                 this.eum.onstatuschange = (st) =>
                     this.updateStatus(st)
@@ -283,13 +241,13 @@ namespace OS {
                             return reject(__e(e));
                         }
                     });
-                let file = "Untitled".asFileHandle() as CodePadFileHandle;
+                let file = "Untitled".asFileHandle() as EditorFileHandle;
                 if (this.args && this.args.length > 0) {
                     this.addRecent(this.args[0].path);
                     if (this.args[0].type === "dir") {
-                        this.currdir = this.args[0].path.asFileHandle() as CodePadFileHandle;
+                        this.currdir = this.args[0].path.asFileHandle() as EditorFileHandle;
                     } else {
-                        file = this.args[0].path.asFileHandle() as CodePadFileHandle;
+                        file = this.args[0].path.asFileHandle() as EditorFileHandle;
                         this.currdir = file.parent();
                     }
                 }
@@ -316,7 +274,7 @@ namespace OS {
                     }
                     this.addRecent(e.data.path);
                     return this.eum.active.openFile(
-                        e.data.path.asFileHandle() as CodePadFileHandle
+                        e.data.path.asFileHandle() as EditorFileHandle
                     );
                 };
 
@@ -519,7 +477,7 @@ namespace OS {
                 else {
                     $(right_pannel).show();
                     this.split_mode = true;
-                    right_editor.openFile("Untitled".asFileHandle() as CodePadFileHandle);
+                    right_editor.openFile("Untitled".asFileHandle() as EditorFileHandle);
                     right_editor.focus();
                 }
                 this.trigger("resize");
@@ -977,7 +935,7 @@ namespace OS {
                 }
                 switch (dataid) {
                     case "new":
-                        return me.eum.active.openFile("Untitled".asFileHandle() as CodePadFileHandle);
+                        return me.eum.active.openFile("Untitled".asFileHandle() as EditorFileHandle);
                     case "open":
                         return me
                             .openDialog("FileDialog", {
@@ -1081,7 +1039,7 @@ namespace OS {
                         ],
                         onchildselect: (
                             e: GUI.TagEventType<GUI.tag.MenuEventData>,
-                            r: CodePadFileHandle
+                            r: EditorFileHandle
                         ) => {
                             switch (e.data.item.data.dataid) {
                                 case "cmdpalette":
@@ -1225,19 +1183,19 @@ namespace OS {
              * Referent to the active editor model
              *
              * @private
-             * @type {CodePadBaseEditorModel}
+             * @type {BaseEditorModel}
              * @memberof EditorModelManager
              */
-            private active_editor: CodePadBaseEditorModel;
+            private active_editor: BaseEditorModel;
 
             /**
              * Store a list of editor models
              *
              * @private
-             * @type {CodePadBaseEditorModel[]}
+             * @type {BaseEditorModel[]}
              * @memberof EditorModelManager
              */
-            private models: CodePadBaseEditorModel[];
+            private models: BaseEditorModel[];
 
             /**
              * Creates an instance of EditorModelManager.
@@ -1248,7 +1206,7 @@ namespace OS {
                 this.models = [];
             }
 
-            get editors(): CodePadBaseEditorModel[] {
+            get editors(): BaseEditorModel[] {
                 return this.models;
             }
             set contextmenuHandle(cb: (e: any, m: any) => void) {
@@ -1261,20 +1219,20 @@ namespace OS {
              * Get the active editor model
              *
              * @readonly
-             * @type {CodePadBaseEditorModel}
+             * @type {BaseEditorModel}
              * @memberof EditorModelManager
              */
-            get active(): CodePadBaseEditorModel {
+            get active(): BaseEditorModel {
                 return this.active_editor;
             }
 
             /**
              * Add a model to the manager
              *
-             * @param {CodePadBaseEditorModel} model
+             * @param {BaseEditorModel} model
              * @memberof EditorModelManager
              */
-            add(model: CodePadBaseEditorModel): EditorModelManager {
+            add(model: BaseEditorModel): EditorModelManager {
                 this.models.push(model);
                 if (!this.active_editor)
                     this.active_editor = model;
@@ -1290,7 +1248,7 @@ namespace OS {
                 }
             }
 
-            dirties(): CodePadFileHandle[] {
+            dirties(): EditorFileHandle[] {
                 let list = [];
                 for (let ed of this.models) {
                     list = list.concat(ed.dirties());

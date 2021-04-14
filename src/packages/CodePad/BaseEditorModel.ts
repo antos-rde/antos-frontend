@@ -1,32 +1,61 @@
 namespace OS {
     export namespace application {
 
-        export abstract class CodePadBaseEditorModel {
+        /**
+         * Extends the [[RemoteFileHandle]] interface with some useful
+         * properties used by the Editor API
+         */
+         export type EditorFileHandle = API.VFS.RemoteFileHandle & {
+            /**
+             * The text will be displayed on the tab bar when opened
+             *
+             * @type {string}
+             */
+            text: string;
+
+            /**
+             * Editor text model attached to the file
+             * modification history of the file
+             *
+             * @type {any}
+             */
+            textModel: any;
+
+            /**
+             * Indicate whether the file is selected
+             *
+             * @type {boolean}
+             */
+            selected: boolean;
+
+        };
+
+        export abstract class BaseEditorModel {
             /**
              * Reference to the current editing file handle
              *
              * @protected
-             * @type {CodePadFileHandle}
-             * @memberof CodePad
+             * @type {EditorFileHandle}
+             * @memberof BaseEditorModel
              */
-            protected currfile: CodePadFileHandle;
+            protected currfile: EditorFileHandle;
 
 
             /**
              * Referent to the parent app
              *
              * @private
-             * @type {CodePad}
-             * @memberof CodePadBaseEditorModel
+             * @type {BaseApplication}
+             * @memberof BaseEditorModel
              */
-            private app: CodePad;
+            private app: BaseApplication;
 
             /**
              * Reference to the editor tab bar UI
              *
              * @private
              * @type {GUI.tag.TabBarTag}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
             private tabbar: GUI.tag.TabBarTag;
 
@@ -36,7 +65,7 @@ namespace OS {
              *
              * @private
              * @type {HTMLElement}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             private container: HTMLElement;
 
@@ -47,22 +76,22 @@ namespace OS {
              *
              * @private
              * @type {boolean}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
             private editormux: boolean;
 
 
             /**
-             * Creates an instance of CodePadBaseEditorModel.
+             * Creates an instance of BaseEditorModel.
              * 
-             * @param {CodePad} app parent app
+             * @param {Antedit} app parent app
              * @param {GUI.tag.TabBarTag} tabbar tabbar DOM element
              * @param {HTMLElement} editorarea editor container DOM element
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
-            constructor(app: CodePad, tabbar: GUI.tag.TabBarTag, editorarea: HTMLElement) {
+            constructor(app: BaseApplication, tabbar: GUI.tag.TabBarTag, editorarea: HTMLElement) {
                 this.container = editorarea;
-                this.currfile = "Untitled".asFileHandle() as CodePadFileHandle;
+                this.currfile = "Untitled".asFileHandle() as EditorFileHandle;
                 this.tabbar = tabbar;
                 this.editorSetup(editorarea);
                 this.app = app;
@@ -118,11 +147,11 @@ namespace OS {
              * Find a tab on the tabbar corresponding to a file handle
              *
              * @private
-             * @param {CodePadFileHandle} file then file handle to search
+             * @param {EditorFileHandle} file then file handle to search
              * @returns {number}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
-            private findTabByFile(file: CodePadFileHandle): number {
+            private findTabByFile(file: EditorFileHandle): number {
                 const lst = this.tabbar.items;
                 const its = (() => {
                     const result = [];
@@ -144,15 +173,15 @@ namespace OS {
              * Create new tab when opening a file
              *
              * @private
-             * @param {CodePadFileHandle} file
-             * @memberof CodePad
+             * @param {EditorFileHandle} file
+             * @memberof BaseEditorModel
              */
-            private newTab(file: CodePadFileHandle): void {
+            private newTab(file: EditorFileHandle): void {
                 file.text = file.basename ? file.basename : file.path;
                 if (!file.cache) {
                     file.cache = "";
                 }
-                file.um = this.newUndoManager();
+                file.textModel = this.newTextModelFrom(file);
                 this.currfile.selected = false;
                 file.selected = true;
                 //console.log cnt
@@ -165,7 +194,7 @@ namespace OS {
              * @private
              * @param {GUI.tag.ListViewItemTag} it reference to the tab to close
              * @returns {boolean}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
             private closeTab(it: GUI.tag.ListViewItemTag): boolean {
                 this.tabbar.delete(it);
@@ -173,7 +202,7 @@ namespace OS {
 
                 if (cnt === 0) {
                     this.openFile(
-                        "Untitled".asFileHandle() as CodePadFileHandle
+                        "Untitled".asFileHandle() as EditorFileHandle
                     );
                     return false;
                 }
@@ -187,41 +216,23 @@ namespace OS {
              * @private
              * @param {number} i tab index
              * @returns {void}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
             private selecteTab(i: number): void {
                 //return if i is @tabbar.get "selidx"
-                const file = this.tabbar.items[i] as CodePadFileHandle;
+                const file = this.tabbar.items[i] as EditorFileHandle;
                 if (!file) {
                     return;
                 }
                 //return if file is @currfile
                 if (this.currfile !== file) {
-                    this.currfile.cache = this.getValue();
-                    this.currfile.cursor = this.getCursor();
+                    this.currfile.textModel = this.getTexModel();
                     this.currfile.selected = false;
                     this.currfile = file;
                 }
 
-                if (!file.langmode) {
-                    if (file.path.toString() !== "Untitled") {
-                        file.langmode = this.getModeForPath(file.path);
-                    } else {
-                        file.langmode = {
-                            text: "Text",
-                            mode: "ace/mode/text",
-                        };
-                    }
-                }
                 this.editormux = true;
-                this.setUndoManager(this.newUndoManager());
-                this.setValue(file.cache);
-                this.setMode(file.langmode);
-
-                if (file.cursor) {
-                    this.setCursor(file.cursor);
-                }
-                this.setUndoManager(file.um);
+                this.setTextModel(file.textModel);
                 if (this.onstatuschange)
                     this.onstatuschange(this.getEditorStatus());
                 this.focus();
@@ -231,12 +242,12 @@ namespace OS {
             /**
              * Select an opened file, this will select the corresponding tab
              *
-             * @param {(CodePadFileHandle | string)} file
-             * @memberof CodePadBaseEditorModel
+             * @param {(EditorFileHandle | string)} file
+             * @memberof BaseEditorModel
              */
-            selectFile(file: CodePadFileHandle | string): void {
+            selectFile(file: EditorFileHandle | string): void {
                 const i = this.findTabByFile(
-                    file.asFileHandle() as CodePadFileHandle
+                    file.asFileHandle() as EditorFileHandle
                 );
                 if (i !== -1) {
                     this.tabbar.selected = i;
@@ -247,11 +258,11 @@ namespace OS {
              * the just select the tab
              *
              *
-             * @param {CodePadFileHandle} file file to open
+             * @param {EditorFileHandle} file file to open
              * @returns {void}
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
-            openFile(file: CodePadFileHandle): void {
+            openFile(file: EditorFileHandle): void {
                 //find tab
                 const i = this.findTabByFile(file);
                 if (i !== -1) {
@@ -280,10 +291,10 @@ namespace OS {
              * write a file
              *
              * @private
-             * @param {CodePadFileHandle} file
-             * @memberof CodePad
+             * @param {EditorFileHandle} file
+             * @memberof BaseEditorModel
              */
-            private write(file: CodePadFileHandle): void {
+            private write(file: EditorFileHandle): void {
                 this.currfile.cache = this.getValue();
                 file.write("text/plain")
                     .then((d) => {
@@ -301,7 +312,7 @@ namespace OS {
              * Save the current opened file
              *
              * @return {*}  {void}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             save(): void {
                 this.currfile.cache = this.getValue();
@@ -315,7 +326,7 @@ namespace OS {
              * Save the current file as another file
              *
              * @public
-             * @memberof CodePad
+             * @memberof BaseEditorModel
              */
             saveAs(): void {
                 this.app.openDialog("FileDialog", {
@@ -334,10 +345,10 @@ namespace OS {
             /**
              * Get all dirty file handles in the editor
              *
-             * @return {*}  {CodePadFileHandle[]}
-             * @memberof CodePadBaseEditorModel
+             * @return {*}  {EditorFileHandle[]}
+             * @memberof BaseEditorModel
              */
-            dirties(): CodePadFileHandle[] {
+            dirties(): EditorFileHandle[] {
                 const result = [];
                 for (let v of Array.from(this.tabbar.items)) {
                     if (v.dirty) {
@@ -350,7 +361,7 @@ namespace OS {
             /**
              * Context menu handle for the editor
              *
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             set contextmenuHandle(cb: (e: any, m: any) => void) {
                 this.container.contextmenuHandle = cb;
@@ -360,19 +371,18 @@ namespace OS {
             /**
              * Close all opened files
              *
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             closeAll(): void {
                 this.tabbar.items = [];
-                this.setValue("");
-                this.setUndoManager(this.newUndoManager());
+                this.resetEditor();
             }
 
             /**
              * Check whether the editor is dirty
              *
              * @return {*}  {boolean}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             isDirty(): boolean {
                 return this.dirties().length > 0;
@@ -386,7 +396,7 @@ namespace OS {
              * @protected
              * @abstract
              * @param {HTMLElement} el
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             protected abstract editorSetup(el: HTMLElement): void;
 
@@ -399,7 +409,7 @@ namespace OS {
              * @abstract
              * @param {string} evt_str
              * @param {() => void} callback
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract on(evt_str: string, callback: () => void): void;
 
@@ -410,7 +420,7 @@ namespace OS {
              * Should be implemented by subclasses
              *
              * @abstract
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract resize(): void;
 
@@ -421,7 +431,7 @@ namespace OS {
              * Should be implemented by subclasses
              *
              * @abstract
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract focus(): void;
 
@@ -435,7 +445,7 @@ namespace OS {
              * @abstract
              * @param {string} path
              * @return {*}  {GenericObject<any>}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             protected abstract getModeForPath(path: string): GenericObject<any>;
 
@@ -447,7 +457,7 @@ namespace OS {
              *
              * @abstract
              * @return {*}  {GenericObject<any>}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract getEditorStatus(): GenericObject<any>;
 
@@ -459,7 +469,7 @@ namespace OS {
              *
              * @abstract
              * @return {*}  {string}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract getValue(): string;
 
@@ -471,50 +481,9 @@ namespace OS {
              *
              * @abstract
              * @param {string} value
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract setValue(value: string): void;
-
-
-            /**
-             * Get the current editor position
-             * 
-             * Should be implemented by subclasses
-             *
-             * @protected
-             * @abstract
-             * @return {*}  {GenericObject<any>}
-             * @memberof CodePadBaseEditorModel
-             */
-            protected abstract getCursor(): GenericObject<any>;
-
-
-            /**
-             * Create new instance of UndoManager
-             * 
-             * This is specific to each editor, so
-             * it should be implemented by subclasses
-             *
-             * @protected
-             * @abstract
-             * @return {*}  {GenericObject<any>}
-             * @memberof CodePadBaseEditorModel
-             */
-            protected abstract newUndoManager(): GenericObject<any>;
-
-
-            /**
-             * Set the editor UndoManager
-             * 
-             * Should be implemented by subclasses
-             *
-             * @protected
-             * @abstract
-             * @param {GenericObject<any>} um
-             * @memberof CodePadBaseEditorModel
-             */
-            protected abstract setUndoManager(um: GenericObject<any>): void;
-
 
             /**
              * Set the editor language mode
@@ -523,24 +492,54 @@ namespace OS {
              *
              * @abstract
              * @param {GenericObject<any>} m
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract setMode(m: GenericObject<any>): void;
 
 
             /**
-             * Set current editor cursor position
-             * 
-             * Should be implemented by subclasses
+             * Get textModel from the current editor session
              *
              * @protected
              * @abstract
-             * @param {GenericObject<any>} c
-             * @memberof CodePadBaseEditorModel
+             * @return {*}  {*}
+             * @memberof BaseEditorModel
              */
-            protected abstract setCursor(c: GenericObject<any>): void;
+            protected abstract getTexModel(): any;
+            
+
+            /**
+             * Set text model to the current editor session
+             *
+             * @protected
+             * @abstract
+             * @param {*} model
+             * @memberof BaseEditorModel
+             */
+            protected abstract setTextModel(model: any): void;
+            
+
+            /**
+             * Create new text model from the VFS file
+             *
+             * @protected
+             * @abstract
+             * @param {EditorFileHandle} file
+             * @return {*}  {*}
+             * @memberof BaseEditorModel
+             */
+            protected abstract newTextModelFrom(file: EditorFileHandle): any;
 
 
+            /**
+             * Reset the editor
+             *
+             * @protected
+             * @abstract
+             * @memberof BaseEditorModel
+             */
+            protected abstract resetEditor(): void;
+            
             /**
              * Set the current editor theme
              * 
@@ -548,7 +547,7 @@ namespace OS {
              *
              * @abstract
              * @param {string} theme
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract setTheme(theme: string): void;
 
@@ -558,7 +557,7 @@ namespace OS {
              *
              * @abstract
              * @return {*}  {GenericObject<any>[]}
-             * @memberof CodePadBaseEditorModel
+             * @memberof BaseEditorModel
              */
             abstract getModes(): GenericObject<any>[];
         }

@@ -68,7 +68,7 @@ namespace OS {
                     try {
                         await this.build(meta);
                         try {
-                            return this.mkar(
+                            return API.VFS.mkar(
                                 `${meta.root}/build/debug`,
                                 `${meta.root}/build/release/${meta.meta.name}.zip`
                             );
@@ -157,14 +157,16 @@ namespace OS {
                 ["templates/ext-main.tpl", `${rpath}/${name}.coffee`],
                 ["templates/ext-extension.tpl", `${rpath}/extension.json`],
             ];
-            this.mkdirAll(dirs)
+            API.VFS.mkdirAll(dirs)
                 .then(async () => {
                     try {
-                        await this.mkfileAll(files, path, name);
+                        await API.VFS.mktpl(files, this.basedir(), (data)=>{
+                            return data.format(name, `${path}/${name}`);
+                        });
                         this.app.currdir = rpath.asFileHandle();
                         this.app.toggleSideBar();
                         return this.app.eum.active.openFile(
-                            `${rpath}/${name}.coffee`.asFileHandle() as application.CodePadFileHandle
+                            `${rpath}/${name}.coffee`.asFileHandle() as application.EditorFileHandle
                         );
                     } catch (e) {
                         return this.logger().error(
@@ -227,7 +229,7 @@ namespace OS {
                     try {
                         await this.verify(list.map((x: string) => x));
                         try {
-                            const code = await this.cat(list, "");
+                            const code = await API.VFS.cat(list, "");
                             const jsrc = CoffeeScript.compile(code);
                             this.logger().info(__("Compiled successful"));
                             return resolve(jsrc);
@@ -257,7 +259,7 @@ namespace OS {
                     const src = await this.compile(meta);
                     let v: string;
                     try {
-                        const jsrc = await this.cat(
+                        const jsrc = await API.VFS.cat(
                             (() => {
                                 const result = [];
                                 for (v of meta.javascripts) {
@@ -283,7 +285,7 @@ namespace OS {
                                 .then((data) => r(data))
                                 .catch((ex_1) => e(__e(ex_1)))
                         );
-                        await this.copy(
+                        await API.VFS.copy(
                             (() => {
                                 const result1 = [];
                                 for (v of meta.copies) {
@@ -503,7 +505,7 @@ namespace OS {
                                             }
                                         }
                                         if (dir.length > 0) {
-                                            this.mkdirAll(dir)
+                                            API.VFS.mkdirAll(dir)
                                                 .then(() => {
                                                     this.installExtension(
                                                         files,

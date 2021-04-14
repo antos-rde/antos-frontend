@@ -7,41 +7,121 @@ namespace OS {
          * Wrapper model for the ACE text editor
          *
          * @export
-         * @class CodePadACEModel
-         * @extends {CodePadBaseEditorModel}
+         * @class ACEModel
+         * @extends {BaseEditorModel}
          */
-        export class CodePadACEModel extends CodePadBaseEditorModel {
+        export class ACEModel extends BaseEditorModel {
+
+            /**
+             * Current editor mode
+             *
+             * @private
+             * @type {GenericObject<any>}
+             * @memberof ACEModel
+             */
+            private mode: GenericObject<any>;
 
             /**
              * Reference to ACE language modes
              *
              * @private
              * @type {GenericObject<any>}
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             private modes: GenericObject<any>;
 
 
             /**
-             * Creates an instance of CodePadACEModel.
-             * @param {CodePad} app CodePad instance
+             * Creates an instance of ACEModel.
+             * @param {ACEModel} app  instance
              * @param {GUI.tag.TabBarTag} tabbar tabbar element
              * @param {HTMLElement} editorarea main editor container element
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
-            constructor(app: CodePad, tabbar: GUI.tag.TabBarTag, editorarea: HTMLElement) {
+            constructor(app: BaseApplication, tabbar: GUI.tag.TabBarTag, editorarea: HTMLElement) {
                 ace.config.set("basePath", "scripts/ace");
                 ace.require("ace/ext/language_tools");
                 super(app, tabbar, editorarea);
                 this.modes = ace.require("ace/ext/modelist");
             }
 
+            /**
+             * Reset the editor
+             *
+             * @protected
+             * @memberof ACEModel
+             */
+            protected resetEditor(): void {
+                this.setValue("");
+                this.editor.getSession().setUndoManager(new ace.UndoManager());
+            }
+
+
+            /**
+             * Get a text model from the current editor session
+             *
+             * @protected
+             * @return {*} 
+             * @memberof ACEModel
+             */
+            protected getTexModel() {
+                const textModel = {} as any;
+                textModel.cursor = this.editor.getCursorPosition();
+                textModel.cache = this.getValue();
+                textModel.um = this.editor.session.getUndoManager();
+                textModel.langmode = this.mode;
+                return textModel;
+            }
+
+
+            /**
+             * Set text model to current editor session
+             *
+             * @protected
+             * @param {*} model
+             * @memberof ACEModel
+             */
+            protected setTextModel(model: any): void {
+                this.editor.getSession().setUndoManager(new ace.UndoManager());
+                this.setValue(model.cache);
+                this.setMode(model.langmode);
+
+                if (model.cursor) {
+                    this.setCursor(model.cursor);
+                }
+                this.editor.getSession().setUndoManager(model.um);
+            }
+
+
+            /**
+             * Create new editor model from file
+             *
+             * @protected
+             * @param {EditorFileHandle} file
+             * @return {*}  {*}
+             * @memberof ACEModel
+             */
+            protected newTextModelFrom(file: EditorFileHandle): any {
+                const textModel = {} as any;
+                textModel.um =  new ace.UndoManager();
+                textModel.cache = file.cache;
+                textModel.cursor = undefined;
+                if (file.path.toString() !== "Untitled") {
+                    textModel.langmode = this.getModeForPath(file.path);
+                } else {
+                    textModel.langmode = {
+                        text: "Text",
+                        mode: "ace/mode/text",
+                    };
+                }
+                return textModel;
+            }
 
             /**
              * Get language modes
              *
              * @return {*}  {GenericObject<any>[]}
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             getModes(): GenericObject<any>[] {
                 const list = [];
@@ -57,33 +137,20 @@ namespace OS {
              * Set the editor theme
              *
              * @param {string} theme theme name
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             setTheme(theme: string): void {
                 this.editor.setTheme(theme);
             }
 
-
-            /**
-             * Set the editor undo manager
-             *
-             * @protected
-             * @param {GenericObject<any>} um
-             * @memberof CodePadACEModel
-             */
-            protected setUndoManager(um: GenericObject<any>): void {
-                this.editor.getSession().setUndoManager(um);
-            }
-
-
             /**
              * Set the editor cursor
              *
-             * @protected
+             * @private
              * @param {GenericObject<any>} c cursor option
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
-            protected setCursor(c: GenericObject<any>): void {
+            private setCursor(c: GenericObject<any>): void {
                 this.editor.renderer.scrollCursorIntoView(
                     {
                         row: c.row,
@@ -110,43 +177,21 @@ namespace OS {
              * ```
              * 
              * @param {GenericObject<any>} m language mode object
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             setMode(m: GenericObject<any>): void {
-                this.currfile.langmode = m;
+                this.mode = m;
                 this.editor.getSession().setMode(m.mode);
             }
 
 
-            /**
-             * Get current editor cursor position
-             *
-             * @protected
-             * @return {*}  {GenericObject<any>}
-             * @memberof CodePadACEModel
-             */
-            protected getCursor(): GenericObject<any> {
-                return this.editor.getCursorPosition();
-            }
-
-
-            /**
-             * create a new UndoManage instance
-             *
-             * @protected
-             * @return {*}  {GenericObject<any>}
-             * @memberof CodePadACEModel
-             */
-            protected newUndoManager(): GenericObject<any> {
-                return new ace.UndoManager();
-            }
 
             /**
              * Reference to the editor instance
              *
              * @protected
              * @type {GenericObject<any>}
-             * @memberof CodePad
+             * @memberof ACEModel
              */
             protected editor: GenericObject<any>;
 
@@ -156,7 +201,7 @@ namespace OS {
              *
              * @protected
              * @param {HTMLElement} el editor container DOM
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             protected editorSetup(el: HTMLElement): void {
                 this.editor = ace.edit(el);
@@ -191,7 +236,7 @@ namespace OS {
              *
              * @param {string} evt_str event name
              * @param {() => void} callback callback function
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             on(evt_str: string, callback: () => void): void {
                 switch (evt_str) {
@@ -213,7 +258,7 @@ namespace OS {
             /**
              * Resize the editor
              *
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             resize(): void {
                 this.editor.resize();
@@ -223,7 +268,7 @@ namespace OS {
             /**
              * Focus on the editor
              *
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             focus(): void {
                 this.editor.focus();
@@ -236,9 +281,9 @@ namespace OS {
              * @protected
              * @param {string} path
              * @return {*}  {GenericObject<any>}
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
-            protected getModeForPath(path: string): GenericObject<any> {
+             protected getModeForPath(path: string): GenericObject<any> {
                 const m = this.modes.getModeForPath(path);
                 return {
                     text: m.caption,
@@ -250,7 +295,7 @@ namespace OS {
              * Get the editor status
              *
              * @return {*}  {GenericObject<any>}
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             getEditorStatus(): GenericObject<any> {
                 const c = this.editor.session.selection.getCursor();
@@ -259,7 +304,7 @@ namespace OS {
                     row: c.row,
                     column: c.column,
                     line: l,
-                    langmode: this.currfile.langmode,
+                    langmode: this.mode,
                     file: this.currfile.path
                 }
             }
@@ -269,7 +314,7 @@ namespace OS {
              * Get editor value
              *
              * @return {*}  {string}
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             getValue(): string {
                 return this.editor.getValue();
@@ -280,7 +325,7 @@ namespace OS {
              * Set editor value
              *
              * @param {string} value
-             * @memberof CodePadACEModel
+             * @memberof ACEModel
              */
             setValue(value: string): void {
                 this.editor.setValue(value, -1);
