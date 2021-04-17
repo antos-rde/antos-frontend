@@ -356,7 +356,7 @@ namespace OS {
                         return;
                     }
                     this.genealogy = re.split("/").filter(s=> s!="");
-                    this.path = this.genealogy.join("/");
+                    this.path = `${this.protocol}://${this.genealogy.join("/")}`;
                     if (!this.isRoot()) {
                         this.basename = this.genealogy[
                             this.genealogy.length - 1
