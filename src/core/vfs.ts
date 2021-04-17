@@ -355,7 +355,8 @@ namespace OS {
                     if (re === "") {
                         return;
                     }
-                    this.genealogy = re.split("/");
+                    this.genealogy = re.split("/").filter(s=> s!="");
+                    this.path = this.genealogy.join("/");
                     if (!this.isRoot()) {
                         this.basename = this.genealogy[
                             this.genealogy.length - 1
