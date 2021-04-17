@@ -1770,9 +1770,7 @@ namespace OS {
              * - array: the result will be an Array of bytes (numbers between 0 and 255).
              * - uint8array : the result will be a Uint8Array. This requires a compatible browser.
              * - arraybuffer : the result will be a ArrayBuffer. This requires a compatible browser.
-             * - blob : the result will be a Blob. This requires a compatible browser.
-             * - nodebuffer : the result will be a nodejs Buffer. This requires nodejs.
-             * 
+             * - blob : the result will be a Blob. This requires a compatible browser.             * 
              * If file_name is not specified, the first file_name in the zip archive will be read
              * @export
              * @param {string} file zip file
@@ -1784,91 +1782,65 @@ namespace OS {
                 return new Promise(async (resolve, reject) => {
                     try {
                         await API.requires("os://scripts/jszip.min.js");
-                        try {
-                            const data = await file.asFileHandle().read("binary");
-                            try {
-                                const zip = await JSZip.loadAsync(data);
-                                if (!file_name) {
-                                    for (let name in zip.files) {
-                                        file_name = name;
-                                        break;
-                                    }
-                                }
-
-                                try {
-                                    const udata = await zip.file(file_name).async(type);
-                                    resolve(udata);
-                                } catch (e_2) {
-                                    return reject(__e(e_2));
-                                }
-                            } catch (e_1) {
-                                return reject(__e(e_1));
+                        const data = await file.asFileHandle().read("binary");
+                        const zip = await JSZip.loadAsync(data);
+                        if (!file_name) {
+                            for (let name in zip.files) {
+                                file_name = name;
+                                break;
                             }
-                        } catch (e) {
-                            return reject(__e(e));
                         }
-                    } catch (e_3) {
-                        return reject(__e(e_3));
+                        const udata = await zip.file(file_name).async(type);
+                        resolve(udata);
+                    } catch (e) {
+                        return reject(__e(e));
                     }
-
                 });
             }
 
 
             /**
-             * Cat al file to a single out-put
+             * Cat all files to a single out-put
              *
              * @export
              * @param {string[]} list list of VFS files
              * @param {string} data input data string that will be cat to the files content
+             * @param {string} join_by join on files content by this string
              * @return {*}  {Promise<string>}
              */
-            export function cat(list: string[], data: string): Promise<string> {
-                return new Promise((resolve, reject) => {
+            export function cat(list: string[], data: string, join_by: string = "\n"): Promise<string> {
+                return new Promise(async (resolve, reject) => {
                     if (list.length === 0) {
                         return resolve(data);
                     }
-                    const file = list.splice(0, 1)[0].asFileHandle();
-                    return file
-                        .read()
-                        .then((text: string) => {
-                            data = data + "\n" + text;
-                            return cat(list, data)
-                                .then((d) => resolve(d))
-                                .catch((e) => reject(__e(e)));
-                        })
-                        .catch((e: Error) => reject(__e(e)));
+                    const promises = [];
+                    for (const file of list) {
+                        promises.push(file.asFileHandle().read("text"));
+                    }
+                    try {
+                        const results = await Promise.all(promises);
+                        resolve(`${data}${join_by}${results.join(join_by)}`);
+                    } catch (error) {
+                        reject(__e(error));
+                    }
                 });
             }
 
 
             /**
-             * Read all files content to on the list
+             * Read all files content on the list
              *
              * @export
              * @param {string[]} list list of VFS files
              * @param {GenericObject<string>[]} contents content array
-             * @return {*}  {Promise<GenericObject<string>[]>}
+             * @return {void}
              */
-            export function read_files(list: string[], contents: GenericObject<string>[]): Promise<GenericObject<string>[]> {
-                return new Promise((resolve, reject) => {
-                    if (list.length === 0) {
-                        return resolve(contents);
-                    }
-                    const file = list.splice(0, 1)[0].asFileHandle();
-                    return file
-                        .read()
-                        .then((text: string) => {
-                            contents.push({
-                                path: file.path,
-                                content: text
-                            });
-                            return read_files(list, contents)
-                                .then((d) => resolve(d))
-                                .catch((e) => reject(__e(e)));
-                        })
-                        .catch((e: Error) => reject(__e(e)));
-                });
+            export function read_files(list: string[]): Promise<GenericObject<string>[]> {
+                const promises = [];
+                for (const file of list) {
+                    promises.push(file.asFileHandle().read("text"));
+                }
+                return Promise.all(promises);
             }
 
 
@@ -1878,71 +1850,45 @@ namespace OS {
              * @export
              * @param {string[]} files list of files
              * @param {string} to destination folder
-             * @return {*}  {Promise<void>}
+             * @return {*}  {Promise<any[]>}
              */
-            export function copy(files: string[], to: string): Promise<void> {
-                return new Promise((resolve, reject) => {
-                    if (files.length === 0) {
-                        return resolve();
-                    }
-                    const file = files.splice(0, 1)[0].asFileHandle();
-                    const tof = `${to}/${file.basename}`.asFileHandle();
-                    return file
-                        .onready()
-                        .then((meta: { type: string }) => {
+            export function copy(files: string[], to: string): Promise<any[]> {
+                const promises = [];
+                for (const path of files) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        try {
+                            const file = path.asFileHandle();
+                            const tof = `${to}/${file.basename}`.asFileHandle();
+                            const meta = await file.onready();
                             if (meta.type === "dir") {
-                                // copy directory
                                 const desdir = to.asFileHandle();
-                                return desdir
-                                    .mk(file.basename)
-                                    .then(() => {
-                                        // read the dir content
-                                        return file
-                                            .read()
-                                            .then((data: API.RequestResult) => {
-                                                const list = (data.result as API.FileInfoType[]).map(
-                                                    (v) => v.path
-                                                );
-                                                return copy(
-                                                    list,
-                                                    `${desdir.path}/${file.basename}`
-                                                )
-                                                    .then(() => {
-                                                        return copy(files, to)
-                                                            .then(() => resolve())
-                                                            .catch((e) =>
-                                                                reject(__e(e))
-                                                            );
-                                                    })
-                                                    .catch((e) => reject(__e(e)));
-                                            })
-                                            .catch((e: Error) => reject(__e(e)));
-                                    })
-                                    .catch((e: Error) => reject(__e(e)));
-                            } else {
-                                // copy file
-                                return file
-                                    .read("binary")
-                                    .then(async (data: ArrayBuffer) => {
-                                        const d = await tof
-                                            .setCache(
-                                                new Blob([data], {
-                                                    type: file.info.mime,
-                                                })
-                                            )
-                                            .write(file.info.mime);
-                                        try {
-                                            await copy(files, to);
-                                            return resolve();
-                                        } catch (e) {
-                                            return reject(__e(e));
-                                        }
-                                    })
-                                    .catch((e: Error) => reject(__e(e)));
+                                await desdir.mk(file.basename);
+                                const ret = await file.read();
+                                const files = ret.result.map((v: API.FileInfoType) => v.path);
+                                if (files.length > 0) {
+                                    await copy(files, `${desdir.path}/${file.basename}`);
+                                    resolve(undefined);
+                                }
+                                else {
+                                    resolve(undefined);
+                                }
                             }
-                        })
-                        .catch((e: Error) => reject(__e(e)));
-                });
+                            else {
+                                const content = await file.read("binary");
+                                await tof
+                                    .setCache(
+                                        new Blob([content], {
+                                            type: file.info.mime,
+                                        }))
+                                    .write(file.info.mime);
+                                resolve(undefined);
+                            }
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
             }
 
             /**
@@ -1954,69 +1900,38 @@ namespace OS {
              * @return {*}  {Promise<any>}
              */
             function aradd(list: string[], zip: any, base: string): Promise<any> {
-                return new Promise((resolve, reject) => {
-                    if (list.length === 0) {
-                        return resolve(zip);
-                    }
-                    const path = list.splice(0, 1)[0];
-                    const file = path.asFileHandle();
-                    return file
-                        .onready()
-                        .then((meta: { type: string }) => {
-                            if (meta.type === "dir") {
-                                return file
-                                    .read()
-                                    .then(
-                                        (d: {
-                                            result:
-                                            | Iterable<unknown>
-                                            | ArrayLike<unknown>;
-                                        }) => {
-                                            const l = (d.result as API.FileInfoType[]).map(
-                                                (v) => v.path
-                                            );
-                                            return aradd(
-                                                l,
-                                                zip,
-                                                `${base}${file.basename}/`
-                                            )
-                                                .then(() => {
-                                                    return aradd(
-                                                        list,
-                                                        zip,
-                                                        base
-                                                    )
-                                                        .then(() => resolve(zip))
-                                                        .catch((e) =>
-                                                            reject(__e(e))
-                                                        );
-                                                })
-                                                .catch((e) => reject(__e(e)));
-                                        }
-                                    )
-                                    .catch((e: Error) => reject(__e(e)));
-                            } else {
-                                return file
-                                    .read("binary")
-                                    .then(async (d: any) => {
-                                        const zpath = `${base}${file.basename}`.replace(
-                                            /^\/+|\/+$/g,
-                                            ""
-                                        );
-                                        zip.file(zpath, d, { binary: true });
-                                        try {
-                                            await aradd(list, zip, base);
-                                            return resolve(zip);
-                                        }
-                                        catch (e) {
-                                            return reject(__e(e));
-                                        }
-                                    })
-                                    .catch((e: Error) => reject(__e(e)));
+                const promises = [];
+                for (const path of list) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        const file = path.asFileHandle();
+                        try {
+                            const meta = await file.asFileHandle().onready();
+                            if (meta.type == "dir") {
+                                const ret = await file.read();
+                                const dirs: string[] = ret.result.map((v: API.FileInfoType) => v.path);
+                                if (dirs.length > 0) {
+                                    await aradd(dirs, zip, `${base}${file.basename}/`);
+                                    resolve(undefined);
+                                }
+                                else {
+                                    resolve(undefined);
+                                }
                             }
-                        })
-                        .catch((e: Error) => reject(__e(e)));
-                });
+                            else {
+                                const u_data = await file.read("binary");
+                                const z_path = `${base}${file.basename}`.replace(
+                                    /^\/+|\/+$/g,
+                                    ""
+                                );
+                                zip.file(z_path, u_data, { binary: true });
+                                resolve(undefined);
+                            }
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
             }
 
 
@@ -2024,57 +1939,36 @@ namespace OS {
              * Create a zip archive from a folder
              *
              * @export
-             * @param {string} src source folder
+             * @param {string} src source file/folder
              * @param {string} dest destination archive
              * @return {*}  {Promise<void>}
              */
             export function mkar(src: string, dest: string): Promise<void> {
-                return new Promise((resolve, reject) => {
-                    return new Promise(async (r, e) => {
-                        try {
-                            await API.requires("os://scripts/jszip.min.js");
-                            try {
-                                const d = await src.asFileHandle().read();
-                                return r(d.result);
-                            } catch (ex) {
-                                return e(__e(ex));
-                            }
-                        } catch (ex_1) {
-                            return e(__e(ex_1));
+                console.log(src, dest);
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        const zip = new JSZip();
+                        const fhd =  src.asFileHandle();
+                        const meta = await fhd.onready();
+                        if(meta.type === "file")
+                        {
+                            await aradd([src], zip, "/");
                         }
-                    })
-                        .then((files: API.FileInfoType[]) => {
-                            return new Promise(async (r, e) => {
-                                const zip = new JSZip();
-                                try {
-                                    const z = await aradd(
-                                        files.map((v: { path: any }) => v.path),
-                                        zip,
-                                        "/"
-                                    );
-                                    return r(z);
-                                } catch (ex) {
-                                    return e(__e(ex));
-                                }
-                            });
-                        })
-                        .then((zip: any) => {
-                            return zip
-                                .generateAsync({ type: "base64" })
-                                .then((data: string) => {
-                                    return dest
-                                        .asFileHandle()
-                                        .setCache(
-                                            "data:application/zip;base64," + data
-                                        )
-                                        .write("base64")
-                                        .then((r: any) => {
-                                            resolve();
-                                        })
-                                        .catch((e: Error) => reject(__e(e)));
-                                });
-                        })
-                        .catch((e) => reject(__e(e)));
+                        else
+                        {
+                            const ret = await fhd.read();
+                            await aradd(
+                                ret.result.map((v: API.FileInfoType) => v.path), zip, "/");
+                        }
+                        const z_data = await zip.generateAsync({ type: "base64" });
+                        await dest.asFileHandle()
+                            .setCache("data:application/zip;base64," + z_data)
+                            .write("base64");
+                        resolve();
+                    } catch (error) {
+                        reject(__e(error));
+                    }
                 });
             }
 
@@ -2083,35 +1977,105 @@ namespace OS {
              *
              * @export
              * @param {string[]} list of directories to be created
-             * @return {*}  {Promise<void>}
+             * @param {boolen} sync sync/async of directory creation
+             * @return {*}  {Promise<any>}
              */
-            export function mkdirAll(list: string[]): Promise<void> {
-                return new Promise((resolve, reject) => {
-                    if (list.length === 0) {
-                        return resolve();
+            export function mkdirAll(list: string[], sync?: boolean): Promise<any> {
+                if (!sync) {
+                    const promises = [];
+                    for (const dir of list) {
+                        const path = dir.asFileHandle()
+                        promises.push(path.parent().mk(path.basename));
                     }
-                    const path = list.splice(0, 1)[0].asFileHandle();
-                    return path
-                        .parent()
-                        .mk(path.basename)
-                        .then((d: any) => {
-                            return mkdirAll(list)
-                                .then(() => resolve())
-                                .catch((e) => reject(__e(e)));
-                        })
-                        .catch((e: Error) => reject(__e(e)));
-                });
+                    return Promise.all(promises);
+                }
+                else {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            if (list.length === 0) {
+                                return resolve(true);
+                            }
+                            const dir = list.splice(0, 1)[0].asFileHandle();
+                            const path = dir.parent();
+                            const dname = dir.basename;
+                            const r = await path.asFileHandle().mk(dname);
+                            if (r.error) {
+                                return reject(
+                                    this._api.throwe(
+                                        __(
+                                            "Cannot create {0}",
+                                            `${path}/${dir}`
+                                        )
+                                    )
+                                );
+                            }
+                            await mkdirAll(list, sync);
+                            resolve(true);
+                        }
+                        catch (e) {
+                            reject(__e(e));
+                        }
+                    });
+                }
             }
 
+
+
             /**
-             * 
              *
-             * @export
-             * @param {Array<string[]>} list of templates mapping files
-             * @param {string} path path stored create files
-             * @param {string} name
+             *
+             * @export Extract a zip fle
+             * @param {string} zfile zip file to extract
+             * @param {(zip:any) => Promise<string>} [dest_callback] a callback to get extraction destination
              * @return {*}  {Promise<void>}
              */
+            export function extractZip(zfile: string | API.VFS.BaseFileHandle, dest_callback: (zip: any) => Promise<string>): Promise<void> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        const data = await zfile.asFileHandle().read("binary");
+                        const zip = await JSZip.loadAsync(data);
+                        const to = await dest_callback(zip);
+                        const dirs = [];
+                        const files = [];
+                        for (const name in zip.files) {
+                            const file = zip.files[name];
+                            if (file.dir) {
+                                dirs.push(to + "/" + name);
+                            } else {
+                                files.push(name);
+                            }
+                        }
+                        await mkdirAll(dirs, true);
+                        const promises = [];
+                        for (const file of files) {
+                            promises.push(new Promise(async (res, rej) => {
+                                try {
+                                    const data = await zip.file(file).async("uint8array");
+                                    const path = `${to}/${file}`;
+                                    const fp = path.asFileHandle();
+                                    fp.cache = new Blob([data], { type: "octet/stream" });
+                                    const r = await fp.write("text/plain");
+                                    if (r.error) {
+                                        return rej(
+                                            API.throwe(
+                                                __("Cannot extract file to {0}", path)
+                                            )
+                                        );
+                                    }
+                                    return resolve(res(path));
+                                } catch (error) {
+                                    rej(__e(error));
+                                }
+                            }));
+                        }
+                        await Promise.all(promises);
+                        resolve();
+                    } catch (e) {
+                        return reject(__e(e));
+                    }
+                });
+            }
 
             /**
              * Make files from a set of template files
@@ -2120,35 +2084,28 @@ namespace OS {
              * @param {Array<string[]>} list mapping paths between templates files and created files
              * @param {string} path files destination
              * @param {(data: string) => string} callback: pre-processing files content before writing to destination files
-             * @return {*}  {Promise<void>}
+             * @return {*}  {Promise<any[]>}
              */
             export function mktpl(
                 list: Array<string[]>,
                 path: string,
                 callback: (data: string) => string
-            ): Promise<void> {
-                return new Promise((resolve, reject) => {
-                    if (list.length === 0) {
-                        return resolve();
-                    }
-                    const item = list.splice(0, 1)[0];
-                    return `${path}/${item[0]}`
-                        .asFileHandle()
-                        .read()
-                        .then((data) => {
-                            const file = item[1].asFileHandle();
-                            return file
-                                .setCache(callback(data))
-                                .write("text/plain")
-                                .then(() => {
-                                    return mktpl(list, path, callback)
-                                        .then(() => resolve())
-                                        .catch((e) => reject(__e(e)));
-                                })
-                                .catch((e: Error) => reject(__e(e)));
-                        })
-                        .catch((e) => reject(__e(e)));
-                });
+            ): Promise<any[]> {
+                const promises = [];
+                for (const tpl of list) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        try {
+                            const data = await `${path}/${tpl[0]}`.asFileHandle().read();
+                            const file = tpl[1].asFileHandle();
+                            file.setCache(callback(data));
+                            await file.write("text/plain");
+                            resolve(undefined);
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
             }
         }
     }

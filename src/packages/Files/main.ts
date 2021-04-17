@@ -87,8 +87,7 @@ namespace OS {
                             iconclass: v.iconclass,
                         });
                     }
-
-                    m.items = [
+                    let ctx_menu = [
                         {
                             text: "__(Open with)",
                             nodes: apps,
@@ -103,6 +102,75 @@ namespace OS {
                         this.mnFile(),
                         this.mnEdit(),
                     ];
+                    if(file.mime === "application/zip")
+                    {
+                        ctx_menu = ctx_menu.concat([
+                            {
+                                text: "__(Extract Here)",
+                                onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    if (!e) {
+                                        return;
+                                    }
+                                    API.VFS.extractZip(file.path,
+                                        (z) => new Promise((r,e) => r(file.path.asFileHandle().parent().path)))
+                                    .catch((err) => this.error(__("Unable to extract file"), err));
+                                },
+                            },
+                            {
+                                text: "__(Extract to)",
+                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    if (!e) {
+                                        return;
+                                    }
+                                    try {
+                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                        const d = await this.openDialog("FileDialog", {
+                                            title: __("Select extract destination"),
+                                            type: "dir",
+                                            file: file.path.replace(".zip","").asFileHandle()
+                                        });
+                                        const path = `${d.file.path}/${d.name}`;
+                                        await API.VFS.mkdirAll([path]);
+                                        await API.VFS.extractZip(file.path,
+                                            (z) => new Promise((r,e) => r(path)));
+                                    } catch (error) {
+                                        this.error(__("Unable to extract file"), error);
+                                    }
+                                },
+                            },
+                        ]);
+                    }
+                    else
+                    {
+                        ctx_menu.push(
+                            {
+                                text: "__(Compress)",
+                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    if (!e) {
+                                        return;
+                                    }
+                                    try {
+                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                        const d = await this.openDialog("FileDialog", {
+                                            title: __("Save compressed file to"),
+                                            type: "dir",
+                                            file: `${this.currdir.path}/${file.name}.zip`.asFileHandle()
+                                        });
+                                        if(d.name.trim() === "")
+                                        {
+                                            return this.error(__("Invalid file name"));
+                                        }
+                                        const path = `${d.file.path}/${d.name}`;
+                                        await API.VFS.mkar(file.path, path);
+                                        this.notify(__("Archive file created: {0}",path ));
+                                    } catch (error) {
+                                        this.error(__("Unable to compress file, folder"), error);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    m.items = ctx_menu;
                     m.show(e);
                 };
 
@@ -546,7 +614,7 @@ namespace OS {
                         return this.notify(__("File {0} cut", file.filename));
 
                     case `${this.name}-copy`:
-                        if (!file && file.type !== "dir") {
+                        if (!file) {
                             return;
                         }
                         this.clipboard = {
@@ -579,30 +647,12 @@ namespace OS {
                                     );
                                 });
                         } else {
-                            this.clipboard.file
-                                .read("binary")
-                                .then(async (d) => {
-                                    const blob = new Blob([d], {
-                                        type: this.clipboard.file.info.mime,
-                                    });
-                                    const fp = `${this.currdir.path}/${this.clipboard.file.basename}`.asFileHandle();
-                                    fp.cache = blob;
-                                    try {
-                                        const r = await fp.write(this.clipboard.file.info.mime);
-                                        return (this.clipboard = undefined);
-                                    }
-                                    catch (e) {
-                                        return this.error(__("Fail to paste: {0}", this.clipboard.file.path), e);
-                                    }
+                            API.VFS.copy([this.clipboard.file.path],this.currdir.path)
+                                .then(() => {
+                                    return (this.clipboard = undefined);
                                 })
                                 .catch((e) => {
-                                    return this.error(
-                                        __(
-                                            "Fail to read: {0}",
-                                            this.clipboard.file.path
-                                        ),
-                                        e
-                                    );
+                                    return this.error(__("Fail to paste: {0}", this.clipboard.file.path), e);
                                 });
                         }
                         break;

@@ -1,12 +1,12 @@
 {
     "app":"MarketPlace",
-    "name":"Application store",
+    "name":"AntOS Application store",
     "description":"Application store",
     "info":{
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.2.2-a",
+    "version":"0.2.3-a",
     "category":"System",
     "iconclass":"fa  fa-shopping-bag",
     "mimes":["none"],

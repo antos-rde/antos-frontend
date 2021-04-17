@@ -68,19 +68,15 @@ namespace OS {
                 };
 
                 this.btinstall.onbtclick = async () => {
-                    if (this.btinstall.data.dirty) {
-                        try {
+                    try {
+                        if (this.btinstall.data.dirty) {
                             await this.updatePackage();
                             return this.notify(__("Package updated"));
-                        } catch (e) {
-                            return this.error(e.toString(), e);
                         }
-                    }
-                    try {
                         const n = await this.remoteInstall();
                         return this.notify(__("Package installed: {0}", n));
-                    } catch (e_1) {
-                        return this.error(e_1.toString(), e_1);
+                    } catch (error) {
+                        return this.error(error.toString(), error);
                     }
                 };
 
@@ -466,40 +462,19 @@ namespace OS {
                         return reject(this._api.throwe(__("Unable to find package: {0}", pkgname)));
                     }
                     try {
-                        const data = await this._api.blob(
-                            meta.download + "?_=" + new Date().getTime()
-                        );
-                        try {
-                            const n = await this.install(data, meta);
-                            return resolve(meta);
-                        } catch (e) {
-                            return reject(__e(e));
-                        }
+                        const n = await this.install(meta.download + "?_=" + new Date().getTime(), meta);
+                        return resolve(meta);
                     } catch (e_1) {
                         return reject(__e(e_1));
                     }
                 });
             }
             private bulkInstall(list: string[]): Promise<any> {
-                return new Promise((resolve, reject) => {
-                    if (list.length == 0) {
-                        return resolve(true);
-                    }
-                    const pkgname = list.splice(0, 1)[0];
-                    this.installPkg(pkgname)
-                        .then((_meta) => {
-                            this.bulkInstall(list)
-                                .then((b) => {
-                                    resolve(b);
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                })
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        })
-                });
+                const promises = [];
+                for (let pkgname of list) {
+                    promises.push(this.installPkg(pkgname));
+                }
+                return Promise.all(promises);
             }
             private remoteInstall(): Promise<string> {
                 const el = this.applist.selectedItem;
@@ -512,175 +487,130 @@ namespace OS {
                 }
                 // get blob file
                 return new Promise(async (resolve, reject) => {
-                    let pkgname = `${el.data.pkgname}@${el.data.version}`;
-                    const dep = this.checkDependencies(pkgname);
-                    if (dep.notfound.size != 0) {
-                        return this.openDialog("TextDialog", {
-                            disable: true,
-                            title: __("Unresolved dependencies"),
-                            value: __(
-                                "Unable to install: The package `{0}` depends on these packages, but they are not found:\n{1}",
-                                pkgname,
-                                [...dep.notfound].join("\n")
-                            )
-                        })
-                            .then((_v) => {
-                                reject(__("Unresolved dependencies on: {0}", pkgname))
+                    try {
+                        let pkgname = `${el.data.pkgname}@${el.data.version}`;
+                        const dep = this.checkDependencies(pkgname);
+                        if (dep.notfound.size != 0) {
+                            this.openDialog("TextDialog", {
+                                disable: true,
+                                title: __("Unresolved dependencies"),
+                                value: __(
+                                    "Unable to install: The package `{0}` depends on these packages, but they are not found:\n{1}",
+                                    pkgname,
+                                    [...dep.notfound].join("\n")
+                                )
                             });
+                            return reject(__("Unresolved dependencies on: {0}", pkgname));
+                        }
+                        const t = await this.openDialog("TextDialog", {
+                            title: __("Confirm install"),
+                            disable: true,
+                            value: __(
+                                "Please confirm the following operation:\n\n{0} packages will be removed:\n\n{1}\n\n{2} packages will be installed:\n\n{3}",
+                                dep.uninstall.size.toString(),
+                                [...dep.uninstall].join("\n"),
+                                dep.install.size.toString(),
+                                [...dep.install].join("\n")
+                            )
+                        });
+                        if (!t) return;
+                        await this.bulkUninstall([...dep.uninstall]);
+                        const metas = await this.bulkInstall([...dep.install]);
+                        this.appDetail(metas.pop());
+                        resolve(pkgname);
+                    } catch (error) {
+                        reject(__e(error));
                     }
-                    this.openDialog("TextDialog", {
-                        title: __("Confirm install"),
-                        disable: true,
-                        value: __(
-                            "Please confirm the following operation:\n\n{0} packages will be removed:\n\n{1}\n\n{2} packages will be installed:\n\n{3}",
-                            dep.uninstall.size.toString(),
-                            [...dep.uninstall].join("\n"),
-                            dep.install.size.toString(),
-                            [...dep.install].join("\n")
-                        )
-                    }).then((_v) => {
-                        this.bulkUninstall([...dep.uninstall])
-                            .then((_b) => {
-                                this.bulkInstall([...dep.install])
-                                    .then((_b1) => {
-                                        resolve(pkgname);
-                                    })
-                                    .catch((e1) => {
-                                        reject(e1);
-                                    })
-                            })
-                            .catch((e2) => {
-                                reject(e2);
-                            })
-                    })
                 });
             }
 
             private localInstall(): Promise<string> {
-                return new Promise((resolve, reject) => {
-                    return this.openDialog("FileDialog", {
-                        title: "__(Select package archive)",
-                        mimes: [".*/zip"],
-                    }).then((d) => {
-                        return d.file.path
-                            .asFileHandle()
-                            .read("binary")
-                            .then((data: Uint8Array) => {
-                                return this.install(data)
-                                    .then((n) => {
-                                        const apps = this.applist.data.map(
-                                            (v) => v.pkgname
-                                        );
-                                        const idx = apps.indexOf(n);
-                                        if (idx >= 0) {
-                                            this.applist.selected = idx;
-                                        }
-                                        return resolve(n);
-                                    })
-                                    .catch((e: Error) => reject(__e(e)))
-                                    .catch((e: Error) => reject(__e(e)));
-                            })
-                            .catch((e: Error) => reject(__e(e)));
-                    });
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const d = await this.openDialog("FileDialog", {
+                            title: "__(Select package archive)",
+                            mimes: [".*/zip"],
+                        });
+                        const n = await this.install(d.file.path);
+                        const apps = this.applist.data.map(
+                            (v) => v.pkgname
+                        );
+                        const idx = apps.indexOf(n);
+                        if (idx >= 0) {
+                            this.applist.selected = idx;
+                        }
+                        return resolve(n.name);
+                    } catch (error) {
+                        reject(__e(error));
+                    }
                 });
             }
 
             private install(
-                data: ArrayBuffer,
+                zfile: string,
                 meta?: GenericObject<any>
-            ): Promise<string> {
-                return new Promise((resolve, reject) => {
-                    return JSZip.loadAsync(data)
-                        .then((zip: any) => {
-                            return zip
-                                .file("package.json")
-                                .async("string")
-                                .then((d: string) => {
-                                    let name: string;
-                                    const v = JSON.parse(d);
-                                    const pth = `${this.installdir}/${v.pkgname ? v.pkgname : v.app}`;
-                                    const dir = [pth];
-                                    const files = [];
-                                    for (name in zip.files) {
-                                        const file = zip.files[name];
-                                        if (file.dir) {
-                                            dir.push(pth + "/" + name);
-                                        } else {
-                                            files.push(name);
-                                        }
-                                    }
-                                    // create all directory
-                                    return this.mkdirs(dir)
-                                        .then(() => {
-                                            return this.installFile(
-                                                v.pkgname ? v.pkgname : v.app,
-                                                zip,
-                                                files
-                                            )
-                                                .then(() => {
-                                                    const app_meta = {
-                                                        pkgname: v.pkgname ? v.pkgname : v.app,
-                                                        name: v.name,
-                                                        text: v.name,
-                                                        icon: v.icon,
-                                                        iconclass: v.iconclass,
-                                                        category: v.category,
-                                                        author: v.info.author,
-                                                        version: v.version,
-                                                        description: meta
-                                                            ? meta.description
-                                                            : undefined,
-                                                        download: meta
-                                                            ? meta.download
-                                                            : undefined,
-                                                    };
-                                                    v.text = v.name;
-                                                    v.filename = v.pkgname ? v.pkgname : v.app;
-                                                    v.type = "app";
-                                                    v.mime = "antos/app";
-                                                    if (
-                                                        !v.iconclass &&
-                                                        !v.icon
-                                                    ) {
-                                                        v.iconclass =
-                                                            "fa fa-adn";
-                                                    }
-                                                    v.path = pth;
-                                                    this.systemsetting.system.packages[
-                                                        v.pkgname ? v.pkgname : v.app
-                                                    ] = v;
-                                                    this.appDetail(app_meta);
-                                                    return resolve(v.name);
-                                                })
-                                                .catch((e) => reject(__e(e)));
-                                        })
-                                        .catch((e) => reject(__e(e)));
-                                })
-                                .catch((err: Error) => reject(__e(err)));
-                        })
-                        .catch((e: Error) => reject(__e(e)));
+            ): Promise<GenericObject<any>> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        let v: API.PackageMetaType;
+                        let pth: string = "";
+                        await API.VFS.extractZip(zfile, (zip) => {
+                            return new Promise(async (res, rej) => {
+                                try {
+                                    const d = await zip.file("package.json").async("string");
+                                    v = JSON.parse(d);
+                                    pth = `${this.installdir}/${v.pkgname ? v.pkgname : v.app}`;
+                                    await API.VFS.mkdirAll([pth]);
+                                    res(pth);
+                                } catch (error) {
+                                    rej(__e(error))
+                                }
+                            });
+
+                        });
+                        const app_meta = {
+                            pkgname: v.pkgname ? v.pkgname : v.app,
+                            name: v.name,
+                            text: v.name,
+                            icon: v.icon,
+                            iconclass: v.iconclass,
+                            category: v.category,
+                            author: v.info.author,
+                            version: v.version,
+                            description: meta
+                                ? meta.description
+                                : undefined,
+                            download: meta
+                                ? meta.download
+                                : undefined,
+                        };
+                        v.text = v.name;
+                        v.filename = v.pkgname ? v.pkgname : v.app;
+                        v.type = "app";
+                        v.mime = "antos/app";
+                        if (
+                            !v.iconclass &&
+                            !v.icon
+                        ) {
+                            v.iconclass =
+                                "fa fa-adn";
+                        }
+                        v.path = pth;
+                        this.systemsetting.system.packages[
+                            v.pkgname ? v.pkgname : v.app
+                        ] = v;
+                        return resolve(app_meta);
+                    } catch (error) {
+                        reject(__e(error));
+                    }
                 });
             }
             private bulkUninstall(list: string[]): Promise<any> {
-                return new Promise(async (resolve, reject) => {
-                    if (list.length == 0) {
-                        return resolve(true);
-                    }
-                    const pkgname = list.splice(0, 1)[0];
-                    this.uninstallPkg(pkgname)
-                        .then((_meta) => {
-                            this.bulkUninstall(list)
-                                .then((b) => {
-                                    resolve(b);
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                })
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        })
-                });
+                const promises = [];
+                for (let pkgname of list) {
+                    promises.push(this.uninstallPkg(pkgname));
+                }
+                return Promise.all(promises);
             }
             private uninstallPkg(pkgname: string): Promise<any> {
                 return new Promise(async (resolve, reject) => {
@@ -782,90 +712,20 @@ namespace OS {
                         }
                         const meta = this.apps_meta[`${sel.pkgname}@${app.version}`];
                         await this.remoteInstall();
-                        try {
-                            if (meta) {
-                                if (meta.domel)
-                                    this.applist.delete(meta.domel);
-                            }
-                            return resolve(true);
+                        if (meta) {
+                            if (meta.domel)
+                                this.applist.delete(meta.domel);
                         }
-                        catch (e) {
-                            return reject(__e(e));
-                        }
-
+                        return resolve(true);
                     }
                     catch (e_1) {
                         return reject(__e(e_1));
                     }
                 });
             }
-
-            private mkdirs(list: string[]): Promise<any> {
-                return new Promise((resolve, reject) => {
-                    if (list.length === 0) {
-                        return resolve(true);
-                    }
-                    const dir = list.splice(0, 1)[0].asFileHandle();
-                    const path = dir.parent();
-                    const dname = dir.basename;
-                    return path
-                        .asFileHandle()
-                        .mk(dname)
-                        .then((r) => {
-                            if (r.error) {
-                                return reject(
-                                    this._api.throwe(
-                                        __(
-                                            "Cannot create {0}",
-                                            `${path}/${dir}`
-                                        )
-                                    )
-                                );
-                            }
-                            return this.mkdirs(list)
-                                .then(() => resolve(true))
-                                .catch((e) => reject(__e(e)));
-                        })
-                        .catch((e) => reject(__e(e)));
-                });
-            }
-
-            private installFile(n: string, zip: any, files: string[]): Promise<any> {
-                return new Promise((resolve, reject) => {
-                    if (files.length === 0) {
-                        return resolve(true);
-                    }
-                    const file = files.splice(0, 1)[0];
-                    const path = `${this.installdir}/${n}/${file}`;
-                    return zip
-                        .file(file)
-                        .async("uint8array")
-                        .then((d: Uint8Array) => {
-                            const fp = path.asFileHandle();
-                            fp.cache = new Blob([d], { type: "octet/stream" });
-                            return fp
-                                .write("text/plain")
-                                .then((r) => {
-                                    if (r.error) {
-                                        return reject(
-                                            this._api.throwe(
-                                                __("Cannot install {0}", path)
-                                            )
-                                        );
-                                    }
-                                    return this.installFile(n, zip, files)
-                                        .then(() => resolve(true))
-                                        .catch((e) => reject(__e(e)));
-                                })
-                                .catch((e) => reject(__e(e)));
-                        })
-                        .catch((e: Error) => reject(__e(e)));
-                });
-            }
         }
 
         MarketPlace.dependencies = [
-            "os://scripts/jszip.min.js",
             "os://scripts/showdown.min.js",
         ];
         MarketPlace.singleton = true;

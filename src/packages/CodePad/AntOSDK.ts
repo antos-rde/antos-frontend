@@ -89,13 +89,9 @@ namespace OS {
                 .then(async (meta) => {
                     try {
                         await this.build(meta, true);
-                        try {
-                            return this.run(meta);
-                        } catch (e) {
-                            return this.logger().error(__("Unable to run project: {0}", e.stack));
-                        }
+                        await this.run(meta);
                     } catch (e_1) {
-                        return this.logger().error(__("Unable to build project: {0}", e_1.stack));
+                        return this.logger().error(__("Unable to build and run project: {0}", e_1.stack));
                     }
                 })
                 .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
@@ -112,19 +108,13 @@ namespace OS {
                 .then(async (meta) => {
                     try {
                         await this.build(meta, false);
-                        try {
-                            return API.VFS.mkar(
-                                `${meta.root}/build/debug`,
-                                `${meta.root}/build/release/${meta.name}.zip`
-                            );
-                        } catch (e) {
-                            return this.logger().error(
-                                __("Unable to create package archive: {0}",
-                                    e.stack)
-                            );
-                        }
+                        await API.VFS.mkar(
+                            `${meta.root}/build/debug`,
+                            `${meta.root}/build/release/${meta.name}.zip`
+                        );
+                        this.logger().info(__("Archive generate at: {0}", `${meta.root}/build/release/${meta.name}.zip`));
                     } catch (e_1) {
-                        return this.logger().error(__("Unable to build project: {0}", e_1.stack));
+                        return this.logger().error(__("Unable to release project: {0}", e_1.stack));
                     }
                 })
                 .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
@@ -253,54 +243,54 @@ namespace OS {
                 const core_lib = "os://packages/CodePad/libs/corelib.d.ts";
                 try {
                     await this.load_corelib(core_lib);
-                    const arr = [];
-                    API.VFS.read_files(files, arr).then((_result) => {
-                        const libs: string[] = arr.map((e) => e.path)
-                        libs.unshift(core_lib);
-                        const src_files: GenericObject<any> = {};
-                        src_files[core_lib] = AntOSDK.corelib["ts"];
-                        for (const el of arr) {
-                            src_files[el.path] = ts.createSourceFile(el.path, el.content, ts.ScriptTarget.Latest);
-                        }
-                        let js_code = "";
-                        const host = {
-                            fileExists: (path: string) => {
-                                return src_files[path] != undefined;
-                            },
-                            directoryExists: (path: string) => {
-                                return true;
-                            },
-                            getCurrentDirectory: () => "/",
-                            getDirectories: () => [],
-                            getCanonicalFileName: (path: string) => path,
-                            getNewLine: () => "\n",
-                            getDefaultLibFileName: () => "",
-                            getSourceFile: (path: string) => src_files[path],
-                            readFile: (path: string) => undefined,
-                            useCaseSensitiveFileNames: () => true,
-                            writeFile: (path: string, data: string) => js_code = `${js_code}\n${data}`,
-                        };
-                        const program = ts.createProgram(libs, {
-                            "target": "es6",
-                            "skipLibCheck": true,
-                        }, host);
-                        const result = program.emit();
-                        const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));
-                        if (diagnostics.length > 0) {
-                            diagnostics.forEach(diagnostic => {
-                                if (diagnostic.file) {
-                                    let { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!);
-                                    let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
-                                    this.logger().error(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-                                } else {
-                                    this.logger().error(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
-                                }
-                            });
-                            return reject(API.throwe(__("Typescript compile error")));
-                        }
-                        resolve(js_code);
-                    })
-                        .catch((e) => { reject(__e(e)) });
+                    const arr = await API.VFS.read_files(files);
+                    const libs: string[] = files.map((e) => e)
+                    libs.unshift(core_lib);
+                    const src_files: GenericObject<any> = {};
+                    src_files[core_lib] = AntOSDK.corelib["ts"];
+                    for (const i in arr) {
+                        src_files[files[i]] = ts.createSourceFile(files[i], arr[i], ts.ScriptTarget.Latest);
+                    }
+                    let js_code = "";
+                    const host = {
+                        fileExists: (path: string) => {
+                            return src_files[path] != undefined;
+                        },
+                        directoryExists: (path: string) => {
+                            return true;
+                        },
+                        getCurrentDirectory: () => "/",
+                        getDirectories: () => [],
+                        getCanonicalFileName: (path: string) => path,
+                        getNewLine: () => "\n",
+                        getDefaultLibFileName: () => "",
+                        getSourceFile: (path: string) => src_files[path],
+                        readFile: (path: string) => undefined,
+                        useCaseSensitiveFileNames: () => true,
+                        writeFile: (path: string, data: string) => js_code = `${js_code}\n${data}`,
+                    };
+                    const program = ts.createProgram(libs, {
+                        "target": "es6",
+                        "skipLibCheck": true,
+                    }, host);
+                    const result = program.emit();
+                    const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));
+                    if (diagnostics.length > 0) {
+                        diagnostics.forEach(diagnostic => {
+                            if (diagnostic.file) {
+                                let { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!);
+                                let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
+                                this.logger().error(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+                            } else {
+                                this.logger().error(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
+                            }
+                        });
+                        return reject(API.throwe(__("Typescript compile error")));
+                    }
+                    for (const file of files) {
+                        this.logger().info(__("Compiled: {0}", file));
+                    }
+                    resolve(js_code);
                 } catch (e) {
                     return reject(__e(e));
                 }
@@ -331,12 +321,12 @@ namespace OS {
                     const ts_list = meta.ts.map(
                         (v: string) => `${meta.root.trimBy("/")}/${v}`
                     );
-                    Promise.all([
+                    const results = await Promise.all([
                         this.compile_ts(ts_list),
                         this.compile_coffee(coffee_list)
-                    ]).then((js_codes: string[]) => {
-                        resolve(js_codes.join("\n"));
-                    }).catch((e_1) => reject(__e(e_1)));
+                    ]);
+
+                    resolve(results.join("\n"));
                 } catch (e_2) {
                     return reject(__e(e_2));
                 }
@@ -358,14 +348,12 @@ namespace OS {
                 }
                 try {
                     await this.verify_coffee(list.map((x: string) => x));
-                    try {
-                        const code = await API.VFS.cat(list, "");
-                        const jsrc = CoffeeScript.compile(code);
-                        this.logger().info(__("Compiled successful"));
-                        return resolve(jsrc);
-                    } catch (e) {
-                        return reject(__e(e));
+                    const code = await API.VFS.cat(list, "");
+                    const jsrc = CoffeeScript.compile(code);
+                    for (const file of list) {
+                        this.logger().info(__("Compiled: {0}", file));
                     }
+                    return resolve(jsrc);
                 } catch (e_1) {
                     return reject(__e(e_1));
                 }
@@ -382,109 +370,54 @@ namespace OS {
          * @memberof AntOSDK
          */
         private build(meta: GenericObject<any>, debug: boolean): Promise<void> {
-            const dirs = [
-                `${meta.root}/build`,
-                `${meta.root}/build/debug`,
-                `${meta.root}/build/release`,
-            ];
             return new Promise(async (resolve, reject) => {
                 try {
-                    await API.VFS.mkdirAll(dirs);
-                    try {
-                        const src = await this.compile(meta);
-                        let v: string;
-                        try {
-                            let jsrc = await API.VFS.cat(
-                                (() => {
-                                    const result = [];
-                                    for (v of meta.javascripts) {
-                                        result.push(`${meta.root}/${v}`);
-                                    }
-                                    return result;
-                                })(),
-                                src
+                    this.logger().info(__("Building the package", meta.name));
+                    await API.VFS.mkdirAll([`${meta.root}/build`,]);
+                    await API.VFS.mkdirAll([`${meta.root}/build/debug`, `${meta.root}/build/release`]);
+                    const src = await this.compile(meta);
+                    let code = await API.VFS.cat(meta.javascripts.map(v => `${meta.root}/${v}`), src);
+                    if (!debug) {
+                        const options = {
+                            toplevel: true,
+                            compress: {
+                                passes: 3,
+                            },
+                            mangle: true,
+                            output: {
+                                //beautify: true,
+                            },
+                        };
+                        const result = Terser.minify(code, options);
+                        if (result.error) {
+                            this.logger().error(
+                                __(
+                                    "Unable to minify code: {0}",
+                                    result.error
+                                )
                             );
-                            await new Promise<void>(async function (r, e) {
-                                let code = jsrc;
-                                if (!debug) {
-                                    const options = {
-                                        toplevel: true,
-                                        compress: {
-                                            passes: 3,
-                                        },
-                                        mangle: true,
-                                        output: {
-                                            //beautify: true,
-                                        },
-                                    };
-                                    const result_1 = Terser.minify(
-                                        jsrc,
-                                        options
-                                    );
-                                    if (result_1.error) {
-                                        this.logger().error(
-                                            __(
-                                                "Unable to minify code: {0}",
-                                                result_1.error
-                                            )
-                                        );
-                                    } else {
-                                        ({ code } = result_1);
-                                    }
-                                }
-                                try {
-                                    const d = await `${meta.root}/build/debug/main.js`
-                                        .asFileHandle()
-                                        .setCache(code)
-                                        .write("text/plain");
-                                    return r();
-                                } catch (ex) {
-                                    return e(__e(ex));
-                                }
-                            });
-                            await new Promise<void>(async (r, e) => {
-                                const txt = await API.VFS.cat(
-                                    (() => {
-                                        const result1 = [];
-                                        for (v of meta.css) {
-                                            result1.push(`${meta.root}/${v}`);
-                                        }
-                                        return result1;
-                                    })(),
-                                    ""
-                                );
-                                if (txt === "") {
-                                    return r();
-                                }
-                                try {
-                                    const d_1 = await `${meta.root}/build/debug/main.css`
-                                        .asFileHandle()
-                                        .setCache(txt)
-                                        .write("text/plain");
-                                    return r();
-                                } catch (ex_1) {
-                                    return e(__e(ex_1));
-                                }
-                            });
-                            await API.VFS.copy(
-                                (() => {
-                                    const result1_1 = [];
-                                    for (v of meta.copies) {
-                                        result1_1.push(`${meta.root}/${v}`);
-                                    }
-                                    return result1_1;
-                                })(),
-                                `${meta.root}/build/debug`
-                            );
-                            return resolve();
-                        } catch (e) {
-                            return reject(__e(e));
+                        } else {
+                            code = result.code;
                         }
-                    } catch (e_1) {
-                        return reject(__e(e_1));
                     }
-                } catch (e_2) {
-                    return reject(__e(e_2));
+                    if (code != "")
+                        await `${meta.root}/build/debug/main.js`
+                            .asFileHandle()
+                            .setCache(code)
+                            .write("text/plain");
+                    const txt = await API.VFS.cat(meta.css.map(v => `${meta.root}/${v}`), "");
+                    if (txt != "")
+                        await `${meta.root}/build/debug/main.css`
+                            .asFileHandle()
+                            .setCache(txt)
+                            .write("text/plain");
+                    await API.VFS.copy(
+                        meta.copies.map(v => `${meta.root}/${v}`),
+                        `${meta.root}/build/debug`
+                    );
+                    resolve();
+                } catch (e) {
+                    return reject(__e(e));
                 }
             });
         }
