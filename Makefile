@@ -69,9 +69,9 @@ lite: build_javascripts build_themes build_packages
 ts:
 	-rm -rf dist
 	tsc -p tsconfig.json
-	cat `find dist/core/ -name "*.d.ts"` > /tmp/antos.d.ts
+	cat `find dist/core/ -name "*.d.ts"` > d.ts/antos.d.ts
 	rm `find dist/ -name "*.d.ts"`
-	cat src/core.dts /tmp/antos.d.ts > /tmp/corelib.d.ts
+	cat d.ts/*.d.ts > /tmp/corelib.d.ts
 	-rm src/packages/CodePad/libs/corelib.d.ts.zip
 	zip -j src/packages/CodePad/libs/corelib.d.ts.zip /tmp/corelib.d.ts
 

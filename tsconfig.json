@@ -6,8 +6,7 @@
         "lib": [
             "es6", "dom", "es2017"
         ],
-        "outDir": "dist",
-        "removeComments": true
+        "outDir": "dist"
     },
     "include": ["src/**/*.ts"]
 }

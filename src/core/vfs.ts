@@ -1086,26 +1086,22 @@ namespace OS {
                         } else {
                             try {
                                 const r = await this.b64(t);
-                                try {
-                                    const result = await API.handle.write(
-                                        this.path,
-                                        r as string
-                                    );
-                                    if (result.error) {
-                                        return reject(
-                                            API.throwe(
-                                                __(
-                                                    "{0}: {1}",
-                                                    result.error,
-                                                    this.path
-                                                )
+                                const result = await API.handle.write(
+                                    this.path,
+                                    r as string
+                                );
+                                if (result.error) {
+                                    return reject(
+                                        API.throwe(
+                                            __(
+                                                "{0}: {1}",
+                                                result.error,
+                                                this.path
                                             )
-                                        );
-                                    }
-                                    return resolve(result);
-                                } catch (e_1) {
-                                    return reject(__e(e_1));
+                                        )
+                                    );
                                 }
+                                return resolve(result);
                             } catch (e_2) {
                                 return reject(__e(e_2));
                             }
@@ -1945,7 +1941,6 @@ namespace OS {
              * @return {*}  {Promise<void>}
              */
             export function mkar(src: string, dest: string): Promise<void> {
-                console.log(src, dest);
                 return new Promise(async (resolve, reject) => {
                     try {
                         await API.requires("os://scripts/jszip.min.js");

@@ -379,7 +379,7 @@ namespace OS {
                     let code = await API.VFS.cat(meta.javascripts.map(v => `${meta.root}/${v}`), src);
                     if (!debug) {
                         const options = {
-                            toplevel: true,
+                            toplevel: false,
                             compress: {
                                 passes: 3,
                             },
