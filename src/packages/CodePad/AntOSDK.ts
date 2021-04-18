@@ -152,7 +152,7 @@ namespace OS {
                 ["templates/sdk-README.tpl", `${rpath}/README.md`],
                 ["templates/sdk-scheme.tpl", `${rpath}/assets/scheme.html`],
             ];
-            API.VFS.mkdirAll(dirs)
+            API.VFS.mkdirAll(dirs,true)
                 .then(async () => {
                     try {
                         await API.VFS.mktpl(files, this.basedir(), (data) => {
