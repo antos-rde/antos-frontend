@@ -71,9 +71,9 @@ ts:
 	tsc -p tsconfig.json
 	cat `find dist/core/ -name "*.d.ts"` > d.ts/antos.d.ts
 	rm `find dist/ -name "*.d.ts"`
-	cat d.ts/*.d.ts > /tmp/corelib.d.ts
-	-rm src/packages/CodePad/libs/corelib.d.ts.zip
-	zip -j src/packages/CodePad/libs/corelib.d.ts.zip /tmp/corelib.d.ts
+	cat d.ts/core.d.ts d.ts/jquery.d.ts d.ts/antos.d.ts > /tmp/corelib.d.ts
+	#-rm src/packages/CodePad/libs/corelib.d.ts.zip
+	#zip -j src/packages/CodePad/libs/corelib.d.ts.zip /tmp/corelib.d.ts
 
 standalone_tags: ts
 	@echo "$(BLUE)Bundling standalone tags files$(NC)"

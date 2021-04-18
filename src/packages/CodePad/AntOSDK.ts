@@ -14,16 +14,7 @@ namespace OS {
      */
     class AntOSDK extends App.BaseExtension {
 
-
-        /**
-         * Core library for the transpiler stored here
-         *
-         * @static
-         * @type {GenericObject<any>}
-         * @memberof AntOSDK
-         */
-        static corelib: GenericObject<any>;
-
+        private sdk: any;
         /**
          *Creates an instance of AntOSDK.
          * @param {application.CodePad} app
@@ -120,6 +111,17 @@ namespace OS {
                 .catch((e) => this.logger().error(__("Unable to read meta-data: {0}", e.stack)));
         }
 
+        /**
+         *
+         *
+         * @protected
+         * @returns {string[]}
+         * @memberof BaseExtension
+         */
+         protected dependencies(): string[] {
+            return ["pkg://libantosdk/main.js"];
+        }
+
         // private functions
         /**
          * Create project template
@@ -174,193 +176,6 @@ namespace OS {
         }
 
         /**
-         * Check coffeescript file validity
-         *
-         * @private
-         * @param {string[]} list
-         * @returns {Promise<void>}
-         * @memberof AntOSDK
-         */
-        private verify_coffee(list: string[]): Promise<void> {
-            return new Promise((resolve, reject) => {
-                if (list.length === 0) {
-                    return resolve();
-                }
-                const file = list.splice(0, 1)[0].asFileHandle();
-                this.logger().info(__("Verifying: {0}", file.path));
-                return file
-                    .read()
-                    .then((data) => {
-                        try {
-                            CoffeeScript.nodes(data);
-                            return this.verify_coffee(list)
-                                .then(() => resolve())
-                                .catch((e) => reject(__e(e)));
-                        } catch (ex) {
-                            return reject(__e(ex));
-                        }
-                    })
-                    .catch((e) => reject(__e(e)));
-            });
-        }
-
-        /**
-         * load typescript core lib
-         *
-         * @private
-         * @param {string} path
-         * @return {*}  {Promise<any>}
-         * @memberof AntOSDK
-         */
-        private load_corelib(path: string): Promise<any> {
-            return new Promise(async (resolve, reject) => {
-                if (AntOSDK.corelib["ts"]) {
-                    return resolve(AntOSDK.corelib["ts"]);
-                }
-                try {
-                    const code = await API.VFS.readFileFromZip(`${path}.zip`, "text");
-                    AntOSDK.corelib["ts"] = ts.createSourceFile(path, code, ts.ScriptTarget.Latest);
-                    return resolve(AntOSDK.corelib["ts"]);
-                } catch (e) {
-                    return reject(__e(e));
-                }
-            });
-        }
-
-        /**
-         * Compile typescript to javascript
-         *
-         * @private
-         * @param {string[]} files
-         * @return {*}  {Promise<string>}
-         * @memberof AntOSDK
-         */
-        private compile_ts(files: string[]): Promise<string> {
-            return new Promise(async (resolve, reject) => {
-                if (files.length == 0) {
-                    return resolve(undefined);
-                }
-                const core_lib = "os://packages/CodePad/libs/corelib.d.ts";
-                try {
-                    await this.load_corelib(core_lib);
-                    const arr = await API.VFS.read_files(files);
-                    const libs: string[] = files.map((e) => e)
-                    libs.unshift(core_lib);
-                    const src_files: GenericObject<any> = {};
-                    src_files[core_lib] = AntOSDK.corelib["ts"];
-                    for (const i in arr) {
-                        src_files[files[i]] = ts.createSourceFile(files[i], arr[i], ts.ScriptTarget.Latest);
-                    }
-                    let js_code = "";
-                    const host = {
-                        fileExists: (path: string) => {
-                            return src_files[path] != undefined;
-                        },
-                        directoryExists: (path: string) => {
-                            return true;
-                        },
-                        getCurrentDirectory: () => "/",
-                        getDirectories: () => [],
-                        getCanonicalFileName: (path: string) => path,
-                        getNewLine: () => "\n",
-                        getDefaultLibFileName: () => "",
-                        getSourceFile: (path: string) => src_files[path],
-                        readFile: (path: string) => undefined,
-                        useCaseSensitiveFileNames: () => true,
-                        writeFile: (path: string, data: string) => js_code = `${js_code}\n${data}`,
-                    };
-                    const program = ts.createProgram(libs, {
-                        "target": "es6",
-                        "skipLibCheck": true,
-                    }, host);
-                    const result = program.emit();
-                    const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));
-                    if (diagnostics.length > 0) {
-                        diagnostics.forEach(diagnostic => {
-                            if (diagnostic.file) {
-                                let { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!);
-                                let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
-                                this.logger().error(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-                            } else {
-                                this.logger().error(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
-                            }
-                        });
-                        return reject(API.throwe(__("Typescript compile error")));
-                    }
-                    for (const file of files) {
-                        this.logger().info(__("Compiled: {0}", file));
-                    }
-                    resolve(js_code);
-                } catch (e) {
-                    return reject(__e(e));
-                }
-            })
-        }
-
-        private compile(meta: GenericObject<any>): Promise<any> {
-            return new Promise(async (resolve, reject) => {
-                const libs = [
-                    `${this.basedir()}/libs/terser.min.js`,
-                ];
-                if (!meta.coffees)
-                    meta.coffees = [];
-                if (meta.coffees.length > 0) {
-                    libs.push(`${this.basedir()}/libs/coffeescript.js`);
-                }
-                if (!meta.ts)
-                    meta.ts = [];
-                if (meta.ts && meta.ts.length > 0) {
-                    libs.push("os://scripts/jszip.min.js");
-                    libs.push(`${this.basedir()}/libs/typescript.min.js`)
-                }
-                try {
-                    await this.import(libs);
-                    const coffee_list = meta.coffees.map(
-                        (v: string) => `${meta.root.trimBy("/")}/${v}`
-                    );
-                    const ts_list = meta.ts.map(
-                        (v: string) => `${meta.root.trimBy("/")}/${v}`
-                    );
-                    const results = await Promise.all([
-                        this.compile_ts(ts_list),
-                        this.compile_coffee(coffee_list)
-                    ]);
-
-                    resolve(results.join("\n"));
-                } catch (e_2) {
-                    return reject(__e(e_2));
-                }
-            });
-        }
-
-        /**
-         * Compile coffeescript to javascript
-         *
-         * @private
-         * @param {GenericObject<any>} meta
-         * @returns {Promise<string>}
-         * @memberof AntOSDK
-         */
-        private compile_coffee(list: string[]): Promise<string> {
-            return new Promise(async (resolve, reject) => {
-                if (list.length == 0) {
-                    return resolve("");
-                }
-                try {
-                    await this.verify_coffee(list.map((x: string) => x));
-                    const code = await API.VFS.cat(list, "");
-                    const jsrc = CoffeeScript.compile(code);
-                    for (const file of list) {
-                        this.logger().info(__("Compiled: {0}", file));
-                    }
-                    return resolve(jsrc);
-                } catch (e_1) {
-                    return reject(__e(e_1));
-                }
-            });
-        }
-
-        /**
          * Build the project
          *
          * @private
@@ -372,39 +187,87 @@ namespace OS {
         private build(meta: GenericObject<any>, debug: boolean): Promise<void> {
             return new Promise(async (resolve, reject) => {
                 try {
+                    const options = {
+                        root: meta.root,
+                        targets: {}
+                    }
+                    if(!this.sdk)
+                    {
+                        this.sdk = new (OS.API as any).AntOSDKBuilder(this.logger(), "");
+                    }
                     this.logger().info(__("Building the package", meta.name));
                     await API.VFS.mkdirAll([`${meta.root}/build`,]);
                     await API.VFS.mkdirAll([`${meta.root}/build/debug`, `${meta.root}/build/release`]);
-                    const src = await this.compile(meta);
-                    let code = await API.VFS.cat(meta.javascripts.map(v => `${meta.root}/${v}`), src);
-                    if (!debug) {
-                        const options = {
-                            toplevel: false,
-                            compress: {
-                                passes: 3,
-                            },
-                            mangle: true,
-                            output: {
-                                //beautify: true,
-                            },
-                        };
-                        const result = Terser.minify(code, options);
-                        if (result.error) {
-                            this.logger().error(
-                                __(
-                                    "Unable to minify code: {0}",
-                                    result.error
-                                )
-                            );
-                        } else {
-                            code = result.code;
-                        }
+                    if(!meta.coffees)
+                        meta.coffees = [];
+                    if(!meta.ts)
+                        meta.ts = [];
+                    options.targets["coffee"] = {
+                        "require": ["coffee"],
+                        "jobs":[
+                            {
+                                "name": "coffee-compile",
+                                "data": {
+                                    "src": meta.coffees,
+                                    "dest": "build/debug/coffee-main.js"
+                                }
+                            }
+                        ]
                     }
-                    if (code != "")
-                        await `${meta.root}/build/debug/main.js`
-                            .asFileHandle()
-                            .setCache(code)
-                            .write("text/plain");
+
+                    options.targets["ts"] = {
+                        "require": ["ts"],
+                        "jobs":[
+                            {
+                                "name": "ts-import",
+                                "data": [
+                                    "sdk://core/ts/core.d.ts",
+                                    "sdk://core/ts/jquery.d.ts",
+                                    "sdk://core/ts/antos.d.ts"
+                                ]
+                            },
+                            {
+                                "name": "ts-compile",
+                                "data": {
+                                    "src": meta.ts,
+                                    "dest": "build/debug/ts-main.js"
+                                }
+                            }
+                        ]
+                    }
+
+                    options.targets["cat"] = {
+                        "jobs":[
+                            {
+                                "name": "vfs-cat",
+                                "data": {
+                                    "src": [
+                                        "build/debug/ts-main.js", "build/debug/coffee-main.js"
+                                    ].concat(meta.javascripts.map(v => `${meta.root}/${v}`)),
+                                    "dest": "build/debug/main.js"
+                                }
+                            },
+                            {
+                                "name": "vfs-rm",
+                                "data": ["build/debug/ts-main.js", "build/debug/coffee-main.js"]
+                            }
+                        ]
+                    }
+
+                    options.targets["uglify"] = {
+                        "require": ["terser"],
+                        "jobs":[
+                            {
+                                "name": "terser-uglify",
+                                "data": ["build/debug/main.js"]
+                            }
+                        ]
+                    }
+                    console.log(options);
+                    await this.sdk.batch(["coffee", "ts", "cat"], options);
+                    if (!debug) {
+                        await this.sdk.batch(["uglify"], options);
+                    }
                     const txt = await API.VFS.cat(meta.css.map(v => `${meta.root}/${v}`), "");
                     if (txt != "")
                         await `${meta.root}/build/debug/main.css`
@@ -452,6 +315,5 @@ namespace OS {
                 });
         }
     }
-    AntOSDK.corelib = {};
     App.extensions.AntOSDK = AntOSDK;
 }
