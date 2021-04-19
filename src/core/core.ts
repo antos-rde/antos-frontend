@@ -1411,18 +1411,7 @@ namespace OS {
                                 console.log("Loaded :", l);
                                 return resolve(undefined);
                             case "js":
-                                /*return API.script(libfp.getlink())
-                                    .then(function (data: any) {
-                                        API.shared[l] = true;
-                                        console.log("Loaded :", l);
-                                        return resolve(data);
-                                    })
-                                    .catch((e: Error) => reject(__e(e)));*/
-                                $("<script>",{
-                                    async: "async",
-                                    type: "text/javascript",
-                                    src: libfp.getlink()
-                                }).appendTo("head");
+                                await API.script(libfp.getlink());
                                 API.shared[l] = true;
                                 console.log("Loaded :", l);
                                 return resolve(undefined);
