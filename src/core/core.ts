@@ -1395,40 +1395,48 @@ namespace OS {
          * @returns {Promise<void>} a promise on the result data
          */
         export function requires(l: string, force: boolean = false): Promise<void> {
-            return new Promise(function (resolve, reject) {
-                if (!API.shared[l] || force) {
-                    const libfp = l.asFileHandle();
-                    switch (libfp.ext) {
-                        case "css":
-                            return libfp
-                                .onready()
-                                .then(function () {
-                                    $("<link>", {
-                                        rel: "stylesheet",
-                                        type: "text/css",
-                                        href: `${libfp.getlink()}`,
-                                    }).appendTo("head");
-                                    API.shared[l] = true;
-                                    console.log("Loaded :", l);
-                                    return resolve(undefined);
-                                })
-                                .catch((e: Error) => reject(__e(e)));
-                        case "js":
-                            return API.script(libfp.getlink())
-                                .then(function (data: any) {
-                                    API.shared[l] = true;
-                                    console.log("Loaded :", l);
-                                    return resolve(data);
-                                })
-                                .catch((e: Error) => reject(__e(e)));
-                        default:
-                            return reject(
-                                API.throwe(__("Invalid library: {0}", l))
-                            );
+            return new Promise(async (resolve, reject) =>{
+                try {
+                    if (!API.shared[l] || force) {
+                        const libfp = l.asFileHandle();
+                        switch (libfp.ext) {
+                            case "css":
+                                await libfp.onready();
+                                $("<link>", {
+                                    rel: "stylesheet",
+                                    type: "text/css",
+                                    href: `${libfp.getlink()}`,
+                                }).appendTo("head");
+                                API.shared[l] = true;
+                                console.log("Loaded :", l);
+                                return resolve(undefined);
+                            case "js":
+                                /*return API.script(libfp.getlink())
+                                    .then(function (data: any) {
+                                        API.shared[l] = true;
+                                        console.log("Loaded :", l);
+                                        return resolve(data);
+                                    })
+                                    .catch((e: Error) => reject(__e(e)));*/
+                                $("<script>",{
+                                    async: "async",
+                                    type: "text/javascript",
+                                    src: libfp.getlink()
+                                }).appendTo("head");
+                                API.shared[l] = true;
+                                console.log("Loaded :", l);
+                                return resolve(undefined);
+                            default:
+                                return reject(
+                                    API.throwe(__("Invalid library: {0}", l))
+                                );
+                        }
+                    } else {
+                        console.log(l, "Library exist, no need to load");
+                        return resolve();
                     }
-                } else {
-                    console.log(l, "Library exist, no need to load");
-                    return resolve();
+                } catch (error) {
+                    reject(__e(error));
                 }
             });
         }
