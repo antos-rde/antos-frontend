@@ -1138,6 +1138,7 @@ namespace OS {
                 return $.ajax({
                     type: "POST",
                     url: p,
+                    cache: false,
                     contentType: "application/json",
                     data: JSON.stringify(
                         d,
@@ -1225,6 +1226,7 @@ namespace OS {
                         return $.ajax({
                             url: p,
                             data: formd,
+                            cache: false,
                             type: "POST",
                             contentType: false,
                             processData: false,
