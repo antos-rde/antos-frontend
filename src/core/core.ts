@@ -1135,7 +1135,7 @@ namespace OS {
             return new Promise(function (resolve, reject) {
                 const q = announcer.getMID();
                 API.loading(q, p);
-                return $.ajax({
+                const xhr = $.ajax({
                     type: "POST",
                     url: p,
                     contentType: "application/json",
@@ -1154,6 +1154,7 @@ namespace OS {
                 })
                     .done(function (data) {
                         API.loaded(q, p, "OK");
+                        xhr.abort();
                         return resolve(data);
                     })
                     .fail(function (j, s, e) {
@@ -1222,7 +1223,7 @@ namespace OS {
                         const formd = new FormData();
                         formd.append("path", d);
                         formd.append("upload", file);
-                        return $.ajax({
+                        const xhr = $.ajax({
                             url: p,
                             data: formd,
                             type: "POST",
@@ -1231,6 +1232,7 @@ namespace OS {
                         })
                             .done(function (data) {
                                 tasks.push("OK");
+                                xhr.abort();
                                 if (tasks.length == n_files)
                                 {
                                     API.loaded(q, p, "OK");

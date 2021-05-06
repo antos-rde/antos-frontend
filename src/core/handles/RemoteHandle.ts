@@ -162,7 +162,7 @@ namespace OS {
              * which contains an error or a list of FileInfoType
              */
             export function scandir(p: string): Promise<RequestResult> {
-                const path = `${REST}/VFS/scandir?__t=${(new Date()).getTime()}`;
+                const path = `${REST}/VFS/scandir`;
                 return API.post(path, { path: p });
             }
 
@@ -176,7 +176,7 @@ namespace OS {
              * which contains an error or true on success
              */
             export function mkdir(p: string): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/mkdir?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/mkdir`;
                 return API.post(path, { path: p });
             }
 
@@ -194,7 +194,7 @@ namespace OS {
                 p: string,
                 pub: boolean
             ): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/publish?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/publish`;
                 return API.post(path, { path: p, publish: pub });
             }
 
@@ -207,7 +207,7 @@ namespace OS {
              * which contains an error or an object of FileInfoType
              */
             export function fileinfo(p: string): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/fileinfo?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/fileinfo`;
                 return API.post(path, { path: p });
             }
 
@@ -244,7 +244,7 @@ namespace OS {
              * which contains an error or a success response
              */
             export function move(s: string, d: string): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/move?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/move`;
                 return API.post(path, { src: s, dest: d });
             }
 
@@ -257,7 +257,7 @@ namespace OS {
              * which contains an error or a success response
              */
             export function remove(p: string): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/delete?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/delete`;
                 return API.post(path, { path: p });
             }
 
@@ -283,7 +283,7 @@ namespace OS {
             export function packages(
                 d: PackageCommandType
             ): Promise<RequestResult> {
-                const path = `${API.REST}/system/packages?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/system/packages`;
                 return API.post(path, d);
             }
 
@@ -295,7 +295,7 @@ namespace OS {
              * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
              */
             export function upload(d: string): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/upload?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/upload`;
                 return API.upload(path, d);
             }
 
@@ -311,7 +311,7 @@ namespace OS {
                 p: string,
                 d: string
             ): Promise<RequestResult> {
-                const path = `${API.REST}/VFS/write?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VFS/write`;
                 return API.post(path, { path: p, data: d });
             }
 
@@ -350,7 +350,7 @@ namespace OS {
                 if (ws) {
                     return new Promise(function (resolve, reject) {
                         try {
-                            const path = `${API.BASE_URI}/system/apigateway?ws=1&__t=${(new Date()).getTime()}`;
+                            const path = `${API.BASE_URI}/system/apigateway?ws=1`;
                             const proto =
                                 window.location.protocol === "https:"
                                     ? "wss://"
@@ -362,7 +362,7 @@ namespace OS {
                         }
                     });
                 } else {
-                    const path = `${API.REST}/system/apigateway?ws=0&__t=${(new Date()).getTime()}`;
+                    const path = `${API.REST}/system/apigateway?ws=0`;
                     return API.post(path, d);
                 }
             }
@@ -375,7 +375,7 @@ namespace OS {
              * contains an error or a [[UserSettingType]] object
              */
             export function auth(): Promise<RequestResult> {
-                const p = `${API.REST}/user/auth?__t=${(new Date()).getTime()}`;
+                const p = `${API.REST}/user/auth`;
                 return API.post(p, {});
             }
 
@@ -388,7 +388,7 @@ namespace OS {
              * contains an error or a [[UserSettingType]] object
              */
             export function login(d: UserLoginType): Promise<RequestResult> {
-                const p = `${API.REST}/user/login?__t=${(new Date()).getTime()}`;
+                const p = `${API.REST}/user/login`;
                 return API.post(p, d);
             }
 
@@ -399,7 +399,7 @@ namespace OS {
              * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
              */
             export function logout(): Promise<RequestResult> {
-                const p = `${API.REST}/user/logout?__t=${(new Date()).getTime()}`;
+                const p = `${API.REST}/user/logout`;
                 return API.post(p, {});
             }
 
@@ -410,7 +410,7 @@ namespace OS {
              * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
              */
             export function setting(): Promise<RequestResult> {
-                const p = `${API.REST}/system/settings?__t=${(new Date()).getTime()}`;
+                const p = `${API.REST}/system/settings`;
                 return API.post(p, OS.setting);
             }
 
@@ -463,7 +463,7 @@ namespace OS {
                 cmd: string,
                 d: GenericObject<any>
             ): Promise<RequestResult> {
-                const path = `${API.REST}/VDB/${cmd}?__t=${(new Date()).getTime()}`;
+                const path = `${API.REST}/VDB/${cmd}`;
                 return API.post(path, d);
             }
         }
