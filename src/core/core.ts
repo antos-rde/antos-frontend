@@ -1138,7 +1138,7 @@ namespace OS {
                 return $.ajax({
                     type: "POST",
                     url: p,
-                    cache: false,
+                    headers: { 'Cache-Control': 'no-cache'},
                     contentType: "application/json",
                     data: JSON.stringify(
                         d,
@@ -1226,7 +1226,7 @@ namespace OS {
                         return $.ajax({
                             url: p,
                             data: formd,
-                            cache: false,
+                            headers: { 'Cache-Control': 'no-cache'},
                             type: "POST",
                             contentType: false,
                             processData: false,
