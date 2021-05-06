@@ -821,6 +821,7 @@ namespace OS {
      * @export
      */
     export function boot(): void {
+        $.ajaxSetup({ cache: false });
         //first login
         console.log("Booting system");
         API.handle
@@ -1135,7 +1136,7 @@ namespace OS {
             return new Promise(function (resolve, reject) {
                 const q = announcer.getMID();
                 API.loading(q, p);
-                const xhr = $.ajax({
+                return $.ajax({
                     type: "POST",
                     url: p,
                     contentType: "application/json",
@@ -1154,7 +1155,6 @@ namespace OS {
                 })
                     .done(function (data) {
                         API.loaded(q, p, "OK");
-                        xhr.abort();
                         return resolve(data);
                     })
                     .fail(function (j, s, e) {
@@ -1223,7 +1223,7 @@ namespace OS {
                         const formd = new FormData();
                         formd.append("path", d);
                         formd.append("upload", file);
-                        const xhr = $.ajax({
+                        return $.ajax({
                             url: p,
                             data: formd,
                             type: "POST",
@@ -1232,7 +1232,6 @@ namespace OS {
                         })
                             .done(function (data) {
                                 tasks.push("OK");
-                                xhr.abort();
                                 if (tasks.length == n_files)
                                 {
                                     API.loaded(q, p, "OK");
