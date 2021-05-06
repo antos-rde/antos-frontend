@@ -821,7 +821,6 @@ namespace OS {
      * @export
      */
     export function boot(): void {
-        $.ajaxSetup({ cache: false });
         //first login
         console.log("Booting system");
         API.handle
