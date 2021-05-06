@@ -1138,7 +1138,6 @@ namespace OS {
                 return $.ajax({
                     type: "POST",
                     url: p,
-                    headers: { 'Connection': 'close'},
                     contentType: "application/json",
                     data: JSON.stringify(
                         d,
@@ -1227,7 +1226,6 @@ namespace OS {
                             url: p,
                             data: formd,
                             type: "POST",
-                            headers: { 'Connection': 'close'},
                             contentType: false,
                             processData: false,
                         })
