@@ -2059,7 +2059,7 @@ namespace OS {
                                             )
                                         );
                                     }
-                                    return resolve(res(path));
+                                    return res(path);
                                 } catch (error) {
                                     rej(__e(error));
                                 }
