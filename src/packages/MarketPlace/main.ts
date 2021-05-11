@@ -15,6 +15,7 @@
 
 // You should have received a copy of the GNU General Public License
 //along with this program. If not, see https://www.gnu.org/licenses/.
+
 namespace OS {
     export namespace application {
         declare var showdown: any;
@@ -23,6 +24,7 @@ namespace OS {
             private installdir: string;
             private apps_meta: GenericObject<any>;
             private applist: GUI.tag.ListViewTag;
+            private catlist: GUI.tag.ListViewTag;
             private container: GUI.tag.VBoxTag;
             private appname: GUI.tag.LabelTag;
             private appdetail: HTMLUListElement;
@@ -42,9 +44,53 @@ namespace OS {
                 this.apps_meta = [];
 
                 this.applist = this.find("applist") as GUI.tag.ListViewTag;
+                this.catlist = this.find("catlist") as GUI.tag.ListViewTag;
                 this.applist.onlistselect = (e) => {
                     const data = e.data.item.data;
                     return this.appDetail(data);
+                };
+
+                this.catlist.onlistselect = (e) => {
+                    const selected = this.catlist.selected;
+                    if(selected < 0)
+                        return;
+                    if(selected === 0)
+                    {
+                        return this.resetAppList();
+                    }
+                    const result = [];
+                    if(selected === 1)
+                    {
+                        for(const k in this.apps_meta)
+                        {
+                            const pkg = this.apps_meta[k];
+                            // check if update is available for this application
+                            const version: Version = pkg.version.__v();
+                            const name = pkg.pkgname ? pkg.pkgname: pkg.app;
+                            if(name && OS.setting.system.packages[name])
+                            {
+                                const curr_version: Version = OS.setting.system.packages[name].version.__v();
+                                if(version.compare(curr_version) === 1)
+                                {
+                                    result.push(pkg);
+                                } 
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // search application by category
+                        const cat = this.catlist.selectedItem.data.text.__();
+                        for(const k in this.apps_meta)
+                        {
+                            const v = this.apps_meta[k];
+                            if(v.category.__() === cat)
+                            {
+                                result.push(v);
+                            }
+                        }
+                    }
+                    this.applist.data = result;
                 };
 
                 this.container = this.find("container") as GUI.tag.VBoxTag;
@@ -103,6 +149,25 @@ namespace OS {
                 });
             }
 
+            private resetAppList(): void
+            {
+                let result = [];
+                for(let k in this.apps_meta)
+                {
+                    result.push(this.apps_meta[k]);
+                }
+                this.applist.data = result.sort(
+                    function (a: GenericObject<any>, b: GenericObject<any>): number {
+                        if (a.text > b.text) {
+                            return 1;
+                        }
+                        if (b.text > a.text) {
+                            return -1;
+                        }
+                        return 0;
+                    });
+            }
+
             private search(e: JQuery.KeyboardEventBase) {
                 let k: string;
                 switch (e.which) {
@@ -119,20 +184,17 @@ namespace OS {
                     case 13:
                         return e.preventDefault();
                     default:
+                        this.catlist.selected = 0;
                         var text = this.searchbox.value;
+                        var result = [];
                         if (text.length === 2) {
-                            this.applist.data = (() => {
-                                const result1 = [];
-                                for (k in this.apps_meta) {
-                                    result1.push(this.apps_meta[k]);
-                                }
-                                return result1;
-                            })();
+                           this.resetAppList();
+                            return;
                         }
                         if (text.length < 3) {
                             return;
                         }
-                        var result = [];
+                        
                         var term = new RegExp(text, "i");
                         for (k in this.apps_meta) {
                             if (this.apps_meta[k].text.match(term)) {
@@ -154,11 +216,9 @@ namespace OS {
             private loadRemoteRepository(url: string): Promise<GenericObject<any>> {
                 return new Promise((resolve, reject) => {
                     url.asFileHandle().read('json')
-                        //this._api
-                        //.get(url + "?_=" + new Date().getTime(), "json")
                         .then((d) => {
                             for (let v of d) {
-                                v.text = `${v.name} v${v.version}`;
+                                v.text = `${v.name} ${v.version}`;
                                 v.iconclass = "fa fa-adn";
                                 v.dependBy = [];
                                 if (!v.dependencies) {
@@ -231,6 +291,44 @@ namespace OS {
                 });
             }
 
+            buildAppCats(): void {
+                let k: string, v: API.PackageMetaType;
+                const catlist = new Set();
+                for (k in this.apps_meta) {
+                    v = this.apps_meta[k];
+                    if (v) {
+                        catlist.add(v.category.__());
+                    }
+                }
+                // build up the category menu
+                const cat_list_data = [];
+                cat_list_data.push({
+                    text: "__(All)",
+                    iconclass: "bi bi-gear-wide"
+                });
+                cat_list_data.push({
+                    text: "__(Update)",
+                    iconclass: "bi bi-cloud-arrow-down-fill"
+                });
+                (OS.setting.applications.categories as Array<GenericObject<any>>)
+                    .forEach((v) =>{
+                        if(catlist.has(v.text.__()))
+                        {
+                            cat_list_data.push({text: v.text, iconclass: v.iconclass});
+                            catlist.delete(v.text.__());
+                        }
+                    })
+                // put the remainder to the data
+                catlist.forEach((c) => {
+                    cat_list_data.push({
+                        text: c,
+                        iconclass: "bi bi-gear-wide"
+                    });
+                });
+                this.catlist.data = cat_list_data;
+                this.catlist.selected = 0;
+            }
+
             fetchApps(): Promise<GenericObject<any>> {
                 return new Promise((resolve, _reject) => {
                     let v: API.PackageMetaType;
@@ -241,7 +339,7 @@ namespace OS {
                         this.apps_meta[`${k}@${v.version}`] = {
                             pkgname: v.pkgname ? v.pkgname : v.app,
                             name: v.name,
-                            text: `${v.name} v${v.version}`,
+                            text: `${v.name} ${v.version}`,
                             icon: v.icon,
                             iconclass: v.iconclass,
                             category: v.category,
@@ -259,16 +357,7 @@ namespace OS {
                     }
                     this.loadRemoteRepositories(list)
                         .then((apps_list) => {
-                            this.applist.data = apps_list.sort(
-                                function (a: GenericObject<any>, b: GenericObject<any>): number {
-                                    if (a.text > b.text) {
-                                        return 1;
-                                    }
-                                    if (b.text > a.text) {
-                                        return -1;
-                                    }
-                                    return 0;
-                                });
+                            this.buildAppCats();
                             resolve(this.apps_meta);
                         });
                 });

@@ -1,4 +1,5 @@
 {
+    "pkgname":"MarketPlace",
     "app":"MarketPlace",
     "name":"AntOS Application store",
     "description":"Application store",
@@ -6,7 +7,7 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.2.3-a",
+    "version":"0.2.4-a",
     "category":"System",
     "iconclass":"fa  fa-shopping-bag",
     "mimes":["none"],
