@@ -529,6 +529,16 @@ namespace OS {
                 SCOPES: "https://www.googleapis.com/auth/drive",
             };
         }
+        // default repo
+        if(!setting.system.repositories || setting.system.repositories.length === 0)
+       {
+           setting.system.repositories = [
+                {
+                    text: "Github",
+                    url: "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/packages.json"
+                }
+           ]
+       } 
 
         setting.applications.categories = [
             {
