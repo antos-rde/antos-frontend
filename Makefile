@@ -54,7 +54,7 @@ javascripts= 	dist/core/core.js \
 antfx = $(tags) \
 		dist/core/Announcerment.js
  
-packages = Syslog Files MarketPlace  Setting
+packages = Syslog Files MarketPlace  Setting  NotePad
 
 main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/

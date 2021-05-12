@@ -1,0 +1,32 @@
+{
+    "pkgname": "NotePad",
+    "name": "Text editor",
+    "app": "NotePad",
+    "description": "A very simple text editor",
+    "info": {
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version": "0.1.0-b",
+    "category": "Utility",
+    "iconclass": "bi bi-pen",
+    "mimes": [
+        "text/.*"
+    ],
+    "dependencies": [],
+    "locale": {
+        "en_GB": {
+            "Text Editor": "Text Editor",
+            "File": "File",
+            "New": "New",
+            "Open": "Open",
+            "Save": "Save",
+            "Quit": "Quit",
+            "Quit without saving?": "Quit without saving?",
+            "Open file": "Open file",
+            "Save as": "Save as",
+            "Unable to read file content": "Unable to read file content",
+            "Error saving file {0}": "Error saving file {0}"
+        }
+    }
+}
