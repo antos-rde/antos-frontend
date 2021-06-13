@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
-AntOS is a front-end API that mimics the traditional desktop environment on the web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). The original purpose of AntOS is to provide visual tools to access and control resource on remote server
+AntOS is a front-end system and API that implement the traditional desktop UI environment on the web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). The original purpose of AntOS is to provide visual tools to access and control resource on remote server
 and embedded linux environment. With its application API and the provided SDK, AntOS facilitates the
-development and deployment of user specific applications.
+development and deployment of user specific applications inside de VDE environment.
 
 ![https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.lxsang.me/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
 
