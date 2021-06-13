@@ -74,4 +74,4 @@ AnTOS is is licensed under the GNU General Public License v3.0, see the LICENCE 
    You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-   *For comercial use, please contact author*
+   **For comercial use, please contact author**
