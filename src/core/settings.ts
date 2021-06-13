@@ -356,6 +356,13 @@ namespace OS {
                  * @type {string[]}
                  */
                 services: string[];
+
+                /**
+                 * List of pinned applications
+                 *
+                 * @type {string[]}
+                 */
+                pinned: string[];
             };
         }
         /**
@@ -423,7 +430,7 @@ namespace OS {
 
         setting.VFS = {
             mountpoints: [
-                //TODO: multi app try to write to this object, it neet to be cloned
+                //TODO: multi app try to write to this object, it need to be cloned
                 {
                     text: "__(Applications)",
                     path: "app://",
@@ -476,6 +483,7 @@ namespace OS {
             startup: {
                 apps: [],
                 services: ["Syslog/PushNotification", "Syslog/Calendar"],
+                pinned: [],
             },
         };
     }
@@ -521,6 +529,55 @@ namespace OS {
                 SCOPES: "https://www.googleapis.com/auth/drive",
             };
         }
+        // default repo
+        if(!setting.system.repositories || setting.system.repositories.length === 0)
+       {
+           setting.system.repositories = [
+                {
+                    text: "Github",
+                    url: "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/packages.json"
+                }
+           ]
+       } 
+
+        setting.applications.categories = [
+            {
+                text: "__(Media)",
+                iconclass: "bi bi-disc"
+            },
+            {
+                text: "__(Development)",
+                iconclass: "bi bi-hammer"
+            },
+            {
+                text: "__(Education)",
+                iconclass: "fa fa-graduation-cap"
+            },
+            {
+                text: "__(Game)",
+                iconclass: "fa fa-gamepad"
+            },
+            {
+                text: "__(Graphics)",
+                iconclass: "bi bi-palette-fill"
+            },
+            {
+                text: "__(Internet)",
+                iconclass: "fa fa-globe"
+            },
+            {
+                text: "__(Office)",
+                iconclass: "bi bi-building"
+            },
+            {
+                text: "__(System)",
+                iconclass: "fa bi-gear-wide-connected"
+            },
+            {
+                text: "__(Utility)",
+                iconclass: "bi bi-tools"
+            },
+        ]
     }
 
     // Register handle for application search
@@ -530,7 +587,7 @@ namespace OS {
         for (let k in setting.system.packages) {
             const v = setting.system.packages[k];
             if (v.app) {
-                var e, k1, v1;
+                var e: any, k1: string, v1: { [x: string]: any; detail?: any; path?: any; complex?: any; };
                 if (
                     v.name.match(term) ||
                     (v.description && v.description.match(term))

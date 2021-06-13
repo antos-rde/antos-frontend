@@ -66,8 +66,11 @@ namespace OS {
                                 data: services,
                             })
                             .then((d) => {
-                                setting.system.startup.services.push(d.text);
-                                return this.refresh();
+                                if(!setting.system.startup.services.includes(d.text))
+                                {
+                                    setting.system.startup.services.push(d.text);
+                                    return this.refresh();
+                                }
                             });
                     },
                 },
@@ -93,12 +96,20 @@ namespace OS {
                             const result = [];
                             for (let k in setting.system.packages) {
                                 const v = setting.system.packages[k];
-                                result.push({
-                                    text: k,
-                                    iconclass: v.iconclass,
-                                });
+                                if(v.app)
+                                {
+                                    result.push({
+                                        text: v.name,
+                                        app: k,
+                                        iconclass: v.iconclass,
+                                    });
+                                }
                             }
-                            return result;
+                            return result.sort((a,b) =>{
+                                if(a.text >b.text) return 1;
+                                if(a.text < b.text) return -1;
+                                return 0;
+                            });
                         })();
                         this.parent
                             .openDialog("SelectionDialog", {
@@ -106,8 +117,11 @@ namespace OS {
                                 data: apps,
                             })
                             .then((d) => {
-                                setting.system.startup.apps.push(d.text);
-                                return this.refresh();
+                                if(!setting.system.startup.apps.includes(d.app))
+                                {
+                                    setting.system.startup.apps.push(d.app);
+                                    return this.refresh();
+                                }
                             });
                     },
                 },
@@ -138,7 +152,7 @@ namespace OS {
             this.srvlist.data = (() => {
                 const result = [];
                 for (v of setting.system.startup.services) {
-                    result.push({ text: v });
+                    result.push({ text: v});
                 }
                 return result;
             })();

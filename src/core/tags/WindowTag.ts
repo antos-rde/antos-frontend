@@ -189,9 +189,13 @@ namespace OS {
                     if (v) {
                         $(this.refs["maxbt"]).show();
                         $(this.refs["grip"]).show();
+                        $(this.refs["grip_bottom"]).show();
+                        $(this.refs["grip_right"]).show();
                     } else {
                         $(this.refs["maxbt"]).hide();
                         $(this.refs["grip"]).hide();
+                        $(this.refs["grip_bottom"]).hide();
+                        $(this.refs["grip_right"]).hide();
                     }
                 }
                 get resizable(): boolean {
@@ -209,6 +213,7 @@ namespace OS {
                     $(this).attr("apptitle", v.__());
                     if (v) {
                         (this.refs["txtTitle"] as LabelTag).text = v;
+                        this.observable.trigger("apptitlechange", this);
                     }
                 }
                 get apptitle(): string | FormattedString {
@@ -241,17 +246,17 @@ namespace OS {
                  */
                 protected mount(): void {
                     this.contextmenuHandle = function (e) {};
-                    $(this.refs["minbt"]).click((e) => {
+                    $(this.refs["minbt"]).on("click",(e) => {
                         return this.observable.trigger("hide", {
                             id: this.aid,
                         });
                     });
 
-                    $(this.refs["maxbt"]).click((e) => {
+                    $(this.refs["maxbt"]).on("click",(e) => {
                         return this.toggle_window();
                     });
 
-                    $(this.refs["closebt"]).click((e) => {
+                    $(this.refs["closebt"]).on("click",(e) => {
                         return this.observable.trigger("exit", {
                             id: this.aid,
                         });
@@ -272,7 +277,7 @@ namespace OS {
                         });
                     });
 
-                    $(this.refs["dragger"]).dblclick((e) => {
+                    $(this.refs["dragger"]).on("dblclick",(e) => {
                         return this.toggle_window();
                     });
 
@@ -356,6 +361,7 @@ namespace OS {
                         offset.top = e.clientY - offset.top;
                         offset.left = e.clientX - offset.left;
                         $(window).on("mousemove", (e) => {
+                            $(this.refs.win_overlay).show();
                             let left: number, top: number;
                             if (this._isMaxi) {
                                 this.toggle_window();
@@ -380,9 +386,10 @@ namespace OS {
                                 .css("top", `${top}px`)
                                 .css("left", `${left}px`);
                         });
-                        return $(window).on("mouseup", function (e) {
-                            $(window).unbind("mousemove", null);
-                            return $(window).unbind("mouseup", null);
+                        return $(window).on("mouseup", (e) => {
+                            $(this.refs.win_overlay).hide();
+                            $(window).off("mousemove", null);
+                            return $(window).off("mouseup", null);
                         });
                     });
                 }
@@ -395,37 +402,57 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 private enable_resize(): void {
-                    $(this.refs["grip"])
-                        .css("user-select", "none")
-                        .css("cursor", "default")
-                        .css("position", "absolute")
-                        .css("bottom", "0")
-                        .css("right", "0")
-                        .css("cursor", "nwse-resize");
-
-                    $(this.refs["grip"]).on("mousedown", (e) => {
-                        e.preventDefault();
-                        const offset = { top: 0, left: 0 };
+                    const offset = { top: 0, left: 0 };
+                    let target = undefined;
+                    const mouse_move_hdl = (e) => {
+                        let w = $(this).width();
+                        let h = $(this).height();
+                        $(this.refs.win_overlay).show();
+                        if(target != this.refs.grip_bottom)
+                        {
+                            w +=  e.clientX - offset.left;
+                        }
+                        if(target != this.refs.grip_right)
+                        {
+                            h += e.clientY - offset.top;
+                        }
+                        w = w < 100 ? 100 : w;
+                        h = h < 100 ? 100 : h;
                         offset.top = e.clientY;
                         offset.left = e.clientX;
-                        $(window).on("mousemove", (e) => {
-                            let w = $(this).width() + e.clientX - offset.left;
-                            let h = $(this).height() + e.clientY - offset.top;
-                            w = w < 100 ? 100 : w;
-                            h = h < 100 ? 100 : h;
-                            offset.top = e.clientY;
-                            offset.left = e.clientX;
-                            this._isMaxi = false;
-                            this.setsize({ w, h });
-                        });
-
-                        $(window).on("mouseup", function (e) {
-                            $(window).unbind("mousemove", null);
-                            return $(window).unbind("mouseup", null);
-                        });
+                        this._isMaxi = false;
+                        this.setsize({ w, h });
+                    }
+                    const mouse_up_hdl = (e) => {
+                        $(this.refs.win_overlay).hide();
+                        $(window).off("mousemove", mouse_move_hdl);
+                        return $(window).off("mouseup", mouse_up_hdl);
+                    }
+                    $(this.refs["grip"]).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
+                    });
+                    $(this.refs.grip_bottom).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip_bottom;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
+                    });
+                    $(this.refs.grip_right).on("mousedown", (e) => {
+                        e.preventDefault();
+                        offset.top = e.clientY;
+                        offset.left = e.clientX;
+                        target = this.refs.grip_right;
+                        $(window).on("mousemove", mouse_move_hdl);
+                        $(window).on("mouseup", mouse_up_hdl);
                     });
                 }
-
                 /**
                  * Maximize the window or restore its previous width, height,
                  * and position
@@ -519,6 +546,21 @@ namespace OS {
                                     el: "div",
                                     ref: "grip",
                                     class: "afx-window-grip",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_bottom",
+                                    class: "afx-window-grip-bottom",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_right",
+                                    class: "afx-window-grip-right",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "win_overlay",
+                                    class: "afx-window-overlay",
                                 },
                             ],
                         },

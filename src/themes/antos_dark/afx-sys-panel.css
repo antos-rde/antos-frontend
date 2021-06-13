@@ -46,15 +46,17 @@ afx-sys-panel afx-overlay
 {
     background-color: #363636;
     border: 1px solid #262626;
-    width: 250px;
 }
-afx-sys-panel afx-list-view[data-id="applist"]
+afx-sys-panel afx-list-view[data-id="applist"],
+afx-sys-panel afx-list-view[data-id="catlist"],
+afx-sys-panel afx-resizer
 {
     border-top: 1px solid #262626;
     border-bottom: 1px solid #262626;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li
 {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -65,27 +67,41 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
 {
     border: 0;
     border-left: 1px solid #262626;
+    border-top: 1px solid #262626;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover{
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li:hover
+{
     background-color: #cecece;
     color: #262626;
 }
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li.selected
+
 {
     background-color: #116cd6;
     color:white;
+}
+
+afx-sys-panel afx-list-view[data-id="catlist"] .label-text {
+    font-weight: bold;
 }
 
 afx-sys-panel afx-list-view[data-id="applist"] afx-label.search-header {
     font-weight: bold;
 
 }
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i,
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i::before {
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i {
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
 }
 
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i.bi::before
+{
+    width: 16px;
+}
 afx-sys-panel div[data-id="searchicon"]:before{
     content: "\f002";
     display: block;

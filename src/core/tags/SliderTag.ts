@@ -110,15 +110,15 @@ namespace OS {
                     this.attsw(v, "enable");
                     if (v) {
                         $(this)
-                            .mouseover(() => {
+                            .on("mouseover",() => {
                                 return $(this.refs.point).show();
                             })
-                            .mouseout(() => {
+                            .on("mouseout",() => {
                                 return $(this.refs.point).hide();
                             });
                     } else {
                         $(this.refs.point).hide();
-                        $(this).unbind("mouseover").unbind("mouseout");
+                        $(this).off("mouseover").off("mouseout");
                     }
                 }
                 get enable(): boolean {
@@ -168,7 +168,7 @@ namespace OS {
                     this.observable.on("resize", (e) => {
                         return this.calibrate();
                     });
-                    $(this.refs.container).click((e) => {
+                    $(this.refs.container).on("click",(e) => {
                         const offset = $(this.refs.container).offset();
                         const left = e.clientX - offset.left;
                         const maxw = $(this.refs.container).width();
@@ -241,8 +241,8 @@ namespace OS {
                                 id: this.aid,
                                 data: this.value,
                             });
-                            $(window).unbind("mousemove", null);
-                            return $(window).unbind("mouseup", null);
+                            $(window).off("mousemove", null);
+                            return $(window).off("mouseup", null);
                         });
                     });
                 }

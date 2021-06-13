@@ -1,7 +1,4 @@
-
-# AntOS v1.0.0-alpha
-
-**This version 1.0.0a removes the dependencies on Riot.js by reimplementing the major API for GUI and Announcement system. The entire core API is also rewritten in TypeScript**
+# antOS v1.2.0
 
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
@@ -14,55 +11,53 @@ development and deployment of user specific applications.
 
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
+## Change logs
+* Improvement GUI API
+   - [x] File dialog should remember last opened folder
+   - [x] Add dynamic key-value dialog that work on any object
+   - [x] Window list panel should show window title in tooltip when mouse hovering on application icon
+   - [x] Allow pinning application to system panel
+   - [x] Improvement application list in market place
+   - [x] Allow triplet keyboard shortcut in GUI
+   - [x] CodePad allows setting shortcut in CommandPalette commands
+   - [ ] Improvement multi-window application support
+   - [x] CodePad should have recent menu entry that remember top n file opened
+   - [x] Improve File application grid view
+   - [x] Label text should be selectable 
+   - [x] switch window using shortcut
+   - [x] Loading bar animation on system pannel
+   - [x] Multiple file upload support
+   - [x] Generic key-value dialog 
+   - [x] Add bootstrap font support for icons
+   - [x] Class applications by categories in start menu
+   - [x]  Support vertical and horizontal resize window
+* Market place now classifies application by categories
+* CodePad is no longer default system application, it has been moved to MarketPlace
+* More applications added to MarketPlace
+* Antos SDK
+   - SDK is no longer included in base Antos release, it can be installed via MarketPlace
+   - The SDK now has a generic API that can be used in different development tasks other than AntOS application
+   - Heavy SDK tasks are now offloaded to workers
+   - Introduce new JSON based syntax for SDK task/target definition
+* From this version, docker image of All-in-one AntOS system is available at: [https://hub.docker.com/r/xsangle/antosaio](https://hub.docker.com/r/xsangle/antosaio)
+
 ## Demo
 A demo of the VDE is available at  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo.
 
-The demo use the **antosaio** docker image available at:
-- [https://hub.docker.com/r/xsangle/antosaio](https://hub.docker.com/r/xsangle/antosaio)
-- Instruction: [https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
+If one want to run AntOS VDE locally in their system, a docker image is available at:
+[https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
 
-## AntOS applications
+## AntOS applications (Available on the MarketPlace)
 [https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
 
 ## Documentation
 
-- API Documentation: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
-- Documentation : [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
-
------
-
-## Change logs
-It has been a long time since version 0.x.x and now AntOS hits a major changes in its API. From version 1.0.0, AntOS no longer depends on **Riot.js**  in its core UI API. This version introduces a brand new AntOS UI API called **AFX** API which is rewritten from bottom up. The entire AntOS core API is rewritten in Typescript (from Coffeescript)  for better debugging, code maintenance and documenting.
-
-**Browser support**: tested on Chrome, Firefox and partly Safari. Any browser that supports custom elements API should work. May have problem with Microsoft Edge
-
-* Say goodbye to Riot.js and welcome **Afx**, the brand new AntOS UI API
-* Rewrite the entire core system in **Typescript** for better maintenance
-* Core API now has Unit test using **jest**
-* Introduce **AntOS dark** and **AntOS light** theme
-* Default core applications are: **Files**, **CodePad**, **Setting**, **Syslog**, and **MarketPlace**
-* More application can be install via **MarketPlace**
-* **AntOSDK** is now integrated into **CodePad**
-* Other applications are now developed with **CodePad** using **AntOSDK** and are hosted in a [separated repository](https://github.com/lxsang/antosdk-apps)
-* System errors are reported in **Syslog**
-
-## Credits
-
-The core of AntOS is based on some open source libraries:
-* Mandatory
-    *  JQuery: [https://jquery.com/](https://jquery.com)
-    
-* Optional
-    *  ACE editor library : [https://ace.c9.io/](https://ace.c9.io/)
-    *  Font Awesome for default icon: [https://fontawesome.com](https://fontawesome.com)
-    *  Showdown JS for markdown rendering: [https://github.com/showdownjs/showdown](https://github.com/showdownjs/showdown)
-    *  Simple MDE for default Markdown editor: [https://simplemde.com/](https://simplemde.com/)
-    *  JSZIP for in browser Zip file handle : [https://stuk.github.io/jszip/](https://stuk.github.io/jszip/)
-    *  Other opensource libraries used by different application (see in each application README)..
+- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+- API: (https://doc.iohub.dev/antos/api/)[https://doc.iohub.dev/antos/api/]
 
 ## Licence
 
-Copyright 2017-2021 Xuan Sang LE <xsang.le AT gmail DOT com>
+Copyright 2017-2021 Xuan Sang LE <mrsang AT iohub DOT dev>
 
 AnTOS is is licensed under the GNU General Public License v3.0, see the LICENCE file for more information
 

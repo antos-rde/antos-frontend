@@ -34,47 +34,16 @@ namespace OS {
          */
         export interface ShortcutType {
             /**
-             * Placeholder for all shortcut callbacks attached to `ALT` key, eg.
+             * Placeholder for all shortcut callbacks, example:
              * ```typescript
-             *      ALT.c = function() {..}
+             *      fn_193462204.c = function() {..}
              *      // this function will be called when the hotkey `ALT-C` is triggered
+             *      // fn_${"ALT".hash()} is fn_193462204
              * ```
              *
              * @memberof ShortcutType
              */
-            ALT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-
-            /**
-             * Placeholder for all shortcut callbacks attached to `CTRL` key, eg.
-             * ```typescript
-             *      CTRL.c = function() {..}
-             *      // this function will be called when the hotkey `CTRL-C` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            CTRL: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-
-            /**
-             * Placeholder for all shortcut callbacks attached to `SHIFT` key, eg.
-             * ```typescript
-             *      SHIFT.c = function() {..}
-             *      // this function will be called when the hotkey `SHIFT-C` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            SHIFT: GenericObject<(e: JQuery.MouseDownEvent) => void>;
-            /**
-             * Placeholder for all shortcut callbacks attached to `META` key, eg.
-             * ```typescript
-             *      META[" "] = function() {..}
-             *      // this function will be called when the hotkey `META-[space]` is triggered
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            META: GenericObject<(e: JQuery.MouseDownEvent) => void>;
+            [propName: string]: GenericObject<(e: JQuery.KeyDownEvent) => void>;
         }
 
         /**
@@ -129,12 +98,7 @@ namespace OS {
         /**
          * Placeholder for system shortcuts
          */
-        var shortcut: ShortcutType = {
-            ALT: {},
-            CTRL: {},
-            SHIFT: {},
-            META: {},
-        };
+        var shortcut: ShortcutType = {};
 
         /**
          * Convert an application html scheme to
@@ -156,7 +120,6 @@ namespace OS {
             parent: Element | string
         ): void {
             const scheme = $.parseHTML(html);
-
             if (app.scheme) {
                 $(app.scheme).remove();
             }
@@ -353,7 +316,8 @@ namespace OS {
                 return;
             }
             if (it.type === "app" && it.app) {
-                return launch(it.app, []);
+                launch(it.app, []);
+                return;
             }
             if (it.type === "app") {
                 return announcer.osinfo(
@@ -367,17 +331,19 @@ namespace OS {
                 );
             }
             if (apps.length === 1) {
-                return launch(apps[0].app, [it]);
+                launch(apps[0].app, [it]);
+                return;
             }
             const list = apps.map((e) => ({
-                text: e.app,
+                text: e.name,
+                app: e.app,
                 icon: e.icon,
                 iconclass: e.iconclass,
             }));
             openDialog("SelectionDialog", {
                 title: __("Open with"),
                 data: list,
-            }).then((d) => launch(d.text, [it]));
+            }).then((d) => launch(d.app, [it]));
         }
 
         /**
@@ -400,7 +366,7 @@ namespace OS {
                 "This method is used for developing only, please use the launch method instead"
             );
             unloadApp(app);
-            return launch(app, args);
+            launch(app, args);
         }
 
         /**
@@ -565,50 +531,61 @@ namespace OS {
          * @param {string} app application class name
          * @param {AppArgumentsType[]} args application arguments
          */
-        export function launch(app: string, args: AppArgumentsType[]): void {
-            if (!application[app]) {
-                // first load it
-                loadApp(app)
-                    .then((a) =>
-                        {
-                            if (!application[app]){
-                                return announcer.oserror(
+        export function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType> {
+            return new Promise((resolve, reject) => {
+                if (!application[app]) {
+                    // first load it
+                    loadApp(app)
+                        .then((a) => {
+                            if (!application[app]) {
+                                const e = API.throwe(__("Application not found"));
+                                announcer.oserror(
                                     __("{0} is not an application", app),
-                                    API.throwe(__("Application not found"))
-                                );
+                                    e);
+                                return reject(e);
                             }
                             PM.createProcess(
                                 app,
                                 application[app],
                                 args
-                            ).catch((e) =>
+                            ).catch((e) => {
                                 announcer.osfail(
                                     __("Unable to launch: {0}", app),
                                     e
-                                )
-                            )
+                                );
+                                return reject(e);
+                            }
+                            ).then((p: PM.ProcessType) => resolve(p));
                         }
-                    )
-                    .catch((e) =>
-                        announcer.osfail(__("Unable to launch: {0}", app), e)
-                    );
-            } else {
-                // now launch it
-                if (application[app]) {
-                    PM.createProcess(
-                        app,
-                        application[app],
-                        args
-                    ).catch((e: Error) =>
-                        announcer.osfail(__("Unable to launch: {0}", app), e)
-                    );
+                        )
+                        .catch((e) => {
+                            announcer.osfail(__("Unable to launch: {0}", app), e);
+                            reject(e);
+                        }
+                        );
                 } else {
-                    announcer.osfail(
-                        __("Unable to find: {0}", app),
-                        API.throwe("Application not found")
-                    );
+                    // now launch it
+                    if (application[app]) {
+                        PM.createProcess(
+                            app,
+                            application[app],
+                            args
+                        ).catch((e: Error) => {
+                            announcer.osfail(__("Unable to launch: {0}", app), e);
+                            return reject(e);
+                        }
+
+                        );
+                    } else {
+                        const e = API.throwe(__("Application not found"));
+                        announcer.osfail(
+                            __("Unable to find: {0}", app),
+                            e
+                        );
+                        return reject(e);
+                    }
                 }
-            }
+            });
         }
 
         /**
@@ -643,9 +620,9 @@ namespace OS {
                 data.iconclass = "fa fa-cogs";
             }
             const dock = $("#sysdock")[0] as tag.AppDockTag;
+            app.sysdock = dock;
             app.init();
             app.observable.one("rendered", function () {
-                app.sysdock = dock;
                 app.appmenu = $(
                     "[data-id = 'appmenu']",
                     "#syspanel"
@@ -739,7 +716,7 @@ namespace OS {
             var handle = function (e: HTMLElement) {
                 if (e.contextmenuHandle) {
                     const m = $("#contextmenu")[0] as tag.MenuTag;
-                    m.onmenuselect = () => {};
+                    m.onmenuselect = () => { };
                     return e.contextmenuHandle(event, m);
                 } else {
                     const p = $(e).parent().get(0);
@@ -758,23 +735,38 @@ namespace OS {
          *
          * @export
          * @param {string} k the hotkey e.g. `ALT-C`
-         * @param {(e: JQuery.MouseDownEvent) => void} f handle function
+         * @param {(e: JQuery.KeyPressEvent) => void} f handle function
          * @param {boolean} force force to rebind the hotkey
          * @returns {void}
          */
         export function bindKey(
             k: string,
-            f: (e: JQuery.MouseDownEvent) => void,
+            f: (e: JQuery.KeyDownEvent) => void,
             force: boolean = true
         ): void {
-            const arr = k.split("-");
-            if (arr.length !== 2) {
+            const arr = k.toUpperCase().split("-");
+            const c = arr.pop();
+            let fnk = "";
+            if (arr.includes("META")) {
+                fnk += "META";
+            }
+            if (arr.includes("CTRL")) {
+                fnk += "CTRL";
+            }
+            if (arr.includes("ALT")) {
+                fnk += "ALT";
+            }
+            if (arr.includes("SHIFT")) {
+                fnk += "SHIFT";
+            }
+
+            if (fnk == "") {
                 return;
             }
-            const fnk = arr[0].toUpperCase();
-            const c = arr[1].toUpperCase();
+            fnk = `fn_${fnk.hash()}`;
+
             if (!shortcut[fnk]) {
-                return;
+                shortcut[fnk] = {};
             }
             if (shortcut[fnk][c] && !force) return;
             shortcut[fnk][c] = f;
@@ -837,6 +829,10 @@ namespace OS {
                 case "ct": //ceter top
                     left = offset.left + w / 2 - $(label).width() / 2;
                     top = offset.top - $(label).height() - 5;
+                    break;
+                case "cb": // center bottom
+                    left = offset.left + w / 2 - $(label).width() / 2;
+                    top = offset.top + $(label).height() + 10;
                     break;
                 default:
                     if (!e) {
@@ -907,7 +903,7 @@ namespace OS {
             $("#wrapper").append(scheme);
 
             announcer.observable.one("sysdockloaded", () => {
-                $(window).bind("keydown", function (event) {
+                $(window).on("keydown", function (event) {
                     const dock = $("#sysdock")[0] as tag.AppDockTag;
                     if (!dock) {
                         return;
@@ -915,20 +911,24 @@ namespace OS {
                     const app = dock.selectedApp;
                     //return true unless app
                     const c = String.fromCharCode(event.which).toUpperCase();
-                    let fnk = undefined;
-                    if (event.ctrlKey) {
-                        fnk = "CTRL";
-                    } else if (event.metaKey) {
-                        fnk = "META";
-                    } else if (event.shiftKey) {
-                        fnk = "SHIFT";
-                    } else if (event.altKey) {
-                        fnk = "ALT";
+                    let fnk = "";
+                    if (event.metaKey) {
+                        fnk += "META";
                     }
-
-                    if (!fnk) {
+                    if (event.ctrlKey) {
+                        fnk += "CTRL";
+                    }
+                    if (event.altKey) {
+                        fnk += "ALT";
+                    }
+                    if (event.shiftKey) {
+                        fnk += "SHIFT";
+                    }
+                    //console.log(fnk, c);
+                    if (fnk == "") {
                         return;
                     }
+                    fnk = `fn_${fnk.hash()}`;
                     const r = app ? app.shortcut(fnk, c, event) : true;
                     if (!r) {
                         return event.preventDefault();
@@ -949,9 +949,9 @@ namespace OS {
             $("#systooltip")[0].uify(undefined);
             $("#contextmenu")[0].uify(undefined);
 
-            $("#workspace").contextmenu((e) => bindContextMenu(e));
+            $("#wrapper").on("contextmenu",(e) => bindContextMenu(e));
             // tooltip
-            $(document).mouseover(function (e) {
+            $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");
                 if (!(el.length > 0)) {
                     return;
@@ -1092,7 +1092,7 @@ namespace OS {
         export function login(): void {
             const scheme = $.parseHTML(schemes.login);
             $("#wrapper").append(scheme);
-            $("#btlogin").click(async function () {
+            $("#btlogin").on("click", async function () {
                 const data: API.UserLoginType = {
                     username: $("#txtuser").val() as string,
                     password: $("#txtpass").val() as string,
@@ -1107,14 +1107,14 @@ namespace OS {
                     return $("#login_error").html("Login: server error");
                 }
             });
-            $("#txtpass").keyup(function (e) {
+            $("#txtpass").on("keyup", function (e) {
                 if (e.which === 13) {
-                    return $("#btlogin").click();
+                    return $("#btlogin").trigger("click");
                 }
             });
             $("#txtuser").keyup(function (e) {
                 if (e.which === 13) {
-                    return $("#btlogin").click();
+                    return $("#btlogin").trigger("click");
                 }
             });
         }
@@ -1227,8 +1227,8 @@ namespace OS {
         schemes.login = `\
 <div id = "login_form">
     <p>Welcome to AntOS, please login</p>
-    <input id = "txtuser" type = "text" value = "demo" />
-    <input id = "txtpass" type = "password" value = "demo" />
+    <input id = "txtuser" type = "text" value = "demo" ></input>
+    <input id = "txtpass" type = "password" value = "demo" ></input>
     <button id = "btlogin">Login</button>
     <div id = "login_error"></div>
 </div>\

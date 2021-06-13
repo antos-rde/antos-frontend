@@ -1,6 +1,6 @@
-<afx-app-window data-id = "setting-window" apptitle="Setting" width="600" height="400">
+<afx-app-window data-id = "setting-window" apptitle="Setting" width="650" height="400">
    <afx-vbox>
-        <afx-tab-container data-id = "container" dir = "row" tabbarwidth= "120">
+        <afx-tab-container data-id = "container" dir = "row" tabbarwidth= "150">
 
             <afx-hbox tabname="__(Appearance)" data-id="appearance" iconclass = "fa fa-paint-brush">
                 <div data-width="10"></div>
@@ -77,9 +77,22 @@
                 <div data-width="10"></div>
             </afx-hbox>
 
+            <afx-hbox data-id="app-services" tabname = "__(Apps. and Services)" iconclass = "fa fa-adn">
+                <div data-width="10"></div>
+                <afx-vbox>
+                    <afx-label text = "__(Services)" iconclass = "fa fa-tasks" class = "header" data-height="23"></afx-label>
+                    <afx-list-view  data-id="sys-srvlist"></afx-list-view>
+                    <div data-height="5"></div>
+                    <afx-label text = "__(Pinned applications)" iconclass = "fa fa-adn" class = "header" data-height="23"></afx-label>
+                    <afx-list-view  data-id="sys-applist"></afx-list-view>
+                    <div data-height="10"></div>
+                </afx-vbox>
+                <div data-width="10"></div>
+            </afx-hbox>
+
         </afx-tab-container>
         <afx-hbox  data-height="35">
-            <div data-width = "120" class = "footer"></div>
+            <div data-width = "150" class = "footer"></div>
             <div style="text-align:right" >
                     <afx-button text="__(Save)" data-id="btnsave" iconclass="fa fa-save" style="margin-right:10px;" ></afx-button>
             </div>

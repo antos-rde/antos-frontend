@@ -159,19 +159,19 @@ namespace OS {
              * `data-width` of the element, not to be confused with
              * the `width` attribute of the DOM element
              *
-             * @type {number}
+             * @type {number|string}
              * @memberof TagLayoutType
              */
-            width?: number;
+            width?: number|string;
 
             /**
              ** `data-height` of the element, not to be confused with
              * the `height` attribute of the DOM element
              *
-             * @type {number}
+             * @type {number|string}
              * @memberof TagLayoutType
              */
-            height?: number;
+            height?: number|string;
         }
 
         /**

@@ -191,7 +191,7 @@ namespace OS {
                     // ensure that the data is in sync
                     this._data.nodes = v;
                     if (this.is_root()) {
-                        $(this.refs.container).mouseleave((e) => {
+                        $(this.refs.container).on("mouseleave",(e) => {
                             return $(this.refs.submenu).attr("style", "");
                         });
                     }
@@ -209,7 +209,7 @@ namespace OS {
                  * @memberof MenuEntryTag
                  */
                 protected mount(): void {
-                    $(this.refs.entry).click((e) => this.select(e));
+                    $(this.refs.entry).on("click",(e) => this.select(e));
                 }
 
                 /**
@@ -730,7 +730,7 @@ namespace OS {
                     if (!this.context) {
                         return;
                     }
-                    $(this.refs.wrapper).mouseleave((e) => {
+                    $(this.refs.wrapper).on("mouseleave",(e) => {
                         if (!this.is_root()) {
                             return;
                         }

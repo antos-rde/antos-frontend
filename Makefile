@@ -5,7 +5,7 @@ DOCDIR?=/opt/www/htdocs/doc/antos
 BLUE=\033[1;34m
 NC=\033[0m
 
-VERSION=1.1.2
+VERSION=1.2.0
 
 GSED=sed
 UNAME_S := $(shell uname -s)
@@ -54,7 +54,7 @@ javascripts= 	dist/core/core.js \
 antfx = $(tags) \
 		dist/core/Announcerment.js
  
-packages = Syslog CodePad Files MarketPlace  Setting
+packages = Syslog Files MarketPlace  Setting  NotePad
 
 main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
@@ -69,6 +69,11 @@ lite: build_javascripts build_themes build_packages
 ts:
 	-rm -rf dist
 	tsc -p tsconfig.json
+	cat `find dist/core/ -name "*.d.ts"` > d.ts/antos.d.ts
+	rm `find dist/ -name "*.d.ts"`
+	cat d.ts/core.d.ts d.ts/jquery.d.ts d.ts/antos.d.ts > /tmp/corelib.d.ts
+	#-rm src/packages/CodePad/libs/corelib.d.ts.zip
+	#zip -j src/packages/CodePad/libs/corelib.d.ts.zip /tmp/corelib.d.ts
 
 standalone_tags: ts
 	@echo "$(BLUE)Bundling standalone tags files$(NC)"
@@ -198,6 +203,7 @@ ar:
 	BUILDDIR=/tmp/antos-$(VERSION) make release
 	cd /tmp/antos-$(VERSION) && tar cvzf ../antos-$(VERSION).tar.gz .
 	mv /tmp/antos-$(VERSION).tar.gz release/
+	echo -n $(VERSION) > release/latest
 
 release: main uglify
 

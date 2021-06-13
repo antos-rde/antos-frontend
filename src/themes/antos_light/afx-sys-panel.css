@@ -46,15 +46,17 @@ afx-sys-panel afx-overlay
 {
     background-color: #e7e7e7;
     border: 1px solid #9c9C9C;
-    width: 250px;
 }
-afx-sys-panel afx-list-view[data-id="applist"]
+afx-sys-panel afx-list-view[data-id="applist"],
+afx-sys-panel afx-list-view[data-id="catlist"],
+afx-sys-panel afx-resizer
 {
     border-top: 1px solid #afafaf;
     border-bottom: 1px solid #afafaf;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li
 {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -65,24 +67,40 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
 {
     border: 0;
     border-left: 1px solid #afafaf;
+    border-top: 1px solid #afafaf;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover{
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li:hover
+
+{
     background-color: #cecece;
 }
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li.selected,
+afx-sys-panel afx-list-view[data-id="catlist"] > div.list-container > ul li.selected
 {
     background-color: #116cd6;
     color:white;
+}
+
+
+afx-sys-panel afx-list-view[data-id="catlist"] .label-text {
+    font-weight: bold;
 }
 
 afx-sys-panel afx-list-view[data-id="applist"] afx-label.search-header {
     font-weight: bold;
 
 }
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i,
-afx-sys-panel afx-list-view[data-id="applist"] afx-label  i::before {
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i {
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] afx-label  i.bi::before
+{
+    width: 16px;
 }
 
 afx-sys-panel div[data-id="searchicon"]:before{

@@ -1,21 +1,21 @@
 <afx-app-window data-id="Syslog"  width='500' height='350' apptitle = "__(System error log)" >
     <afx-hbox>
         <afx-list-view data-id = "loglist" data-width="200"> </afx-list-view>
-        <afx-resizer data-width = "2" />
+        <afx-resizer data-width = "2" ></afx-resizer>
         <afx-vbox>
             <div data-id = "container">
                 <pre><code data-id="logdetail"></code></pre>
             </div>
-            <div data-height="10" />
+            <div data-height="10" ></div>
             <afx-hbox  style="text-align:right;" data-height = "27">
                 <afx-button data-width ="20"
-                    tooltip = "ct:__(Clear all logs)" iconclass = "fa fa-trash-o" data-id = "btclean" />
-                <input type = "text" data-id = "txturi" />
+                    tooltip = "ct:__(Clear all logs)" iconclass = "fa fa-trash-o" data-id = "btclean" ></afx-button>
+                <input type = "text" data-id = "txturi" ></input>
                 <afx-button data-width ="80" text = "__(Report)"
-                    iconclass = "fa fa-bug" data-id = "btnreport" />
-                <div data-width="10" />
+                    iconclass = "fa fa-bug" data-id = "btnreport" ></afx-button>
+                <div data-width="10" ></div>
             </afx-hbox>
-            <div data-height="10" />
+            <div data-height="10" ></div>
         </afx-vbox>
     </afx-hbox>
 </afx-app-window>

@@ -104,7 +104,7 @@ namespace OS {
                 set dir(v: string) {
                     let att: string;
                     $(this).attr("dir", v);
-                    $(this).unbind("mousedown", null);
+                    $(this).off("mousedown", null);
                     if (v === "hz") {
                         $(this).css("cursor", "col-resize");
                         $(this).addClass("horizontal");
@@ -222,10 +222,10 @@ namespace OS {
                         });
 
                         return $(window).on("mouseup", function (evt) {
-                            $(window).unbind("mousemove", null);
-                            $(window).unbind("mouseup", null);
+                            $(window).off("mousemove", null);
+                            $(window).off("mouseup", null);
 
-                            return $(window).unbind("mouseup", null);
+                            return $(window).off("mouseup", null);
                         });
                     });
                 }

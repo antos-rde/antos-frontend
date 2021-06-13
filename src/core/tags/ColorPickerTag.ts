@@ -259,15 +259,15 @@ namespace OS {
                         );
                     };
 
-                    $(this.refs.palette).mouseenter((e) => {
+                    $(this.refs.palette).on("mouseenter",(e) => {
                         return $(this.refs.palette).on(
                             "mousemove",
                             mouse_move_h
                         );
                     });
 
-                    $(this.refs.palette).mouseout((e) => {
-                        $(this.refs.palette).unbind("mousemove", mouse_move_h);
+                    $(this.refs.palette).on("mouseout", (e) => {
+                        $(this.refs.palette).off("mousemove", mouse_move_h);
                         if (this.selectedColor) {
                             return $(this.refs.colorval).css(
                                 "background-color",

@@ -81,11 +81,11 @@ namespace OS {
                  */
                 protected mount(): void {
                     $(this.refs.holder).attr("type", "text");
-                    $(this.refs.incr).click((e) => {
+                    $(this.refs.incr).on("click",(e) => {
                         this.value = this.value + this.step;
                     });
 
-                    $(this.refs.decr).click((e) => {
+                    $(this.refs.decr).on("click",(e) => {
                         this.value = this.value - this.step;
                     });
 
@@ -93,7 +93,7 @@ namespace OS {
                     this.observable.on("resize", () => this.calibrate());
 
                     $(this.refs.holder).on("keyup", (e) => {
-                        if (e.keyCode === 13) {
+                        if (e.which === 13) {
                             let val = parseInt(
                                 (this.refs.holder as HTMLInputElement).value
                             );

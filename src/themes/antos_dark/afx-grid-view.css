@@ -3,6 +3,11 @@ afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
     background-color: #3b3b3b;
 }
 
+afx-grid-view afx-grid-row:nth-child(odd) afx-grid-cell
+{
+    background-color: #363636;
+}
+
 afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
 {
     background-color: #116cd6;

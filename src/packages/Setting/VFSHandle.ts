@@ -99,22 +99,22 @@ namespace OS {
 <afx-app-window  width='250' height='180' apptitle = "__(Mount Points)">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label data-height="30" text = "__(Name)" />
-                <input type = "text" data-id= "txtName" />
-                <div data-height="3" />
-                <afx-label data-height="30" text = "__(Path)" />
-                <input type = "text" data-id= "txtPath" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label data-height="30" text = "__(Name)" ></afx-label>
+                <input type = "text" data-id= "txtName" ></input>
+                <div data-height="3" ></div>
+                <afx-label data-height="30" text = "__(Path)" ></afx-label>
+                <input type = "text" data-id= "txtPath" ></input>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\

@@ -61,10 +61,10 @@ namespace OS {
                  * process in the dock
                  *
                  * @private
-                 * @type {application.BaseApplication}
+                 * @type {AppDockItemType}
                  * @memberof AppDockTag
                  */
-                private _selectedApp: application.BaseApplication;
+                private _selectedItem: AppDockItemType;
 
                 /**
                  *Creates an instance of AppDockTag.
@@ -83,7 +83,25 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof AppDockTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void {
+                    let app: application.BaseApplication = d as application.BaseApplication;
+                    if(!app)
+                    {
+                        return;
+                    }
+                    let i = -1;
+                    const iterable = this.items;
+                    for (let k = 0; k < iterable.length; k++) {
+                        const v = iterable[k];
+                        if (v.app.pid === app.pid) {
+                            i = k;
+                            break;
+                        }
+                    }
+                    if (i !== -1) {
+                        $(this.items[i].domel).attr("tooltip", `cr:${app.title()}`);
+                    }
+                }
 
                 /**
                  * Init the tag before mounting
@@ -134,24 +152,39 @@ namespace OS {
                  * @memberof AppDockTag
                  */
                 set selectedApp(v: application.BaseApplication) {
-                    this._selectedApp = v;
                     let el = undefined;
                     for (let it of this.items) {
                         it.app.blur();
                         $(it.domel).removeClass();
                         if (v && v === it.app) {
-                            el = it.domel;
+                            el = it;
                         }
                     }
+                    this._selectedItem = el;
                     if (!el) {
                         return;
                     }
-                    $(el).addClass("selected");
+                    $(el.domel).addClass("selected");
                     ($(Ant.OS.GUI.workspace)[0] as FloatListTag).unselect();
                 }
 
                 get selectedApp(): application.BaseApplication {
-                    return this._selectedApp;
+                    if(!this._selectedItem)
+                        return undefined;
+                    return this._selectedItem.app;
+                }
+
+
+                /**
+                 * Get selected item of the dock
+                 *
+                 * @readonly
+                 * @type {AppDockItemType}
+                 * @memberof AppDockTag
+                 */
+                get selectedItem(): AppDockItemType
+                {
+                    return this._selectedItem;
                 }
 
                 /**
@@ -171,8 +204,8 @@ namespace OS {
                     el[0].uify(this.observable);
                     bt.set(item);
                     bt.data = item.app;
-                    el.attr("tooltip", `cr:${item.app.title()}`);
                     item.domel = bt;
+                    $(bt).attr("tooltip", `cr:${item.app.title()}`);
                     bt.onbtclick = (e) => {
                         e.id = this.aid;
                         //e.data.item = item;
@@ -222,8 +255,9 @@ namespace OS {
                         const bt = ($(e.target).closest(
                             "afx-button"
                         )[0] as any) as ButtonTag;
-                        const app = bt.data;
+                        const app = bt.data as application.BaseApplication;
                         m.items = [
+                            { text: "__(New window)", dataid: "new" },
                             { text: "__(Show)", dataid: "show" },
                             { text: "__(Hide)", dataid: "hide" },
                             { text: "__(Close)", dataid: "quit" },
@@ -233,10 +267,56 @@ namespace OS {
                             if (app[item.dataid]) {
                                 return app[item.dataid]();
                             }
+                            else
+                            {
+                                switch (item.dataid) {
+                                    case "new":
+                                        GUI.launch(app.name, []);
+                                        break;
+                                
+                                    default:
+                                        break;
+                                }
+                            }
                         };
                         return m.show(e);
                     };
                     announcer.trigger("sysdockloaded", undefined);
+                    GUI.bindKey("CTRL-ALT-2", (e) =>{
+                        if(!this.items || this.items.length === 0)
+                        {
+                            return;
+                        }
+                        let index = this.items.indexOf(this.selectedItem);
+                        if(index < 0)
+                        {
+                            index = 0;
+                        }
+                        else
+                        {
+                            index++;
+                        }
+                        if(index >= this.items.length)
+                            index = 0;
+                        this.items[index].app.trigger("focus");
+                    });
+                    GUI.bindKey("CTRL-ALT-1", (e) =>{
+                        if(!this.items || this.items.length === 0)
+                        {
+                            return;
+                        }
+                        let index = this.items.indexOf(this.selectedItem);
+                        index--;
+                        if(index < 0)
+                        {
+                            index = this.items.length - 1;
+                        }
+                        if(index < 0)
+                        {
+                            return;
+                        }
+                        this.items[index].app.trigger("focus");
+                    });
                 }
             }
             define("afx-apps-dock", AppDockTag);

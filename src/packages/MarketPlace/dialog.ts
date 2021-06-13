@@ -39,18 +39,14 @@ namespace OS {
                 {
                     text: "+",
                     onbtclick: () => {
-                        return this.openDialog("PromptDialog", {
+                        return this.openDialog("MultiInputDialog", {
                             title: __("Add repository"),
-                            label: __("Format : [name] url")
-                        }).then(e => {
-                            const m = e.match(/\[([^\]]*)\]\s*(.+)/);
-                            if (!m || (m.length !== 3)) {
-                                return this.error(__("Wrong format: it should be [name] url"));
+                            model: {
+                                text: "Repository name",
+                                url: "Repository URL"
                             }
-                            const repo = {
-                                url: m[2],
-                                text: m[1]
-                            };
+                        }).then(e => {
+                            const repo = e;
                             this.systemsetting.system.repositories.push(repo);
                             return this.list.push(repo);
                         });
@@ -82,17 +78,17 @@ namespace OS {
             if  (!(selidx >= 0)) { return; }
             const data = el.data;
             const sel = this.systemsetting.system.repositories[selidx];
-            this.openDialog("PromptDialog", {
+            this.openDialog("MultiInputDialog", {
                 title: __("Edit repository"),
-                label: __("Format : [name] url"),
-                value: `[${data.text}] ${data.url}`
+                model: {
+                    text: "Repository name",
+                    url: "Repository URL"
+                },
+                allow_empty: false,
+                data: data
             }).then(e => {
-                const m = e.match(/\[([^\]]*)\]\s*(.+)/);
-                if (!m || (m.length !== 3)) {
-                    return this.error(__("Wrong format: it should be [name] url"));
-                }
-                data.text = m[1];
-                data.url = m[2];
+                data.text = e.text;
+                data.url = e.url;
                 this.list.update(undefined);
                 return this.list.unselect();
             });

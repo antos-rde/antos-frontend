@@ -8,7 +8,54 @@ afx-sys-panel > div{
      margin:0;
      padding: 0;
      position:absolute;
- }
+}
+
+afx-sys-panel afx-overlay
+{
+    width: 400px;
+}
+afx-sys-panel > div.loading::before{
+    background-color: orangered;
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 0%;
+}
+
+afx-sys-panel > div.loading::before {
+    right: 0;
+    bottom:0;
+    animation: sys-loading 1s linear infinite;
+}
+
+@keyframes sys-loading {
+    0% {
+        right: auto;
+        left: 0;
+        width: 25%;
+    }
+    25% {
+        right: auto;
+        left: 25%;
+        width: 25%;
+    }
+    50% {
+        right: auto;
+        left: 50%;
+        width: 25%;
+    }
+    75% {
+        right: auto;
+        left: 75%;
+        width: 25%;
+    }
+    100% {
+        right: auto;
+        left: 100%;
+        width: 12.5%;
+    }
+}
+
 afx-sys-panel .afx-panel-os-menu {
     padding:0;
     margin: 0;
@@ -19,6 +66,10 @@ afx-sys-panel .afx-panel-os-menu {
 afx-sys-panel .afx-panel-os-stray{
     float:right;
     position: relative;
+}
+
+afx-sys-panel .afx-panel-os-pinned-app afx-menu-entry{
+    display: inline-block;
 }
 
 afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  {

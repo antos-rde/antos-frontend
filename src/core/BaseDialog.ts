@@ -63,6 +63,7 @@ namespace OS {
              */
             quit(): void {
                 const evt = new BaseEvent("exit", false);
+                this.onexit(evt);
                 if (!evt.prevent) {
                     delete this._observable;
                     if (this.scheme) {
@@ -71,7 +72,6 @@ namespace OS {
                     if (this.dialog) {
                         return this.dialog.quit();
                     }
-                    this.onexit(evt);
                 }
             }
 
@@ -173,11 +173,11 @@ namespace OS {
              * Function called when dialog exits
              *
              * @protected
-             * @param {BaseEvent} e
+             * @param {BaseEvent} _e
              * @returns {void}
              * @memberof BaseDialog
              */
-            protected onexit(e: BaseEvent): void {
+            protected onexit(_e: BaseEvent): void {
                 if (this.parent) {
                     return (this.parent.dialog = undefined);
                 }
@@ -199,11 +199,11 @@ namespace OS {
              * be either the string definition of the scheme or
              * the VFS file handle of the scheme file
              *
-             * @private
+             * @protected
              * @type {(string | OS.API.VFS.BaseFileHandle)}
              * @memberof BasicDialog
              */
-            private markup: string | OS.API.VFS.BaseFileHandle;
+            protected markup: string | OS.API.VFS.BaseFileHandle;
 
             /**
              * If the `markup` variable is not provided, then
@@ -238,6 +238,7 @@ namespace OS {
              * @memberof BasicDialog
              */
             init(): void {
+                //this._onenter = undefined;
                 if (this.markup) {
                     if (typeof this.markup === "string") {
                         return GUI.htmlToScheme(this.markup, this, this.host);
@@ -263,11 +264,27 @@ namespace OS {
              */
             main(): void {
                 const win = this.scheme as tag.WindowTag;
+                $(win).attr("tabindex", 0);
+                $(win).on('keydown', (e) => {
+                    switch (e.which) {
+                        case 27:
+                            return this.quit();
+                        case 13:
+                            const btn = $("afx-button", win).filter(function () {
+                                const did = $(this).attr('data-id').toLowerCase();
+                                return did === "btnok" || did === "btnyes";
+                            });
+                            return $("button", btn).trigger("click");
+                        default:
+                            return;
+                    }
+                });
                 if (this.data && this.data.title) {
                     win.apptitle = this.data.title;
                 }
                 win.resizable = false;
                 win.minimizable = false;
+                $(win).trigger("focus");
             }
         }
 
@@ -322,12 +339,11 @@ namespace OS {
                         $input.val(this.data.value);
                     }
 
-                    if (this.data && this.data.type)
-                    {
+                    if (this.data && this.data.type) {
                         ($input[0] as HTMLInputElement).type = this.data.type
                     }
 
-                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         if (this.handle) {
                             this.handle($input.val());
                         }
@@ -335,12 +351,12 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ) => {
                         return this.quit();
                     };
 
-                    $input.keyup((e) => {
+                    $input.on("keyup", (e) => {
                         if (e.which !== 13) {
                             return;
                         }
@@ -350,7 +366,7 @@ namespace OS {
                         return this.quit();
                     });
 
-                    $input.focus();
+                    $input.trigger("focus");
                 }
             }
             /**
@@ -360,19 +376,19 @@ namespace OS {
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label data-id = "lbl" />
-                <input type = "text" data-id= "txtInput" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label data-id = "lbl" ></afx-label>
+                <input type = "text" data-id= "txtInput" ></input>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -409,11 +425,10 @@ namespace OS {
                     if (this.data && this.data.value) {
                         $input.val(this.data.value);
                     }
-                    if(this.data && this.data.disable)
-                    {
+                    if (this.data && this.data.disable) {
                         $input.prop('disabled', true);
                     }
-                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("btn-Ok") as tag.ButtonTag).onbtclick = (_e) => {
                         const value = $input.val();
                         if (!value || value === "") {
                             return;
@@ -425,7 +440,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -440,18 +455,18 @@ namespace OS {
 <afx-app-window data-id = "TextDialog" width='400' height='300'>
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <textarea data-id= "txtInput" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <textarea data-id= "txtInput" ></textarea>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btn-Ok" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -493,7 +508,7 @@ namespace OS {
                 main(): void {
                     super.main();
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         const date = (this.find("cal") as tag.CalendarTag)
                             .selectedDate;
@@ -507,7 +522,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -520,19 +535,19 @@ namespace OS {
 <afx-app-window  width='300' height='230' apptitle = "Calendar" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-calendar-view data-id = "cal" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-calendar-view data-id = "cal" ></afx-calendar-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -571,7 +586,7 @@ namespace OS {
                 main(): void {
                     super.main();
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         const color = (this.find(
                             "cpicker"
@@ -586,7 +601,7 @@ namespace OS {
                     };
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -599,19 +614,19 @@ namespace OS {
 <afx-app-window  width='320' height='250' apptitle = "Color picker" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-color-picker data-id = "cpicker" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-color-picker data-id = "cpicker" ></afx-color-picker>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -666,7 +681,7 @@ namespace OS {
                     ];
                     grid.rows = rows;
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -679,18 +694,18 @@ namespace OS {
 <afx-app-window  width='250' height='300' apptitle = "Info" >
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-grid-view data-id = "grid" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-grid-view data-id = "grid" ></afx-grid-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
-                <div data-height="10" />
+                <div data-height="10" ></div>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -736,7 +751,7 @@ namespace OS {
                         (this.find("lbl") as tag.LabelTag).set(this.data);
                     }
                     (this.find("btnYes") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         if (this.handle) {
                             this.handle(true);
@@ -744,7 +759,7 @@ namespace OS {
                         return this.quit();
                     };
                     (this.find("btnNo") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         if (this.handle) {
                             this.handle(false);
@@ -760,18 +775,18 @@ namespace OS {
 <afx-app-window  width='200' height='150' apptitle = "Prompt">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label data-id = "lbl" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label data-id = "lbl" ></afx-label>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" />
-                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" />
+                    <div ></div>
+                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -819,7 +834,7 @@ namespace OS {
                     if (this.data && this.data.data) {
                         listview.data = this.data.data;
                     }
-                    const fn = (e: TagEventType<GUI.tag.ListItemEventData>) => {
+                    const fn = (_e: TagEventType<GUI.tag.ListItemEventData>) => {
                         const data = listview.selectedItem;
                         if (!data) {
                             return this.notify(__("Please select an item"));
@@ -833,7 +848,7 @@ namespace OS {
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = fn;
 
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -846,18 +861,18 @@ namespace OS {
 <afx-app-window  width='250' height='300' apptitle = "Selection">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-list-view data-id = "list" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-list-view data-id = "list" ></afx-list-view>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>\
@@ -916,7 +931,7 @@ namespace OS {
                     grid.header = [{ text: "", width: 100 }, { text: "" }];
                     grid.rows = rows;
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ): void => {
                         return this.quit();
                     };
@@ -940,10 +955,10 @@ namespace OS {
         </afx-hbox>
         
         <afx-hbox data-height="30">
-            <div />
-            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" />
+            <div ></div>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" ></afx-button>
         </afx-hbox>
-        <div data-height = "10"/>
+        <div data-height = "10"></div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -988,11 +1003,20 @@ namespace OS {
                 }
 
                 /**
+                 * Store the last opened directory
+                 *
+                 * @static
+                 * @type {string}
+                 * @memberof FileDialog
+                 */
+                static last_opened: string;
+                /**
                  *
                  *
                  * @returns {void}
                  * @memberof FileDialog
                  */
+
                 main(): void {
                     super.main();
                     const fileview = this.find("fileview") as tag.FileViewTag;
@@ -1003,12 +1027,19 @@ namespace OS {
                             if (!path) {
                                 return resolve(undefined);
                             }
-                            return path
-                                .asFileHandle()
+                            let dir = path.asFileHandle();
+                            return dir
                                 .read()
                                 .then(function (d) {
                                     if (d.error) {
                                         return reject(d);
+                                    }
+                                    FileDialog.last_opened = path;
+                                    if (!dir.isRoot()) {
+                                        const p = dir.parent();
+                                        p.filename = "[..]";
+                                        p.type = "dir";
+                                        d.result.unshift(p);
                                     }
                                     return resolve(d.result);
                                 })
@@ -1033,9 +1064,18 @@ namespace OS {
                         };
                         location.data = this.systemsetting.VFS.mountpoints.filter(
                             (i) => i.type !== "app"
+                        ).map(
+                            (i) => {
+                                if (FileDialog.last_opened)
+                                    i.selected = false;
+                                return i;
+                            }
                         );
-                        if (location.selectedItem === undefined) {
+                        if (location.selectedItem === undefined && !FileDialog.last_opened) {
                             location.selected = 0;
+                        }
+                        else if (FileDialog.last_opened) {
+                            setroot(FileDialog.last_opened);
                         }
                     } else {
                         $(location).hide();
@@ -1047,7 +1087,7 @@ namespace OS {
                             return $(filename).val(e.data.filename);
                         }
                     };
-                    (this.find("bt-ok") as tag.ButtonTag).onbtclick = (e) => {
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         const f = fileview.selectedFile;
                         if (!f) {
                             return this.notify(
@@ -1096,7 +1136,7 @@ namespace OS {
                     };
 
                     (this.find("bt-cancel") as tag.ButtonTag).onbtclick = (
-                        e
+                        _e
                     ) => {
                         return this.quit();
                     };
@@ -1112,6 +1152,8 @@ namespace OS {
                     }
                 }
             }
+
+            FileDialog.last_opened = undefined;
             /**
              * Scheme definition
              */
@@ -1121,10 +1163,10 @@ namespace OS {
         <afx-list-view data-id = "location" dropdown = "false" data-width = "120"></afx-list-view>
         <afx-vbox>
             <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
-            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" /> 
+            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
             <afx-hbox data-height = '30'>
                 <div style=' text-align:right;'>
-                    <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                    <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
                     <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
                 </div>
                 <div data-width="5"></div>
@@ -1133,6 +1175,298 @@ namespace OS {
     </afx-hbox>
 </afx-app-window>\
             `;
+
+            /**
+             * Generic & dynamic key-value dialog. The content
+             * of the dialog consist of an array of label and input elements
+             * which are generated based on the input model
+             * 
+             * The input data of the dialog should be:
+             *
+             * ```typescript
+             * {
+             *      title: string, // window title
+             *      model: {
+             *          [propName:string]: string
+             *      },
+             *      data: {
+             *          [propName:string]: string
+             *      },
+             *      allow_empty: boolean
+             * }
+             * ```
+             * Where:
+             * - keys of `model` are data fields, each key correspond to an input element
+             * - values of `model` are description texts of fields, each value correspond to a label text
+             * - data is the input data object in the format of model (optional)
+             * 
+             * ```
+             * Example:
+             * {
+             *      title: "Greeting",
+             *      model: {
+             *          name: "Your name",
+             *          email: "Your email"
+             *      },
+             *      allow_empty: false
+             * }
+             *```
+
+             * The data passing from the dialog to the callback function is
+             * the user input data corresponding to the input model
+             * 
+             * Example of callback data for the above model:
+             * 
+             * ```
+             * {
+             *      name: "John Doe",
+             *      email: "jd@mail.com"
+             * }
+             * ```
+             *
+             * @export
+             * @class MultiInputDialog
+             * @extends {BasicDialog}
+             */
+            export class MultiInputDialog extends BasicDialog {
+
+                /**
+                 * References to all the input fields in the
+                 * dialog
+                 *
+                 * @private
+                 * @type {HTMLElement[]}
+                 * @memberof MultiInputDialog
+                 */
+                private inputs: JQuery<HTMLElement>;
+
+                /**
+                 *Creates an instance of MultiInputDialog.
+                 * @memberof MultiInputDialog
+                 */
+                constructor() {
+                    super("MultiInputDialog");
+                }
+
+                /**
+                 * Generate the scheme before rendering
+                 *
+                 * @memberof MultiInputDialog
+                 */
+                init(): void {
+                    let height = 60;
+                    let html = "";
+                    if (this.data && this.data.model) {
+                        const model = this.data.model;
+                        for (const key in model) {
+                            html += `\
+                            <afx-label data-height="25" text="{0}" ></afx-label>
+                            <input data-height="25" type="text" name="{1}" ></input>
+                            <div data-height="10" ></div>
+                            `.format(model[key], key);
+                            height += 60;
+                        }
+                    }
+                    this.markup = MultiInputDialog.scheme.format(height, html);
+                    super.init();
+                }
+                /**
+                 * Main entry point
+                 *
+                 * @memberof MultiInputDialog
+                 */
+                main(): void {
+                    super.main();
+                    this.inputs = $("input", this.scheme);
+                    if (this.data && this.data.data) {
+                        const that = this;
+                        this.inputs.each(function (_i) {
+                            const input = this as HTMLInputElement;
+                            input.value = that.data.data[input.name];
+                        });
+                    }
+                    (this.find("btnCancel") as tag.ButtonTag).onbtclick = (_e) => this.quit();
+
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
+                        let cdata: GenericObject<string> = {};
+                        for (const el of this.inputs) {
+                            let input = el as HTMLInputElement;
+                            if (!this.data.allow_empty && input.value.trim() == "") {
+                                return this.notify(__("All fields should be filled"));
+                            }
+                            cdata[input.name] = input.value.trim();
+                        }
+                        if (this.handle)
+                            this.handle(cdata);
+                        this.quit();
+                    }
+                }
+            }
+            /**
+             * Scheme definition
+             */
+            MultiInputDialog.scheme = `\
+<afx-app-window width='350' height='{0}'>
+    <afx-hbox>
+        <div data-width="10" ></div>
+        <afx-vbox>
+            <div data-height="5" ></div>
+            {1}
+            <afx-hbox data-height="30">
+                <div ></div>
+                <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
+            </afx-hbox>
+            <div data-height="5" ></div>
+        </afx-vbox>
+        <div data-width="10" ></div>
+    </afx-hbox>
+</afx-app-window>`;
+
+
+            /**
+             * Generic dynamic key-value dialog
+             * 
+             * Allow user to input any data key-value based object:
+             * 
+             * {
+             *      [prop:string]: string;
+             * }
+             *
+             * @export
+             * @class KeyValueDialog
+             * @extends {BasicDialog}
+             */
+            export class KeyValueDialog extends BasicDialog {
+
+                /**
+                 * Reference to the form container
+                 *
+                 * @private
+                 * @type {HTMLDivElement}
+                 * @memberof KeyValueDialog
+                 */
+                private container: HTMLDivElement;
+
+                /**
+                 * Creates an instance of KeyValueDialog.
+                 * @memberof KeyValueDialog
+                 */
+                constructor() {
+                    super("KeyValueDialog");
+                }
+
+                /**
+                 * Main entry point
+                 *
+                 * @memberof KeyValueDialog
+                 */
+                main(): void {
+                    super.main();
+                    this.container = this.find("container") as HTMLDivElement;
+                    (this.find("btnCancel") as tag.ButtonTag).onbtclick = (e) => this.quit();
+                    (this.find("btnAdd") as tag.ButtonTag).onbtclick = (e) => this.addField("", "", true);
+                    $(this.find("wrapper"))
+                    $(this.container)
+                        .css("overflow-y", "auto");
+                    if (this.data && this.data.data) {
+                        for (const key in this.data.data) {
+                            const value = this.data.data[key];
+                            this.addField(key, value, false);
+                        }
+                    }
+                    else {
+                        this.addField("key", "value", false);
+                    }
+                    (this.find("btnOk") as tag.ButtonTag).onbtclick = (e) => {
+                        const inputs = $("input", this.scheme) as JQuery<HTMLInputElement>;
+                        let cdata: GenericObject<string> = {};
+                        for (let i = 0; i < inputs.length; i += 2) {
+                            const key = inputs[i].value.trim();
+                            if (key === "") {
+                                return this.notify(__("Key cannot be empty"));
+                            }
+                            if (cdata[key]) {
+                                return this.notify(__("Duplicate key: {0}", key));
+                            }
+                            cdata[key] = inputs[i + 1].value.trim();
+                        }
+                        if (this.handle)
+                            this.handle(cdata);
+                        this.quit();
+                    }
+                }
+
+
+                /**
+                 * Add new input key-value field to the dialog
+                 *
+                 * @private
+                 * @memberof KeyValueDialog
+                 */
+                private addField(key: string, value: string, removable: boolean): void {
+                    const div = $("<div>")
+                        .css("width", "100%")
+                        .css("display", "flex")
+                        .css("flex-direction", "row")
+                        .appendTo(this.container);
+                    $("<input>")
+                        .attr("type", "text")
+                        .css("width", "120px")
+                        .css("height", "23px")
+                        .val(key)
+                        .appendTo(div);
+                    $("<input>")
+                        .attr("type", "text")
+                        .css("width", "200px")
+                        .css("height", "23px")
+                        .val(value)
+                        .appendTo(div);
+                    if (removable) {
+                        const btn = $("<afx-button>");
+                        btn[0].uify(undefined);
+                        $("button", btn)
+                            .css("width", "23px")
+                            .css("height", "23px");
+                        (btn[0] as tag.ButtonTag).iconclass = "fa fa-minus";
+                        btn
+                            .on("click", () => {
+                                div.remove();
+                            })
+                            .appendTo(div);
+                    }
+                    else {
+                        $("<div>")
+                            .css("width", "23px")
+                            .appendTo(div);
+                    }
+
+                }
+
+            }
+
+            /**
+             * Scheme definition
+             */
+            KeyValueDialog.scheme = `\
+             <afx-app-window width='350' height='300'>
+                 <afx-hbox>
+                    <div data-width="10" ></div>
+                    <afx-vbox>
+                        <div data-height="5" ></div>
+                        <afx-label text="__(Enter key-value data)" data-height="30"></afx-label>
+                        <div data-id="container"></div>
+                        <afx-hbox data-height="30">
+                            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "30" ></afx-button>
+                            <div ></div>
+                            <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
+                        </afx-hbox>
+                        <div data-height="5" ></div>
+                    </afx-vbox>
+                    <div data-width="10" ></div>
+                 </afx-hbox>
+             </afx-app-window>`;
         }
     }
 }

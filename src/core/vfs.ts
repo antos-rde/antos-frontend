@@ -15,7 +15,7 @@
 
 // You should have received a copy of the GNU General Public License
 //along with this program. If not, see https://www.gnu.org/licenses/.
-type VFSFileHandleClass = { new (...args: any[]): OS.API.VFS.BaseFileHandle };
+type VFSFileHandleClass = { new(...args: any[]): OS.API.VFS.BaseFileHandle };
 interface String {
     /**
      * Convert a string to VFS file handle.
@@ -164,6 +164,8 @@ namespace OS {
          * AntOS Virtual File System (VFS)
          */
         export namespace VFS {
+            declare var JSZip: any;
+
             String.prototype.asFileHandle = function (): BaseFileHandle {
                 const list = this.split("://");
                 const handles = API.VFS.findHandles(list[0]);
@@ -353,7 +355,8 @@ namespace OS {
                     if (re === "") {
                         return;
                     }
-                    this.genealogy = re.split("/");
+                    this.genealogy = re.split("/").filter(s=> s!="");
+                    this.path = `${this.protocol}://${this.genealogy.join("/")}`;
                     if (!this.isRoot()) {
                         this.basename = this.genealogy[
                             this.genealogy.length - 1
@@ -1083,26 +1086,22 @@ namespace OS {
                         } else {
                             try {
                                 const r = await this.b64(t);
-                                try {
-                                    const result = await API.handle.write(
-                                        this.path,
-                                        r as string
-                                    );
-                                    if (result.error) {
-                                        return reject(
-                                            API.throwe(
-                                                __(
-                                                    "{0}: {1}",
-                                                    result.error,
-                                                    this.path
-                                                )
+                                const result = await API.handle.write(
+                                    this.path,
+                                    r as string
+                                );
+                                if (result.error) {
+                                    return reject(
+                                        API.throwe(
+                                            __(
+                                                "{0}: {1}",
+                                                result.error,
+                                                this.path
                                             )
-                                        );
-                                    }
-                                    return resolve(result);
-                                } catch (e_1) {
-                                    return reject(__e(e_1));
+                                        )
+                                    );
                                 }
+                                return resolve(result);
                             } catch (e_2) {
                                 return reject(__e(e_2));
                             }
@@ -1298,7 +1297,7 @@ namespace OS {
 
             register("^(home|desktop|os|Untitled)$", RemoteFileHandle);
 
-            
+
             /**
              * Package file is remote file ([[RemoteFileHandle]]) located either in
              * the local user packages location or system packages
@@ -1316,8 +1315,7 @@ namespace OS {
              * @class PackageFileHandle
              * @extends {RemoteFileHandle}
              */
-            export class PackageFileHandle extends RemoteFileHandle
-            {
+            export class PackageFileHandle extends RemoteFileHandle {
 
                 /**
                  *Creates an instance of PackageFileHandle.
@@ -1325,12 +1323,11 @@ namespace OS {
                  * @memberof PackageFileHandle
                  */
                 constructor(pkg_path: string) {
-                    var error:FormattedString|string;
+                    var error: FormattedString | string;
                     var pkg_name: string;
                     super(pkg_path);
                     // now find the correct path
-                    if(!this.genealogy || this.genealogy.length == 0)
-                    {
+                    if (!this.genealogy || this.genealogy.length == 0) {
                         error = __("Invalid package path");
                         announcer.oserror(error, API.throwe(error));
                         throw new Error(error.__());
@@ -1338,14 +1335,12 @@ namespace OS {
                     else {
                         // get the correct path of the package
                         pkg_name = this.genealogy.shift();
-                        if(OS.setting.system.packages[pkg_name])
-                        {
+                        if (OS.setting.system.packages[pkg_name]) {
                             this.setPath(OS.setting.system.packages[pkg_name].path + "/" + this.genealogy.join("/"));
                         }
-                        else
-                        {
+                        else {
                             error = __("Package not found {0}", pkg_name);
-                            announcer.oserror(error,API.throwe(error));
+                            announcer.oserror(error, API.throwe(error));
                             throw new Error(error.__());
                         }
                     }
@@ -1427,8 +1422,7 @@ namespace OS {
                         const result = [];
                         for (let k in OS.setting.system.packages) {
                             const v = OS.setting.system.packages[k];
-                            if(v.app)
-                            {
+                            if (v.app) {
                                 result.push(v);
                             }
                         }
@@ -1599,7 +1593,7 @@ namespace OS {
                     //read the file
                     if (t === "binary") {
                         //return API.handle.fileblob(this.path);
-                        return API.blob(this.path+ "?_=" + new Date().getTime());
+                        return API.blob(this.path + "?_=" + new Date().getTime());
                     }
                     return API.get(this.path, t ? t : "text");
                 }
@@ -1760,6 +1754,355 @@ namespace OS {
             }
 
             API.VFS.register("^shared$", SharedFileHandle);
+
+            /**Utilities global functions */
+
+            /**
+             * Read a file content from a zip archive
+             *
+             * The content type should be:
+             * - base64 : the result will be a string, the binary in a base64 form.
+             * - text (or string): the result will be an unicode string.
+             * - binarystring: the result will be a string in “binary” form, using 1 byte per char (2 bytes).
+             * - array: the result will be an Array of bytes (numbers between 0 and 255).
+             * - uint8array : the result will be a Uint8Array. This requires a compatible browser.
+             * - arraybuffer : the result will be a ArrayBuffer. This requires a compatible browser.
+             * - blob : the result will be a Blob. This requires a compatible browser.             * 
+             * If file_name is not specified, the first file_name in the zip archive will be read
+             * @export
+             * @param {string} file zip file
+             * @param {string} type content type to read
+             * @param {string} [file_name] the file should be read from the zip archive 
+             * @return {*}  {Promise<any>}
+             */
+            export function readFileFromZip(file: string, type: string, file_name?: string): Promise<any> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        const data = await file.asFileHandle().read("binary");
+                        const zip = await JSZip.loadAsync(data);
+                        if (!file_name) {
+                            for (let name in zip.files) {
+                                file_name = name;
+                                break;
+                            }
+                        }
+                        const udata = await zip.file(file_name).async(type);
+                        resolve(udata);
+                    } catch (e) {
+                        return reject(__e(e));
+                    }
+                });
+            }
+
+
+            /**
+             * Cat all files to a single out-put
+             *
+             * @export
+             * @param {string[]} list list of VFS files
+             * @param {string} data input data string that will be cat to the files content
+             * @param {string} join_by join on files content by this string
+             * @return {*}  {Promise<string>}
+             */
+            export function cat(list: string[], data: string, join_by: string = "\n"): Promise<string> {
+                return new Promise(async (resolve, reject) => {
+                    if (list.length === 0) {
+                        return resolve(data);
+                    }
+                    const promises = [];
+                    for (const file of list) {
+                        promises.push(file.asFileHandle().read("text"));
+                    }
+                    try {
+                        const results = await Promise.all(promises);
+                        resolve(`${data}${join_by}${results.join(join_by)}`);
+                    } catch (error) {
+                        reject(__e(error));
+                    }
+                });
+            }
+
+
+            /**
+             * Read all files content on the list
+             *
+             * @export
+             * @param {string[]} list list of VFS files
+             * @param {GenericObject<string>[]} contents content array
+             * @return {void}
+             */
+            export function read_files(list: string[]): Promise<GenericObject<string>[]> {
+                const promises = [];
+                for (const file of list) {
+                    promises.push(file.asFileHandle().read("text"));
+                }
+                return Promise.all(promises);
+            }
+
+
+            /**
+             * Copy files to a folder
+             *
+             * @export
+             * @param {string[]} files list of files
+             * @param {string} to destination folder
+             * @return {*}  {Promise<any[]>}
+             */
+            export function copy(files: string[], to: string): Promise<any[]> {
+                const promises = [];
+                for (const path of files) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        try {
+                            const file = path.asFileHandle();
+                            const tof = `${to}/${file.basename}`.asFileHandle();
+                            const meta = await file.onready();
+                            if (meta.type === "dir") {
+                                const desdir = to.asFileHandle();
+                                await desdir.mk(file.basename);
+                                const ret = await file.read();
+                                const files = ret.result.map((v: API.FileInfoType) => v.path);
+                                if (files.length > 0) {
+                                    await copy(files, `${desdir.path}/${file.basename}`);
+                                    resolve(undefined);
+                                }
+                                else {
+                                    resolve(undefined);
+                                }
+                            }
+                            else {
+                                const content = await file.read("binary");
+                                await tof
+                                    .setCache(
+                                        new Blob([content], {
+                                            type: file.info.mime,
+                                        }))
+                                    .write(file.info.mime);
+                                resolve(undefined);
+                            }
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
+            }
+
+            /**
+             * Add a list of files to the zip archive
+             *
+             * @param {string[]} list list of VFS files
+             * @param {*} zip JSZip handle
+             * @param {string} base root path of all added files in the zip
+             * @return {*}  {Promise<any>}
+             */
+            function aradd(list: string[], zip: any, base: string): Promise<any> {
+                const promises = [];
+                for (const path of list) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        const file = path.asFileHandle();
+                        try {
+                            const meta = await file.asFileHandle().onready();
+                            if (meta.type == "dir") {
+                                const ret = await file.read();
+                                const dirs: string[] = ret.result.map((v: API.FileInfoType) => v.path);
+                                if (dirs.length > 0) {
+                                    await aradd(dirs, zip, `${base}${file.basename}/`);
+                                    resolve(undefined);
+                                }
+                                else {
+                                    resolve(undefined);
+                                }
+                            }
+                            else {
+                                const u_data = await file.read("binary");
+                                const z_path = `${base}${file.basename}`.replace(
+                                    /^\/+|\/+$/g,
+                                    ""
+                                );
+                                zip.file(z_path, u_data, { binary: true });
+                                resolve(undefined);
+                            }
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
+            }
+
+
+            /**
+             * Create a zip archive from a folder
+             *
+             * @export
+             * @param {string} src source file/folder
+             * @param {string} dest destination archive
+             * @return {*}  {Promise<void>}
+             */
+            export function mkar(src: string, dest: string): Promise<void> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        const zip = new JSZip();
+                        const fhd =  src.asFileHandle();
+                        const meta = await fhd.onready();
+                        if(meta.type === "file")
+                        {
+                            await aradd([src], zip, "/");
+                        }
+                        else
+                        {
+                            const ret = await fhd.read();
+                            await aradd(
+                                ret.result.map((v: API.FileInfoType) => v.path), zip, "/");
+                        }
+                        const z_data = await zip.generateAsync({ type: "base64" });
+                        await dest.asFileHandle()
+                            .setCache("data:application/zip;base64," + z_data)
+                            .write("base64");
+                        resolve();
+                    } catch (error) {
+                        reject(__e(error));
+                    }
+                });
+            }
+
+            /**
+             * Create a list of directories
+             *
+             * @export
+             * @param {string[]} list of directories to be created
+             * @param {boolen} sync sync/async of directory creation
+             * @return {*}  {Promise<any>}
+             */
+            export function mkdirAll(list: string[], sync?: boolean): Promise<any> {
+                if (!sync) {
+                    const promises = [];
+                    for (const dir of list) {
+                        const path = dir.asFileHandle()
+                        promises.push(path.parent().mk(path.basename));
+                    }
+                    return Promise.all(promises);
+                }
+                else {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            if (list.length === 0) {
+                                return resolve(true);
+                            }
+                            const dir = list.splice(0, 1)[0].asFileHandle();
+                            const path = dir.parent();
+                            const dname = dir.basename;
+                            const r = await path.asFileHandle().mk(dname);
+                            if (r.error) {
+                                return reject(
+                                    this._api.throwe(
+                                        __(
+                                            "Cannot create {0}",
+                                            `${path}/${dir}`
+                                        )
+                                    )
+                                );
+                            }
+                            await mkdirAll(list, sync);
+                            resolve(true);
+                        }
+                        catch (e) {
+                            reject(__e(e));
+                        }
+                    });
+                }
+            }
+
+
+
+            /**
+             *
+             *
+             * @export Extract a zip fle
+             * @param {string} zfile zip file to extract
+             * @param {(zip:any) => Promise<string>} [dest_callback] a callback to get extraction destination
+             * @return {*}  {Promise<void>}
+             */
+            export function extractZip(zfile: string | API.VFS.BaseFileHandle, dest_callback: (zip: any) => Promise<string>): Promise<void> {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires("os://scripts/jszip.min.js");
+                        const data = await zfile.asFileHandle().read("binary");
+                        const zip = await JSZip.loadAsync(data);
+                        const to = await dest_callback(zip);
+                        const dirs = [];
+                        const files = [];
+                        for (const name in zip.files) {
+                            const file = zip.files[name];
+                            if (file.dir) {
+                                dirs.push(to + "/" + name);
+                            } else {
+                                files.push(name);
+                            }
+                        }
+                        await mkdirAll(dirs, true);
+                        const promises = [];
+                        for (const file of files) {
+                            promises.push(new Promise(async (res, rej) => {
+                                try {
+                                    const data = await zip.file(file).async("uint8array");
+                                    const path = `${to}/${file}`;
+                                    const fp = path.asFileHandle();
+                                    fp.cache = new Blob([data], { type: "octet/stream" });
+                                    const r = await fp.write("text/plain");
+                                    if (r.error) {
+                                        return rej(
+                                            API.throwe(
+                                                __("Cannot extract file to {0}", path)
+                                            )
+                                        );
+                                    }
+                                    return res(path);
+                                } catch (error) {
+                                    rej(__e(error));
+                                }
+                            }));
+                        }
+                        await Promise.all(promises);
+                        resolve();
+                    } catch (e) {
+                        return reject(__e(e));
+                    }
+                });
+            }
+
+            /**
+             * Make files from a set of template files
+             *
+             * @export
+             * @param {Array<string[]>} list mapping paths between templates files and created files
+             * @param {string} path files destination
+             * @param {(data: string) => string} callback: pre-processing files content before writing to destination files
+             * @return {*}  {Promise<any[]>}
+             */
+            export function mktpl(
+                list: Array<string[]>,
+                path: string,
+                callback: (data: string) => string
+            ): Promise<any[]> {
+                const promises = [];
+                for (const tpl of list) {
+                    promises.push(new Promise(async (resolve, reject) => {
+                        try {
+                            const data = await `${path}/${tpl[0]}`.asFileHandle().read();
+                            const file = tpl[1].asFileHandle();
+                            file.setCache(callback(data));
+                            await file.write("text/plain");
+                            resolve(undefined);
+                        } catch (error) {
+                            reject(__e(error));
+                        }
+                    }));
+                }
+                return Promise.all(promises);
+            }
         }
     }
 }
