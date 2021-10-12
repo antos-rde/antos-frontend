@@ -843,7 +843,7 @@ namespace OS {
      * exits. These callbacks are useful when an application or service wants
      * to perform a particular task before shuting down the system
      */
-    export const cleanupHandles: { [index: string]: () => void } = {};
+    export const cleanupHandles: { [index: string]: () => Promise<any> } = {};
 
     /**
      * Perform the system shutdown operation. This function calls all
@@ -854,15 +854,16 @@ namespace OS {
      */
     export function exit(): void {
         //do clean up first
+        const promises: Promise<any>[] = [];
         for (let n in cleanupHandles) {
-            const f = cleanupHandles[n];
-            f();
+            promises.push(cleanupHandles[n]());
         }
-        API.handle
-            .setting()
-            .then(function (r: any) {
+        promises.push(API.handle.setting());
+        Promise.all(promises)
+            .then(async function (r: any) {
                 cleanup();
-                return API.handle.logout().then((d: any) => boot());
+                const d = await API.handle.logout();
+                return boot();
             })
             .catch((e: Error) => console.error(e));
     }
@@ -875,7 +876,7 @@ namespace OS {
      * @param {() => void} f the callback handle
      * @returns
      */
-    export function onexit(n: string, f: () => void) {
+    export function onexit(n: string, f: () => Promise<any>) {
         if (!cleanupHandles[n]) {
             return (cleanupHandles[n] = f);
         }

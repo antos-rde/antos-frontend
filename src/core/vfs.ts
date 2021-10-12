@@ -355,7 +355,7 @@ namespace OS {
                     if (re === "") {
                         return;
                     }
-                    this.genealogy = re.split("/").filter(s=> s!="");
+                    this.genealogy = re.split("/").filter(s => s != "");
                     this.path = `${this.protocol}://${this.genealogy.join("/")}`;
                     if (!this.isRoot()) {
                         this.basename = this.genealogy[
@@ -548,12 +548,8 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._rd(t);
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._rd(t);
+                            resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -601,16 +597,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d_1 = await this._mk(d);
-                                announcer.ostrigger("VFS", {
-                                    m: "mk",
-                                    file: this,
-                                });
-                                return resolve(d_1);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d_1 = await this._mk(d);
+                            announcer.ostrigger("VFS", {
+                                m: "mk",
+                                file: this,
+                            });
+                            return resolve(d_1);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -629,16 +621,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._rm();
-                                announcer.ostrigger("VFS", {
-                                    m: "remove",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._rm();
+                            announcer.ostrigger("VFS", {
+                                m: "remove",
+                                file: this,
+                            });
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -659,16 +647,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._up();
-                                announcer.ostrigger("VFS", {
-                                    m: "upload",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._up();
+                            announcer.ostrigger("VFS", {
+                                m: "upload",
+                                file: this,
+                            });
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -689,16 +673,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._pub();
-                                announcer.ostrigger("VFS", {
-                                    m: "publish",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._pub();
+                            announcer.ostrigger("VFS", {
+                                m: "publish",
+                                file: this,
+                            });
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -719,16 +699,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._down();
-                                announcer.ostrigger("VFS", {
-                                    m: "download",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._down();
+                            announcer.ostrigger("VFS", {
+                                m: "download",
+                                file: this,
+                            });
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -748,16 +724,13 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const data = await this._mv(d);
-                                announcer.ostrigger("VFS", {
-                                    m: "move",
-                                    file: d.asFileHandle(),
-                                });
-                                return resolve(data);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const data = await this._mv(d);
+                            announcer.ostrigger("VFS", {
+                                m: "move",
+                                file: d.asFileHandle(),
+                            });
+                            return resolve(data);
+
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -778,16 +751,12 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._exec();
-                                announcer.ostrigger("VFS", {
-                                    m: "execute",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._exec();
+                            announcer.ostrigger("VFS", {
+                                m: "execute",
+                                file: this,
+                            });
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -1066,8 +1035,8 @@ namespace OS {
                 protected _wr(t: string): Promise<RequestResult> {
                     // t is base64 or undefined
                     return new Promise(async (resolve, reject) => {
-                        if (t === "base64") {
-                            try {
+                        try {
+                            if (t === "base64") {
                                 const d = await API.handle.write(
                                     this.path,
                                     this.cache
@@ -1080,11 +1049,7 @@ namespace OS {
                                     );
                                 }
                                 return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
-                        } else {
-                            try {
+                            } else {
                                 const r = await this.b64(t);
                                 const result = await API.handle.write(
                                     this.path,
@@ -1102,9 +1067,9 @@ namespace OS {
                                     );
                                 }
                                 return resolve(result);
-                            } catch (e_2) {
-                                return reject(__e(e_2));
                             }
+                        } catch (e) {
+                            return reject(__e(e));
                         }
                     });
                 }
@@ -1945,14 +1910,12 @@ namespace OS {
                     try {
                         await API.requires("os://scripts/jszip.min.js");
                         const zip = new JSZip();
-                        const fhd =  src.asFileHandle();
+                        const fhd = src.asFileHandle();
                         const meta = await fhd.onready();
-                        if(meta.type === "file")
-                        {
+                        if (meta.type === "file") {
                             await aradd([src], zip, "/");
                         }
-                        else
-                        {
+                        else {
                             const ret = await fhd.read();
                             await aradd(
                                 ret.result.map((v: API.FileInfoType) => v.path), zip, "/");

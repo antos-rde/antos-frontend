@@ -2445,7 +2445,7 @@ declare namespace OS {
      * to perform a particular task before shuting down the system
      */
     const cleanupHandles: {
-        [index: string]: () => void;
+        [index: string]: () => Promise<any>;
     };
     /**
      * Perform the system shutdown operation. This function calls all
@@ -2463,7 +2463,7 @@ declare namespace OS {
      * @param {() => void} f the callback handle
      * @returns
      */
-    function onexit(n: string, f: () => void): () => void;
+    function onexit(n: string, f: () => Promise<any>): () => Promise<any>;
     /**
      * The namespace API is dedicated to the definition of the core system APIs
      * used by AntOS and its applications. The following core APIs are defined:
