@@ -949,7 +949,7 @@ namespace OS {
             $("#systooltip")[0].uify(undefined);
             $("#contextmenu")[0].uify(undefined);
 
-            $("#wrapper").on("contextmenu",(e) => bindContextMenu(e));
+            $("#wrapper").on("contextmenu", (e) => bindContextMenu(e));
             // tooltip
             $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");
@@ -1152,9 +1152,7 @@ namespace OS {
                     return API.packages.fetch().then(function (r) {
                         let v: API.PackageMetaType;
                         if (r.result) {
-                            const result = r.result as GenericObject<
-                                API.PackageMetaType
-                            >;
+                            const result = r.result as GenericObject<API.PackageMetaType>;
                             for (let k in result) {
                                 v = result[k];
                                 v.text = v.name;
@@ -1172,32 +1170,28 @@ namespace OS {
                                 ? result
                                 : undefined;
                         }
-                        // load VFSX
-                        // GUI.refreshSystemMenu()
-                        // GUI.buildSystemMenu()
-                        // push startup services
-                        // TODO: get services list from user setting
+                        // load services + VFSX
                         Promise.all(
-                            [OS.API.VFS.loadVFSX(true),
-                            pushServices(
-                                (() => {
-                                    const result = [];
-                                    for (let v of setting.system.startup.services) {
-                                        result.push(v);
-                                    }
-                                    return result;
-                                })()
-                            )
-                        ])
-                        .then(function () {
-                            setting.system.startup.apps.map((a) => {
-                                launch(a, []);
+                            [
+                                OS.API.VFS.loadVFSX(true),
+                                pushServices(
+                                    (() => {
+                                        const result = [];
+                                        for (let v of setting.system.startup.services) {
+                                            result.push(v);
+                                        }
+                                        return result;
+                                    })()
+                                )
+                            ])
+                            .then(function () {
+                                setting.system.startup.apps.map((a) => {
+                                    launch(a, []);
+                                });
                             });
-                        });
                     });
                 }
             });
-            //GUI.launch "DummyApp"
             // initDM
             API.setLocale(setting.system.locale).then(() => initDM());
             Ant.OS.announcer.observable.on("error", function (d) {
