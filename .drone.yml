@@ -10,7 +10,7 @@ clone:
 steps:
 - name: download
   commands:
-  - cd /opt/www/htdocs/os && wget https://github.com/lxsang/antos/raw/next-1.2.0/release/antos-1.2.1.tar.gz
+  - cd /opt/www/htdocs/os && wget https://github.com/lxsang/antos/raw/1.2.1/release/antos-1.2.1.tar.gz
 - name: build
   commands:
   - cd /opt/www/htdocs/os && tar xvzf antos-1.2.1.tar.gz
