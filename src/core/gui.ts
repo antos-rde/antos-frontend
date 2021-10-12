@@ -1172,20 +1172,24 @@ namespace OS {
                                 ? result
                                 : undefined;
                         }
-
+                        // load VFSX
                         // GUI.refreshSystemMenu()
                         // GUI.buildSystemMenu()
                         // push startup services
                         // TODO: get services list from user setting
-                        pushServices(
-                            (() => {
-                                const result = [];
-                                for (let v of setting.system.startup.services) {
-                                    result.push(v);
-                                }
-                                return result;
-                            })()
-                        ).then(function () {
+                        Promise.all(
+                            [OS.API.VFS.loadVFSX(true),
+                            pushServices(
+                                (() => {
+                                    const result = [];
+                                    for (let v of setting.system.startup.services) {
+                                        result.push(v);
+                                    }
+                                    return result;
+                                })()
+                            )
+                        ])
+                        .then(function () {
                             setting.system.startup.apps.map((a) => {
                                 launch(a, []);
                             });

@@ -165,7 +165,9 @@ namespace OS {
          */
         export namespace VFS {
             declare var JSZip: any;
-
+            /** path for custom VFS protocol handles */
+            const VFSX_PATH = "pkg://vfsx/vfsx.js";
+            
             String.prototype.asFileHandle = function (): BaseFileHandle {
                 const list = this.split("://");
                 const handles = API.VFS.findHandles(list[0]);
@@ -198,7 +200,27 @@ namespace OS {
             ): void {
                 handles[protos] = cls;
             }
-
+            /**
+             * Load custom VFS handles if the package vfsx available
+             *
+             * @export
+             * @param {boolean} [force] force load the file
+             * @return {*}  {Promise<any>}
+             */
+            export function loadVFSX(force?: boolean): Promise<any>
+            {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires(VFSX_PATH, force);
+                        resolve(true);
+                    }
+                    catch(e)
+                    {
+                        console.warn("No custom VFS protocol loaded");
+                        resolve(true);
+                    }
+                })
+            }
             /**
              * Looking for a attached file handle class of a string protocol
              *

@@ -4030,6 +4030,14 @@ declare namespace OS {
              */
             function register(protos: string, cls: VFSFileHandleClass): void;
             /**
+             * Load custom VFS handles if the package vfsx available
+             *
+             * @export
+             * @param {boolean} [force] force load the file
+             * @return {*}  {Promise<any>}
+             */
+            function loadVFSX(force?: boolean): Promise<any>;
+            /**
              * Looking for a attached file handle class of a string protocol
              *
              * When converting a string to file handle, the system will look
