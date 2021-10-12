@@ -17,4 +17,4 @@ steps:
   - rm /opt/www/htdocs/os/antos-1.2.0.tar.gz
 trigger:
   branch:
-  - next-1.2.0
+  - 1.2.1
