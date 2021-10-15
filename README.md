@@ -53,7 +53,7 @@ If one want to run AntOS VDE locally in their system, a docker image is availabl
 ## Documentation
 
 - Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
-- API: (https://doc.iohub.dev/antos/api/)[https://doc.iohub.dev/antos/api/]
+- API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
 
 ## Licence
 
