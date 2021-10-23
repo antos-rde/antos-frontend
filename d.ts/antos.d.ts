@@ -1,2955 +1,4 @@
 declare namespace OS {
-    /**
-     * This namespace is dedicated to everything related to the
-     * global system settings
-     */
-    namespace setting {
-        /**
-         * User setting type definition
-         *
-         * @export
-         * @interface UserSettingType
-         */
-        interface UserSettingType {
-            /**
-             * User full name
-             *
-             * @type {string}
-             * @memberof UserSettingType
-             */
-            name: string;
-            /**
-             * User name
-             *
-             * @type {string}
-             * @memberof UserSettingType
-             */
-            username: string;
-            /**
-             * User id
-             *
-             * @type {number}
-             * @memberof UserSettingType
-             */
-            id: number;
-            /**
-             * User groups
-             *
-             * @type {{ [index: number]: string }}
-             * @memberof UserSettingType
-             */
-            group?: {
-                [index: number]: string;
-            };
-            [propName: string]: any;
-        }
-        /**
-         * Virtual desktop setting data type
-         *
-         * @export
-         * @interface DesktopSettingType
-         */
-        interface DesktopSettingType {
-            /**
-             * Desktop VFS path
-             *
-             * @type {string}
-             * @memberof DesktopSettingType
-             */
-            path: string;
-            /**
-             * Desktop menu, can be added automatically by applications
-             *
-             * @type {GUI.BasicItemType[]}
-             * @memberof DesktopSettingType
-             */
-            menu: GUI.BasicItemType[];
-            /**
-             * Show desktop hidden files
-             *
-             * @type {boolean}
-             * @memberof DesktopSettingType
-             */
-            showhidden: boolean;
-            [propName: string]: any;
-        }
-        /**
-         * Wallpaper setting data type
-         *
-         * @export
-         * @interface WPSettingType
-         */
-        interface WPSettingType {
-            /**
-             * Repeat wallpaper:
-             * - `repeat`
-             * - `repeat-x`
-             * - `repeat-y`
-             * - `no-repeat`
-             *
-             * @type {string}
-             * @memberof WPSettingType
-             */
-            repeat: string;
-            /**
-             * Wallpaper size
-             * - `contain`
-             * - `cover`
-             * - `auto`
-             *
-             * @type {string}
-             * @memberof WPSettingType
-             */
-            size: string;
-            /**
-             * VFS path to the wallpaper image
-             *
-             * @type {string}
-             * @memberof WPSettingType
-             */
-            url: string;
-        }
-        /**
-         * Theme setting data type
-         *
-         * @export
-         * @interface ThemeSettingType
-         */
-        interface ThemeSettingType {
-            /**
-             * Theme name, this value is used for looking
-             * theme file in system asset
-             *
-             * @type {string}
-             * @memberof ThemeSettingType
-             */
-            name: string;
-            /**
-             * Theme user-friendly text
-             *
-             * @type {string}
-             * @memberof ThemeSettingType
-             */
-            text: string;
-        }
-        /**
-         * Appearance setting data type
-         *
-         * @export
-         * @interface AppearanceSettingType
-         */
-        interface AppearanceSettingType {
-            /**
-             * Current theme name
-             *
-             * @type {string}
-             * @memberof AppearanceSettingType
-             */
-            theme: string;
-            /**
-             * All themes available in the system
-             *
-             * @type {ThemeSettingType[]}
-             * @memberof AppearanceSettingType
-             */
-            themes: ThemeSettingType[];
-            /**
-             * Current wallpaper setting
-             *
-             * @type {WPSettingType}
-             * @memberof AppearanceSettingType
-             */
-            wp: WPSettingType;
-            /**
-             * All wallpapers available in the system
-             *
-             * @type {string[]}
-             * @memberof AppearanceSettingType
-             */
-            wps: string[];
-        }
-        /**
-         * VFS Mount points setting data type
-         *
-         * @export
-         * @interface VFSMountPointSettingType
-         */
-        interface VFSMountPointSettingType {
-            /**
-             * Path to the mount point
-             *
-             * @type {string}
-             * @memberof VFSMountPointSettingType
-             */
-            path: string;
-            /**
-             * User friendly mount point name
-             *
-             * @type {string}
-             * @memberof VFSMountPointSettingType
-             */
-            text: string;
-            [propName: string]: any;
-        }
-        /**
-         * VFS setting data type
-         *
-         * @export
-         * @interface VFSSettingType
-         */
-        interface VFSSettingType {
-            /**
-             * mount points setting
-             *
-             * @type {VFSMountPointSettingType[]}
-             * @memberof VFSSettingType
-             */
-            mountpoints: VFSMountPointSettingType[];
-            [propName: string]: any;
-        }
-        /**
-         * Global system setting data type
-         *
-         * @export
-         * @interface SystemSettingType
-         */
-        interface SystemSettingType {
-            /**
-             * System error report URL
-             *
-             * @type {string}
-             * @memberof SystemSettingType
-             */
-            error_report: string;
-            /**
-             * Current system locale e.g. `en_GB`
-             *
-             * @type {string}
-             * @memberof SystemSettingType
-             */
-            locale: string;
-            /**
-             * System menus
-             *
-             * @type {API.PackageMetaType[]}
-             * @memberof API.PackageMetaType
-             */
-            menu: API.PackageMetaType[];
-            /**
-             * Packages meta-data
-             *
-             * @type {{ [index: string]: API.PackageMetaType }}
-             * @memberof SystemSettingType
-             */
-            packages: {
-                [index: string]: API.PackageMetaType;
-            };
-            /**
-             * Path to the installed packages
-             *
-             * @type {{
-             *                 user: string;
-             *                 system: string;
-             *             }}
-             * @memberof SystemSettingType
-             */
-            pkgpaths: {
-                /**
-                 * User specific packages install location
-                 *
-                 * @type {string}
-                 */
-                user: string;
-                /**
-                 * System packages install location
-                 *
-                 * @type {string}
-                 */
-                system: string;
-            };
-            /**
-             * Package repositories setting.
-             * This configuration is used by [[MarketPlace]]
-             * for package management
-             *
-             * @type {{
-             *                 text: string;
-             *                 url: string;
-             *             }[]}
-             * @memberof SystemSettingType
-             */
-            repositories: {
-                /**
-                 * Repository name
-                 *
-                 * @type {string}
-                 */
-                text: string;
-                /**
-                 * Repository uri
-                 *
-                 * @type {string}
-                 */
-                url: string;
-            }[];
-            /**
-             * Startup applications and services
-             *
-             * @type {{
-             *                 apps: string[];
-             *                 services: string[];
-             *             }}
-             * @memberof SystemSettingType
-             */
-            startup: {
-                /**
-                 * List of application names
-                 *
-                 * @type {string[]}
-                 */
-                apps: string[];
-                /**
-                 * List of service names
-                 *
-                 * @type {string[]}
-                 */
-                services: string[];
-                /**
-                 * List of pinned applications
-                 *
-                 * @type {string[]}
-                 */
-                pinned: string[];
-            };
-        }
-        /**
-         * User settings
-         */
-        var user: UserSettingType;
-        /**
-         * Application settings
-         */
-        var applications: GenericObject<any>;
-        /**
-         * Desktop settings
-         */
-        var desktop: DesktopSettingType;
-        /**
-         * Appearance settings
-         */
-        var appearance: AppearanceSettingType;
-        /**
-         * VFS settings
-         */
-        var VFS: VFSSettingType;
-        /**
-         * System settings
-         */
-        var system: SystemSettingType;
-    }
-    /**
-     * Reset the system settings to default values
-     *
-     * @export
-     */
-    function resetSetting(): void;
-    /**
-     * Apply the input parameter object to system settings.
-     * This object could be an object loaded from
-     * setting JSON file saved on the server.
-     *
-     * @export
-     * @param {*} conf
-     */
-    function systemSetting(conf: any): void;
-}
-declare namespace OS {
-    namespace API {
-        /**
-         * Simple Virtual Database (VDB) application API.
-         *
-         * This API abstracts and provides a standard way to
-         * connect to a server-side relational database (e.g. sqlite).
-         *
-         * Each user when connected has their own database previously
-         * created. All VDB operations related to that user will be
-         * performed on this database.
-         *
-         * The creation of user database need to be managed by the server-side API.
-         * The VDB API assumes that the database already exist. All operations
-         * is performed in tables level
-         *
-         * @export
-         * @class DB
-         */
-        class DB {
-            /**
-             * A table name on the user's database
-             *
-             * @private
-             * @type {string}
-             * @memberof DB
-             */
-            private table;
-            /**
-             *Creates an instance of DB.
-             * @param {string} table table name
-             * @memberof DB
-             */
-            constructor(table: string);
-            /**
-             * Save data to the current table. The input
-             * data must conform to the table record format.
-             *
-             * On the server side, if the table doest not
-             * exist yet, it should be created automatically
-             * by inferring the data structure of the input
-             * object
-             *
-             * @param {GenericObject<any>} d data object represents a current table record
-             * @returns {Promise<API.RequestResult>}
-             * @memberof DB
-             */
-            save(d: GenericObject<any>): Promise<API.RequestResult>;
-            /**
-             * delete record(s) from the current table by
-             * a conditional object
-             *
-             * @param {*} c conditional object, c can be:
-             *
-             * * a `number`: the operation will delete the record with `id = c`
-             * * a `string`: The SQL string condition that selects record to delete
-             * * a conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2` is represented by:
-             *
-             * ```typescript
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *  }
-             * ```
-             *
-             * @returns {Promise<API.RequestResult>}
-             * @memberof DB
-             */
-            delete(c: GenericObject<any> | number | string): Promise<API.RequestResult>;
-            /**
-             * Get a record in the table by its primary key
-             *
-             * @param {number} id the primary key value
-             * @returns {Promise<GenericObject<any>>} Promise on returned record data
-             * @memberof DB
-             */
-            get(id: number): Promise<GenericObject<any>>;
-            /**
-             * Find records by a condition
-             *
-             * @param {GenericObject<any>} cond conditional object
-             *
-             * a conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2 ORDER BY date DESC` is represented by:
-             *
-             * ```typescript
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *      },
-             *      order: {
-             *          date: "DESC"
-             *      }
-             *  }
-             * ```
-             * @returns {Promise<GenericObject<any>[]>}
-             * @memberof DB
-             */
-            find(cond: GenericObject<any>): Promise<GenericObject<any>[]>;
-        }
-    }
-}
-/// <reference types="jquery" />
-declare namespace OS {
-    /**
-     * This namespace is dedicated to application and service definition.
-     * When an application is loaded, its prototype definition will be
-     * inserted to this namespace for reuse lately
-     */
-    namespace application {
-        /**
-         * Abstract prototype of all AntOS applications.
-         * Any new application definition should extend
-         * this prototype
-         *
-         * @export
-         * @abstract
-         * @class BaseApplication
-         * @extends {BaseModel}
-         */
-        abstract class BaseApplication extends BaseModel {
-            /**
-             * Placeholder of all settings specific to the application.
-             * The settings stored in this object will be saved to system
-             * setting when logout and can be reused in the next login session
-             *
-             * @type {GenericObject<any>}
-             * @memberof BaseApplication
-             */
-            setting: GenericObject<any>;
-            /**
-             * Hotkeys (shortcuts) defined for this application
-             *
-             * @protected
-             * @type {GUI.ShortcutType}
-             * @memberof BaseApplication
-             */
-            protected keycomb: GUI.ShortcutType;
-            /**
-             * Reference to the system dock
-             *
-             * @type {GUI.tag.AppDockTag}
-             * @memberof BaseApplication
-             */
-            sysdock: GUI.tag.AppDockTag;
-            /**
-             * Reference to the system application menu located
-             * on the system panel
-             *
-             * @type {GUI.tag.MenuTag}
-             * @memberof BaseApplication
-             */
-            appmenu: GUI.tag.MenuTag;
-            /**
-             *Creates an instance of BaseApplication.
-             * @param {string} name application name
-             * @param {AppArgumentsType[]} args application arguments
-             * @memberof BaseApplication
-             */
-            constructor(name: string, args: AppArgumentsType[]);
-            /**
-             * Init the application, this function is called when the
-             * application process is created and docked in the application
-             * dock.
-             *
-             * The application UI will be rendered after the execution
-             * of this function.
-             *
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            init(): void;
-            /**
-             * Render the application UI by first loading its scheme
-             * and then mount this scheme to the DOM tree
-             *
-             * @protected
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected loadScheme(): void;
-            /**
-             * API function to perform an heavy task.
-             * This function will trigger the global `loading`
-             * event at the beginning of the task, and the `loaded`
-             * event after finishing the task
-             *
-             * @protected
-             * @param {Promise<any>} promise the promise on a task to be performed
-             * @returns {Promise<void>}
-             * @memberof BaseApplication
-             */
-            protected load(promise: Promise<any>): Promise<void>;
-            /**
-             * Bind a hotkey to the application, this function
-             * is used to define application keyboard shortcut
-             *
-             * @protected
-             * @param {string} k the hotkey to bind, should be in the following
-             * format: `[ALT|SHIFT|CTRL|META]-KEY`, e.g. `CTRL-S`
-             * @param {(e: JQuery.KeyboardEventBase) => void} f the callback function
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected bindKey(k: string, f: (e: JQuery.KeyboardEventBase) => void): void;
-            /**
-             * Update the application local from the system
-             * locale or application specific locale configuration
-             *
-             * @private
-             * @param {string} name locale name e.g. `en_GB`
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected updateLocale(name: string): void;
-            /**
-             * Execute the callback subscribed to a
-             * keyboard shortcut
-             *
-             * @param {string} fnk meta or modifier key e.g. `CTRL`, `ALT`, `SHIFT` or `META`
-             * @param {string} c a regular key
-             * @param {JQuery.KeyDownEvent} e JQuery keyboard event
-             * @returns {boolean} return whether the shortcut is executed
-             * @memberof BaseApplication
-             */
-            shortcut(fnk: string, c: string, e: JQuery.KeyDownEvent): boolean;
-            /**
-             * Apply a setting to the application
-             *
-             * @protected
-             * @param {string} k the setting name
-             * @memberof BaseApplication
-             */
-            protected applySetting(k: string): void;
-            /**
-             * Apply all settings to the application
-             *
-             * @protected
-             * @memberof BaseApplication
-             */
-            protected applyAllSetting(): void;
-            /**
-             * Set a setting value to the application setting
-             * registry
-             *
-             * @protected
-             * @param {string} k setting name
-             * @param {*} v setting value
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected registry(k: string, v: any): void;
-            /**
-             * Show the appliation
-             *
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            show(): void;
-            /**
-             * Blur the application
-             *
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            blur(): void;
-            /**
-             * Hide the application
-             *
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            hide(): void;
-            /**
-             * Maximize or restore the application window size
-             * and its position
-             *
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            toggle(): void;
-            /**
-             * Get the application title
-             *
-             * @returns {(string| FormattedString)}
-             * @memberof BaseApplication
-             */
-            title(): string | FormattedString;
-            /**
-             * Function called when the application exit.
-             * If the input exit event is prevented, the application
-             * process will not be killed
-             *
-             *
-             * @protected
-             * @param {BaseEvent} evt exit event
-             * @memberof BaseApplication
-             */
-            protected onexit(evt: BaseEvent): void;
-            /**
-             * Get the application meta-data
-             *
-             * @returns {API.PackageMetaType}
-             * @memberof BaseApplication
-             */
-            meta(): API.PackageMetaType;
-            /**
-             * Base menu definition. This function
-             * returns the based menu definition of all applications.
-             * Other application specific menu entries
-             * should be defined in [[menu]] function
-             *
-             * @protected
-             * @returns {GUI.BasicItemType[]}
-             * @memberof BaseApplication
-             */
-            protected baseMenu(): GUI.BasicItemType[];
-            /**
-             * The main application entry that is called after
-             * the application UI is rendered. This application
-             * must be implemented by all subclasses
-             *
-             * @abstract
-             * @memberof BaseApplication
-             */
-            abstract main(): void;
-            /**
-             * Application specific menu definition
-             *
-             * @protected
-             * @returns {GUI.BasicItemType[]}
-             * @memberof BaseApplication
-             */
-            protected menu(): GUI.BasicItemType[];
-            /**
-             * The cleanup function that is called by [[onexit]] function.
-             * Application need to override this function to perform some
-             * specific task before exiting or to prevent the application
-             * to be exited
-             *
-             * @protected
-             * @param {BaseEvent} e
-             * @memberof BaseApplication
-             */
-            protected cleanup(e: BaseEvent): void;
-        }
-    }
-}
-declare namespace OS {
-    namespace API {
-        /**
-         * Observable entry type definition
-         *
-         * @export
-         * @interface ObservableEntryType
-         */
-        interface ObservableEntryType {
-            /**
-             * A Set of callbacks that should be called only once.
-             * These callbacks will be removed after the first
-             * occurrence of the corresponding event
-             *
-             * @memberof ObservableEntryType
-             */
-            one: Set<(d: any) => void>;
-            /**
-             * A Set of callbacks that should be called
-             * every time the corresponding event is triggered
-             *
-             * @memberof ObservableEntryType
-             */
-            many: Set<(d: any) => void>;
-        }
-        /**
-         * Announcement listener type definition
-         *
-         * @export
-         * @interface AnnouncerListenerType
-         */
-        interface AnnouncerListenerType {
-            [index: number]: {
-                /**
-                 * The event name
-                 *
-                 * @type {string}
-                 */
-                e: string;
-                /**
-                 * The event callback
-                 *
-                 */
-                f: (d: any) => void;
-            }[];
-        }
-        /**
-         * This class is the based class used in AntOS event
-         * announcement system.
-         * It implements the observer pattern using simple
-         * subscribe/publish mechanism
-         * @export
-         * @class Announcer
-         */
-        class Announcer {
-            /**
-             * The observable object that stores event name
-             * and its corresponding callback in [[ObservableEntryType]]
-             *
-             * @type {GenericObject<ObservableEntryType>}
-             * @memberof Announcer
-             */
-            observable: GenericObject<ObservableEntryType>;
-            /**
-             * Enable/disable the announcer
-             *
-             * @type {boolean}
-             * @memberof Announcer
-             */
-            enable: boolean;
-            /**
-             *Creates an instance of Announcer.
-             * @memberof Announcer
-             */
-            constructor();
-            /**
-             * Disable the announcer, when this function is called
-             * all events and their callbacks will be removed
-             *
-             * @returns
-             * @memberof Announcer
-             */
-            disable(): boolean;
-            /**
-             * Subscribe to an event, the callback will be called
-             * every time the corresponding event is trigged
-             *
-             * @param {string} evtName event name
-             * @param {(d: any) => void} callback The corresponding callback
-             * @returns {void}
-             * @memberof Announcer
-             */
-            on(evtName: string, callback: (d: any) => void): void;
-            /**
-             * Subscribe to an event, the callback will
-             * be called only once and then removed from the announcer
-             *
-             * @param {string} evtName event name
-             * @param {(d: any) => void} callback the corresponding callback
-             * @returns {void}
-             * @memberof Announcer
-             */
-            one(evtName: string, callback: (d: any) => void): void;
-            /**
-             * Unsubscribe the callback from an event
-             *
-             * @param {string} evtName event name
-             * @param {(d: any) => void} [callback] the callback to be unsubscribed.
-             * When the `callback` is `*`, all callbacks related to `evtName` will be
-             * removed
-             * @memberof Announcer
-             */
-            off(evtName: string, callback?: (d: any) => void): void;
-            /**
-             * Trigger an event
-             *
-             * @param {string} evtName event name
-             * @param {*} data data object that will be send to all related callback
-             * @returns {void}
-             * @memberof Announcer
-             */
-            trigger(evtName: string, data: any): void;
-        }
-    }
-    /**
-     * This namespace defines every thing related to the system announcement.
-     *
-     * The system announcement provides a global way to communicate between
-     * processes (applications/services) using the subscribe/publish
-     * mechanism
-     */
-    namespace announcer {
-        /**
-         * The global announcer object that manages global events
-         * and callbacks
-         */
-        var observable: API.Announcer;
-        /**
-         * This variable is used to allocate the `id` of all messages
-         * passing between publishers and subscribers in the
-         * system announcement
-         */
-        var quota: 0;
-        /**
-         * Placeholder of all global events listeners
-         */
-        var listeners: API.AnnouncerListenerType;
-        /**
-         * Subscribe to a global event
-         *
-         * @export
-         * @param {string} e event name
-         * @param {(d: any) => void} f event callback
-         * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
-         */
-        function on(e: string, f: (d: any) => void, a: BaseModel): void;
-        /**
-         * Trigger a global event
-         *
-         * @export
-         * @param {string} e event name
-         * @param {*} d data passing to all related callback
-         */
-        function trigger(e: string, d: any): void;
-        /**
-         * Report system fail. This will trigger the global `fail`
-         * event
-         *
-         * @export
-         * @param {(string | FormattedString)} m message string
-         * @param {Error} e error to be reported
-         */
-        function osfail(m: string | FormattedString, e: Error): void;
-        /**
-         * Report system error. This will trigger the global `error`
-         * event
-         *
-         * @export
-         * @param {(string | FormattedString)} m message string
-         * @param {Error} e error to be reported
-         */
-        function oserror(m: string | FormattedString, e: Error): void;
-        /**
-         * Trigger system notification (`info` event)
-         *
-         * @export
-         * @param {(string | FormattedString)} m notification message
-         */
-        function osinfo(m: string | FormattedString): void;
-        /**
-         * trigger a specific global event
-         *
-         * @export
-         * @param {string} e event name
-         * @param {*} d event data
-         */
-        function ostrigger(e: string, d: any): void;
-        /**
-         * Unregister a process (application/service) from
-         * the global announcement system
-         *
-         * @export
-         * @param {GUI.BaseModel} app reference to the process
-         * @returns {void}
-         */
-        function unregister(app: BaseModel): void;
-        /**
-         * Allocate message id
-         *
-         * @export
-         * @returns {number}
-         */
-        function getMID(): number;
-    }
-}
-/// <reference types="jquery" />
-declare namespace OS {
-    /**
-     * Application argument type definition
-     *
-     * @export
-     * @interface AppArgumentsType
-     */
-    interface AppArgumentsType {
-        /**
-         * File type to be open by the app
-         *
-         * @type {string}
-         * @memberof AppArgumentsType
-         */
-        type?: string;
-        /**
-         * File path to be opened
-         *
-         * @type {string}
-         * @memberof AppArgumentsType
-         */
-        path: string;
-        /**
-         * Any other object
-         */
-        [propName: string]: any;
-    }
-    /**
-     * Enum definition of different model types
-     *
-     * @export
-     * @enum {number}
-     */
-    enum ModelType {
-        /**
-         * Applications
-         */
-        Application = 0,
-        /**
-         * Services
-         */
-        Service = 1,
-        /**
-         * Sub-window such as dialogs
-         */
-        SubWindow = 2
-    }
-    /**
-     * Base AntOS event definition
-     *
-     * @export
-     * @class BaseEvent
-     */
-    class BaseEvent {
-        /**
-         * The event name placeholder
-         *
-         * @type {string}
-         * @memberof BaseEvent
-         */
-        name: string;
-        /**
-         * Placeholder indicates whether the event is forced to
-         * be happen
-         *
-         * @private
-         * @type {boolean}
-         * @memberof BaseEvent
-         */
-        private force;
-        /**
-         * Placeholder indicates whether the event is prevented.
-         * This value has not effect if `force` is set to `true`
-         *
-         * @type {boolean}
-         * @memberof BaseEvent
-         */
-        prevent: boolean;
-        /**
-         *Creates an instance of BaseEvent.
-         * @param {string} name event name
-         * @param {boolean} force indicates whether the event is forced
-         * @memberof BaseEvent
-         */
-        constructor(name: string, force: boolean);
-        /**
-         * Prevent the current event. This function
-         * has no effect if `force` is set to true
-         *
-         * @memberof BaseEvent
-         */
-        preventDefault(): void;
-    }
-    /**
-     * The root model of all applications, dialogs or services
-     * in the system
-     *
-     * @export
-     * @abstract
-     * @class BaseModel
-     */
-    abstract class BaseModel {
-        /**
-         * The class name
-         *
-         * @type {string}
-         * @memberof BaseModel
-         */
-        name: string;
-        /**
-         * The argument of the model
-         *
-         * @type {AppArgumentsType[]}
-         * @memberof BaseModel
-         */
-        args: AppArgumentsType[];
-        /**
-         * Each model has its own local announcement system
-         * to handle all local events inside that model.
-         *
-         * This observable object is propagate to all the
-         * UI elements ([[AFXTag]]) inside the model
-         *
-         * @protected
-         * @type {API.Announcer}
-         * @memberof BaseModel
-         */
-        protected _observable: API.Announcer;
-        /**
-         * Reference to the core API namespace
-         *
-         * @protected
-         * @type {typeof API}
-         * @memberof BaseModel
-         */
-        protected _api: typeof API;
-        /**
-         * Reference to the core GUI namespace
-         *
-         * @protected
-         * @type {typeof GUI}
-         * @memberof BaseModel
-         */
-        protected _gui: typeof GUI;
-        /**
-         * Reference to the model's dialog
-         *
-         * @type {GUI.BaseDialog}
-         * @memberof BaseModel
-         */
-        dialog: GUI.BaseDialog;
-        /**
-         * The HTML element ID of the virtual desktop
-         *
-         * @protected
-         * @type {string}
-         * @memberof BaseModel
-         */
-        protected host: string;
-        /**
-         * The process number of the current model.
-         * For sub-window this number is the number
-         * of the parent window
-         *
-         * @type {number}
-         * @memberof BaseModel
-         */
-        pid: number;
-        /**
-         * Reference the DOM element of the UI scheme belong to
-         * this model
-         *
-         * @type {HTMLElement}
-         * @memberof BaseModel
-         */
-        scheme: HTMLElement;
-        /**
-         * Reference to the system setting
-         *
-         * @protected
-         * @type {typeof setting}
-         * @memberof BaseModel
-         */
-        protected systemsetting: typeof setting;
-        /**
-         * Placeholder for the process creation timestamp
-         *
-         * @type {number}
-         * @memberof BaseModel
-         */
-        birth: number;
-        /**
-         * Different model type
-         *
-         * @static
-         * @type {ModelType}
-         * @memberof BaseModel
-         */
-        static type: ModelType;
-        /**
-         * Allow singleton on this model
-         *
-         * @static
-         * @type {boolean}
-         * @memberof BaseModel
-         */
-        static singleton: boolean;
-        /**
-         * The javascript or css files that the model depends on. All dependencies
-         * will be loaded before the model is rendered
-         *
-         * @static
-         * @type {string[]} list of VFS paths of dependencies
-         * @memberof BaseModel
-         */
-        static dependencies: string[];
-        /**
-         * Reference to the CSS Element of the model
-         *
-         * @static
-         * @type {(HTMLElement | string)}
-         * @memberof BaseModel
-         */
-        static style: HTMLElement | string;
-        /**
-         * Place holder for model meta-data
-         *
-         * @static
-         * @type {API.PackageMetaType}
-         * @memberof BaseModel
-         */
-        static meta: API.PackageMetaType;
-        /**
-         *Creates an instance of BaseModel.
-         * @param {string} name class name
-         * @param {AppArgumentsType[]} args arguments
-         * @memberof BaseModel
-         */
-        constructor(name: string, args: AppArgumentsType[]);
-        /**
-         * Getter: get the local announcer object
-         *
-         * @readonly
-         * @type {API.Announcer}
-         * @memberof BaseModel
-         */
-        get observable(): API.Announcer;
-        /**
-         * Update the model locale
-         *
-         * @protected
-         * @param {string} name
-         * @memberof BaseModel
-         */
-        protected updateLocale(name: string): void;
-        /**
-         * Render the model's UI
-         *
-         * @protected
-         * @param {string} p VFS path to the UI scheme definition
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        protected render(p: string): void;
-        /**
-         * Exit the model
-         *
-         * @param {boolean} force set this value to `true` will bypass the prevented exit event by user
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        quit(force: boolean): void;
-        /**
-         * Model meta data, need to be implemented by
-         * subclasses
-         *
-         * @abstract
-         * @returns {API.PackageMetaType}
-         * @memberof BaseModel
-         */
-        abstract meta(): API.PackageMetaType;
-        /**
-         * VFS path to the model asset
-         *
-         * @returns {string}
-         * @memberof BaseModel
-         */
-        path(): string;
-        /**
-         * Execute a server side script and get back the result
-         *
-         * @protected
-         * @param {GenericObject<any>} cmd execution indication, should be:
-         *
-         * ```
-         * {
-         *      path?: string, // VFS path to the server side script
-         *      code: string, // or server side code to be executed
-         *      parameters: any // the parameters of the server side execution
-         * }
-         * ```
-         *
-         * @returns {Promise<any>}
-         * @memberof BaseModel
-         */
-        protected call(cmd: GenericObject<any>): Promise<any>;
-        /**
-         * Connect to the server side api using a websocket connection
-         *
-         * Server side script can be execute inside the stream by writing
-         * data in JSON format with the following interface
-         *
-         * ```
-         * {
-         *      path?: string, // VFS path to the server side script
-         *      code: string, // or server side code to be executed
-         *      parameters: any // the parameters of the server side execution
-         * }
-         * ```
-         *
-         * @protected
-         * @returns {Promise<WebSocket>}
-         * @memberof BaseModel
-         */
-        protected stream(): Promise<WebSocket>;
-        /**
-         * Init the model before  UI rendering
-         *
-         * @abstract
-         * @memberof BaseModel
-         */
-        abstract init(): void;
-        /**
-         * Main entry point after UI rendering
-         *
-         * @abstract
-         * @memberof BaseModel
-         */
-        abstract main(): void;
-        /**
-         * Show the model
-         *
-         * @abstract
-         * @memberof BaseModel
-         */
-        abstract show(): void;
-        /**
-         * Hide the model
-         *
-         * @abstract
-         * @memberof BaseModel
-         */
-        abstract hide(): void;
-        /**
-         * Function called when the model exits
-         *
-         * @protected
-         * @abstract
-         * @param {BaseEvent} e exit event
-         * @memberof BaseModel
-         */
-        protected abstract onexit(e: BaseEvent): void;
-        /**
-         * subscribe once to a local event
-         *
-         * @protected
-         * @param {string} e name of the event
-         * @param {(d: any) => void} f event callback
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        protected one(e: string, f: (d: any) => void): void;
-        /**
-         * Subscribe to a local event
-         *
-         * @protected
-         * @param {string} e event name
-         * @param {(d: any) => void} f event callback
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        protected on(e: string, f: (d: any) => void): void;
-        /**
-         * Unsubscribe an event
-         *
-         * @protected
-         * @param {string} e event name or `*` (all events)
-         * @param {(d: any) => void} [f] callback to be unsubscribed, can be `undefined`
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        protected off(e: string, f?: (d: any) => void): void;
-        /**
-         * trigger a local event
-         *
-         * @protected
-         * @param {string} e event name
-         * @param {*} [d] event data
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        trigger(e: string, d?: any): void;
-        /**
-         * subscribe to an event on the global announcement system
-         *
-         * @protected
-         * @param {string} e event name
-         * @param {(d: any) => void} f event callback
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        subscribe(e: string, f: (d: any) => void): void;
-        /**
-         * Open a dialog
-         *
-         * @param {(GUI.BaseDialog | string)} d a dialog object or a dialog class name
-         * @param {GenericObject<any>} [data] input data of the dialog, refer to each
-         * dialog definition for the format of the input data
-         * @returns {Promise<any>} A promise on the callback data of the dialog, refer
-         * to each dialog definition for the format of the callback data
-         * @memberof BaseModel
-         */
-        openDialog(d: GUI.BaseDialog | string, data?: GenericObject<any>): Promise<any>;
-        /**
-         * Open a [[YesNoDialog]] to confirm a task
-         *
-         * @protected
-         * @param {GenericObject<any>} data [[YesNoDialog]] input data
-         * @returns {Promise<boolean>}
-         * @memberof BaseModel
-         */
-        protected ask(data: GenericObject<any>): Promise<boolean>;
-        /**
-         * Trigger a global event
-         *
-         * @protected
-         * @param {string} t event name
-         * @param {(string | FormattedString)} m event message
-         * @param {Error} [e] error object if any
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        protected publish(t: string, m: string | FormattedString, e?: Error): void;
-        /**
-         * Publish a global notification
-         *
-         * @param {(string | FormattedString)} m notification string
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        notify(m: string | FormattedString): void;
-        /**
-         * Publish a global warning
-         *
-         * @param {(string | FormattedString)} m warning string
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        warn(m: string | FormattedString): void;
-        /**
-         * Report a global error
-         *
-         * @param {(string | FormattedString)} m error message
-         * @param {Error} [e] error object if any
-         * @returns
-         * @memberof BaseModel
-         */
-        error(m: string | FormattedString, e?: Error): void;
-        /**
-         * Report a global fail event
-         *
-         * @param {string} m fail message
-         * @param {Error} [e] error object if any
-         * @returns
-         * @memberof BaseModel
-         */
-        fail(m: string, e?: Error): void;
-        /**
-         * Throw an error inside the model
-         *
-         * @returns {Error}
-         * @memberof BaseModel
-         */
-        throwe(): Error;
-        /**
-         * Update the model, this will update all its UI elements
-         *
-         * @returns {void}
-         * @memberof BaseModel
-         */
-        update(): void;
-        /**
-         * Find a HTMLElement in the UI of the model
-         * using the `data-id` attribute of the element
-         *
-         * @protected
-         * @param {string} id
-         * @returns {HTMLElement}
-         * @memberof BaseModel
-         */
-        protected find(id: string): HTMLElement;
-        /**
-         * Select all DOM Element inside the UI of the model
-         * using JQuery selector
-         *
-         * @protected
-         * @param {string} sel
-         * @returns {HTMLElement}
-         * @memberof BaseModel
-         */
-        protected select(sel: string): JQuery<HTMLElement>;
-    }
-}
-/// <reference types="jquery" />
-declare namespace OS {
-    namespace application {
-        /**
-         * Services are processes that run in the background and
-         * are waken up in certain circumstances such as by global
-         * events or user interactions.
-         *
-         * Each service takes an entry in the system tray menu
-         * located on the system panel. This menu entry is used
-         * to access to service visual contents such as: options,
-         * task performing based on user interaction, etc.
-         *
-         * Services are singleton processes, there is only
-         * one process of a service at a time
-         *
-         * @export
-         * @abstract
-         * @class BaseService
-         * @extends {BaseModel}
-         */
-        abstract class BaseService extends BaseModel {
-            /**
-             * The service icon shown in the system tray
-             *
-             * @type {string}
-             * @memberof BaseService
-             */
-            icon: string;
-            /**
-             * CSS class of the service icon shown in the system tray
-             *
-             * @type {string}
-             * @memberof BaseService
-             */
-            iconclass: string;
-            /**
-             * Text of the service shown in the system tray
-             *
-             * @type {string}
-             * @memberof BaseService
-             */
-            text: string;
-            /**
-             * Reference to the menu entry DOM element attached
-             * to the service
-             *
-             * @type {HTMLElement}
-             * @memberof BaseService
-             */
-            domel: HTMLElement;
-            /**
-             * Reference to the timer that periodically executes the callback
-             * defined in [[watch]].
-             *
-             * @private
-             * @type {number}
-             * @memberof BaseService
-             */
-            private timer;
-            /**
-             * Reference to the system tray menu
-             *
-             * @type {HTMLElement}
-             * @memberof BaseService
-             */
-            holder: HTMLElement;
-            /**
-             * Placeholder for service select callback
-             *
-             * @memberof BaseService
-             */
-            onmenuselect: (d: OS.GUI.TagEventType<GUI.tag.MenuEventData>) => void;
-            /**
-             *Creates an instance of BaseService.
-             * @param {string} name service class name
-             * @param {AppArgumentsType[]} args service arguments
-             * @memberof BaseService
-             */
-            constructor(name: string, args: AppArgumentsType[]);
-            /**
-             * Do nothing
-             *
-             * @memberof BaseService
-             */
-            hide(): void;
-            /**
-             * Init the service before attaching it to
-             * the system tray: event subscribe, scheme
-             * loading.
-             *
-             * Should be implemented by all subclasses
-             *
-             * @abstract
-             * @memberof BaseService
-             */
-            abstract init(): void;
-            /**
-             * Refresh the service menu entry in the
-             * system tray
-             *
-             * @memberof BaseService
-             */
-            update(): void;
-            /**
-             * Get the service meta-data
-             *
-             * @returns {API.PackageMetaType}
-             * @memberof BaseService
-             */
-            meta(): API.PackageMetaType;
-            /**
-             * Attach the service to a menu element
-             * such as the system tray menu
-             *
-             * @param {HTMLElement} h
-             * @memberof BaseService
-             */
-            attach(h: HTMLElement): void;
-            /**
-             * Set the callback that will be called periodically
-             * after a period of time.
-             *
-             * Each service should only have at most one watcher
-             *
-             * @protected
-             * @param {number} t period time in seconds
-             * @param {() => void} f callback function
-             * @returns {number}
-             * @memberof BaseService
-             */
-            protected watch(t: number, f: () => void): number;
-            /**
-             * This function is called when the service
-             * is exited
-             *
-             * @protected
-             * @param {BaseEvent} evt exit event
-             * @returns
-             * @memberof BaseService
-             */
-            protected onexit(evt: BaseEvent): JQuery<HTMLElement>;
-            /**
-             * Do nothing
-             *
-             * @memberof BaseService
-             */
-            main(): void;
-            /**
-             * Do nothing
-             *
-             * @memberof BaseService
-             */
-            show(): void;
-            /**
-             * Awake the service, this function is usually called when
-             * the system tray menu entry attached to the service is
-             * selected.
-             *
-             * This function should be implemented by all subclasses
-             *
-             * @abstract
-             * @param {GUI.TagEventType} e
-             * @memberof BaseService
-             */
-            abstract awake(e: GUI.TagEventType<GUI.tag.MenuEventData>): void;
-            /**
-             * Do nothing
-             *
-             * @protected
-             * @param {BaseEvent} evt
-             * @memberof BaseService
-             */
-            protected cleanup(evt: BaseEvent): void;
-        }
-    }
-}
-declare namespace OS {
-    /**
-     * This namespace dedicated to all operations related to system
-     * process management
-     */
-    namespace PM {
-        /**
-         * A process is either an instance of an application or a service
-         */
-        type ProcessType = application.BaseApplication | application.BaseService;
-        /**
-         * Alias to  all classes that extends [[BaseModel]]
-         */
-        type ModelTypeClass = {
-            new <T extends BaseModel>(args: AppArgumentsType[]): T;
-        };
-        /**
-         * Process id allocator, when a new process is created, the value of
-         * this variable is increased
-         */
-        var pidalloc: number;
-        /**
-         * All running processes is stored in this variables
-         */
-        var processes: GenericObject<BaseModel[]>;
-        /**
-         * Create a new process of application or service
-         *
-         * @export
-         * @param {string} app class name string
-         * @param {ProcessTypeClass} cls prototype class
-         * @param {GUI.AppArgumentsType[]} [args] process arguments
-         * @returns {Promise<ProcessType>} a promise on the created process
-         */
-        function createProcess(app: string, cls: ModelTypeClass, args?: AppArgumentsType[]): Promise<ProcessType>;
-        /**
-         * Get the reference to a process using its id
-         *
-         * @export
-         * @param {number} pid
-         * @returns {BaseModel}
-         */
-        function appByPid(pid: number): BaseModel;
-        /**
-         * Kill a process
-         *
-         * @export
-         * @param {OS.GUI.BaseModel} app reference to the process
-         * @returns {void}
-         */
-        function kill(app: BaseModel): void;
-        /**
-         * Kill all process of an application or service
-         *
-         * @export
-         * @param {string} app process class name
-         * @param {boolean} force force exit all process
-         * @returns {void}
-         */
-        function killAll(app: string, force: boolean): void;
-    }
-}
-/// <reference types="jquery" />
-declare namespace OS {
-    /**
-     * This namespace is dedicated to all APIs related to AntOS UI system,
-     * these API are called AFX APIs which handle:
-     * - The mouse and keyboard interaction with the UI system
-     * - UI rendering
-     * - Custom tags definition
-     * - Load/unload system, applications and services UI
-     * - System dialogs definition
-     */
-    namespace GUI {
-        /**
-         * AntOS keyboard shortcut type definition
-         *
-         * @export
-         * @interface ShortcutType
-         */
-        interface ShortcutType {
-            /**
-             * Placeholder for all shortcut callbacks, example:
-             * ```typescript
-             *      fn_193462204.c = function() {..}
-             *      // this function will be called when the hotkey `ALT-C` is triggered
-             *      // fn_${"ALT".hash()} is fn_193462204
-             * ```
-             *
-             * @memberof ShortcutType
-             */
-            [propName: string]: GenericObject<(e: JQuery.KeyDownEvent) => void>;
-        }
-        /**
-         * Basic item type definition which is usually used by some UI element
-         * such as list view, tree view, menu and grid view
-         *
-         *
-         * @export
-         * @interface BasicItemType
-         */
-        interface BasicItemType {
-            /**
-             * Item text
-             *
-             * @type {(string | FormattedString)}
-             * @memberof BasicItemType
-             */
-            text: string | FormattedString;
-            /**
-             * Item children, usually used by tree view or menu item
-             * This property is keep for compatibility purposes only.
-             * Otherwise, the [[nodes]] property should be used
-             *
-             * @type {BasicItemType[]}
-             * @memberof BasicItemType
-             */
-            children?: BasicItemType[];
-            /**
-             * Item children, usually used by tree view or menu item
-             *
-             * @type {BasicItemType[]}
-             * @memberof BasicItemType
-             */
-            nodes?: BasicItemType[];
-            [propName: string]: any;
-        }
-        /**
-         * Element id of the virtual desktop, used by JQuery
-         */
-        var workspace: string;
-        /**
-         * Indicate whether the system is in fullscreen mode
-         */
-        var fullscreen: boolean;
-        /**
-         * Reference to the current system dialog, only one dialog
-         * is allowed at a time. A dialog may have sub dialog
-         */
-        var dialog: BaseDialog;
-        /**
-         * Convert an application html scheme to
-         * UI elements, then insert this UI scheme to the DOM tree.
-         *
-         * This function renders the UI of the application before calling the
-         * application's [[main]] function
-         *
-         * @export
-         * @param {string} html html scheme string
-         * @param {BaseModel} app reference to the target application
-         * @param {(Element | string)} parent
-         * The parent HTML element where the application is rendered.
-         * This is usually the reference to the virtual desktop element.
-         */
-        function htmlToScheme(html: string, app: BaseModel, parent: Element | string): void;
-        /**
-         * Load an application scheme file then render
-         * it with [[htmlToScheme]]
-         *
-         * @export
-         * @param {string} path VFS path to the scheme file
-         * @param {BaseModel} app the target application
-         * @param {(HTMLElement | string)} parent The parent HTML element where the application is rendered.
-         */
-        function loadScheme(path: string, app: BaseModel, parent: HTMLElement | string): void;
-        /**
-         * Clear the current system theme
-         *
-         * @export
-         */
-        function clearTheme(): void;
-        /**
-         * Load a theme based on its name, then refresh the
-         * system UI theme
-         *
-         * @export
-         * @param {string} name name of the theme e.g. `antos_dark`
-         * @param {boolean} force force to clear the system theme before applying the new one
-         */
-        function loadTheme(name: string, force: boolean): void;
-        /**
-         * Open a system dialog.
-         *
-         * @export
-         * @param {(BaseDialog | string)} d a dialog object or a dialog class name
-         * @param {GenericObject<any>} [data] input data of the dialog, refer to each
-         * dialog definition for the format of the input data
-         * @returns {Promise<any>} A promise on the callback data of the dialog, refer
-         * to each dialog definition for the format of the callback data
-         */
-        function openDialog(d: string | BaseDialog, data: GenericObject<any>): Promise<any>;
-        /**
-         * Find a list of applications that support a specific mime
-         * type in the system packages meta-data
-         *
-         * @export
-         * @param {string} mime the mime type
-         * @returns {API.PackageMetaType[]}
-         */
-        function appsByMime(mime: string): API.PackageMetaType[];
-        /**
-         * Find all applications that have services attached to it.
-         * This function allows to collect all the services available
-         * on the system. These services may or may not be running.
-         *
-         * @export
-         * @returns {GenericObject<API.PackageMetaType>} result in forme of:
-         * `service_name:service-meta-data` key-value pairs
-         */
-        function appsWithServices(): GenericObject<API.PackageMetaType>;
-        /**
-         * Find an launch an application using input application argument
-         * such as VFS file meta-data.
-         *
-         * Based on the input application argument, the function will try
-         * to find all applications that is compatible with that argument.
-         * Three cases possible:
-         * - There is no application that can handle the argument, a message will
-         * be notified to user.
-         * - There is one application that can handle the argument, the application
-         * will be launched with the argument
-         * - There are many applications that can handle the arguments, a selection
-         * dialog will be popped up and allows user to select an application to launch.
-         *
-         * @export
-         * @param {AppArgumentsType} it application argument
-         * @returns {void}
-         */
-        function openWith(it: AppArgumentsType): void;
-        /**
-         * Kil all processes related to an application, reload the application
-         * prototype definition and launch a new process of this application.
-         *
-         * This function is used only for debug purpose or used by
-         * AntOSDK during in-browser application development
-         *
-         * @export
-         * @param {string} app the application class name
-         * @param {AppArgumentsType[]} args application arguments
-         * @returns {void}
-         */
-        function forceLaunch(app: string, args: AppArgumentsType[]): void;
-        /**
-         * Kill an running processes of an application, then
-         * unregister the application prototype definition
-         * from the [[application]] namespace.
-         *
-         * This process is similar to uninstall the application
-         * from the current system state
-         *
-         * @export
-         * @param {string} app
-         */
-        function unloadApp(app: string): void;
-        /**
-         * Create a service process.
-         *
-         * Services are singleton processes, there is only
-         * one process of a service at a time
-         *
-         * @export
-         * @param {string} ph
-         * @returns {Promise<PM.ProcessType>}
-         */
-        function pushService(ph: string): Promise<PM.ProcessType>;
-        /**
-         * Synchronously start a list of services
-         *
-         * @export
-         * @param {string[]} srvs list of service class names
-         * @returns {Promise<void>}
-         */
-        function pushServices(srvs: string[]): Promise<void>;
-        /**
-         * Launch an application with arguments
-         *
-         * @export
-         * @param {string} app application class name
-         * @param {AppArgumentsType[]} args application arguments
-         */
-        function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType>;
-        /**
-         * Dock an application to the system application dock
-         *
-         * @export
-         * @param {BaseApplication} app reference to the application process
-         * @param {API.PackageMetaType} meta Application meta-data
-         * @returns {void}
-         */
-        function dock(app: OS.application.BaseApplication, meta: API.PackageMetaType): void;
-        /**
-         * Toggle system fullscreen
-         *
-         * @export
-         */
-        function toggleFullscreen(): void;
-        /**
-         * Remove an application process from the system application
-         * dock. This action will also exit the process
-         *
-         * @export
-         * @param {BaseApplication} app
-         * @returns
-         */
-        function undock(app: application.BaseApplication): void;
-        /**
-         * Attach a running service process to the system tray
-         *
-         * @export
-         * @param {BaseService} srv reference to the running service process
-         * @returns {void}
-         */
-        function attachservice(srv: application.BaseService): void;
-        /**
-         * Detach a running process from the system tray
-         *
-         * @export
-         * @param {BaseService} srv reference to the running service process
-         * @returns {void}
-         */
-        function detachservice(srv: application.BaseService): void;
-        /**
-         * Register a hot key and its handle in the
-         * system  shortcut
-         *
-         * @export
-         * @param {string} k the hotkey e.g. `ALT-C`
-         * @param {(e: JQuery.KeyPressEvent) => void} f handle function
-         * @param {boolean} force force to rebind the hotkey
-         * @returns {void}
-         */
-        function bindKey(k: string, f: (e: JQuery.KeyDownEvent) => void, force?: boolean): void;
-        /**
-         * Load and apply system wallpaper from the setting object
-         *
-         * @export
-         * @param {setting.WPSettingType} obj wallpaper setting object
-         */
-        function wallpaper(obj?: setting.WPSettingType): void;
-        /**
-         * Refresh the virtual desktop
-         *
-         * @export
-         */
-        function refreshDesktop(): void;
-        /**
-         * Show the login screen and perform the login operation.
-         *
-         * Once login successfully, the [[startAntOS]] will be called
-         *
-         * @export
-         */
-        function login(): void;
-        /**
-         * Start AntOS after a successful login.
-         *
-         * This function performs the following operations:
-         *
-         * - System cleanup
-         * - Apply system setting
-         * - Load desktop wallpaper and the current theme from the system setting
-         * - Load system package meta-data
-         * - Load and apply system locale and language
-         *
-         *
-         * @export
-         * @param {*} conf
-         */
-        function startAntOS(conf: any): void;
-        /**
-         * HTML schemes used by the system:
-         * - The login screen scheme
-         * - The workspace including:
-         *  - System panel
-         *  - Virtual desktop
-         *  - Context menu
-         *  - System tooltip
-         */
-        const schemes: GenericObject<string>;
-    }
-}
-/**
- * Reference to the global this
- */
-declare const Ant: typeof globalThis;
-/**
- * Extend the String prototype with some API
- * functions used by AntOS API
- *
- * @interface String
- */
-interface String {
-    /**
-     * Simple string hash function
-     *
-     * @returns {number}
-     * @memberof String
-     */
-    hash(): number;
-    /**
-     * Parse the current string and convert it
-     * to an object of type [[Version]] if the string
-     * is in the format recognized by [[Version]],
-     * e.g.: `1.0.1-a`
-     *
-     * @returns {OS.Version}
-     * @memberof String
-     */
-    __v(): OS.Version;
-    /**
-     * Convert the current string to base 64 string
-     *
-     * @returns {string}
-     * @memberof String
-     */
-    asBase64(): string;
-    /**
-     * Unescape all escaped characters on the
-     * string using `\`
-     *
-     * @returns {string}
-     * @memberof String
-     */
-    unescape(): string;
-    /**
-     * Escape the current string using backslash
-     *
-     * @returns {string}
-     * @memberof String
-     */
-    escape(): string;
-    /**
-     * Convert the current string to uint8 array
-     *
-     * @returns {Uint8Array}
-     * @memberof String
-     */
-    asUint8Array(): Uint8Array;
-    /**
-     * Format the current using input parameters.
-     * The current string should be a formatted string
-     * in the following form:
-     *
-     * ```typescript
-     * "example string: {0} and {1}".format("hello", "world")
-     * // return "example string: hello and world"
-     * ```
-     *
-     * @param {...any[]} args
-     * @returns {string}
-     * @memberof String
-     */
-    format(...args: any[]): string;
-    /**
-     * Create a [[FormattedString]] object using the current
-     * string and the input parameters
-     *
-     * @param {...any[]} args
-     * @returns {OS.FormattedString}
-     * @memberof String
-     */
-    f(...args: any[]): OS.FormattedString;
-    /**
-     * Check if the current string is translatable, if it
-     * is the case, translate the string to the language specified
-     * in the current system locale setting.
-     *
-     * A translatable string is a string in the following
-     * form: `"__(example string)"`
-     *
-     * @returns {string}
-     * @memberof String
-     */
-    __(): string;
-    /**
-     * Translate current string to the language specified
-     * by the system locale setting
-     *
-     * @returns {string}
-     * @memberof String
-     */
-    l(): string;
-    /**
-     * Trim left of a string by a mask string
-     *
-     * @param {string} arg specifies a sub-string to be removed
-     * @returns {string}
-     * @memberof String
-     */
-    trimFromLeft(arg: string): string;
-    /**
-     * Trim right of a string by a mask string
-     *
-     * @param {string} arg specifies a sub-string to be removed
-     * @returns {string}
-     * @memberof String
-     */
-    trimFromRight(arg: string): string;
-    /**
-     * Trim both left and right of a string by a mask string
-     *
-     * @param {string} arg specifies a sub-string to be removed
-     * @returns {string}
-     * @memberof String
-     */
-    trimBy(arg: string): string;
-}
-/**
- * Extend the Data prototype with the
- * [[timestamp]] function
- *
- * @interface Date
- */
-interface Date {
-    /**
-     * Return the timestamp of the current Date object
-     *
-     * @returns {number}
-     * @memberof Date
-     */
-    timestamp(): number;
-}
-/**
- * Generic key-value pair object interface
- *
- * @interface GenericObject
- * @template T
- */
-interface GenericObject<T> {
-    [index: string]: T;
-}
-/**
- * Global function to create a [[FormattedString]] from
- * a formatted string and a list of parameters. Example
- *
- * ```typescript
- * __("hello {0}", world) // return a FormattedString object
- * ```
- *
- * @param {...any[]} args
- * @returns {(OS.FormattedString | string)}
- */
-declare function __(...args: any[]): OS.FormattedString | string;
-/**
- * This global function allow chaining stack trace from one error to
- * another. It is particular helping when tracking the source of
- * the error in promises chain which results in some obfuscated stack
- * traces as the stack resets on every new promise.
- *
- * @param {Error} e
- * @returns {Error}
- */
-declare function __e(e: Error): Error;
-/**
- * This namespace is the main entry point of AntOS
- * API
- */
-declare namespace OS {
-    /**
-     * Represent a translatable formatted string
-     *
-     * @export
-     * @class FormattedString
-     */
-    class FormattedString {
-        /**
-         * Format string in the following form
-         *
-         * ```typescript
-         * "format string with {0} and {1}"
-         * // {[0-9]} is the format pattern
-         * ```
-         *
-         * @type {string}
-         * @memberof FormattedString
-         */
-        fs: string;
-        /**
-         * The value of the format pattern represented
-         * in [[fs]]
-         *
-         * @type {any[]}
-         * @memberof FormattedString
-         */
-        values: any[];
-        /**
-         * Creates an instance of FormattedString.
-         * @param {string} fs format string
-         * @param {any[]} args input values of the format patterns
-         * @memberof FormattedString
-         */
-        constructor(fs: string, args: any[]);
-        /**
-         * Convert FormattedString to String
-         *
-         * @returns {string}
-         * @memberof FormattedString
-         */
-        toString(): string;
-        /**
-         * Translate the format string to the current system
-         * locale language, format the string with values and
-         * then converted it to normal `string`
-         *
-         * @returns {string}
-         * @memberof FormattedString
-         */
-        __(): string;
-        /**
-         * Return the hash number of the formatted string
-         *
-         * @returns {number}
-         * @memberof FormattedString
-         */
-        hash(): number;
-        /**
-         * Match the formatted string against a regular expression
-         * a string pattern
-         *
-         * @param {(string | RegExp)} t string or regular expression
-         * @returns {RegExpMatchArray}
-         * @memberof FormattedString
-         */
-        match(t: string | RegExp): RegExpMatchArray;
-        /**
-         * Convert the formatted string to Base^$
-         *
-         * @returns {string}
-         * @memberof FormattedString
-         */
-        asBase64(): string;
-        /**
-         * Un escape the formatted string
-         *
-         * @returns {string}
-         * @memberof FormattedString
-         */
-        unescape(): string;
-        /**
-         * Escape the formatted string
-         *
-         * @returns {string}
-         * @memberof FormattedString
-         */
-        escape(): string;
-        /**
-         * Convert the formatted string to uint8 array
-         *
-         * @returns {Uint8Array}
-         * @memberof FormattedString
-         */
-        asUint8Array(): Uint8Array;
-        /**
-         * Input values for the format string
-         *
-         * @param {...any[]} args
-         * @memberof FormattedString
-         */
-        format(...args: any[]): void;
-    }
-    /**
-     * This class represents the Version number format used by AntOS. A typical
-     * AntOS version number is in the following format:
-     *
-     * ```
-     * [major_number].[minor_number].[patch]-[branch]
-     *
-     * e.g.: 1.2.3-r means that:
-     * - version major number is 1
-     * - version minor number is 2
-     * - patch version is 3
-     * - the current branch is release `r`
-     * ```
-     *
-     * @export
-     * @class Version
-     */
-    class Version {
-        /**
-         * The version string
-         *
-         * @type {string}
-         * @memberof Version
-         */
-        string: string;
-        /**
-         * The current branch
-         * - 1: `a` - alpha branch
-         * - 2: `b` - beta branch
-         * - 3: `r` - release branch
-         *
-         * @private
-         * @type {number}
-         * @memberof Version
-         */
-        private branch;
-        /**
-         * Version major number
-         *
-         * @type {number}
-         * @memberof Version
-         */
-        major: number;
-        /**
-         * Version minor number
-         *
-         * @type {number}
-         * @memberof Version
-         */
-        minor: number;
-        /**
-         * Version patch number
-         *
-         * @type {number}
-         * @memberof Version
-         */
-        patch: number;
-        /**
-         *Creates an instance of Version.
-         * @param {string} string string represents the version
-         * @memberof Version
-         */
-        constructor(string: string);
-        /**
-         * Compare the current version with another version.
-         *
-         * The comparison priority is `branch>major>minor>patch`.
-         *
-         * For the branch, the priority is `r>b>a`
-         *
-         * @param {(string | Version)} o version string or object
-         * @returns {(0 | 1 | -1)}
-         * Return 0 if the two versions are the same, 1 if
-         * the current version is newer than the input version,
-         * otherwise return -1
-         * @memberof Version
-         */
-        compare(o: string | Version): 0 | 1 | -1;
-        /**
-         * Check if the current version is newer than
-         * the input version
-         *
-         * @param {(string | Version)} o version string or object
-         * @returns {boolean}
-         * @memberof Version
-         */
-        nt(o: string | Version): boolean;
-        /**
-         * Check if the current version is older than
-         * the input version
-         *
-         * @param {(string | Version)} o version string or object
-         * @returns {boolean}
-         * @memberof Version
-         */
-        ot(o: string | Version): boolean;
-        /**
-         * Return itself
-         *
-         * @returns {Version}
-         * @memberof Version
-         */
-        __v(): Version;
-        /**
-         * Convert Version object to string
-         *
-         * @returns {string}
-         * @memberof Version
-         */
-        toString(): string;
-    }
-    /**
-     * Variable represents the current AntOS version, it
-     * is an instance of [[Version]]
-     */
-    const VERSION: Version;
-    /**
-     * Register a model prototype to the system namespace.
-     * There are two types of model to be registered, if the model
-     * is of type [[SubWindow]], its prototype will be registered
-     * in the [[dialogs]] namespace, otherwise, if the model type
-     * is [[Application]] or [[Service]], its prototype will be
-     * registered in the [[application]] namespace.
-     *
-     * When a model is loaded in the system, its prototype is registered
-     * for later uses
-     *
-     * @export
-     * @param {string} name class name
-     * @param {*} x the corresponding class
-     * @returns {*}
-     */
-    function register(name: string, x: PM.ModelTypeClass): void;
-    /**
-     * This function cleans up the entire system and
-     * makes sure the system is in a new and clean session.
-     * It performs the following operations:
-     *
-     * - Kill all running processes
-     * - Unregister all global events and reset the  global
-     * announcement system
-     * - Clear the current theme
-     * - Reset process manager and all system settings
-     *
-     * @export
-     */
-    function cleanup(): void;
-    /**
-     * Booting up AntOS. This function checks whether the user
-     * is successfully logged in, then call [[startAntOS]], otherwise
-     * it shows the login screen
-     *
-     * @export
-     */
-    function boot(): void;
-    /**
-     * Placeholder for all the callbacks that are called when the system
-     * exits. These callbacks are useful when an application or service wants
-     * to perform a particular task before shuting down the system
-     */
-    const cleanupHandles: {
-        [index: string]: () => Promise<any>;
-    };
-    /**
-     * Perform the system shutdown operation. This function calls all
-     * clean up handles in [[cleanupHandles]], then save the system setting
-     * before exiting
-     *
-     * @export
-     */
-    function exit(): void;
-    /**
-     * Register a callback to the system [[cleanupHandles]]
-     *
-     * @export
-     * @param {string} n callback string name
-     * @param {() => void} f the callback handle
-     * @returns
-     */
-    function onexit(n: string, f: () => Promise<any>): () => Promise<any>;
-    /**
-     * The namespace API is dedicated to the definition of the core system APIs
-     * used by AntOS and its applications. The following core APIs are defined:
-     *
-     * - The AntOS announcement system
-     * - Virtual File system
-     * - Virtual Database
-     * - Low-level REST based client-server communication
-     * - Dependencies management
-     * - System utilities
-     *
-     * These APIs are considered as middle-ware that abstracts the client-server
-     * communication and provide the application layer with a standardized APIs
-     * for file/database access, system events handling (announcement), automatic
-     * dependencies resolving, etc.
-     */
-    namespace API {
-        /**
-         * AntOS package meta-data type definition
-         *
-         * @export
-         * @interface PackageMetaType
-         */
-        interface PackageMetaType {
-            /**
-             * The application class name, if the package has only services
-             * this property is ignored and [[pkgname]] should be specified
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            app?: string;
-            /**
-             * Package name, in case of [[app]] being undefined, this property
-             * need to be specified
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            pkgname?: string;
-            /**
-             * Package category
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            category: string;
-            /**
-             * Package description string
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            description: string;
-            /**
-             * List of services that is attached to the
-             * package
-             *
-             * @type {string[]}
-             * @memberof PackageMetaType
-             */
-            services?: string[];
-            /**
-             * CSS icon class of the package
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            iconclass?: string;
-            /**
-             * VFS application icon path
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            icon?: string;
-            /**
-             * Package information
-             *
-             * @type {{
-             *                 author: string;
-             *                 email: string;
-             *                 [propName: string]: any;
-             *             }}
-             * @memberof PackageMetaType
-             */
-            info: {
-                /**
-                 * Author of the package
-                 *
-                 * @type {string}
-                 */
-                author: string;
-                /**
-                 * Author's email
-                 *
-                 * @type {string}
-                 */
-                email: string;
-                [propName: string]: any;
-            };
-            /**
-             * Application-specific locale definition. When the system locale changes,
-             * translatable texts inside the application will be first translated using
-             * the locale dictionary defined in the package meta-data. If no translation
-             * found, the system locale dictionary is used instead.
-             *
-             * A local dictionary definition should be in the following format:
-             *
-             * ```typescript
-             * {
-             *      [locale_name: string]: {
-             *          [origin_string]: string // translation string
-             *      }
-             * }
-             * ```
-             *
-             * Example of locale dictionaries:
-             *
-             * ```typescript
-             * {
-             *      "en_GB": {
-             *          "Cancel": "Cancel",
-             *          "Modify": "Modify"
-             *      },
-             *      "fr_FR": {
-             *          "Cancel": "Annuler",
-             *          "Modify": "Modifier"
-             *      }
-             * }
-             * ```
-             *
-             * @type {{ [index: string]: GenericObject<string> }} locale dictionaries
-             * @memberof PackageMetaType
-             */
-            locales: {
-                [index: string]: GenericObject<string>;
-            };
-            /**
-             * Mime types supported by the packages, regular expression can be used
-             * to specified a range of mimes in common
-             *
-             * @type {string[]}
-             * @memberof PackageMetaType
-             */
-            mimes: string[];
-            /**
-             * Package (application) name
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            name: string;
-            /**
-             * VFS path to package installation location
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            path: string;
-            /**
-             * Package version, should be in a format conforming
-             * to the version definition in [[Version]] class
-             *
-             * @type {string}
-             * @memberof PackageMetaType
-             */
-            version: string;
-            /**
-             * Package dependencies, each entry is in the following format
-             *
-             * `package_name@version`
-             *
-             * Example:
-             *
-             * ```json
-             * [
-             *  "File@0.1.5-b"
-             * ]
-             * ```
-             *
-             * @type {string[]}
-             * @memberof PackageMetaType
-             */
-            dependencies: string[];
-            [propName: string]: any;
-        }
-        /**
-         * Placeholder to store all loaded shared libraries. Once
-         * a shared library is firstly loaded, its identity will be
-         * stored in this variable. Based on this information, in
-         * the next use of the library, the system knows that the
-         * library is already loaded and ready to use.
-         *
-         * A shared library can be a javascript or a CSS file.
-         */
-        const shared: GenericObject<boolean>;
-        /**
-         * Placeholder for all global search handles registered to the system.
-         * These callbacks will be called when user performs the search operation
-         * in the spotlight UI.
-         *
-         * Applications can define their own search handle to provide the spotlight UI
-         * with additional search results
-         *
-         */
-        const searchHandle: GenericObject<(text: string) => any[]>;
-        /**
-         * Placeholder of the current system locale dictionary, the system uses
-         * this dictionary to translate all translatable texts to the current
-         * locale language
-         */
-        var lang: GenericObject<string>;
-        /**
-         * Re-export the system announcement [[getMID]] function to the
-         * core API
-         *
-         * @export
-         * @returns {number}
-         */
-        function mid(): number;
-        /**
-         * REST-based API.
-         *
-         * Perform a POST request to the server. Data exchanged
-         * is in `application/json`
-         *
-         * @export
-         * @param {string} p the server URI
-         * @param {*} d data object that will be converted to JSON
-         * @returns {Promise<any>} a promise on the result data
-         */
-        function post(p: string, d: any): Promise<any>;
-        /**
-         * REST-based API.
-         *
-         * Perform a GET request and read back the data in
-         * `ArrayBuffer` (binary) format. This is useful for
-         * binary data reading
-         *
-         * @export
-         * @param {string} p resource URI
-         * @returns {Promise<ArrayBuffer>} a promise on the returned binary data
-         */
-        function blob(p: string): Promise<ArrayBuffer>;
-        /**
-         * REST-based API.
-         *
-         * Send file to server
-         *
-         * @export
-         * @param {string} p resource URI
-         * @param {string} d VFS path of the destination file
-         * @returns {Promise<any>}
-         */
-        function upload(p: string, d: string): Promise<any>;
-        /**
-         * REST-based API.
-         *
-         * Download a file
-         *
-         * @export
-         * @param {string} name file name
-         * @param {*} b file content
-         */
-        function saveblob(name: string, b: any): void;
-        /**
-         * Helper function to trigger the global `loading`
-         * event. This event should be triggered in the
-         * beginning of a heavy task
-         *
-         * @export
-         * @param {number} q message id, see [[mid]]
-         * @param {string} p message string
-         */
-        function loading(q: number, p: string): void;
-        /**
-         * Helper function to trigger the global `loaded`
-         * event: This event should be triggered in the
-         * end of a heavy task that has previously triggered
-         * the `loading` event
-         *
-         * @export
-         * @param {number} q the message id of the corresponding `loading` event
-         * @param {string} p the message string
-         * @param {string} m message status  (`OK` of `FAIL`)
-         */
-        function loaded(q: number, p: string, m: string): void;
-        /**
-         * Perform an REST GET request
-         *
-         * @export
-         * @param {string} p the URI of the request
-         * @param {string} [t=undefined] the response data type:
-         * - jsonp: the response is an json object
-         * - script: the response is a javascript code
-         * - xm, html: the response is a XML/HTML object
-         * - text: plain text
-         * @returns {Promise<any>} a Promise on the requested data
-         */
-        function get(p: string, t?: string): Promise<any>;
-        /**
-         * REST-based API
-         *
-         * Perform a GET operation and executed the returned
-         * content as javascript
-         *
-         * @export
-         * @param {string} p URI resource
-         * @returns {Promise<any>} promise on the executed content
-         */
-        function script(p: string): Promise<any>;
-        /**
-         * REST-based API
-         *
-         * Get the content of a global asset resource stored
-         * in `os://resources/`
-         *
-         * @export
-         * @param {string} r relative path to the resource
-         * @returns {Promise<any>} promise on the returned content
-         */
-        function resource(r: string): Promise<any>;
-        /**
-         * Helper function to verify whether a shared library
-         * is loaded and ready to use
-         *
-         * @export
-         * @param {string} l path to the library
-         * @returns {boolean}
-         */
-        function libready(l: string): boolean;
-        /**
-         * Load a shared library if not ready
-         *
-         * @export
-         * @param {string} l VFS path to the library
-         * @param {string} force force reload library
-         * @returns {Promise<void>} a promise on the result data
-         */
-        function requires(l: string, force?: boolean): Promise<void>;
-        /**
-         * Synchronously load a list of shared libraries
-         *
-         * @export
-         * @param {string[]} libs list of shared libraries
-         * @returns {Promise<void>}
-         */
-        function require(libs: string[]): Promise<void>;
-        /**
-         * The namespace packages is dedicated to all package management
-         * related APIs.
-         */
-        namespace packages {
-            /**
-             * Fetch the package meta-data from the server
-             *
-             * @export
-             * @returns {Promise<RequestResult>} Promise on a [[RequestResult]].
-             * A success request result should contain a list of [[PackageMetaType]]
-             */
-            function fetch(): Promise<RequestResult>;
-            /**
-             * Request the server to regenerate the package
-             * caches
-             *
-             * @export
-             * @returns {Promise<RequestResult>}
-             */
-            function cache(): Promise<RequestResult>;
-        }
-        /**
-         * Save the current user setting
-         *
-         * @export
-         * @returns {Promise<RequestResult>} promise on a [[RequestResult]]
-         */
-        function setting(): Promise<RequestResult>;
-        /**
-         * An apigateway allows client side to execute a custom server-side
-         * script and get back the result. This gateway is particularly
-         * useful in case of performing a task that is not provided by the core
-         * API
-         *
-         * @export
-         * @param {GenericObject<any>} d execution indication, provided only when ws is `false`
-         * otherwise, `d` should be written directly to the websocket stream as JSON object.
-         * Two possible formats of `d`:
-         * ```text
-         * execute an server-side script file:
-         *
-         * {
-         *  path: [VFS path],
-         *  parameters: [parameters of the server-side script]
-         * }
-         *
-         * or, execute directly a snippet of server-side script:
-         *
-         * { code: [server-side script code snippet as string] }
-         *
-         * ```
-         *
-         * @param {boolean} ws flag indicate whether to use websocket for the connection
-         * to the gateway API. In case of streaming data, the websocket is preferred
-         * @returns {Promise<any>} a promise on the result object (any)
-         */
-        function apigateway(d: GenericObject<any>, ws: boolean): Promise<any>;
-        /**
-         * Perform the global search operation when user enter
-         * text in spotlight.
-         *
-         * This function will call all the search handles stored
-         * in [[searchHandle]] and build the search result based
-         * on output of these handle
-         *
-         * @export
-         * @param {string} text text to search
-         * @returns {any[]}
-         */
-        function search(text: string): any[];
-        /**
-         * Register a search handle to the global [[searchHandle]]
-         *
-         * @export
-         * @param {string} name handle name string
-         * @param {(text: string) => any[]} fn search handle
-         */
-        function onsearch(name: string, fn: (text: string) => any[]): void;
-        /**
-         * Set the current system locale: This function will
-         * find and load the locale dictionary definition file in the
-         * system asset resource, then trigger the global event
-         * `systemlocalechange` to translated all translatable text
-         * to the target language
-         *
-         * @export
-         * @param {string} name locale name, e.g. `en_GB`
-         * @returns {Promise<any>}
-         */
-        function setLocale(name: string): Promise<any>;
-        /**
-         * Return an error Object: AntOS use this function to
-         * collect information (stack trace) from user reported
-         * error.
-         *
-         * @export
-         * @param {(string | FormattedString)} n error string
-         * @returns {Error}
-         */
-        function throwe(n: string | FormattedString): Error;
-        /**
-         * Set value to the system clipboard
-         *
-         * @export
-         * @param {string} v clipboard value
-         * @returns {boolean}
-         */
-        function setClipboard(v: string): boolean;
-        /**
-         * Get the clipboard data
-         *
-         * @export
-         * @returns {Promise<any>} Promise on the clipboard data
-         */
-        function getClipboard(): Promise<any>;
-        /**
-         * A switcher object is a special object in which
-         * each object's property is a boolean option. All object's
-         * properties are mutual exclusive. It means that when a property
-         * is set to true, all other properties will be reset to false.
-         *
-         * Example:
-         *
-         * ```typescript
-         * let view = API.switcher("tree", "list", "icon")
-         * view.tree = true // view.list = false and view.icon = false
-         * view.list = true // view.tree = false and view.icon = false
-         * ```
-         *
-         * @export
-         * @returns {*}
-         */
-        function switcher(...args: string[]): any;
-    }
-}
-declare namespace OS {
     namespace GUI {
         /**
          * the SubWindow class is the abstract prototype of all
@@ -3543,6 +592,602 @@ declare namespace OS {
         }
     }
 }
+/// <reference types="jquery" />
+declare namespace OS {
+    /**
+     * This namespace is dedicated to all APIs related to AntOS UI system,
+     * these API are called AFX APIs which handle:
+     * - The mouse and keyboard interaction with the UI system
+     * - UI rendering
+     * - Custom tags definition
+     * - Load/unload system, applications and services UI
+     * - System dialogs definition
+     */
+    namespace GUI {
+        /**
+         * AntOS keyboard shortcut type definition
+         *
+         * @export
+         * @interface ShortcutType
+         */
+        interface ShortcutType {
+            /**
+             * Placeholder for all shortcut callbacks, example:
+             * ```typescript
+             *      fn_193462204.c = function() {..}
+             *      // this function will be called when the hotkey `ALT-C` is triggered
+             *      // fn_${"ALT".hash()} is fn_193462204
+             * ```
+             *
+             * @memberof ShortcutType
+             */
+            [propName: string]: GenericObject<(e: JQuery.KeyDownEvent) => void>;
+        }
+        /**
+         * Basic item type definition which is usually used by some UI element
+         * such as list view, tree view, menu and grid view
+         *
+         *
+         * @export
+         * @interface BasicItemType
+         */
+        interface BasicItemType {
+            /**
+             * Item text
+             *
+             * @type {(string | FormattedString)}
+             * @memberof BasicItemType
+             */
+            text: string | FormattedString;
+            /**
+             * Item children, usually used by tree view or menu item
+             * This property is keep for compatibility purposes only.
+             * Otherwise, the [[nodes]] property should be used
+             *
+             * @type {BasicItemType[]}
+             * @memberof BasicItemType
+             */
+            children?: BasicItemType[];
+            /**
+             * Item children, usually used by tree view or menu item
+             *
+             * @type {BasicItemType[]}
+             * @memberof BasicItemType
+             */
+            nodes?: BasicItemType[];
+            [propName: string]: any;
+        }
+        /**
+         * Element id of the virtual desktop, used by JQuery
+         */
+        var workspace: string;
+        /**
+         * Indicate whether the system is in fullscreen mode
+         */
+        var fullscreen: boolean;
+        /**
+         * Reference to the current system dialog, only one dialog
+         * is allowed at a time. A dialog may have sub dialog
+         */
+        var dialog: BaseDialog;
+        /**
+         * Convert an application html scheme to
+         * UI elements, then insert this UI scheme to the DOM tree.
+         *
+         * This function renders the UI of the application before calling the
+         * application's [[main]] function
+         *
+         * @export
+         * @param {string} html html scheme string
+         * @param {BaseModel} app reference to the target application
+         * @param {(Element | string)} parent
+         * The parent HTML element where the application is rendered.
+         * This is usually the reference to the virtual desktop element.
+         */
+        function htmlToScheme(html: string, app: BaseModel, parent: Element | string): void;
+        /**
+         * Load an application scheme file then render
+         * it with [[htmlToScheme]]
+         *
+         * @export
+         * @param {string} path VFS path to the scheme file
+         * @param {BaseModel} app the target application
+         * @param {(HTMLElement | string)} parent The parent HTML element where the application is rendered.
+         */
+        function loadScheme(path: string, app: BaseModel, parent: HTMLElement | string): void;
+        /**
+         * Clear the current system theme
+         *
+         * @export
+         */
+        function clearTheme(): void;
+        /**
+         * Load a theme based on its name, then refresh the
+         * system UI theme
+         *
+         * @export
+         * @param {string} name name of the theme e.g. `antos_dark`
+         * @param {boolean} force force to clear the system theme before applying the new one
+         */
+        function loadTheme(name: string, force: boolean): void;
+        /**
+         * Open a system dialog.
+         *
+         * @export
+         * @param {(BaseDialog | string)} d a dialog object or a dialog class name
+         * @param {GenericObject<any>} [data] input data of the dialog, refer to each
+         * dialog definition for the format of the input data
+         * @returns {Promise<any>} A promise on the callback data of the dialog, refer
+         * to each dialog definition for the format of the callback data
+         */
+        function openDialog(d: string | BaseDialog, data: GenericObject<any>): Promise<any>;
+        /**
+         * Find a list of applications that support a specific mime
+         * type in the system packages meta-data
+         *
+         * @export
+         * @param {string} mime the mime type
+         * @returns {API.PackageMetaType[]}
+         */
+        function appsByMime(mime: string): API.PackageMetaType[];
+        /**
+         * Find all applications that have services attached to it.
+         * This function allows to collect all the services available
+         * on the system. These services may or may not be running.
+         *
+         * @export
+         * @returns {GenericObject<API.PackageMetaType>} result in forme of:
+         * `service_name:service-meta-data` key-value pairs
+         */
+        function appsWithServices(): GenericObject<API.PackageMetaType>;
+        /**
+         * Find an launch an application using input application argument
+         * such as VFS file meta-data.
+         *
+         * Based on the input application argument, the function will try
+         * to find all applications that is compatible with that argument.
+         * Three cases possible:
+         * - There is no application that can handle the argument, a message will
+         * be notified to user.
+         * - There is one application that can handle the argument, the application
+         * will be launched with the argument
+         * - There are many applications that can handle the arguments, a selection
+         * dialog will be popped up and allows user to select an application to launch.
+         *
+         * @export
+         * @param {AppArgumentsType} it application argument
+         * @returns {void}
+         */
+        function openWith(it: AppArgumentsType): void;
+        /**
+         * Kil all processes related to an application, reload the application
+         * prototype definition and launch a new process of this application.
+         *
+         * This function is used only for debug purpose or used by
+         * AntOSDK during in-browser application development
+         *
+         * @export
+         * @param {string} app the application class name
+         * @param {AppArgumentsType[]} args application arguments
+         * @returns {void}
+         */
+        function forceLaunch(app: string, args: AppArgumentsType[]): void;
+        /**
+         * Kill an running processes of an application, then
+         * unregister the application prototype definition
+         * from the [[application]] namespace.
+         *
+         * This process is similar to uninstall the application
+         * from the current system state
+         *
+         * @export
+         * @param {string} app
+         */
+        function unloadApp(app: string): void;
+        /**
+         * Create a service process.
+         *
+         * Services are singleton processes, there is only
+         * one process of a service at a time
+         *
+         * @export
+         * @param {string} ph
+         * @returns {Promise<PM.ProcessType>}
+         */
+        function pushService(ph: string): Promise<PM.ProcessType>;
+        /**
+         * Synchronously start a list of services
+         *
+         * @export
+         * @param {string[]} srvs list of service class names
+         * @returns {Promise<void>}
+         */
+        function pushServices(srvs: string[]): Promise<void>;
+        /**
+         * Launch an application with arguments
+         *
+         * @export
+         * @param {string} app application class name
+         * @param {AppArgumentsType[]} args application arguments
+         */
+        function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType>;
+        /**
+         * Dock an application to the system application dock
+         *
+         * @export
+         * @param {BaseApplication} app reference to the application process
+         * @param {API.PackageMetaType} meta Application meta-data
+         * @returns {void}
+         */
+        function dock(app: OS.application.BaseApplication, meta: API.PackageMetaType): void;
+        /**
+         * Toggle system fullscreen
+         *
+         * @export
+         */
+        function toggleFullscreen(): void;
+        /**
+         * Remove an application process from the system application
+         * dock. This action will also exit the process
+         *
+         * @export
+         * @param {BaseApplication} app
+         * @returns
+         */
+        function undock(app: application.BaseApplication): void;
+        /**
+         * Attach a running service process to the system tray
+         *
+         * @export
+         * @param {BaseService} srv reference to the running service process
+         * @returns {void}
+         */
+        function attachservice(srv: application.BaseService): void;
+        /**
+         * Detach a running process from the system tray
+         *
+         * @export
+         * @param {BaseService} srv reference to the running service process
+         * @returns {void}
+         */
+        function detachservice(srv: application.BaseService): void;
+        /**
+         * Register a hot key and its handle in the
+         * system  shortcut
+         *
+         * @export
+         * @param {string} k the hotkey e.g. `ALT-C`
+         * @param {(e: JQuery.KeyPressEvent) => void} f handle function
+         * @param {boolean} force force to rebind the hotkey
+         * @returns {void}
+         */
+        function bindKey(k: string, f: (e: JQuery.KeyDownEvent) => void, force?: boolean): void;
+        /**
+         * Load and apply system wallpaper from the setting object
+         *
+         * @export
+         * @param {setting.WPSettingType} obj wallpaper setting object
+         */
+        function wallpaper(obj?: setting.WPSettingType): void;
+        /**
+         * Refresh the virtual desktop
+         *
+         * @export
+         */
+        function refreshDesktop(): void;
+        /**
+         * Show the login screen and perform the login operation.
+         *
+         * Once login successfully, the [[startAntOS]] will be called
+         *
+         * @export
+         */
+        function login(): void;
+        /**
+         * Start AntOS after a successful login.
+         *
+         * This function performs the following operations:
+         *
+         * - System cleanup
+         * - Apply system setting
+         * - Load desktop wallpaper and the current theme from the system setting
+         * - Load system package meta-data
+         * - Load and apply system locale and language
+         *
+         *
+         * @export
+         * @param {*} conf
+         */
+        function startAntOS(conf: any): void;
+        /**
+         * HTML schemes used by the system:
+         * - The login screen scheme
+         * - The workspace including:
+         *  - System panel
+         *  - Virtual desktop
+         *  - Context menu
+         *  - System tooltip
+         */
+        const schemes: GenericObject<string>;
+    }
+}
+declare namespace OS {
+    namespace API {
+        /**
+         * Observable entry type definition
+         *
+         * @export
+         * @interface ObservableEntryType
+         */
+        interface ObservableEntryType {
+            /**
+             * A Set of callbacks that should be called only once.
+             * These callbacks will be removed after the first
+             * occurrence of the corresponding event
+             *
+             * @memberof ObservableEntryType
+             */
+            one: Set<(d: any) => void>;
+            /**
+             * A Set of callbacks that should be called
+             * every time the corresponding event is triggered
+             *
+             * @memberof ObservableEntryType
+             */
+            many: Set<(d: any) => void>;
+        }
+        /**
+         * Announcement listener type definition
+         *
+         * @export
+         * @interface AnnouncerListenerType
+         */
+        interface AnnouncerListenerType {
+            [index: number]: {
+                /**
+                 * The event name
+                 *
+                 * @type {string}
+                 */
+                e: string;
+                /**
+                 * The event callback
+                 *
+                 */
+                f: (d: any) => void;
+            }[];
+        }
+        /**
+         * This class is the based class used in AntOS event
+         * announcement system.
+         * It implements the observer pattern using simple
+         * subscribe/publish mechanism
+         * @export
+         * @class Announcer
+         */
+        class Announcer {
+            /**
+             * The observable object that stores event name
+             * and its corresponding callback in [[ObservableEntryType]]
+             *
+             * @type {GenericObject<ObservableEntryType>}
+             * @memberof Announcer
+             */
+            observable: GenericObject<ObservableEntryType>;
+            /**
+             * Enable/disable the announcer
+             *
+             * @type {boolean}
+             * @memberof Announcer
+             */
+            enable: boolean;
+            /**
+             *Creates an instance of Announcer.
+             * @memberof Announcer
+             */
+            constructor();
+            /**
+             * Disable the announcer, when this function is called
+             * all events and their callbacks will be removed
+             *
+             * @returns
+             * @memberof Announcer
+             */
+            disable(): boolean;
+            /**
+             * Subscribe to an event, the callback will be called
+             * every time the corresponding event is trigged
+             *
+             * @param {string} evtName event name
+             * @param {(d: any) => void} callback The corresponding callback
+             * @returns {void}
+             * @memberof Announcer
+             */
+            on(evtName: string, callback: (d: any) => void): void;
+            /**
+             * Subscribe to an event, the callback will
+             * be called only once and then removed from the announcer
+             *
+             * @param {string} evtName event name
+             * @param {(d: any) => void} callback the corresponding callback
+             * @returns {void}
+             * @memberof Announcer
+             */
+            one(evtName: string, callback: (d: any) => void): void;
+            /**
+             * Unsubscribe the callback from an event
+             *
+             * @param {string} evtName event name
+             * @param {(d: any) => void} [callback] the callback to be unsubscribed.
+             * When the `callback` is `*`, all callbacks related to `evtName` will be
+             * removed
+             * @memberof Announcer
+             */
+            off(evtName: string, callback?: (d: any) => void): void;
+            /**
+             * Trigger an event
+             *
+             * @param {string} evtName event name
+             * @param {*} data data object that will be send to all related callback
+             * @returns {void}
+             * @memberof Announcer
+             */
+            trigger(evtName: string, data: any): void;
+        }
+    }
+    /**
+     * This namespace defines every thing related to the system announcement.
+     *
+     * The system announcement provides a global way to communicate between
+     * processes (applications/services) using the subscribe/publish
+     * mechanism
+     */
+    namespace announcer {
+        /**
+         * The global announcer object that manages global events
+         * and callbacks
+         */
+        var observable: API.Announcer;
+        /**
+         * This variable is used to allocate the `id` of all messages
+         * passing between publishers and subscribers in the
+         * system announcement
+         */
+        var quota: 0;
+        /**
+         * Placeholder of all global events listeners
+         */
+        var listeners: API.AnnouncerListenerType;
+        /**
+         * Subscribe to a global event
+         *
+         * @export
+         * @param {string} e event name
+         * @param {(d: any) => void} f event callback
+         * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
+         */
+        function on(e: string, f: (d: any) => void, a: BaseModel): void;
+        /**
+         * Trigger a global event
+         *
+         * @export
+         * @param {string} e event name
+         * @param {*} d data passing to all related callback
+         */
+        function trigger(e: string, d: any): void;
+        /**
+         * Report system fail. This will trigger the global `fail`
+         * event
+         *
+         * @export
+         * @param {(string | FormattedString)} m message string
+         * @param {Error} e error to be reported
+         */
+        function osfail(m: string | FormattedString, e: Error): void;
+        /**
+         * Report system error. This will trigger the global `error`
+         * event
+         *
+         * @export
+         * @param {(string | FormattedString)} m message string
+         * @param {Error} e error to be reported
+         */
+        function oserror(m: string | FormattedString, e: Error): void;
+        /**
+         * Trigger system notification (`info` event)
+         *
+         * @export
+         * @param {(string | FormattedString)} m notification message
+         */
+        function osinfo(m: string | FormattedString): void;
+        /**
+         * trigger a specific global event
+         *
+         * @export
+         * @param {string} e event name
+         * @param {*} d event data
+         */
+        function ostrigger(e: string, d: any): void;
+        /**
+         * Unregister a process (application/service) from
+         * the global announcement system
+         *
+         * @export
+         * @param {GUI.BaseModel} app reference to the process
+         * @returns {void}
+         */
+        function unregister(app: BaseModel): void;
+        /**
+         * Allocate message id
+         *
+         * @export
+         * @returns {number}
+         */
+        function getMID(): number;
+    }
+}
+declare namespace OS {
+    /**
+     * This namespace dedicated to all operations related to system
+     * process management
+     */
+    namespace PM {
+        /**
+         * A process is either an instance of an application or a service
+         */
+        type ProcessType = application.BaseApplication | application.BaseService;
+        /**
+         * Alias to  all classes that extends [[BaseModel]]
+         */
+        type ModelTypeClass = {
+            new <T extends BaseModel>(args: AppArgumentsType[]): T;
+        };
+        /**
+         * Process id allocator, when a new process is created, the value of
+         * this variable is increased
+         */
+        var pidalloc: number;
+        /**
+         * All running processes is stored in this variables
+         */
+        var processes: GenericObject<BaseModel[]>;
+        /**
+         * Create a new process of application or service
+         *
+         * @export
+         * @param {string} app class name string
+         * @param {ProcessTypeClass} cls prototype class
+         * @param {GUI.AppArgumentsType[]} [args] process arguments
+         * @returns {Promise<ProcessType>} a promise on the created process
+         */
+        function createProcess(app: string, cls: ModelTypeClass, args?: AppArgumentsType[]): Promise<ProcessType>;
+        /**
+         * Get the reference to a process using its id
+         *
+         * @export
+         * @param {number} pid
+         * @returns {BaseModel}
+         */
+        function appByPid(pid: number): BaseModel;
+        /**
+         * Kill a process
+         *
+         * @export
+         * @param {OS.GUI.BaseModel} app reference to the process
+         * @returns {void}
+         */
+        function kill(app: BaseModel): void;
+        /**
+         * Kill all process of an application or service
+         *
+         * @export
+         * @param {string} app process class name
+         * @param {boolean} force force exit all process
+         * @returns {void}
+         */
+        function killAll(app: string, force: boolean): void;
+    }
+}
 declare namespace OS {
     namespace API {
         /**
@@ -3875,6 +1520,548 @@ declare namespace OS {
              * ```
              */
             function dbquery(cmd: string, d: GenericObject<any>): Promise<RequestResult>;
+        }
+    }
+}
+declare namespace OS {
+    /**
+     * This namespace is dedicated to everything related to the
+     * global system settings
+     */
+    namespace setting {
+        /**
+         * User setting type definition
+         *
+         * @export
+         * @interface UserSettingType
+         */
+        interface UserSettingType {
+            /**
+             * User full name
+             *
+             * @type {string}
+             * @memberof UserSettingType
+             */
+            name: string;
+            /**
+             * User name
+             *
+             * @type {string}
+             * @memberof UserSettingType
+             */
+            username: string;
+            /**
+             * User id
+             *
+             * @type {number}
+             * @memberof UserSettingType
+             */
+            id: number;
+            /**
+             * User groups
+             *
+             * @type {{ [index: number]: string }}
+             * @memberof UserSettingType
+             */
+            group?: {
+                [index: number]: string;
+            };
+            [propName: string]: any;
+        }
+        /**
+         * Virtual desktop setting data type
+         *
+         * @export
+         * @interface DesktopSettingType
+         */
+        interface DesktopSettingType {
+            /**
+             * Desktop VFS path
+             *
+             * @type {string}
+             * @memberof DesktopSettingType
+             */
+            path: string;
+            /**
+             * Desktop menu, can be added automatically by applications
+             *
+             * @type {GUI.BasicItemType[]}
+             * @memberof DesktopSettingType
+             */
+            menu: GUI.BasicItemType[];
+            /**
+             * Show desktop hidden files
+             *
+             * @type {boolean}
+             * @memberof DesktopSettingType
+             */
+            showhidden: boolean;
+            [propName: string]: any;
+        }
+        /**
+         * Wallpaper setting data type
+         *
+         * @export
+         * @interface WPSettingType
+         */
+        interface WPSettingType {
+            /**
+             * Repeat wallpaper:
+             * - `repeat`
+             * - `repeat-x`
+             * - `repeat-y`
+             * - `no-repeat`
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
+            repeat: string;
+            /**
+             * Wallpaper size
+             * - `contain`
+             * - `cover`
+             * - `auto`
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
+            size: string;
+            /**
+             * VFS path to the wallpaper image
+             *
+             * @type {string}
+             * @memberof WPSettingType
+             */
+            url: string;
+        }
+        /**
+         * Theme setting data type
+         *
+         * @export
+         * @interface ThemeSettingType
+         */
+        interface ThemeSettingType {
+            /**
+             * Theme name, this value is used for looking
+             * theme file in system asset
+             *
+             * @type {string}
+             * @memberof ThemeSettingType
+             */
+            name: string;
+            /**
+             * Theme user-friendly text
+             *
+             * @type {string}
+             * @memberof ThemeSettingType
+             */
+            text: string;
+        }
+        /**
+         * Appearance setting data type
+         *
+         * @export
+         * @interface AppearanceSettingType
+         */
+        interface AppearanceSettingType {
+            /**
+             * Current theme name
+             *
+             * @type {string}
+             * @memberof AppearanceSettingType
+             */
+            theme: string;
+            /**
+             * All themes available in the system
+             *
+             * @type {ThemeSettingType[]}
+             * @memberof AppearanceSettingType
+             */
+            themes: ThemeSettingType[];
+            /**
+             * Current wallpaper setting
+             *
+             * @type {WPSettingType}
+             * @memberof AppearanceSettingType
+             */
+            wp: WPSettingType;
+            /**
+             * All wallpapers available in the system
+             *
+             * @type {string[]}
+             * @memberof AppearanceSettingType
+             */
+            wps: string[];
+        }
+        /**
+         * VFS Mount points setting data type
+         *
+         * @export
+         * @interface VFSMountPointSettingType
+         */
+        interface VFSMountPointSettingType {
+            /**
+             * Path to the mount point
+             *
+             * @type {string}
+             * @memberof VFSMountPointSettingType
+             */
+            path: string;
+            /**
+             * User friendly mount point name
+             *
+             * @type {string}
+             * @memberof VFSMountPointSettingType
+             */
+            text: string;
+            [propName: string]: any;
+        }
+        /**
+         * VFS setting data type
+         *
+         * @export
+         * @interface VFSSettingType
+         */
+        interface VFSSettingType {
+            /**
+             * mount points setting
+             *
+             * @type {VFSMountPointSettingType[]}
+             * @memberof VFSSettingType
+             */
+            mountpoints: VFSMountPointSettingType[];
+            [propName: string]: any;
+        }
+        /**
+         * Global system setting data type
+         *
+         * @export
+         * @interface SystemSettingType
+         */
+        interface SystemSettingType {
+            /**
+             * System error report URL
+             *
+             * @type {string}
+             * @memberof SystemSettingType
+             */
+            error_report: string;
+            /**
+             * Current system locale e.g. `en_GB`
+             *
+             * @type {string}
+             * @memberof SystemSettingType
+             */
+            locale: string;
+            /**
+             * System menus
+             *
+             * @type {API.PackageMetaType[]}
+             * @memberof API.PackageMetaType
+             */
+            menu: API.PackageMetaType[];
+            /**
+             * Packages meta-data
+             *
+             * @type {{ [index: string]: API.PackageMetaType }}
+             * @memberof SystemSettingType
+             */
+            packages: {
+                [index: string]: API.PackageMetaType;
+            };
+            /**
+             * Path to the installed packages
+             *
+             * @type {{
+             *                 user: string;
+             *                 system: string;
+             *             }}
+             * @memberof SystemSettingType
+             */
+            pkgpaths: {
+                /**
+                 * User specific packages install location
+                 *
+                 * @type {string}
+                 */
+                user: string;
+                /**
+                 * System packages install location
+                 *
+                 * @type {string}
+                 */
+                system: string;
+            };
+            /**
+             * Package repositories setting.
+             * This configuration is used by [[MarketPlace]]
+             * for package management
+             *
+             * @type {{
+             *                 text: string;
+             *                 url: string;
+             *             }[]}
+             * @memberof SystemSettingType
+             */
+            repositories: {
+                /**
+                 * Repository name
+                 *
+                 * @type {string}
+                 */
+                text: string;
+                /**
+                 * Repository uri
+                 *
+                 * @type {string}
+                 */
+                url: string;
+            }[];
+            /**
+             * Startup applications and services
+             *
+             * @type {{
+             *                 apps: string[];
+             *                 services: string[];
+             *             }}
+             * @memberof SystemSettingType
+             */
+            startup: {
+                /**
+                 * List of application names
+                 *
+                 * @type {string[]}
+                 */
+                apps: string[];
+                /**
+                 * List of service names
+                 *
+                 * @type {string[]}
+                 */
+                services: string[];
+                /**
+                 * List of pinned applications
+                 *
+                 * @type {string[]}
+                 */
+                pinned: string[];
+            };
+        }
+        /**
+         * User settings
+         */
+        var user: UserSettingType;
+        /**
+         * Application settings
+         */
+        var applications: GenericObject<any>;
+        /**
+         * Desktop settings
+         */
+        var desktop: DesktopSettingType;
+        /**
+         * Appearance settings
+         */
+        var appearance: AppearanceSettingType;
+        /**
+         * VFS settings
+         */
+        var VFS: VFSSettingType;
+        /**
+         * System settings
+         */
+        var system: SystemSettingType;
+    }
+    /**
+     * Reset the system settings to default values
+     *
+     * @export
+     */
+    function resetSetting(): void;
+    /**
+     * Apply the input parameter object to system settings.
+     * This object could be an object loaded from
+     * setting JSON file saved on the server.
+     *
+     * @export
+     * @param {*} conf
+     */
+    function systemSetting(conf: any): void;
+}
+/// <reference types="jquery" />
+declare namespace OS {
+    namespace application {
+        /**
+         * Services are processes that run in the background and
+         * are waken up in certain circumstances such as by global
+         * events or user interactions.
+         *
+         * Each service takes an entry in the system tray menu
+         * located on the system panel. This menu entry is used
+         * to access to service visual contents such as: options,
+         * task performing based on user interaction, etc.
+         *
+         * Services are singleton processes, there is only
+         * one process of a service at a time
+         *
+         * @export
+         * @abstract
+         * @class BaseService
+         * @extends {BaseModel}
+         */
+        abstract class BaseService extends BaseModel {
+            /**
+             * The service icon shown in the system tray
+             *
+             * @type {string}
+             * @memberof BaseService
+             */
+            icon: string;
+            /**
+             * CSS class of the service icon shown in the system tray
+             *
+             * @type {string}
+             * @memberof BaseService
+             */
+            iconclass: string;
+            /**
+             * Text of the service shown in the system tray
+             *
+             * @type {string}
+             * @memberof BaseService
+             */
+            text: string;
+            /**
+             * Reference to the menu entry DOM element attached
+             * to the service
+             *
+             * @type {HTMLElement}
+             * @memberof BaseService
+             */
+            domel: HTMLElement;
+            /**
+             * Reference to the timer that periodically executes the callback
+             * defined in [[watch]].
+             *
+             * @private
+             * @type {number}
+             * @memberof BaseService
+             */
+            private timer;
+            /**
+             * Reference to the system tray menu
+             *
+             * @type {HTMLElement}
+             * @memberof BaseService
+             */
+            holder: HTMLElement;
+            /**
+             * Placeholder for service select callback
+             *
+             * @memberof BaseService
+             */
+            onmenuselect: (d: OS.GUI.TagEventType<GUI.tag.MenuEventData>) => void;
+            /**
+             *Creates an instance of BaseService.
+             * @param {string} name service class name
+             * @param {AppArgumentsType[]} args service arguments
+             * @memberof BaseService
+             */
+            constructor(name: string, args: AppArgumentsType[]);
+            /**
+             * Do nothing
+             *
+             * @memberof BaseService
+             */
+            hide(): void;
+            /**
+             * Init the service before attaching it to
+             * the system tray: event subscribe, scheme
+             * loading.
+             *
+             * Should be implemented by all subclasses
+             *
+             * @abstract
+             * @memberof BaseService
+             */
+            abstract init(): void;
+            /**
+             * Refresh the service menu entry in the
+             * system tray
+             *
+             * @memberof BaseService
+             */
+            update(): void;
+            /**
+             * Get the service meta-data
+             *
+             * @returns {API.PackageMetaType}
+             * @memberof BaseService
+             */
+            meta(): API.PackageMetaType;
+            /**
+             * Attach the service to a menu element
+             * such as the system tray menu
+             *
+             * @param {HTMLElement} h
+             * @memberof BaseService
+             */
+            attach(h: HTMLElement): void;
+            /**
+             * Set the callback that will be called periodically
+             * after a period of time.
+             *
+             * Each service should only have at most one watcher
+             *
+             * @protected
+             * @param {number} t period time in seconds
+             * @param {() => void} f callback function
+             * @returns {number}
+             * @memberof BaseService
+             */
+            protected watch(t: number, f: () => void): number;
+            /**
+             * This function is called when the service
+             * is exited
+             *
+             * @protected
+             * @param {BaseEvent} evt exit event
+             * @returns
+             * @memberof BaseService
+             */
+            protected onexit(evt: BaseEvent): JQuery<HTMLElement>;
+            /**
+             * Do nothing
+             *
+             * @memberof BaseService
+             */
+            main(): void;
+            /**
+             * Do nothing
+             *
+             * @memberof BaseService
+             */
+            show(): void;
+            /**
+             * Awake the service, this function is usually called when
+             * the system tray menu entry attached to the service is
+             * selected.
+             *
+             * This function should be implemented by all subclasses
+             *
+             * @abstract
+             * @param {GUI.TagEventType} e
+             * @memberof BaseService
+             */
+            abstract awake(e: GUI.TagEventType<GUI.tag.MenuEventData>): void;
+            /**
+             * Do nothing
+             *
+             * @protected
+             * @param {BaseEvent} evt
+             * @memberof BaseService
+             */
+            protected cleanup(evt: BaseEvent): void;
         }
     }
 }
@@ -4879,33 +3066,2019 @@ declare namespace OS {
         }
     }
 }
+/// <reference types="jquery" />
+declare namespace OS {
+    /**
+     * This namespace is dedicated to application and service definition.
+     * When an application is loaded, its prototype definition will be
+     * inserted to this namespace for reuse lately
+     */
+    namespace application {
+        /**
+         * Abstract prototype of all AntOS applications.
+         * Any new application definition should extend
+         * this prototype
+         *
+         * @export
+         * @abstract
+         * @class BaseApplication
+         * @extends {BaseModel}
+         */
+        abstract class BaseApplication extends BaseModel {
+            /**
+             * Placeholder of all settings specific to the application.
+             * The settings stored in this object will be saved to system
+             * setting when logout and can be reused in the next login session
+             *
+             * @type {GenericObject<any>}
+             * @memberof BaseApplication
+             */
+            setting: GenericObject<any>;
+            /**
+             * Hotkeys (shortcuts) defined for this application
+             *
+             * @protected
+             * @type {GUI.ShortcutType}
+             * @memberof BaseApplication
+             */
+            protected keycomb: GUI.ShortcutType;
+            /**
+             * Reference to the system dock
+             *
+             * @type {GUI.tag.AppDockTag}
+             * @memberof BaseApplication
+             */
+            sysdock: GUI.tag.AppDockTag;
+            /**
+             * Reference to the system application menu located
+             * on the system panel
+             *
+             * @type {GUI.tag.MenuTag}
+             * @memberof BaseApplication
+             */
+            appmenu: GUI.tag.MenuTag;
+            /**
+             *Creates an instance of BaseApplication.
+             * @param {string} name application name
+             * @param {AppArgumentsType[]} args application arguments
+             * @memberof BaseApplication
+             */
+            constructor(name: string, args: AppArgumentsType[]);
+            /**
+             * Init the application, this function is called when the
+             * application process is created and docked in the application
+             * dock.
+             *
+             * The application UI will be rendered after the execution
+             * of this function.
+             *
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            init(): void;
+            /**
+             * Render the application UI by first loading its scheme
+             * and then mount this scheme to the DOM tree
+             *
+             * @protected
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected loadScheme(): void;
+            /**
+             * API function to perform an heavy task.
+             * This function will trigger the global `loading`
+             * event at the beginning of the task, and the `loaded`
+             * event after finishing the task
+             *
+             * @protected
+             * @param {Promise<any>} promise the promise on a task to be performed
+             * @returns {Promise<void>}
+             * @memberof BaseApplication
+             */
+            protected load(promise: Promise<any>): Promise<void>;
+            /**
+             * Bind a hotkey to the application, this function
+             * is used to define application keyboard shortcut
+             *
+             * @protected
+             * @param {string} k the hotkey to bind, should be in the following
+             * format: `[ALT|SHIFT|CTRL|META]-KEY`, e.g. `CTRL-S`
+             * @param {(e: JQuery.KeyboardEventBase) => void} f the callback function
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected bindKey(k: string, f: (e: JQuery.KeyboardEventBase) => void): void;
+            /**
+             * Update the application local from the system
+             * locale or application specific locale configuration
+             *
+             * @private
+             * @param {string} name locale name e.g. `en_GB`
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected updateLocale(name: string): void;
+            /**
+             * Execute the callback subscribed to a
+             * keyboard shortcut
+             *
+             * @param {string} fnk meta or modifier key e.g. `CTRL`, `ALT`, `SHIFT` or `META`
+             * @param {string} c a regular key
+             * @param {JQuery.KeyDownEvent} e JQuery keyboard event
+             * @returns {boolean} return whether the shortcut is executed
+             * @memberof BaseApplication
+             */
+            shortcut(fnk: string, c: string, e: JQuery.KeyDownEvent): boolean;
+            /**
+             * Apply a setting to the application
+             *
+             * @protected
+             * @param {string} k the setting name
+             * @memberof BaseApplication
+             */
+            protected applySetting(k: string): void;
+            /**
+             * Apply all settings to the application
+             *
+             * @protected
+             * @memberof BaseApplication
+             */
+            protected applyAllSetting(): void;
+            /**
+             * Set a setting value to the application setting
+             * registry
+             *
+             * @protected
+             * @param {string} k setting name
+             * @param {*} v setting value
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected registry(k: string, v: any): void;
+            /**
+             * Show the appliation
+             *
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            show(): void;
+            /**
+             * Blur the application
+             *
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            blur(): void;
+            /**
+             * Hide the application
+             *
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            hide(): void;
+            /**
+             * Maximize or restore the application window size
+             * and its position
+             *
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            toggle(): void;
+            /**
+             * Get the application title
+             *
+             * @returns {(string| FormattedString)}
+             * @memberof BaseApplication
+             */
+            title(): string | FormattedString;
+            /**
+             * Function called when the application exit.
+             * If the input exit event is prevented, the application
+             * process will not be killed
+             *
+             *
+             * @protected
+             * @param {BaseEvent} evt exit event
+             * @memberof BaseApplication
+             */
+            protected onexit(evt: BaseEvent): void;
+            /**
+             * Get the application meta-data
+             *
+             * @returns {API.PackageMetaType}
+             * @memberof BaseApplication
+             */
+            meta(): API.PackageMetaType;
+            /**
+             * Base menu definition. This function
+             * returns the based menu definition of all applications.
+             * Other application specific menu entries
+             * should be defined in [[menu]] function
+             *
+             * @protected
+             * @returns {GUI.BasicItemType[]}
+             * @memberof BaseApplication
+             */
+            protected baseMenu(): GUI.BasicItemType[];
+            /**
+             * The main application entry that is called after
+             * the application UI is rendered. This application
+             * must be implemented by all subclasses
+             *
+             * @abstract
+             * @memberof BaseApplication
+             */
+            abstract main(): void;
+            /**
+             * Application specific menu definition
+             *
+             * @protected
+             * @returns {GUI.BasicItemType[]}
+             * @memberof BaseApplication
+             */
+            protected menu(): GUI.BasicItemType[];
+            /**
+             * The cleanup function that is called by [[onexit]] function.
+             * Application need to override this function to perform some
+             * specific task before exiting or to prevent the application
+             * to be exited
+             *
+             * @protected
+             * @param {BaseEvent} e
+             * @memberof BaseApplication
+             */
+            protected cleanup(e: BaseEvent): void;
+        }
+    }
+}
+/**
+ * Reference to the global this
+ */
+declare const Ant: typeof globalThis;
+/**
+ * Extend the String prototype with some API
+ * functions used by AntOS API
+ *
+ * @interface String
+ */
+interface String {
+    /**
+     * Simple string hash function
+     *
+     * @returns {number}
+     * @memberof String
+     */
+    hash(): number;
+    /**
+     * Parse the current string and convert it
+     * to an object of type [[Version]] if the string
+     * is in the format recognized by [[Version]],
+     * e.g.: `1.0.1-a`
+     *
+     * @returns {OS.Version}
+     * @memberof String
+     */
+    __v(): OS.Version;
+    /**
+     * Convert the current string to base 64 string
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    asBase64(): string;
+    /**
+     * Unescape all escaped characters on the
+     * string using `\`
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    unescape(): string;
+    /**
+     * Escape the current string using backslash
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    escape(): string;
+    /**
+     * Convert the current string to uint8 array
+     *
+     * @returns {Uint8Array}
+     * @memberof String
+     */
+    asUint8Array(): Uint8Array;
+    /**
+     * Format the current using input parameters.
+     * The current string should be a formatted string
+     * in the following form:
+     *
+     * ```typescript
+     * "example string: {0} and {1}".format("hello", "world")
+     * // return "example string: hello and world"
+     * ```
+     *
+     * @param {...any[]} args
+     * @returns {string}
+     * @memberof String
+     */
+    format(...args: any[]): string;
+    /**
+     * Create a [[FormattedString]] object using the current
+     * string and the input parameters
+     *
+     * @param {...any[]} args
+     * @returns {OS.FormattedString}
+     * @memberof String
+     */
+    f(...args: any[]): OS.FormattedString;
+    /**
+     * Check if the current string is translatable, if it
+     * is the case, translate the string to the language specified
+     * in the current system locale setting.
+     *
+     * A translatable string is a string in the following
+     * form: `"__(example string)"`
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    __(): string;
+    /**
+     * Translate current string to the language specified
+     * by the system locale setting
+     *
+     * @returns {string}
+     * @memberof String
+     */
+    l(): string;
+    /**
+     * Trim left of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
+    trimFromLeft(arg: string): string;
+    /**
+     * Trim right of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
+    trimFromRight(arg: string): string;
+    /**
+     * Trim both left and right of a string by a mask string
+     *
+     * @param {string} arg specifies a sub-string to be removed
+     * @returns {string}
+     * @memberof String
+     */
+    trimBy(arg: string): string;
+}
+/**
+ * Extend the Data prototype with the
+ * [[timestamp]] function
+ *
+ * @interface Date
+ */
+interface Date {
+    /**
+     * Return the timestamp of the current Date object
+     *
+     * @returns {number}
+     * @memberof Date
+     */
+    timestamp(): number;
+}
+/**
+ * Generic key-value pair object interface
+ *
+ * @interface GenericObject
+ * @template T
+ */
+interface GenericObject<T> {
+    [index: string]: T;
+}
+/**
+ * Global function to create a [[FormattedString]] from
+ * a formatted string and a list of parameters. Example
+ *
+ * ```typescript
+ * __("hello {0}", world) // return a FormattedString object
+ * ```
+ *
+ * @param {...any[]} args
+ * @returns {(OS.FormattedString | string)}
+ */
+declare function __(...args: any[]): OS.FormattedString | string;
+/**
+ * This global function allow chaining stack trace from one error to
+ * another. It is particular helping when tracking the source of
+ * the error in promises chain which results in some obfuscated stack
+ * traces as the stack resets on every new promise.
+ *
+ * @param {Error} e
+ * @returns {Error}
+ */
+declare function __e(e: Error): Error;
+/**
+ * This namespace is the main entry point of AntOS
+ * API
+ */
+declare namespace OS {
+    /**
+     * Represent a translatable formatted string
+     *
+     * @export
+     * @class FormattedString
+     */
+    class FormattedString {
+        /**
+         * Format string in the following form
+         *
+         * ```typescript
+         * "format string with {0} and {1}"
+         * // {[0-9]} is the format pattern
+         * ```
+         *
+         * @type {string}
+         * @memberof FormattedString
+         */
+        fs: string;
+        /**
+         * The value of the format pattern represented
+         * in [[fs]]
+         *
+         * @type {any[]}
+         * @memberof FormattedString
+         */
+        values: any[];
+        /**
+         * Creates an instance of FormattedString.
+         * @param {string} fs format string
+         * @param {any[]} args input values of the format patterns
+         * @memberof FormattedString
+         */
+        constructor(fs: string, args: any[]);
+        /**
+         * Convert FormattedString to String
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        toString(): string;
+        /**
+         * Translate the format string to the current system
+         * locale language, format the string with values and
+         * then converted it to normal `string`
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        __(): string;
+        /**
+         * Return the hash number of the formatted string
+         *
+         * @returns {number}
+         * @memberof FormattedString
+         */
+        hash(): number;
+        /**
+         * Match the formatted string against a regular expression
+         * a string pattern
+         *
+         * @param {(string | RegExp)} t string or regular expression
+         * @returns {RegExpMatchArray}
+         * @memberof FormattedString
+         */
+        match(t: string | RegExp): RegExpMatchArray;
+        /**
+         * Convert the formatted string to Base^$
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        asBase64(): string;
+        /**
+         * Un escape the formatted string
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        unescape(): string;
+        /**
+         * Escape the formatted string
+         *
+         * @returns {string}
+         * @memberof FormattedString
+         */
+        escape(): string;
+        /**
+         * Convert the formatted string to uint8 array
+         *
+         * @returns {Uint8Array}
+         * @memberof FormattedString
+         */
+        asUint8Array(): Uint8Array;
+        /**
+         * Input values for the format string
+         *
+         * @param {...any[]} args
+         * @memberof FormattedString
+         */
+        format(...args: any[]): void;
+    }
+    /**
+     * This class represents the Version number format used by AntOS. A typical
+     * AntOS version number is in the following format:
+     *
+     * ```
+     * [major_number].[minor_number].[patch]-[branch]
+     *
+     * e.g.: 1.2.3-r means that:
+     * - version major number is 1
+     * - version minor number is 2
+     * - patch version is 3
+     * - the current branch is release `r`
+     * ```
+     *
+     * @export
+     * @class Version
+     */
+    class Version {
+        /**
+         * The version string
+         *
+         * @type {string}
+         * @memberof Version
+         */
+        string: string;
+        /**
+         * The current branch
+         * - 1: `a` - alpha branch
+         * - 2: `b` - beta branch
+         * - 3: `r` - release branch
+         *
+         * @private
+         * @type {number}
+         * @memberof Version
+         */
+        private branch;
+        /**
+         * Version major number
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        major: number;
+        /**
+         * Version minor number
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        minor: number;
+        /**
+         * Version patch number
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        patch: number;
+        /**
+         *Creates an instance of Version.
+         * @param {string} string string represents the version
+         * @memberof Version
+         */
+        constructor(string: string);
+        /**
+         * Compare the current version with another version.
+         *
+         * The comparison priority is `branch>major>minor>patch`.
+         *
+         * For the branch, the priority is `r>b>a`
+         *
+         * @param {(string | Version)} o version string or object
+         * @returns {(0 | 1 | -1)}
+         * Return 0 if the two versions are the same, 1 if
+         * the current version is newer than the input version,
+         * otherwise return -1
+         * @memberof Version
+         */
+        compare(o: string | Version): 0 | 1 | -1;
+        /**
+         * Check if the current version is newer than
+         * the input version
+         *
+         * @param {(string | Version)} o version string or object
+         * @returns {boolean}
+         * @memberof Version
+         */
+        nt(o: string | Version): boolean;
+        /**
+         * Check if the current version is older than
+         * the input version
+         *
+         * @param {(string | Version)} o version string or object
+         * @returns {boolean}
+         * @memberof Version
+         */
+        ot(o: string | Version): boolean;
+        /**
+         * Return itself
+         *
+         * @returns {Version}
+         * @memberof Version
+         */
+        __v(): Version;
+        /**
+         * Convert Version object to string
+         *
+         * @returns {string}
+         * @memberof Version
+         */
+        toString(): string;
+    }
+    /**
+     * Variable represents the current AntOS version, it
+     * is an instance of [[Version]]
+     */
+    const VERSION: Version;
+    /**
+     * Register a model prototype to the system namespace.
+     * There are two types of model to be registered, if the model
+     * is of type [[SubWindow]], its prototype will be registered
+     * in the [[dialogs]] namespace, otherwise, if the model type
+     * is [[Application]] or [[Service]], its prototype will be
+     * registered in the [[application]] namespace.
+     *
+     * When a model is loaded in the system, its prototype is registered
+     * for later uses
+     *
+     * @export
+     * @param {string} name class name
+     * @param {*} x the corresponding class
+     * @returns {*}
+     */
+    function register(name: string, x: PM.ModelTypeClass): void;
+    /**
+     * This function cleans up the entire system and
+     * makes sure the system is in a new and clean session.
+     * It performs the following operations:
+     *
+     * - Kill all running processes
+     * - Unregister all global events and reset the  global
+     * announcement system
+     * - Clear the current theme
+     * - Reset process manager and all system settings
+     *
+     * @export
+     */
+    function cleanup(): void;
+    /**
+     * Booting up AntOS. This function checks whether the user
+     * is successfully logged in, then call [[startAntOS]], otherwise
+     * it shows the login screen
+     *
+     * @export
+     */
+    function boot(): void;
+    /**
+     * Placeholder for all the callbacks that are called when the system
+     * exits. These callbacks are useful when an application or service wants
+     * to perform a particular task before shuting down the system
+     */
+    const cleanupHandles: {
+        [index: string]: () => Promise<any>;
+    };
+    /**
+     * Perform the system shutdown operation. This function calls all
+     * clean up handles in [[cleanupHandles]], then save the system setting
+     * before exiting
+     *
+     * @export
+     */
+    function exit(): void;
+    /**
+     * Register a callback to the system [[cleanupHandles]]
+     *
+     * @export
+     * @param {string} n callback string name
+     * @param {() => void} f the callback handle
+     * @returns
+     */
+    function onexit(n: string, f: () => Promise<any>): () => Promise<any>;
+    /**
+     * The namespace API is dedicated to the definition of the core system APIs
+     * used by AntOS and its applications. The following core APIs are defined:
+     *
+     * - The AntOS announcement system
+     * - Virtual File system
+     * - Virtual Database
+     * - Low-level REST based client-server communication
+     * - Dependencies management
+     * - System utilities
+     *
+     * These APIs are considered as middle-ware that abstracts the client-server
+     * communication and provide the application layer with a standardized APIs
+     * for file/database access, system events handling (announcement), automatic
+     * dependencies resolving, etc.
+     */
+    namespace API {
+        /**
+         * AntOS package meta-data type definition
+         *
+         * @export
+         * @interface PackageMetaType
+         */
+        interface PackageMetaType {
+            /**
+             * The application class name, if the package has only services
+             * this property is ignored and [[pkgname]] should be specified
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            app?: string;
+            /**
+             * Package name, in case of [[app]] being undefined, this property
+             * need to be specified
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            pkgname?: string;
+            /**
+             * Package category
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            category: string;
+            /**
+             * Package description string
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            description: string;
+            /**
+             * List of services that is attached to the
+             * package
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
+            services?: string[];
+            /**
+             * CSS icon class of the package
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            iconclass?: string;
+            /**
+             * VFS application icon path
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            icon?: string;
+            /**
+             * Package information
+             *
+             * @type {{
+             *                 author: string;
+             *                 email: string;
+             *                 [propName: string]: any;
+             *             }}
+             * @memberof PackageMetaType
+             */
+            info: {
+                /**
+                 * Author of the package
+                 *
+                 * @type {string}
+                 */
+                author: string;
+                /**
+                 * Author's email
+                 *
+                 * @type {string}
+                 */
+                email: string;
+                [propName: string]: any;
+            };
+            /**
+             * Application-specific locale definition. When the system locale changes,
+             * translatable texts inside the application will be first translated using
+             * the locale dictionary defined in the package meta-data. If no translation
+             * found, the system locale dictionary is used instead.
+             *
+             * A local dictionary definition should be in the following format:
+             *
+             * ```typescript
+             * {
+             *      [locale_name: string]: {
+             *          [origin_string]: string // translation string
+             *      }
+             * }
+             * ```
+             *
+             * Example of locale dictionaries:
+             *
+             * ```typescript
+             * {
+             *      "en_GB": {
+             *          "Cancel": "Cancel",
+             *          "Modify": "Modify"
+             *      },
+             *      "fr_FR": {
+             *          "Cancel": "Annuler",
+             *          "Modify": "Modifier"
+             *      }
+             * }
+             * ```
+             *
+             * @type {{ [index: string]: GenericObject<string> }} locale dictionaries
+             * @memberof PackageMetaType
+             */
+            locales: {
+                [index: string]: GenericObject<string>;
+            };
+            /**
+             * Mime types supported by the packages, regular expression can be used
+             * to specified a range of mimes in common
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
+            mimes: string[];
+            /**
+             * Package (application) name
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            name: string;
+            /**
+             * VFS path to package installation location
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            path: string;
+            /**
+             * Package version, should be in a format conforming
+             * to the version definition in [[Version]] class
+             *
+             * @type {string}
+             * @memberof PackageMetaType
+             */
+            version: string;
+            /**
+             * Package dependencies, each entry is in the following format
+             *
+             * `package_name@version`
+             *
+             * Example:
+             *
+             * ```json
+             * [
+             *  "File@0.1.5-b"
+             * ]
+             * ```
+             *
+             * @type {string[]}
+             * @memberof PackageMetaType
+             */
+            dependencies: string[];
+            [propName: string]: any;
+        }
+        /**
+         * Placeholder to store all loaded shared libraries. Once
+         * a shared library is firstly loaded, its identity will be
+         * stored in this variable. Based on this information, in
+         * the next use of the library, the system knows that the
+         * library is already loaded and ready to use.
+         *
+         * A shared library can be a javascript or a CSS file.
+         */
+        const shared: GenericObject<boolean>;
+        /**
+         * Placeholder for all global search handles registered to the system.
+         * These callbacks will be called when user performs the search operation
+         * in the spotlight UI.
+         *
+         * Applications can define their own search handle to provide the spotlight UI
+         * with additional search results
+         *
+         */
+        const searchHandle: GenericObject<(text: string) => any[]>;
+        /**
+         * Placeholder of the current system locale dictionary, the system uses
+         * this dictionary to translate all translatable texts to the current
+         * locale language
+         */
+        var lang: GenericObject<string>;
+        /**
+         * Re-export the system announcement [[getMID]] function to the
+         * core API
+         *
+         * @export
+         * @returns {number}
+         */
+        function mid(): number;
+        /**
+         * REST-based API.
+         *
+         * Perform a POST request to the server. Data exchanged
+         * is in `application/json`
+         *
+         * @export
+         * @param {string} p the server URI
+         * @param {*} d data object that will be converted to JSON
+         * @returns {Promise<any>} a promise on the result data
+         */
+        function post(p: string, d: any): Promise<any>;
+        /**
+         * REST-based API.
+         *
+         * Perform a GET request and read back the data in
+         * `ArrayBuffer` (binary) format. This is useful for
+         * binary data reading
+         *
+         * @export
+         * @param {string} p resource URI
+         * @returns {Promise<ArrayBuffer>} a promise on the returned binary data
+         */
+        function blob(p: string): Promise<ArrayBuffer>;
+        /**
+         * REST-based API.
+         *
+         * Send file to server
+         *
+         * @export
+         * @param {string} p resource URI
+         * @param {string} d VFS path of the destination file
+         * @returns {Promise<any>}
+         */
+        function upload(p: string, d: string): Promise<any>;
+        /**
+         * REST-based API.
+         *
+         * Download a file
+         *
+         * @export
+         * @param {string} name file name
+         * @param {*} b file content
+         */
+        function saveblob(name: string, b: any): void;
+        /**
+         * Helper function to trigger the global `loading`
+         * event. This event should be triggered in the
+         * beginning of a heavy task
+         *
+         * @export
+         * @param {number} q message id, see [[mid]]
+         * @param {string} p message string
+         */
+        function loading(q: number, p: string): void;
+        /**
+         * Helper function to trigger the global `loaded`
+         * event: This event should be triggered in the
+         * end of a heavy task that has previously triggered
+         * the `loading` event
+         *
+         * @export
+         * @param {number} q the message id of the corresponding `loading` event
+         * @param {string} p the message string
+         * @param {string} m message status  (`OK` of `FAIL`)
+         */
+        function loaded(q: number, p: string, m: string): void;
+        /**
+         * Perform an REST GET request
+         *
+         * @export
+         * @param {string} p the URI of the request
+         * @param {string} [t=undefined] the response data type:
+         * - jsonp: the response is an json object
+         * - script: the response is a javascript code
+         * - xm, html: the response is a XML/HTML object
+         * - text: plain text
+         * @returns {Promise<any>} a Promise on the requested data
+         */
+        function get(p: string, t?: string): Promise<any>;
+        /**
+         * REST-based API
+         *
+         * Perform a GET operation and executed the returned
+         * content as javascript
+         *
+         * @export
+         * @param {string} p URI resource
+         * @returns {Promise<any>} promise on the executed content
+         */
+        function script(p: string): Promise<any>;
+        /**
+         * REST-based API
+         *
+         * Get the content of a global asset resource stored
+         * in `os://resources/`
+         *
+         * @export
+         * @param {string} r relative path to the resource
+         * @returns {Promise<any>} promise on the returned content
+         */
+        function resource(r: string): Promise<any>;
+        /**
+         * Helper function to verify whether a shared library
+         * is loaded and ready to use
+         *
+         * @export
+         * @param {string} l path to the library
+         * @returns {boolean}
+         */
+        function libready(l: string): boolean;
+        /**
+         * Load a shared library if not ready
+         *
+         * @export
+         * @param {string} l VFS path to the library
+         * @param {string} force force reload library
+         * @returns {Promise<void>} a promise on the result data
+         */
+        function requires(l: string, force?: boolean): Promise<void>;
+        /**
+         * Synchronously load a list of shared libraries
+         *
+         * @export
+         * @param {string[]} libs list of shared libraries
+         * @returns {Promise<void>}
+         */
+        function require(libs: string[]): Promise<void>;
+        /**
+         * The namespace packages is dedicated to all package management
+         * related APIs.
+         */
+        namespace packages {
+            /**
+             * Fetch the package meta-data from the server
+             *
+             * @export
+             * @returns {Promise<RequestResult>} Promise on a [[RequestResult]].
+             * A success request result should contain a list of [[PackageMetaType]]
+             */
+            function fetch(): Promise<RequestResult>;
+            /**
+             * Request the server to regenerate the package
+             * caches
+             *
+             * @export
+             * @returns {Promise<RequestResult>}
+             */
+            function cache(): Promise<RequestResult>;
+        }
+        /**
+         * Save the current user setting
+         *
+         * @export
+         * @returns {Promise<RequestResult>} promise on a [[RequestResult]]
+         */
+        function setting(): Promise<RequestResult>;
+        /**
+         * An apigateway allows client side to execute a custom server-side
+         * script and get back the result. This gateway is particularly
+         * useful in case of performing a task that is not provided by the core
+         * API
+         *
+         * @export
+         * @param {GenericObject<any>} d execution indication, provided only when ws is `false`
+         * otherwise, `d` should be written directly to the websocket stream as JSON object.
+         * Two possible formats of `d`:
+         * ```text
+         * execute an server-side script file:
+         *
+         * {
+         *  path: [VFS path],
+         *  parameters: [parameters of the server-side script]
+         * }
+         *
+         * or, execute directly a snippet of server-side script:
+         *
+         * { code: [server-side script code snippet as string] }
+         *
+         * ```
+         *
+         * @param {boolean} ws flag indicate whether to use websocket for the connection
+         * to the gateway API. In case of streaming data, the websocket is preferred
+         * @returns {Promise<any>} a promise on the result object (any)
+         */
+        function apigateway(d: GenericObject<any>, ws: boolean): Promise<any>;
+        /**
+         * Perform the global search operation when user enter
+         * text in spotlight.
+         *
+         * This function will call all the search handles stored
+         * in [[searchHandle]] and build the search result based
+         * on output of these handle
+         *
+         * @export
+         * @param {string} text text to search
+         * @returns {any[]}
+         */
+        function search(text: string): any[];
+        /**
+         * Register a search handle to the global [[searchHandle]]
+         *
+         * @export
+         * @param {string} name handle name string
+         * @param {(text: string) => any[]} fn search handle
+         */
+        function onsearch(name: string, fn: (text: string) => any[]): void;
+        /**
+         * Set the current system locale: This function will
+         * find and load the locale dictionary definition file in the
+         * system asset resource, then trigger the global event
+         * `systemlocalechange` to translated all translatable text
+         * to the target language
+         *
+         * @export
+         * @param {string} name locale name, e.g. `en_GB`
+         * @returns {Promise<any>}
+         */
+        function setLocale(name: string): Promise<any>;
+        /**
+         * Return an error Object: AntOS use this function to
+         * collect information (stack trace) from user reported
+         * error.
+         *
+         * @export
+         * @param {(string | FormattedString)} n error string
+         * @returns {Error}
+         */
+        function throwe(n: string | FormattedString): Error;
+        /**
+         * Set value to the system clipboard
+         *
+         * @export
+         * @param {string} v clipboard value
+         * @returns {boolean}
+         */
+        function setClipboard(v: string): boolean;
+        /**
+         * Get the clipboard data
+         *
+         * @export
+         * @returns {Promise<any>} Promise on the clipboard data
+         */
+        function getClipboard(): Promise<any>;
+        /**
+         * A switcher object is a special object in which
+         * each object's property is a boolean option. All object's
+         * properties are mutual exclusive. It means that when a property
+         * is set to true, all other properties will be reset to false.
+         *
+         * Example:
+         *
+         * ```typescript
+         * let view = API.switcher("tree", "list", "icon")
+         * view.tree = true // view.list = false and view.icon = false
+         * view.list = true // view.tree = false and view.icon = false
+         * ```
+         *
+         * @export
+         * @returns {*}
+         */
+        function switcher(...args: string[]): any;
+    }
+}
+/// <reference types="jquery" />
+declare namespace OS {
+    /**
+     * Application argument type definition
+     *
+     * @export
+     * @interface AppArgumentsType
+     */
+    interface AppArgumentsType {
+        /**
+         * File type to be open by the app
+         *
+         * @type {string}
+         * @memberof AppArgumentsType
+         */
+        type?: string;
+        /**
+         * File path to be opened
+         *
+         * @type {string}
+         * @memberof AppArgumentsType
+         */
+        path: string;
+        /**
+         * Any other object
+         */
+        [propName: string]: any;
+    }
+    /**
+     * Enum definition of different model types
+     *
+     * @export
+     * @enum {number}
+     */
+    enum ModelType {
+        /**
+         * Applications
+         */
+        Application = 0,
+        /**
+         * Services
+         */
+        Service = 1,
+        /**
+         * Sub-window such as dialogs
+         */
+        SubWindow = 2
+    }
+    /**
+     * Base AntOS event definition
+     *
+     * @export
+     * @class BaseEvent
+     */
+    class BaseEvent {
+        /**
+         * The event name placeholder
+         *
+         * @type {string}
+         * @memberof BaseEvent
+         */
+        name: string;
+        /**
+         * Placeholder indicates whether the event is forced to
+         * be happen
+         *
+         * @private
+         * @type {boolean}
+         * @memberof BaseEvent
+         */
+        private force;
+        /**
+         * Placeholder indicates whether the event is prevented.
+         * This value has not effect if `force` is set to `true`
+         *
+         * @type {boolean}
+         * @memberof BaseEvent
+         */
+        prevent: boolean;
+        /**
+         *Creates an instance of BaseEvent.
+         * @param {string} name event name
+         * @param {boolean} force indicates whether the event is forced
+         * @memberof BaseEvent
+         */
+        constructor(name: string, force: boolean);
+        /**
+         * Prevent the current event. This function
+         * has no effect if `force` is set to true
+         *
+         * @memberof BaseEvent
+         */
+        preventDefault(): void;
+    }
+    /**
+     * The root model of all applications, dialogs or services
+     * in the system
+     *
+     * @export
+     * @abstract
+     * @class BaseModel
+     */
+    abstract class BaseModel {
+        /**
+         * The class name
+         *
+         * @type {string}
+         * @memberof BaseModel
+         */
+        name: string;
+        /**
+         * The argument of the model
+         *
+         * @type {AppArgumentsType[]}
+         * @memberof BaseModel
+         */
+        args: AppArgumentsType[];
+        /**
+         * Each model has its own local announcement system
+         * to handle all local events inside that model.
+         *
+         * This observable object is propagate to all the
+         * UI elements ([[AFXTag]]) inside the model
+         *
+         * @protected
+         * @type {API.Announcer}
+         * @memberof BaseModel
+         */
+        protected _observable: API.Announcer;
+        /**
+         * Reference to the core API namespace
+         *
+         * @protected
+         * @type {typeof API}
+         * @memberof BaseModel
+         */
+        protected _api: typeof API;
+        /**
+         * Reference to the core GUI namespace
+         *
+         * @protected
+         * @type {typeof GUI}
+         * @memberof BaseModel
+         */
+        protected _gui: typeof GUI;
+        /**
+         * Reference to the model's dialog
+         *
+         * @type {GUI.BaseDialog}
+         * @memberof BaseModel
+         */
+        dialog: GUI.BaseDialog;
+        /**
+         * The HTML element ID of the virtual desktop
+         *
+         * @protected
+         * @type {string}
+         * @memberof BaseModel
+         */
+        protected host: string;
+        /**
+         * The process number of the current model.
+         * For sub-window this number is the number
+         * of the parent window
+         *
+         * @type {number}
+         * @memberof BaseModel
+         */
+        pid: number;
+        /**
+         * Reference the DOM element of the UI scheme belong to
+         * this model
+         *
+         * @type {HTMLElement}
+         * @memberof BaseModel
+         */
+        scheme: HTMLElement;
+        /**
+         * Reference to the system setting
+         *
+         * @protected
+         * @type {typeof setting}
+         * @memberof BaseModel
+         */
+        protected systemsetting: typeof setting;
+        /**
+         * Placeholder for the process creation timestamp
+         *
+         * @type {number}
+         * @memberof BaseModel
+         */
+        birth: number;
+        /**
+         * Different model type
+         *
+         * @static
+         * @type {ModelType}
+         * @memberof BaseModel
+         */
+        static type: ModelType;
+        /**
+         * Allow singleton on this model
+         *
+         * @static
+         * @type {boolean}
+         * @memberof BaseModel
+         */
+        static singleton: boolean;
+        /**
+         * The javascript or css files that the model depends on. All dependencies
+         * will be loaded before the model is rendered
+         *
+         * @static
+         * @type {string[]} list of VFS paths of dependencies
+         * @memberof BaseModel
+         */
+        static dependencies: string[];
+        /**
+         * Reference to the CSS Element of the model
+         *
+         * @static
+         * @type {(HTMLElement | string)}
+         * @memberof BaseModel
+         */
+        static style: HTMLElement | string;
+        /**
+         * Place holder for model meta-data
+         *
+         * @static
+         * @type {API.PackageMetaType}
+         * @memberof BaseModel
+         */
+        static meta: API.PackageMetaType;
+        /**
+         *Creates an instance of BaseModel.
+         * @param {string} name class name
+         * @param {AppArgumentsType[]} args arguments
+         * @memberof BaseModel
+         */
+        constructor(name: string, args: AppArgumentsType[]);
+        /**
+         * Getter: get the local announcer object
+         *
+         * @readonly
+         * @type {API.Announcer}
+         * @memberof BaseModel
+         */
+        get observable(): API.Announcer;
+        /**
+         * Update the model locale
+         *
+         * @protected
+         * @param {string} name
+         * @memberof BaseModel
+         */
+        protected updateLocale(name: string): void;
+        /**
+         * Render the model's UI
+         *
+         * @protected
+         * @param {string} p VFS path to the UI scheme definition
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        protected render(p: string): void;
+        /**
+         * Exit the model
+         *
+         * @param {boolean} force set this value to `true` will bypass the prevented exit event by user
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        quit(force: boolean): void;
+        /**
+         * Model meta data, need to be implemented by
+         * subclasses
+         *
+         * @abstract
+         * @returns {API.PackageMetaType}
+         * @memberof BaseModel
+         */
+        abstract meta(): API.PackageMetaType;
+        /**
+         * VFS path to the model asset
+         *
+         * @returns {string}
+         * @memberof BaseModel
+         */
+        path(): string;
+        /**
+         * Execute a server side script and get back the result
+         *
+         * @protected
+         * @param {GenericObject<any>} cmd execution indication, should be:
+         *
+         * ```
+         * {
+         *      path?: string, // VFS path to the server side script
+         *      code: string, // or server side code to be executed
+         *      parameters: any // the parameters of the server side execution
+         * }
+         * ```
+         *
+         * @returns {Promise<any>}
+         * @memberof BaseModel
+         */
+        protected call(cmd: GenericObject<any>): Promise<any>;
+        /**
+         * Connect to the server side api using a websocket connection
+         *
+         * Server side script can be execute inside the stream by writing
+         * data in JSON format with the following interface
+         *
+         * ```
+         * {
+         *      path?: string, // VFS path to the server side script
+         *      code: string, // or server side code to be executed
+         *      parameters: any // the parameters of the server side execution
+         * }
+         * ```
+         *
+         * @protected
+         * @returns {Promise<WebSocket>}
+         * @memberof BaseModel
+         */
+        protected stream(): Promise<WebSocket>;
+        /**
+         * Init the model before  UI rendering
+         *
+         * @abstract
+         * @memberof BaseModel
+         */
+        abstract init(): void;
+        /**
+         * Main entry point after UI rendering
+         *
+         * @abstract
+         * @memberof BaseModel
+         */
+        abstract main(): void;
+        /**
+         * Show the model
+         *
+         * @abstract
+         * @memberof BaseModel
+         */
+        abstract show(): void;
+        /**
+         * Hide the model
+         *
+         * @abstract
+         * @memberof BaseModel
+         */
+        abstract hide(): void;
+        /**
+         * Function called when the model exits
+         *
+         * @protected
+         * @abstract
+         * @param {BaseEvent} e exit event
+         * @memberof BaseModel
+         */
+        protected abstract onexit(e: BaseEvent): void;
+        /**
+         * subscribe once to a local event
+         *
+         * @protected
+         * @param {string} e name of the event
+         * @param {(d: any) => void} f event callback
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        protected one(e: string, f: (d: any) => void): void;
+        /**
+         * Subscribe to a local event
+         *
+         * @protected
+         * @param {string} e event name
+         * @param {(d: any) => void} f event callback
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        protected on(e: string, f: (d: any) => void): void;
+        /**
+         * Unsubscribe an event
+         *
+         * @protected
+         * @param {string} e event name or `*` (all events)
+         * @param {(d: any) => void} [f] callback to be unsubscribed, can be `undefined`
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        protected off(e: string, f?: (d: any) => void): void;
+        /**
+         * trigger a local event
+         *
+         * @protected
+         * @param {string} e event name
+         * @param {*} [d] event data
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        trigger(e: string, d?: any): void;
+        /**
+         * subscribe to an event on the global announcement system
+         *
+         * @protected
+         * @param {string} e event name
+         * @param {(d: any) => void} f event callback
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        subscribe(e: string, f: (d: any) => void): void;
+        /**
+         * Open a dialog
+         *
+         * @param {(GUI.BaseDialog | string)} d a dialog object or a dialog class name
+         * @param {GenericObject<any>} [data] input data of the dialog, refer to each
+         * dialog definition for the format of the input data
+         * @returns {Promise<any>} A promise on the callback data of the dialog, refer
+         * to each dialog definition for the format of the callback data
+         * @memberof BaseModel
+         */
+        openDialog(d: GUI.BaseDialog | string, data?: GenericObject<any>): Promise<any>;
+        /**
+         * Open a [[YesNoDialog]] to confirm a task
+         *
+         * @protected
+         * @param {GenericObject<any>} data [[YesNoDialog]] input data
+         * @returns {Promise<boolean>}
+         * @memberof BaseModel
+         */
+        protected ask(data: GenericObject<any>): Promise<boolean>;
+        /**
+         * Trigger a global event
+         *
+         * @protected
+         * @param {string} t event name
+         * @param {(string | FormattedString)} m event message
+         * @param {Error} [e] error object if any
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        protected publish(t: string, m: string | FormattedString, e?: Error): void;
+        /**
+         * Publish a global notification
+         *
+         * @param {(string | FormattedString)} m notification string
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        notify(m: string | FormattedString): void;
+        /**
+         * Publish a global warning
+         *
+         * @param {(string | FormattedString)} m warning string
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        warn(m: string | FormattedString): void;
+        /**
+         * Report a global error
+         *
+         * @param {(string | FormattedString)} m error message
+         * @param {Error} [e] error object if any
+         * @returns
+         * @memberof BaseModel
+         */
+        error(m: string | FormattedString, e?: Error): void;
+        /**
+         * Report a global fail event
+         *
+         * @param {string} m fail message
+         * @param {Error} [e] error object if any
+         * @returns
+         * @memberof BaseModel
+         */
+        fail(m: string, e?: Error): void;
+        /**
+         * Throw an error inside the model
+         *
+         * @returns {Error}
+         * @memberof BaseModel
+         */
+        throwe(): Error;
+        /**
+         * Update the model, this will update all its UI elements
+         *
+         * @returns {void}
+         * @memberof BaseModel
+         */
+        update(): void;
+        /**
+         * Find a HTMLElement in the UI of the model
+         * using the `data-id` attribute of the element
+         *
+         * @protected
+         * @param {string} id
+         * @returns {HTMLElement}
+         * @memberof BaseModel
+         */
+        protected find(id: string): HTMLElement;
+        /**
+         * Select all DOM Element inside the UI of the model
+         * using JQuery selector
+         *
+         * @protected
+         * @param {string} sel
+         * @returns {HTMLElement}
+         * @memberof BaseModel
+         */
+        protected select(sel: string): JQuery<HTMLElement>;
+    }
+}
+declare namespace OS {
+    namespace API {
+        /**
+         * Simple Virtual Database (VDB) application API.
+         *
+         * This API abstracts and provides a standard way to
+         * connect to a server-side relational database (e.g. sqlite).
+         *
+         * Each user when connected has their own database previously
+         * created. All VDB operations related to that user will be
+         * performed on this database.
+         *
+         * The creation of user database need to be managed by the server-side API.
+         * The VDB API assumes that the database already exist. All operations
+         * is performed in tables level
+         *
+         * @export
+         * @class DB
+         */
+        class DB {
+            /**
+             * A table name on the user's database
+             *
+             * @private
+             * @type {string}
+             * @memberof DB
+             */
+            private table;
+            /**
+             *Creates an instance of DB.
+             * @param {string} table table name
+             * @memberof DB
+             */
+            constructor(table: string);
+            /**
+             * Save data to the current table. The input
+             * data must conform to the table record format.
+             *
+             * On the server side, if the table doest not
+             * exist yet, it should be created automatically
+             * by inferring the data structure of the input
+             * object
+             *
+             * @param {GenericObject<any>} d data object represents a current table record
+             * @returns {Promise<API.RequestResult>}
+             * @memberof DB
+             */
+            save(d: GenericObject<any>): Promise<API.RequestResult>;
+            /**
+             * delete record(s) from the current table by
+             * a conditional object
+             *
+             * @param {*} c conditional object, c can be:
+             *
+             * * a `number`: the operation will delete the record with `id = c`
+             * * a `string`: The SQL string condition that selects record to delete
+             * * a conditional object represents a SQL condition statement as an object,
+             * example: `pid = 10 AND cid = 2` is represented by:
+             *
+             * ```typescript
+             *  {
+             *      exp: {
+             *          "and": {
+             *              pid: 10,
+             *              cid: 2
+             *          }
+             *  }
+             * ```
+             *
+             * @returns {Promise<API.RequestResult>}
+             * @memberof DB
+             */
+            delete(c: GenericObject<any> | number | string): Promise<API.RequestResult>;
+            /**
+             * Get a record in the table by its primary key
+             *
+             * @param {number} id the primary key value
+             * @returns {Promise<GenericObject<any>>} Promise on returned record data
+             * @memberof DB
+             */
+            get(id: number): Promise<GenericObject<any>>;
+            /**
+             * Find records by a condition
+             *
+             * @param {GenericObject<any>} cond conditional object
+             *
+             * a conditional object represents a SQL condition statement as an object,
+             * example: `pid = 10 AND cid = 2 ORDER BY date DESC` is represented by:
+             *
+             * ```typescript
+             *  {
+             *      exp: {
+             *          "and": {
+             *              pid: 10,
+             *              cid: 2
+             *          }
+             *      },
+             *      order: {
+             *          date: "DESC"
+             *      }
+             *  }
+             * ```
+             * @returns {Promise<GenericObject<any>[]>}
+             * @memberof DB
+             */
+            find(cond: GenericObject<any>): Promise<GenericObject<any>[]>;
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        /**
+         *
+         * Interface for an application dock item
+         *
+         * @export
+         * @interface AppDockItemType
+         */
+        interface AppDockItemType {
+            /**
+             * Reference to the application process represented
+             * by the dock item
+             *
+             * @type {application.BaseApplication}
+             * @memberof AppDockItemType
+             */
+            app: application.BaseApplication;
+            /**
+             * Reference to the DOM element of
+             * the owner dock item
+             *
+             * @type {AFXTag}
+             * @memberof AppDockItemType
+             */
+            domel?: AFXTag;
+            [propName: string]: any;
+        }
+        namespace tag {
+            /**
+             * This class define the AntOS system application dock tag
+             *
+             * @export
+             * @class AppDockTag
+             * @extends {AFXTag}
+             */
+            class AppDockTag extends AFXTag {
+                /**
+                 * variable holds the application select event
+                 * callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<any>}
+                 * @memberof AppDockTag
+                 */
+                private _onappselect;
+                /**
+                 * Items data of the dock
+                 *
+                 * @private
+                 * @type {AppDockItemType[]}
+                 * @memberof AppDockTag
+                 */
+                private _items;
+                /**
+                 * Reference to the currently select application
+                 * process in the dock
+                 *
+                 * @private
+                 * @type {AppDockItemType}
+                 * @memberof AppDockTag
+                 */
+                private _selectedItem;
+                /**
+                 *Creates an instance of AppDockTag.
+                 * @memberof AppDockTag
+                 */
+                constructor();
+                /**
+                 * Implementation of the abstract function: Update the current tag.
+                 * It do nothing for this tag
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof AppDockTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof AppDockTag
+                 */
+                protected init(): void;
+                /**
+                 * The tag layout, it is empty on creation but elements will
+                 * be added automatically to it in operation
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof AppDockTag
+                 */
+                protected layout(): TagLayoutType[];
+                /**
+                 * getter to get the dock items
+                 *
+                 * @readonly
+                 * @type {AppDockItemType[]}
+                 * @memberof AppDockTag
+                 */
+                get items(): AppDockItemType[];
+                /**
+                 * Setter:
+                 *
+                 * set the selected application in the dock
+                 * this will trigger two event:
+                 * - `focus`: on the selected application
+                 * - `blur`: on all other applications on the dock
+                 *
+                 * Getter:
+                 *
+                 *  Get the current selected application
+                 * on the dock
+                 *
+                 * @memberof AppDockTag
+                 */
+                set selectedApp(v: application.BaseApplication);
+                get selectedApp(): application.BaseApplication;
+                /**
+                 * Get selected item of the dock
+                 *
+                 * @readonly
+                 * @type {AppDockItemType}
+                 * @memberof AppDockTag
+                 */
+                get selectedItem(): AppDockItemType;
+                /**
+                 * When a new application process is created, this function
+                 * will be called to add new application entry to the dock.
+                 * The added application will becomes the current selected
+                 * application
+                 *
+                 * @param {AppDockItemType} item an application dock item entry
+                 * @memberof AppDockTag
+                 */
+                newapp(item: AppDockItemType): void;
+                /**
+                 * Delete and application entry from the dock.
+                 * This function will be called when an application
+                 * is exit
+                 *
+                 * @param {BaseApplication} a the application to be removed from the dock
+                 * @memberof AppDockTag
+                 */
+                removeapp(a: application.BaseApplication): void;
+                /**
+                 * Mount the current dock tag
+                 *
+                 * @protected
+                 * @memberof AppDockTag
+                 */
+                protected mount(): void;
+            }
+        }
+    }
+}
 declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
-             * A tile layout organize it child elements
-             * in a fixed horizontal or vertical direction.
-             *
-             * The size of each child element is attributed based
-             * on its configuration of automatically based on the
-             * remaining space in the layout
-             *
+             * A simple number sinner tag
              *
              * @export
-             * @class TileLayoutTag
+             * @class NSpinnerTag
              * @extends {AFXTag}
              */
-            class TileLayoutTag extends AFXTag {
+            class NSpinnerTag extends AFXTag {
                 /**
-                 *C reates an instance of TileLayoutTag.
-                 * @memberof TileLayoutTag
+                 * Placeholder for value change event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof NSpinnerTag
+                 */
+                private _onchange;
+                /**
+                 * Placeholder for the spinner data
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof NSpinnerTag
+                 */
+                private _value;
+                /**
+                 * Place holder for the spinner step
+                 *
+                 * @type {number}
+                 * @memberof NSpinnerTag
+                 */
+                step: number;
+                /**
+                 *Creates an instance of NSpinnerTag.
+                 * @memberof NSpinnerTag
                  */
                 constructor();
                 /**
-                 * Do nothing
+                 * Init the spinner value to `0` and step to `1`
                  *
                  * @protected
-                 * @memberof TileLayoutTag
+                 * @memberof NSpinnerTag
                  */
                 protected init(): void;
                 /**
@@ -4913,118 +5086,231 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {*} [d]
-                 * @memberof TileLayoutTag
+                 * @memberof NSpinnerTag
                  */
                 protected reload(d?: any): void;
                 /**
-                 * Setter: Set the name of the tile container, should be: `hbox` or `vbox`
+                 * Set the value change event handle
                  *
-                 * Getter: Get the name of the tile container
-                 *
-                 * @memberof TileLayoutTag
+                 * @memberof NSpinnerTag
                  */
-                set name(v: string);
-                get name(): string;
+                set onvaluechange(f: TagEventCallback<number>);
                 /**
-                 * Setter:
-                 *
-                 * SET the layout direction, should be:
-                 * - `row`: horizontal direction
-                 * - `column`: vertical direction
-                 *
-                 * Getter:
-                 *
-                 * Get layout direction
-                 *
-                 * @memberof TileLayoutTag
-                 */
-                set dir(v: "row" | "column");
-                get dir(): "row" | "column";
-                /**
-                 * Mount the element
+                 * Mount the tag and bind basic events
                  *
                  * @protected
-                 * @returns {void}
-                 * @memberof TileLayoutTag
+                 * @memberof NSpinnerTag
                  */
                 protected mount(): void;
                 /**
-                 * re-organize the layout
+                 * Calibrate the layout of the spinner
                  *
-                 * @returns {void}
-                 * @memberof TileLayoutTag
+                 * @memberof NSpinnerTag
                  */
                 calibrate(): void;
                 /**
-                 * Organize the layout in horizontal direction, only work when
-                 * the layout direction set to horizontal
+                 * Setter: Set the spinner value
+                 *
+                 * Getter: Get the spinner value
+                 *
+                 * @memberof NSpinnerTag
+                 */
+                set value(v: number);
+                get value(): number;
+                /**
+                 * Spinner layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof NSpinnerTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * This class defines basic AFX label tag.
+             * A label contains a text and an icon (optional)
+             *
+             * @export
+             * @class LabelTag
+             * @extends {AFXTag}
+             */
+            class LabelTag extends AFXTag {
+                /**
+                 * placeholder of the text to be displayed
                  *
                  * @private
-                 * @returns {void}
-                 * @memberof TileLayoutTag
+                 * @type {(string | FormattedString)}
+                 * @memberof LabelTag
                  */
-                private hcalibrate;
+                private _text;
                 /**
-                 * Organize the layout in vertical direction, only work when
-                 * the layout direction set to vertical
+                 *Creates an instance of LabelTag.
+                 * @memberof LabelTag
+                 */
+                constructor();
+                /**
+                 * this implementation does nothing in this tag
+                 *
+                 * @protected
+                 * @memberof LabelTag
+                 */
+                protected mount(): void;
+                /**
+                 * Refresh the text in the label
+                 *
+                 * @protected
+                 * @param {*} d
+                 * @memberof LabelTag
+                 */
+                protected reload(d: any): void;
+                /**
+                 * Reset to default some property value
+                 *
+                 * @protected
+                 * @memberof LabelTag
+                 */
+                protected init(): void;
+                /**
+                 * This implementation of the function does nothing
+                 *
+                 * @protected
+                 * @memberof LabelTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Set the VFS path of the label icon
+                 *
+                 * @memberof LabelTag
+                 */
+                set icon(v: string);
+                /**
+                 * Set the CSS class of the label icon
+                 *
+                 * @memberof LabelTag
+                 */
+                set iconclass(v: string);
+                /**
+                 * Setter: Set the text of the label
+                 *
+                 * Getter: Get the text displayed on the label
+                 *
+                 * @memberof LabelTag
+                 */
+                set text(v: string | FormattedString);
+                get text(): string | FormattedString;
+                /**
+                 * Lqbel layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof LabelTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * A switch tag is basically used to visualize an boolean data value.
+             *
+             * @export
+             * @class SwitchTag
+             * @extends {AFXTag}
+             */
+            class SwitchTag extends AFXTag {
+                /**
+                 * Placeholder for the onchange event handle
                  *
                  * @private
-                 * @returns {void}
-                 * @memberof TileLayoutTag
+                 * @type {TagEventCallback<boolean>}
+                 * @memberof SwitchTag
                  */
-                private vcalibrate;
+                private _onchange;
                 /**
-                 * Layout definition
+                 * Setter: Turn on/off the switch
                  *
+                 * Getter: Check whether the switch is turned on
+                 *
+                 * @memberof SwitchTag
+                 */
+                set swon(v: boolean);
+                get swon(): boolean;
+                /**
+                 * Setter: Enable the switch
+                 *
+                 * Getter: Check whether the switch is enabled
+                 *
+                 * @memberof SwitchTag
+                 */
+                set enable(v: boolean);
+                get enable(): boolean;
+                /**
+                 * Set the onchange event handle
+                 *
+                 * @memberof SwitchTag
+                 */
+                set onswchange(v: TagEventCallback<boolean>);
+                /**
+                 * Mount the tag and bind the click event to the switch
+                 *
+                 * @protected
+                 * @memberof SwitchTag
+                 */
+                protected mount(): void;
+                /**
+                 * This function will turn the switch (on/off)
+                 * and trigger the onchange event
+                 *
+                 * @private
+                 * @param {JQuery.ClickEvent} e
                  * @returns
-                 * @memberof TileLayoutTag
+                 * @memberof SwitchTag
                  */
-                layout(): {
+                private makechange;
+                /**
+                 * Tag layout definition
+                 *
+                 * @protected
+                 * @returns
+                 * @memberof SwitchTag
+                 */
+                protected layout(): {
                     el: string;
                     ref: string;
                 }[];
-            }
-            /**
-             * A HBox organize its child elements in horizontal direction
-             *
-             * @export
-             * @class HBoxTag
-             * @extends {TileLayoutTag}
-             */
-            class HBoxTag extends TileLayoutTag {
                 /**
-                 * Creates an instance of HBoxTag.
-                 * @memberof HBoxTag
-                 */
-                constructor();
-                /**
-                 * Mount the tag
+                 * Init the tag:
+                 * - switch is turn off
+                 * - switch is enabled
                  *
                  * @protected
-                 * @memberof HBoxTag
+                 * @memberof SwitchTag
                  */
-                protected mount(): void;
-            }
-            /**
-             * A VBox organize its child elements in vertical direction
-             *
-             * @export
-             * @class VBoxTag
-             * @extends {TileLayoutTag}
-             */
-            class VBoxTag extends TileLayoutTag {
+                protected init(): void;
                 /**
-                 *Creates an instance of VBoxTag.
-                 * @memberof VBoxTag
-                 */
-                constructor();
-                /**
-                 * Mount the tag
+                 * Do nothing
                  *
                  * @protected
-                 * @memberof VBoxTag
+                 * @memberof SwitchTag
                  */
-                protected mount(): void;
+                protected calibrate(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof SwitchTag
+                 */
+                protected reload(d?: any): void;
             }
         }
     }
@@ -5183,322 +5469,6 @@ declare namespace OS {
                  * @protected
                  * @returns {TagLayoutType[]}
                  * @memberof ResizerTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * Definition of system file view widget
-             *
-             * @export
-             * @class FileViewTag
-             * @extends {AFXTag}
-             */
-            class FileViewTag extends AFXTag {
-                /**
-                 * placeholder for file select event callback
-                 *
-                 * @private
-                 * @type {TagEventCallback<API.FileInfoType>}
-                 * @memberof FileViewTag
-                 */
-                private _onfileselect;
-                /**
-                 * placeholder for file open event callback
-                 *
-                 * @private
-                 * @type {TagEventCallback<API.FileInfoType>}
-                 * @memberof FileViewTag
-                 */
-                private _onfileopen;
-                /**
-                 * Reference to the currently selected file meta-data
-                 *
-                 * @private
-                 * @type {API.FileInfoType}
-                 * @memberof FileViewTag
-                 */
-                private _selectedFile;
-                /**
-                 * Data placeholder of the current working directory
-                 *
-                 * @private
-                 * @type {API.FileInfoType[]}
-                 * @memberof FileViewTag
-                 */
-                private _data;
-                /**
-                 * The path of the current working directory
-                 *
-                 * @private
-                 * @type {string}
-                 * @memberof FileViewTag
-                 */
-                private _path;
-                /**
-                 * Header definition of the widget grid view
-                 *
-                 * @private
-                 * @type {(GenericObject<string | number>[])}
-                 * @memberof FileViewTag
-                 */
-                private _header;
-                /**
-                 * placeholder for the user-specified meta-data fetch function
-                 *
-                 * @private
-                 * @memberof FileViewTag
-                 */
-                private _fetch;
-                /**
-                 *Creates an instance of FileViewTag.
-                 * @memberof FileViewTag
-                 */
-                constructor();
-                /**
-                 * Init the widget before mounting
-                 *
-                 * @protected
-                 * @memberof FileViewTag
-                 */
-                protected init(): void;
-                /**
-                 * Update the current widget, do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof FileViewTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * set the function that allows to fetch file entries.
-                 * This handle function should return a promise on
-                 * an arry of [[API.FileInfoType]]
-                 *
-                 * @memberof FileViewTag
-                 */
-                set fetch(v: (p: string) => Promise<API.FileInfoType[]>);
-                /**
-                 * set the callback handle for the file select event.
-                 * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
-                 *
-                 * @memberof FileViewTag
-                 */
-                set onfileselect(e: TagEventCallback<API.FileInfoType>);
-                /**
-                 set the callback handle for the file open event.
-                 * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
-                 *
-                 * @memberof FileViewTag
-                 */
-                set onfileopen(e: TagEventCallback<API.FileInfoType>);
-                /**
-                 * Setter:
-                 *
-                 * chang the view of the widget, there are three different views
-                 * - `icon`
-                 * - `list`
-                 * - `tree`
-                 *
-                 * Getter:
-                 *
-                 * Get the current view setting of the widget
-                 *
-                 * @memberof FileViewTag
-                 */
-                set view(v: string);
-                get view(): string;
-                /**
-                 * Setter:
-                 *
-                 * Turn on/off the changing current working directory feature
-                 * of the widget when a directory is double clicked. If enabled,
-                 * the widget will use the configured [[fetch]] function to query
-                 * the content of the selected directory
-                 *
-                 * Getter:
-                 *
-                 * check whether changing current working directory feature
-                 * is enabled
-                 *
-                 * @memberof FileViewTag
-                 */
-                set chdir(v: boolean);
-                get chdir(): boolean;
-                /**
-                 * Setter : Enable or disable the status bar of the widget
-                 *
-                 * Getter: Check whether the status bar is enabled
-                 *
-                 * @memberof FileViewTag
-                 */
-                set status(v: boolean);
-                get status(): boolean;
-                /**
-                 * Setter:
-                 *
-                 * Allow the widget to show or hide hidden file
-                 *
-                 * Getter:
-                 *
-                 * Check whether the hidden file should be shown in
-                 * the widget
-                 *
-                 * @memberof FileViewTag
-                 */
-                set showhidden(v: boolean);
-                get showhidden(): boolean;
-                /**
-                 * Get the current selected file
-                 *
-                 * @readonly
-                 * @type {API.FileInfoType}
-                 * @memberof FileViewTag
-                 */
-                get selectedFile(): API.FileInfoType;
-                /**
-                 * Setter:
-                 *
-                 * Set the path of the current working directory.
-                 * When called the widget will refresh the current
-                 * working directory using the configured [[fetch]]
-                 * function
-                 *
-                 * Getter:
-                 *
-                 * Get the path of the current working directory
-                 *
-                 * @memberof FileViewTag
-                 */
-                set path(v: string);
-                get path(): string;
-                /**
-                 * Setter: Set the data of the current working directory
-                 *
-                 * Getter: Get the data of the current working directory
-                 *
-                 * @memberof FileViewTag
-                 */
-                set data(v: API.FileInfoType[]);
-                get data(): API.FileInfoType[];
-                /**
-                 * Set the file drag and drop event handle. This allows application
-                 * to define custom behavior of the event
-                 *
-                 * @memberof FileViewTag
-                 */
-                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag | ListViewItemTag>>);
-                /**
-                 * Sort file by its type
-                 *
-                 * @private
-                 * @param {API.FileInfoType} a
-                 * @param {API.FileInfoType} b
-                 * @return {*}  {number}
-                 * @memberof FileViewTag
-                 */
-                private sortByType;
-                /**
-                 * sort file by its name
-                 *
-                 * @private
-                 * @param {API.FileInfoType} a first file meta-data
-                 * @param {API.FileInfoType} b second file meta-data
-                 * @returns {number}
-                 * @memberof FileViewTag
-                 */
-                private sortByName;
-                /**
-                 * calibrate the widget layout
-                 *
-                 * @memberof FileViewTag
-                 */
-                calibrate(): void;
-                /**
-                 * Refresh the list view of the widget. This function
-                 * is called when the view of the widget changed to `icon`
-                 *
-                 * @private
-                 * @memberof FileViewTag
-                 */
-                private refreshList;
-                /**
-                 * Refresh the grid view of the widget, this function is called
-                 * when the view of the widget set to `list`
-                 *
-                 * @private
-                 * @memberof FileViewTag
-                 */
-                private refreshGrid;
-                /**
-                 * Refresh the Treeview of the widget, this function is called
-                 * when the view of the widget set to `tree`
-                 *
-                 * @private
-                 * @memberof FileViewTag
-                 */
-                private refreshTree;
-                /**
-                 * Create the tree data from the list of input
-                 * file meta-data
-                 *
-                 * @private
-                 * @param {API.FileInfoType[]} data list of file meta-data
-                 * @returns {TreeViewDataType[]}
-                 * @memberof FileViewTag
-                 */
-                private getTreeData;
-                /**
-                 * Refresh data of the current widget view
-                 *
-                 * @private
-                 * @returns {void}
-                 * @memberof FileViewTag
-                 */
-                private refreshData;
-                /**
-                 * Switch between three view options
-                 *
-                 * @private
-                 * @memberof FileViewTag
-                 */
-                private switchView;
-                /**
-                 * This function triggers the file select event
-                 *
-                 * @private
-                 * @param {API.FileInfoType} e selected file meta-data
-                 * @memberof FileViewTag
-                 */
-                private fileselect;
-                /**
-                 * This function triggers the file open event
-                 *
-                 * @private
-                 * @param {API.FileInfoType} e selected file meta-data
-                 * @memberof FileViewTag
-                 */
-                private filedbclick;
-                /**
-                 * Mount the widget in the DOM tree
-                 *
-                 * @protected
-                 * @memberof FileViewTag
-                 */
-                protected mount(): void;
-                /**
-                 * Layout definition of the widget
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof FileViewTag
                  */
                 protected layout(): TagLayoutType[];
             }
@@ -6060,64 +6030,43 @@ declare namespace OS {
 }
 declare namespace OS {
     namespace GUI {
-        /**
-         * Tab container data type definition
-         *
-         * @export
-         * @interface TabContainerTabType
-         */
-        interface TabContainerTabType {
-            /**
-             * Reference to the DOM element of the current container
-             *
-             * @type {HTMLElement}
-             * @memberof TabContainerTabType
-             */
-            container: HTMLElement;
-            [propName: string]: any;
-        }
         namespace tag {
             /**
-             * A tab container allows to attach each tab on a [[TabBarTag]]
-             * with a container widget. The attached container widget should be
-             * composed inside a [[HBoxTag]]
-             *
-             * The tab bar in a tab container can be configured to display tabs
-             * in horizontal (row) or vertical (column) order. Default to vertical order
-             *
-             * Once a tab is selected, its attached container will be shown
+             * An overlay tag is a layout tag that alway stay on top of
+             * the virtual desktop environment. Tile layout elements ([[VBoxTag]], [[HboxTag]])
+             * can be used inside this tag to compose elements
              *
              * @export
-             * @class TabContainerTag
+             * @class OverlayTag
              * @extends {AFXTag}
              */
-            class TabContainerTag extends AFXTag {
+            class OverlayTag extends AFXTag {
                 /**
-                 * Reference to the currently selected tab DOM element
+                 * Tag width placeholder
                  *
                  * @private
-                 * @type {TabContainerTabType}
-                 * @memberof TabContainerTag
+                 * @type {string}
+                 * @memberof OverlayTag
                  */
-                private _selectedTab;
+                private _width;
                 /**
-                 * Placeholder of the tab select event handle
+                 * Tag height place holder
                  *
                  * @private
-                 * @type {TagEventCallback<TabContainerTabType>}
-                 * @memberof TabContainerTag
+                 * @type {string}
+                 * @memberof OverlayTag
                  */
-                private _ontabselect;
+                private _height;
                 /**
-                 *Creates an instance of TabContainerTag.
-                 * @memberof TabContainerTag
+                 *Creates an instance of OverlayTag.
+                 * @memberof OverlayTag
                  */
                 constructor();
                 /**
-                 * Init the tab bar direction to vertical (column)
+                 * Put the tag on top of the virtual desktop environment
                  *
                  * @protected
-                 * @memberof TabContainerTag
+                 * @memberof OverlayTag
                  */
                 protected init(): void;
                 /**
@@ -6125,119 +6074,195 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {*} [d]
-                 * @memberof TabContainerTag
+                 * @memberof OverlayTag
                  */
                 protected reload(d?: any): void;
                 /**
-                 * Set the tab select event handle
-                 *
-                 * @memberof TabContainerTag
-                 */
-                set ontabselect(f: TagEventCallback<TabContainerTabType>);
-                /**
-                 * Get all tab items in the container
-                 *
-                 * @readonly
-                 * @type {TabContainerTabType[]}
-                 * @memberof TabContainerTag
-                 */
-                get tabs(): TabContainerTabType[];
-                /**
-                 * Select a tab by its index
-                 *
-                 * @memberof TabContainerTag
-                 */
-                set selectedIndex(i: number);
-                /**
                  * Setter:
                  *
-                 * Set the tab bar direction:
-                 * - `row`: horizontal direction
-                 * - `column`: vertical direction
+                 * Set the width of the tag, the tag width should be in form of:
+                 * `100px` of `80%`
                  *
                  * Getter:
                  *
-                 * Get the tab bar direction
+                 * Get the tag width
                  *
-                 * @memberof TabContainerTag
+                 * @memberof OverlayTag
                  */
-                set dir(v: "row" | "column");
-                get dir(): "row" | "column";
+                set width(v: string);
+                get width(): string;
                 /**
                  * Setter:
                  *
-                 * Select a tab using the its tab data type.
-                 * This will show the attached container to the tab
+                 * Set the tag height, the tag height should be in form of:
+                 * `100px` of `80%`
                  *
                  * Getter:
                  *
-                 * Get the tab data of the currently selected Tab
+                 * Get the tag height
                  *
-                 * @memberof TabContainerTag
+                 * @memberof OverlayTag
                  */
-                set selectedTab(v: TabContainerTabType);
-                get selectedTab(): TabContainerTabType;
+                set height(v: string);
+                get height(): string;
                 /**
-                 * Set the tab bar width, this function only
-                 * works when the tab bar direction is set to
-                 * `row`
-                 *
-                 * @memberof TabContainerTag
-                 */
-                set tabbarwidth(v: number);
-                /**
-                 * Set the tab bar height, this function only works
-                 * when the tab bar direction is set to `column`
-                 *
-                 * @memberof TabContainerTag
-                 */
-                set tabbarheight(v: number);
-                /**
-                 * Add a new tab with container to the container
-                 *
-                 * item should be in the following format:
-                 *
-                 * ```ts
-                 * {
-                 *  text: string,
-                 *  icon?: string,
-                 *  iconclass?: string,
-                 *  container: HTMLElement
-                 * }
-                 * ```
-                 *
-                 * @param {GenericObject<any>} item tab descriptor
-                 * @param {boolean} insert insert the tab content to the container ?
-                 * @returns {ListViewItemTag} the tab DOM element
-                 * @memberof TabContainerTag
-                 */
-                addTab(item: GenericObject<any>, insert: boolean): ListViewItemTag;
-                /**
-                 * Remove a tab from the container
-                 *
-                 * @param {ListViewItemTag} tab the tab item to be removed
-                 * @memberof TabContainerTag
-                 */
-                removeTab(tab: ListViewItemTag): void;
-                /**
-                 * Mount the tag and bind basic events
+                 * Calibrate the element when mounting
                  *
                  * @protected
-                 * @memberof TabContainerTag
+                 * @returns {void}
+                 * @memberof OverlayTag
                  */
                 protected mount(): void;
                 /**
-                 * calibrate the  tab container
+                 * Calibrate the width and height of the tag
                  *
-                 * @memberof TabContainerTag
+                 * @returns {void}
+                 * @memberof OverlayTag
                  */
                 calibrate(): void;
                 /**
-                 * Layout definition
+                 * Layout definition of the tag
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
-                 * @memberof TabContainerTag
+                 * @memberof OverlayTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        /**
+         * Color type used by AFX API
+         *
+         * @export
+         * @interface ColorType
+         */
+        interface ColorType {
+            /**
+             * Red chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
+            r: number;
+            /**
+             * Green chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
+            g: number;
+            /**
+             * Blue chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
+            b: number;
+            /**
+             * Alpha chanel
+             *
+             * @type {number}
+             * @memberof ColorType
+             */
+            a?: number;
+            /**
+             * color text in CSS format
+             *
+             * @type {string}
+             * @memberof ColorType
+             */
+            text?: string;
+            /**
+             * Color in hex format
+             *
+             * @type {string}
+             * @memberof ColorType
+             */
+            hex?: string;
+        }
+        namespace tag {
+            /**
+             * Class definition of Color picker widget
+             *
+             * @export
+             * @class ColorPickerTag
+             * @extends {AFXTag}
+             */
+            class ColorPickerTag extends AFXTag {
+                /**
+                 * The current selected color object
+                 *
+                 * @private
+                 * @type {ColorType}
+                 * @memberof ColorPickerTag
+                 */
+                private _selectedColor;
+                /**
+                 * placeholder for the color select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<ColorType>}
+                 * @memberof ColorPickerTag
+                 */
+                private _oncolorselect;
+                /**
+                 * Creates an instance of ColorPickerTag.
+                 * @memberof ColorPickerTag
+                 */
+                constructor();
+                /**
+                 * Init tag before mounting, do nothing
+                 *
+                 * @protected
+                 * @memberof ColorPickerTag
+                 */
+                protected init(): void;
+                /**
+                 * Reload tag, do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof ColorPickerTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Get selected color value
+                 *
+                 * @readonly
+                 * @type {ColorType}
+                 * @memberof ColorPickerTag
+                 */
+                get selectedColor(): ColorType;
+                /**
+                 * Set the color select event handle
+                 *
+                 * @memberof ColorPickerTag
+                 */
+                set oncolorselect(v: TagEventCallback<ColorType>);
+                /**
+                 * Mount the widget to DOM tree
+                 *
+                 * @protected
+                 * @memberof ColorPickerTag
+                 */
+                protected mount(): void;
+                /**
+                 * Build the color palette
+                 *
+                 * @private
+                 * @memberof ColorPickerTag
+                 */
+                private build_palette;
+                /**
+                 * layout definition of the widget
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof ColorPickerTag
                  */
                 protected layout(): TagLayoutType[];
             }
@@ -6249,125 +6274,768 @@ declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
-             * This tag define a basic button and its behavior
+             * Menu event data interface definition
+             */
+            type MenuEventData = TagEventDataType<MenuEntryTag>;
+            /**
+             * This class defines the abstract prototype of an menu entry.
+             * Any implementation of menu entry tag should extend this class
              *
              * @export
-             * @class ButtonTag
+             * @abstract
+             * @class MenuEntryTag
              * @extends {AFXTag}
              */
-            class ButtonTag extends AFXTag {
+            abstract class MenuEntryTag extends AFXTag {
                 /**
-                 * Variable hold the button click callback handle
+                 * Data placeholder of the menu entry
                  *
                  * @private
-                 * @type {TagEventCallback<JQuery.MouseEventBase>}
-                 * @memberof ButtonTag
-                 */
-                private _onbtclick;
-                /**
-                 * Custom user data
-                 *
                  * @type {GenericObject<any>}
-                 * @memberof ButtonTag
+                 * @memberof MenuEntryTag
                  */
-                data: GenericObject<any>;
+                private _data;
                 /**
-                 *Creates an instance of ButtonTag.
-                 * @memberof ButtonTag
+                 * placeholder of `menu entry select` event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuEntryTag
+                 */
+                private _onmenuselect;
+                /**
+                 * placeholder of `sub-menu entry select event` handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuEntryTag
+                 */
+                private _onchildselect;
+                /**
+                 * Reference to the parent menu entry of current one
+                 *
+                 * @type {MenuEntryTag}
+                 * @memberof MenuEntryTag
+                 */
+                parent: MenuEntryTag;
+                /**
+                 * Reference to the root menu entry
+                 *
+                 * @type {MenuTag}
+                 * @memberof MenuEntryTag
+                 */
+                root: MenuTag;
+                /**
+                 *Creates an instance of MenuEntryTag.
+                 * @memberof MenuEntryTag
                  */
                 constructor();
                 /**
-                 * Set the click callback handle for the target button
-                 *
-                 * @memberof ButtonTag
-                 */
-                set onbtclick(v: TagEventCallback<JQuery.MouseEventBase>);
-                /**
-                 * Set the path to the button icon, the path should be
-                 * a VFS file path
-                 *
-                 * @memberof ButtonTag
-                 */
-                set icon(v: string);
-                /**
-                 * Set the icon class to the button, this property
-                 * allows to style the button icon using CSS
-                 *
-                 * @memberof ButtonTag
-                 */
-                set iconclass(v: string);
-                /**
-                 * Setter: Set the text of the button
-                 *
-                 * Getter: Get the current button test
-                 *
-                 * @memberof ButtonTag
-                 */
-                set text(v: string | FormattedString);
-                get text(): string | FormattedString;
-                /**
-                 * Setter: Enable or disable the button
-                 *
-                 * Getter: Get the `enable` property of the button
-                 *
-                 * @memberof ButtonTag
-                 */
-                set enable(v: boolean);
-                get enable(): boolean;
-                /**
-                 * Setter: set or remove the attribute `selected` of the button
-                 *
-                 * Getter: check whether the attribute `selected` of the button is set
-                 *
-                 * @memberof ButtonTag
-                 */
-                set selected(v: boolean);
-                get selected(): boolean;
-                /**
-                 * Setter: activate or deactivate the toggle mode of the button
-                 *
-                 * Getter: Check whether the button is in toggle mode
-                 *
-                 * @memberof ButtonTag
-                 */
-                set toggle(v: boolean);
-                get toggle(): boolean;
-                /**
-                 * Mount the tag
+                 * Init the tag before mounting
                  *
                  * @protected
-                 * @memberof ButtonTag
-                 */
-                protected mount(): void;
-                /**
-                 *  Init the tag before mounting
-                 *
-                 * @protected
-                 * @memberof ButtonTag
+                 * @memberof MenuEntryTag
                  */
                 protected init(): void;
                 /**
-                 * Re-calibrate the button, do nothing in this tag
+                 * Set the `menu entry select` event handle
+                 *
+                 * @memberof MenuEntryTag
+                 */
+                set onmenuselect(v: TagEventCallback<MenuEventData>);
+                /**
+                 * Setter: Set the `sub menu entry select` event handle
+                 *
+                 * Getter: get the current `sub menu entry select` event handle
+                 *
+                 * @memberof MenuEntryTag
+                 */
+                set onchildselect(v: TagEventCallback<MenuEventData>);
+                get onchildselect(): TagEventCallback<MenuEventData>;
+                /**
+                 * Setter: Set data to the entry
+                 *
+                 * Getter: Get data of the current menu entry
+                 *
+                 * @memberof MenuEntryTag
+                 */
+                set data(data: GenericObject<any>);
+                get data(): GenericObject<any>;
+                /**
+                 * Check whether the current menu entry has sub-menu
                  *
                  * @protected
-                 * @memberof ButtonTag
+                 * @returns {boolean}
+                 * @memberof MenuEntryTag
+                 */
+                protected has_nodes(): boolean;
+                /**
+                 * Check whether the current menu entry is the root entry
+                 *
+                 * @protected
+                 * @returns
+                 * @memberof MenuEntryTag
+                 */
+                protected is_root(): boolean;
+                /**
+                 * Layout definition of the menu entry
+                 * This function define the outer layout of the menu entry.
+                 * Custom inner layout of each item implementation should
+                 * be defined in [[itemlayout]]
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof MenuEntryTag
+                 */
+                protected layout(): TagLayoutType[];
+                /**
+                 * Setter: Set the sub-menu data
+                 *
+                 * Getter: Get the sub-menu data
+                 *
+                 * @memberof MenuEntryTag
+                 */
+                set nodes(v: GenericObject<any>[]);
+                get nodes(): GenericObject<any>[];
+                /**
+                 * Bind some base event to the menu entry
+                 *
+                 * @protected
+                 * @memberof MenuEntryTag
+                 */
+                protected mount(): void;
+                /**
+                 * Hide the sub-menu of the current menu entry
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof MenuEntryTag
+                 */
+                private submenuoff;
+                /**
+                 * This function trigger two event:
+                 * - the `onmenuselect` event on the current entry
+                 * - the `onchildselect` event on the parent of the current entry
+                 *
+                 * @protected
+                 * @param {JQuery.ClickEvent} e
+                 * @memberof MenuEntryTag
+                 */
+                protected select(e: JQuery.ClickEvent): void;
+                /**
+                 * custom inner layout of a menu entry
+                 *
+                 * @protected
+                 * @abstract
+                 * @returns {TagLayoutType[]}
+                 * @memberof MenuEntryTag
+                 */
+                protected abstract itemlayout(): TagLayoutType[];
+            }
+            /**
+             * This class extends the [[MenuEntryTag]] prototype. It inner layout is
+             * defined with the following elements:
+             * - a [[SwitchTag]] acts as checker or radio
+             * - a [[LabelTag]] to display the content of the menu entry
+             * - a `span` element that display the keyboard shortcut of the entry
+             *
+             * @class SimpleMenuEntryTag
+             * @extends {MenuEntryTag}
+             */
+            class SimpleMenuEntryTag extends MenuEntryTag {
+                /**
+                 *Creates an instance of SimpleMenuEntryTag.
+                 * @memberof SimpleMenuEntryTag
+                 */
+                constructor();
+                /**
+                 * Reset some properties to default value
+                 *
+                 * @protected
+                 * @memberof SimpleMenuEntryTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof SimpleMenuEntryTag
                  */
                 protected calibrate(): void;
                 /**
-                 * Update the current tag, do nothing in this tag
+                 * Do nothing
                  *
+                 * @protected
                  * @param {*} [d]
-                 * @memberof ButtonTag
+                 * @memberof SimpleMenuEntryTag
                  */
-                reload(d?: any): void;
+                protected reload(d?: any): void;
                 /**
-                 * Button layout definition
+                 * Setter: Turn on/off the checker feature of the menu entry
+                 *
+                 * Getter: Check whether the checker feature is enabled on this menu entry
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set switch(v: boolean);
+                get switch(): boolean;
+                /**
+                 * Setter: Turn on/off the radio feature of the menu entry
+                 *
+                 * Getter: Check whether the radio feature is enabled
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set radio(v: boolean);
+                get radio(): boolean;
+                /**
+                 * Setter:
+                 *
+                 * Toggle the switch on the menu entry, this setter
+                 * only works when the `checker` or `radio` feature is
+                 * enabled
+                 *
+                 * Getter:
+                 *
+                 * Check whether the switch is turned on
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set checked(v: boolean);
+                get checked(): boolean;
+                /**
+                 * Set the label icon using a VFS path
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set icon(v: string);
+                /**
+                 * Set the label CSS icon class
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set iconclass(v: string);
+                /**
+                 * Set the label text
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set text(v: string);
+                /**
+                 * Set the keyboard shortcut text
+                 *
+                 * @memberof SimpleMenuEntryTag
+                 */
+                set shortcut(v: string);
+                /**
+                 * Uncheck all sub-menu items of the current menu entry
+                 * that have the radio feature enabled
+                 *
+                 * @returns {void}
+                 * @memberof SimpleMenuEntryTag
+                 */
+                protected reset_radio(): void;
+                /**
+                 * Mount the current tag
+                 *
+                 * @protected
+                 * @memberof SimpleMenuEntryTag
+                 */
+                protected mount(): void;
+                /**
+                 * Trigger the onmenuselect and onchildselect events
+                 *
+                 * @protected
+                 * @param {JQuery.ClickEvent} e Mouse click event
+                 * @returns {void}
+                 * @memberof SimpleMenuEntryTag
+                 */
+                protected select(e: JQuery.ClickEvent): void;
+                /**
+                 * Inner item layout of the menu entry
+                 *
+                 * @returns
+                 * @memberof SimpleMenuEntryTag
+                 */
+                itemlayout(): ({
+                    el: string;
+                    ref: string;
+                    class?: undefined;
+                } | {
+                    el: string;
+                    class: string;
+                    ref: string;
+                })[];
+            }
+            /**
+             * A menu tag contains a collection of menu entries in which each
+             * entry maybe a leaf entry or may contain a submenu
+             *
+             * @export
+             * @class MenuTag
+             * @extends {AFXTag}
+             */
+            class MenuTag extends AFXTag {
+                /**
+                 * Reference to the parent menu entry of the current value.
+                 * This value is `undefined` in case of the current menu is
+                 * the root menu
+                 *
+                 * @type {MenuEntryTag}
+                 * @memberof MenuTag
+                 */
+                parent: MenuEntryTag;
+                /**
+                 * Reference to the root menu
+                 *
+                 * @type {MenuTag}
+                 * @memberof MenuTag
+                 */
+                root: MenuTag;
+                /**
+                 * The `pid` of the application that attached to this menu.
+                 * This value is optional
+                 *
+                 * @type {number}
+                 * @memberof MenuTag
+                 */
+                pid?: number;
+                /**
+                 * placeholder for menu select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<MenuEventData>}
+                 * @memberof MenuTag
+                 */
+                private _onmenuselect;
+                /**
+                 * Menu data placeholder
+                 *
+                 * @private
+                 * @type {GenericObject<any>[]}
+                 * @memberof MenuTag
+                 */
+                private _items;
+                /**
+                 *Creates an instance of MenuTag.
+                 * @memberof MenuTag
+                 */
+                constructor();
+                /**
+                 * Reset some properties to  default value
+                 *
+                 * @protected
+                 * @memberof MenuTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof MenuTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof MenuTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Setter: Set the menu items data
+                 *
+                 * Getter: Get menu items data
+                 *
+                 * @memberof MenuTag
+                 */
+                set items(data: GenericObject<any>[]);
+                get items(): GenericObject<any>[];
+                /**
+                 * Setter: Set whether the current menu is a context menu
+                 *
+                 * Getter: Check whether the current menu is a context menu
+                 *
+                 * @memberof MenuTag
+                 */
+                set context(v: boolean);
+                get context(): boolean;
+                /**
+                 * Set menu select event handle
+                 *
+                 * @memberof MenuTag
+                 */
+                set onmenuselect(v: TagEventCallback<MenuEventData>);
+                /**
+                 * Setter:
+                 *
+                 * Set the default tag name of the menu item.
+                 * If the tag is not specified in an item data,
+                 * this value will be used
+                 *
+                 * Getter:
+                 *
+                 * Get the default menu entry tag name
+                 *
+                 * @memberof MenuTag
+                 */
+                set contentag(v: string);
+                get contentag(): string;
+                /**
+                 * Get the reference to the function that triggers
+                 * the menu select event
+                 *
+                 * @readonly
+                 * @type {TagEventCallback}
+                 * @memberof MenuTag
+                 */
+                get onmenuitemselect(): TagEventCallback<MenuEventData>;
+                /**
+                 * This function triggers the menu select event
+                 *
+                 * @private
+                 * @param {TagEventType} e
+                 * @memberof MenuTag
+                 */
+                private handleselect;
+                /**
+                 * Show the current menu. This function is called
+                 * only if the current menu is a context menu
+                 *
+                 * @param {JQuery.MouseEventBase} e JQuery mouse event
+                 * @returns {void}
+                 * @memberof MenuTag
+                 */
+                show(e: JQuery.MouseEventBase): void;
+                /**
+                 * Test whether the current menu is the root menu
+                 *
+                 * @private
+                 * @returns {boolean}
+                 * @memberof MenuTag
+                 */
+                private is_root;
+                /**
+                 * Mount the menu tag and bind some basic events
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof MenuTag
+                 */
+                protected mount(): void;
+                /**
+                 * Add a menu entry to the beginning of the current
+                 * menu
+                 *
+                 * @param {GenericObject<any>} item menu entry data
+                 * @memberof MenuTag
+                 */
+                unshift(item: GenericObject<any>): void;
+                /**
+                 * Delete a menu entry
+                 *
+                 * @param {MenuEntryTag} item reference to the DOM element of an menu entry
+                 * @memberof MenuTag
+                 */
+                delete(item: MenuEntryTag): void;
+                /**
+                 * Add an menu entry to the beginning or end of the menu
+                 *
+                 * @param {GenericObject<any>} item menu entry data
+                 * @param {boolean} flag indicates whether the entry should be added to the beginning of the menu
+                 * @returns {MenuEntryTag}
+                 * @memberof MenuTag
+                 */
+                push(item: GenericObject<any>, flag: boolean): MenuEntryTag;
+                /**
+                 * Menu tag layout definition
+                 *
+                 * @returns
+                 * @memberof MenuTag
+                 */
+                layout(): {
+                    el: string;
+                    ref: string;
+                    children: ({
+                        el: string;
+                        class: string;
+                        ref?: undefined;
+                    } | {
+                        el: string;
+                        ref: string;
+                        class?: undefined;
+                    })[];
+                }[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * Tag event data type definition
+             */
+            type TabEventData = TagEventDataType<ListViewItemTag>;
+            /**
+             * a TabBar allows to control a collection of tabs
+             *
+             * @export
+             * @class TabBarTag
+             * @extends {AFXTag}
+             */
+            export class TabBarTag extends AFXTag {
+                /**
+                 * Placeholder of currently selected tab index
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof TabBarTag
+                 */
+                private _selected;
+                /**
+                 * Placeholder of tab close event handle
+                 *
+                 * @private
+                 * @memberof TabBarTag
+                 */
+                private _ontabclose;
+                /**
+                 * Placeholder of tab select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<TabEventData>}
+                 * @memberof TabBarTag
+                 */
+                private _ontabselect;
+                /**
+                 *Creates an instance of TabBarTag.
+                 * @memberof TabBarTag
+                 */
+                constructor();
+                /**
+                 * Init the tag
+                 *
+                 * @protected
+                 * @memberof TabBarTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof TabBarTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Setter: Enable/disable a tab to be closed
+                 *
+                 * Getter: Check whether tabs can be closed
+                 *
+                 * @memberof TabBarTag
+                 */
+                set closable(v: boolean);
+                get closable(): boolean;
+                /**
+                 * Add a tab in the end of the tab bar
+                 *
+                 * @param {GenericObject<any>} item tab data
+                 * @memberof TabBarTag
+                 */
+                push(item: GenericObject<any>): ListViewItemTag;
+                /**
+                 * Delete a tab
+                 *
+                 * @param {ListViewItemTag} el reference to DOM element of a tab
+                 * @memberof TabBarTag
+                 */
+                delete(el: ListViewItemTag): void;
+                /**
+                 * Add a tab to the beginning of the tab bar
+                 *
+                 * @param {GenericObject<any>} item tab data
+                 * @memberof TabBarTag
+                 */
+                unshift(item: GenericObject<any>): ListViewItemTag;
+                /**
+                 * Setter: Set tabs data
+                 *
+                 * Getter: Get all tabs data
+                 *
+                 * @memberof TabBarTag
+                 */
+                set items(v: GenericObject<any>[]);
+                get items(): GenericObject<any>[];
+                /**
+                 * Setter: Select a tab by its index
+                 *
+                 * Getter: Get the currently selected tab
+                 *
+                 * @memberof TabBarTag
+                 */
+                set selected(v: number | number[]);
+                get selected(): number | number[];
+                /**
+                 * Set the tab close event handle
+                 *
+                 * @memberof TabBarTag
+                 */
+                set ontabclose(v: (e: TagEventType<TabEventData>) => boolean);
+                /**
+                 * Set the tab select event handle
+                 *
+                 * @memberof TabBarTag
+                 */
+                set ontabselect(v: TagEventCallback<TabEventData>);
+                /**
+                 * Mount the tab bar and bind some basic events
+                 *
+                 * @protected
+                 * @memberof TabBarTag
+                 */
+                protected mount(): void;
+                /**
+                 * TabBar layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
-                 * @memberof ButtonTag
+                 * @memberof TabBarTag
                  */
                 protected layout(): TagLayoutType[];
+            }
+            export {};
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * A float list is a list of items in which each
+             * item can be moved (drag and drop) freely
+             *
+             * @export
+             * @class FloatListTag
+             * @extends {ListViewTag}
+             */
+            class FloatListTag extends ListViewTag {
+                /**
+                 * Update the current tag, do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof FloatListTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Variable that hold the onready callback of
+                 * the tag. This callback will be called after
+                 * the tag is mounted
+                 *
+                 * @private
+                 * @memberof FloatListTag
+                 */
+                private _onready;
+                /**
+                 *Creates an instance of FloatListTag.
+                 * @memberof FloatListTag
+                 */
+                constructor();
+                /**
+                 * set the onready callback function to the tag.
+                 * This callback will be called after
+                 * the tag is mounted
+                 *
+                 * @memberof FloatListTag
+                 */
+                set onready(v: (e: FloatListTag) => void);
+                /**
+                 * Setter:
+                 *
+                 * Set the direction of the list item layout.
+                 * Two directions are available:
+                 * - `vertical`
+                 * - `horizontal`
+                 *
+                 * This setter acts as a DOM attribute
+                 *
+                 * Getter:
+                 *
+                 * Get the currently set direction of list
+                 * item layout
+                 *
+                 * @memberof FloatListTag
+                 */
+                set dir(v: string);
+                get dir(): string;
+                /**
+                 * Disable the dropdown option in this list
+                 *
+                 * @memberof FloatListTag
+                 */
+                set dropdown(v: boolean);
+                /**
+                 * Disable the list buttons configuration in this
+                 * list
+                 *
+                 * @memberof FloatListTag
+                 */
+                set buttons(v: GenericObject<any>[]);
+                /**
+                 * Disable the `showlist` behavior in this list
+                 *
+                 * @protected
+                 * @param {*} e
+                 * @memberof FloatListTag
+                 */
+                protected showlist(e: any): void;
+                /**
+                 * Disable the `dropoff` behavior in this list
+                 *
+                 * @protected
+                 * @param {*} e
+                 * @memberof FloatListTag
+                 */
+                protected dropoff(e: any): void;
+                /**
+                 * Function called when the data of the list
+                 * is changed
+                 *
+                 * @protected
+                 * @memberof FloatListTag
+                 */
+                protected ondatachange(): void;
+                /**
+                 * Mount the list to the DOM tree
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof FloatListTag
+                 */
+                protected mount(): void;
+                /**
+                 * Push an element to the list
+                 *
+                 * @param {GenericObject<any>} v an element data
+                 * @returns
+                 * @memberof FloatListTag
+                 */
+                push(v: GenericObject<any>): ListViewItemTag;
+                /**
+                 * Enable drag and drop on the list
+                 *
+                 * @private
+                 * @param {ListViewItemTag} el the list item DOM element
+                 * @memberof FloatListTag
+                 */
+                private enable_drag;
+                /**
+                 * Calibrate the view of the list
+                 *
+                 * @memberof FloatListTag
+                 */
+                calibrate(): void;
             }
         }
     }
@@ -6900,893 +7568,61 @@ declare namespace OS {
         }
     }
 }
-/// <reference types="jquery" />
 declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
-             * Menu event data interface definition
-             */
-            type MenuEventData = TagEventDataType<MenuEntryTag>;
-            /**
-             * This class defines the abstract prototype of an menu entry.
-             * Any implementation of menu entry tag should extend this class
+             * A slider or track bar is a graphical control element with which
+             * a user may set a value by moving an indicator, usually horizontally
              *
-             * @export
-             * @abstract
-             * @class MenuEntryTag
+             * @class SliderTag
              * @extends {AFXTag}
              */
-            abstract class MenuEntryTag extends AFXTag {
+            class SliderTag extends AFXTag {
                 /**
-                 * Data placeholder of the menu entry
-                 *
-                 * @private
-                 * @type {GenericObject<any>}
-                 * @memberof MenuEntryTag
-                 */
-                private _data;
-                /**
-                 * placeholder of `menu entry select` event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<MenuEventData>}
-                 * @memberof MenuEntryTag
-                 */
-                private _onmenuselect;
-                /**
-                 * placeholder of `sub-menu entry select event` handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<MenuEventData>}
-                 * @memberof MenuEntryTag
-                 */
-                private _onchildselect;
-                /**
-                 * Reference to the parent menu entry of current one
-                 *
-                 * @type {MenuEntryTag}
-                 * @memberof MenuEntryTag
-                 */
-                parent: MenuEntryTag;
-                /**
-                 * Reference to the root menu entry
-                 *
-                 * @type {MenuTag}
-                 * @memberof MenuEntryTag
-                 */
-                root: MenuTag;
-                /**
-                 *Creates an instance of MenuEntryTag.
-                 * @memberof MenuEntryTag
-                 */
-                constructor();
-                /**
-                 * Init the tag before mounting
-                 *
-                 * @protected
-                 * @memberof MenuEntryTag
-                 */
-                protected init(): void;
-                /**
-                 * Set the `menu entry select` event handle
-                 *
-                 * @memberof MenuEntryTag
-                 */
-                set onmenuselect(v: TagEventCallback<MenuEventData>);
-                /**
-                 * Setter: Set the `sub menu entry select` event handle
-                 *
-                 * Getter: get the current `sub menu entry select` event handle
-                 *
-                 * @memberof MenuEntryTag
-                 */
-                set onchildselect(v: TagEventCallback<MenuEventData>);
-                get onchildselect(): TagEventCallback<MenuEventData>;
-                /**
-                 * Setter: Set data to the entry
-                 *
-                 * Getter: Get data of the current menu entry
-                 *
-                 * @memberof MenuEntryTag
-                 */
-                set data(data: GenericObject<any>);
-                get data(): GenericObject<any>;
-                /**
-                 * Check whether the current menu entry has sub-menu
-                 *
-                 * @protected
-                 * @returns {boolean}
-                 * @memberof MenuEntryTag
-                 */
-                protected has_nodes(): boolean;
-                /**
-                 * Check whether the current menu entry is the root entry
-                 *
-                 * @protected
-                 * @returns
-                 * @memberof MenuEntryTag
-                 */
-                protected is_root(): boolean;
-                /**
-                 * Layout definition of the menu entry
-                 * This function define the outer layout of the menu entry.
-                 * Custom inner layout of each item implementation should
-                 * be defined in [[itemlayout]]
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof MenuEntryTag
-                 */
-                protected layout(): TagLayoutType[];
-                /**
-                 * Setter: Set the sub-menu data
-                 *
-                 * Getter: Get the sub-menu data
-                 *
-                 * @memberof MenuEntryTag
-                 */
-                set nodes(v: GenericObject<any>[]);
-                get nodes(): GenericObject<any>[];
-                /**
-                 * Bind some base event to the menu entry
-                 *
-                 * @protected
-                 * @memberof MenuEntryTag
-                 */
-                protected mount(): void;
-                /**
-                 * Hide the sub-menu of the current menu entry
-                 *
-                 * @private
-                 * @returns {void}
-                 * @memberof MenuEntryTag
-                 */
-                private submenuoff;
-                /**
-                 * This function trigger two event:
-                 * - the `onmenuselect` event on the current entry
-                 * - the `onchildselect` event on the parent of the current entry
-                 *
-                 * @protected
-                 * @param {JQuery.ClickEvent} e
-                 * @memberof MenuEntryTag
-                 */
-                protected select(e: JQuery.ClickEvent): void;
-                /**
-                 * custom inner layout of a menu entry
-                 *
-                 * @protected
-                 * @abstract
-                 * @returns {TagLayoutType[]}
-                 * @memberof MenuEntryTag
-                 */
-                protected abstract itemlayout(): TagLayoutType[];
-            }
-            /**
-             * This class extends the [[MenuEntryTag]] prototype. It inner layout is
-             * defined with the following elements:
-             * - a [[SwitchTag]] acts as checker or radio
-             * - a [[LabelTag]] to display the content of the menu entry
-             * - a `span` element that display the keyboard shortcut of the entry
-             *
-             * @class SimpleMenuEntryTag
-             * @extends {MenuEntryTag}
-             */
-            class SimpleMenuEntryTag extends MenuEntryTag {
-                /**
-                 *Creates an instance of SimpleMenuEntryTag.
-                 * @memberof SimpleMenuEntryTag
-                 */
-                constructor();
-                /**
-                 * Reset some properties to default value
-                 *
-                 * @protected
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected calibrate(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Setter: Turn on/off the checker feature of the menu entry
-                 *
-                 * Getter: Check whether the checker feature is enabled on this menu entry
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set switch(v: boolean);
-                get switch(): boolean;
-                /**
-                 * Setter: Turn on/off the radio feature of the menu entry
-                 *
-                 * Getter: Check whether the radio feature is enabled
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set radio(v: boolean);
-                get radio(): boolean;
-                /**
-                 * Setter:
-                 *
-                 * Toggle the switch on the menu entry, this setter
-                 * only works when the `checker` or `radio` feature is
-                 * enabled
-                 *
-                 * Getter:
-                 *
-                 * Check whether the switch is turned on
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set checked(v: boolean);
-                get checked(): boolean;
-                /**
-                 * Set the label icon using a VFS path
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set icon(v: string);
-                /**
-                 * Set the label CSS icon class
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set iconclass(v: string);
-                /**
-                 * Set the label text
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set text(v: string);
-                /**
-                 * Set the keyboard shortcut text
-                 *
-                 * @memberof SimpleMenuEntryTag
-                 */
-                set shortcut(v: string);
-                /**
-                 * Uncheck all sub-menu items of the current menu entry
-                 * that have the radio feature enabled
-                 *
-                 * @returns {void}
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected reset_radio(): void;
-                /**
-                 * Mount the current tag
-                 *
-                 * @protected
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected mount(): void;
-                /**
-                 * Trigger the onmenuselect and onchildselect events
-                 *
-                 * @protected
-                 * @param {JQuery.ClickEvent} e Mouse click event
-                 * @returns {void}
-                 * @memberof SimpleMenuEntryTag
-                 */
-                protected select(e: JQuery.ClickEvent): void;
-                /**
-                 * Inner item layout of the menu entry
-                 *
-                 * @returns
-                 * @memberof SimpleMenuEntryTag
-                 */
-                itemlayout(): ({
-                    el: string;
-                    ref: string;
-                    class?: undefined;
-                } | {
-                    el: string;
-                    class: string;
-                    ref: string;
-                })[];
-            }
-            /**
-             * A menu tag contains a collection of menu entries in which each
-             * entry maybe a leaf entry or may contain a submenu
-             *
-             * @export
-             * @class MenuTag
-             * @extends {AFXTag}
-             */
-            class MenuTag extends AFXTag {
-                /**
-                 * Reference to the parent menu entry of the current value.
-                 * This value is `undefined` in case of the current menu is
-                 * the root menu
-                 *
-                 * @type {MenuEntryTag}
-                 * @memberof MenuTag
-                 */
-                parent: MenuEntryTag;
-                /**
-                 * Reference to the root menu
-                 *
-                 * @type {MenuTag}
-                 * @memberof MenuTag
-                 */
-                root: MenuTag;
-                /**
-                 * The `pid` of the application that attached to this menu.
-                 * This value is optional
-                 *
-                 * @type {number}
-                 * @memberof MenuTag
-                 */
-                pid?: number;
-                /**
-                 * placeholder for menu select event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<MenuEventData>}
-                 * @memberof MenuTag
-                 */
-                private _onmenuselect;
-                /**
-                 * Menu data placeholder
-                 *
-                 * @private
-                 * @type {GenericObject<any>[]}
-                 * @memberof MenuTag
-                 */
-                private _items;
-                /**
-                 *Creates an instance of MenuTag.
-                 * @memberof MenuTag
-                 */
-                constructor();
-                /**
-                 * Reset some properties to  default value
-                 *
-                 * @protected
-                 * @memberof MenuTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @memberof MenuTag
-                 */
-                protected calibrate(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof MenuTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Setter: Set the menu items data
-                 *
-                 * Getter: Get menu items data
-                 *
-                 * @memberof MenuTag
-                 */
-                set items(data: GenericObject<any>[]);
-                get items(): GenericObject<any>[];
-                /**
-                 * Setter: Set whether the current menu is a context menu
-                 *
-                 * Getter: Check whether the current menu is a context menu
-                 *
-                 * @memberof MenuTag
-                 */
-                set context(v: boolean);
-                get context(): boolean;
-                /**
-                 * Set menu select event handle
-                 *
-                 * @memberof MenuTag
-                 */
-                set onmenuselect(v: TagEventCallback<MenuEventData>);
-                /**
-                 * Setter:
-                 *
-                 * Set the default tag name of the menu item.
-                 * If the tag is not specified in an item data,
-                 * this value will be used
-                 *
-                 * Getter:
-                 *
-                 * Get the default menu entry tag name
-                 *
-                 * @memberof MenuTag
-                 */
-                set contentag(v: string);
-                get contentag(): string;
-                /**
-                 * Get the reference to the function that triggers
-                 * the menu select event
-                 *
-                 * @readonly
-                 * @type {TagEventCallback}
-                 * @memberof MenuTag
-                 */
-                get onmenuitemselect(): TagEventCallback<MenuEventData>;
-                /**
-                 * This function triggers the menu select event
-                 *
-                 * @private
-                 * @param {TagEventType} e
-                 * @memberof MenuTag
-                 */
-                private handleselect;
-                /**
-                 * Show the current menu. This function is called
-                 * only if the current menu is a context menu
-                 *
-                 * @param {JQuery.MouseEventBase} e JQuery mouse event
-                 * @returns {void}
-                 * @memberof MenuTag
-                 */
-                show(e: JQuery.MouseEventBase): void;
-                /**
-                 * Test whether the current menu is the root menu
-                 *
-                 * @private
-                 * @returns {boolean}
-                 * @memberof MenuTag
-                 */
-                private is_root;
-                /**
-                 * Mount the menu tag and bind some basic events
-                 *
-                 * @protected
-                 * @returns {void}
-                 * @memberof MenuTag
-                 */
-                protected mount(): void;
-                /**
-                 * Add a menu entry to the beginning of the current
-                 * menu
-                 *
-                 * @param {GenericObject<any>} item menu entry data
-                 * @memberof MenuTag
-                 */
-                unshift(item: GenericObject<any>): void;
-                /**
-                 * Delete a menu entry
-                 *
-                 * @param {MenuEntryTag} item reference to the DOM element of an menu entry
-                 * @memberof MenuTag
-                 */
-                delete(item: MenuEntryTag): void;
-                /**
-                 * Add an menu entry to the beginning or end of the menu
-                 *
-                 * @param {GenericObject<any>} item menu entry data
-                 * @param {boolean} flag indicates whether the entry should be added to the beginning of the menu
-                 * @returns {MenuEntryTag}
-                 * @memberof MenuTag
-                 */
-                push(item: GenericObject<any>, flag: boolean): MenuEntryTag;
-                /**
-                 * Menu tag layout definition
-                 *
-                 * @returns
-                 * @memberof MenuTag
-                 */
-                layout(): {
-                    el: string;
-                    ref: string;
-                    children: ({
-                        el: string;
-                        class: string;
-                        ref?: undefined;
-                    } | {
-                        el: string;
-                        ref: string;
-                        class?: undefined;
-                    })[];
-                }[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * A WindowTag represents a virtual window element
-             * used by AntOS applications and dialogs.
-             *
-             * @export
-             * @class WindowTag
-             * @extends {AFXTag}
-             */
-            class WindowTag extends AFXTag {
-                /**
-                 * The element ID of the virtual desktop element
-                 *
-                 * @type {string}
-                 * @memberof WindowTag
-                 */
-                desktop: string;
-                /**
-                 * Window width placeholder
+                 * Slider max value placeholder
                  *
                  * @private
                  * @type {number}
-                 * @memberof WindowTag
+                 * @memberof SliderTag
                  */
-                private _width;
+                private _max;
                 /**
-                 * Window height placeholder
+                 * Current slider value placeholder
                  *
                  * @private
                  * @type {number}
-                 * @memberof WindowTag
-                 */
-                private _height;
-                /**
-                 * Placeholder indicates whether the current window is shown
-                 *
-                 * @private
-                 * @type {boolean}
-                 * @memberof WindowTag
-                 */
-                private _shown;
-                /**
-                 * Placeholder indicates whether the current window is maximized
-                 *
-                 * @private
-                 * @type {boolean}
-                 * @memberof WindowTag
-                 */
-                private _isMaxi;
-                /**
-                 * This placeholder stores the latest offset of the current window.
-                 *
-                 * @private
-                 * @type {GenericObject<any>}
-                 * @memberof WindowTag
-                 */
-                private _history;
-                /**
-                 * This placeholder stores the offset of the virtual desktop element
-                 *
-                 * @private
-                 * @type {GenericObject<any>}
-                 * @memberof WindowTag
-                 */
-                private _desktop_pos;
-                /**
-                 * Creates an instance of WindowTag.
-                 * @memberof WindowTag
-                 */
-                constructor();
-                /**
-                 * Init window tag
-                 * - `shown`: false
-                 * - `isMaxi`: false
-                 * - `minimizable`: false
-                 * - `resizable`: true
-                 * - `apptitle`: Untitled
-                 *
-                 * @protected
-                 * @memberof WindowTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @memberof WindowTag
-                 */
-                protected calibrate(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof WindowTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Setter: Set the window width
-                 *
-                 * Getter: Get the window width
-                 *
-                 * @memberof WindowTag
-                 */
-                set width(v: number);
-                get width(): number;
-                /**
-                 * Setter: Set the window height
-                 *
-                 * Getter: Get the window height
-                 *
-                 * @memberof WindowTag
-                 */
-                set height(v: number);
-                get height(): number;
-                /**
-                 * Setter: enable/disable window minimizable
-                 *
-                 * getter: Check whether the window is minimizable
-                 *
-                 * @memberof WindowTag
-                 */
-                set minimizable(v: boolean);
-                get minimizable(): boolean;
-                /**
-                 * Setter: enable/disable widow resizable
-                 *
-                 * Getter: Check whether the current window is resizable
-                 *
-                 * @memberof WindowTag
-                 */
-                set resizable(v: boolean);
-                get resizable(): boolean;
-                /**
-                 * Setter: Set the window title
-                 *
-                 * Getter: Get window title
-                 *
-                 * @memberof WindowTag
-                 */
-                set apptitle(v: string | FormattedString);
-                get apptitle(): string | FormattedString;
-                /**
-                 * Resize all the children of the window based on its width and height
-                 *
-                 * @private
-                 * @memberof WindowTag
-                 */
-                private resize;
-                /**
-                 * Mount the window tag and bind basic events
-                 *
-                 * @protected
-                 * @returns {void}
-                 * @memberof WindowTag
-                 */
-                protected mount(): void;
-                /**
-                 * Set the window size
-                 *
-                 * @private
-                 * @param {GenericObject<any>} o format: `{ w: window_width, h: window_height }`
-                 * @returns {void}
-                 * @memberof WindowTag
-                 */
-                private setsize;
-                /**
-                 * Enable to drag window on the virtual desktop
-                 *
-                 * @private
-                 * @memberof WindowTag
-                 */
-                private enable_dragging;
-                /**
-                 * Enable window resize, this only works if the window
-                 * is resizable
-                 *
-                 * @private
-                 * @memberof WindowTag
-                 */
-                private enable_resize;
-                /**
-                 * Maximize the window or restore its previous width, height,
-                 * and position
-                 *
-                 * @private
-                 * @returns {void}
-                 * @memberof WindowTag
-                 */
-                private toggle_window;
-                /**
-                 * Layout definition of the window tag
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof WindowTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * Tag event data type definition
-             */
-            type TabEventData = TagEventDataType<ListViewItemTag>;
-            /**
-             * a TabBar allows to control a collection of tabs
-             *
-             * @export
-             * @class TabBarTag
-             * @extends {AFXTag}
-             */
-            export class TabBarTag extends AFXTag {
-                /**
-                 * Placeholder of currently selected tab index
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof TabBarTag
-                 */
-                private _selected;
-                /**
-                 * Placeholder of tab close event handle
-                 *
-                 * @private
-                 * @memberof TabBarTag
-                 */
-                private _ontabclose;
-                /**
-                 * Placeholder of tab select event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<TabEventData>}
-                 * @memberof TabBarTag
-                 */
-                private _ontabselect;
-                /**
-                 *Creates an instance of TabBarTag.
-                 * @memberof TabBarTag
-                 */
-                constructor();
-                /**
-                 * Init the tag
-                 *
-                 * @protected
-                 * @memberof TabBarTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof TabBarTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Setter: Enable/disable a tab to be closed
-                 *
-                 * Getter: Check whether tabs can be closed
-                 *
-                 * @memberof TabBarTag
-                 */
-                set closable(v: boolean);
-                get closable(): boolean;
-                /**
-                 * Add a tab in the end of the tab bar
-                 *
-                 * @param {GenericObject<any>} item tab data
-                 * @memberof TabBarTag
-                 */
-                push(item: GenericObject<any>): ListViewItemTag;
-                /**
-                 * Delete a tab
-                 *
-                 * @param {ListViewItemTag} el reference to DOM element of a tab
-                 * @memberof TabBarTag
-                 */
-                delete(el: ListViewItemTag): void;
-                /**
-                 * Add a tab to the beginning of the tab bar
-                 *
-                 * @param {GenericObject<any>} item tab data
-                 * @memberof TabBarTag
-                 */
-                unshift(item: GenericObject<any>): ListViewItemTag;
-                /**
-                 * Setter: Set tabs data
-                 *
-                 * Getter: Get all tabs data
-                 *
-                 * @memberof TabBarTag
-                 */
-                set items(v: GenericObject<any>[]);
-                get items(): GenericObject<any>[];
-                /**
-                 * Setter: Select a tab by its index
-                 *
-                 * Getter: Get the currently selected tab
-                 *
-                 * @memberof TabBarTag
-                 */
-                set selected(v: number | number[]);
-                get selected(): number | number[];
-                /**
-                 * Set the tab close event handle
-                 *
-                 * @memberof TabBarTag
-                 */
-                set ontabclose(v: (e: TagEventType<TabEventData>) => boolean);
-                /**
-                 * Set the tab select event handle
-                 *
-                 * @memberof TabBarTag
-                 */
-                set ontabselect(v: TagEventCallback<TabEventData>);
-                /**
-                 * Mount the tab bar and bind some basic events
-                 *
-                 * @protected
-                 * @memberof TabBarTag
-                 */
-                protected mount(): void;
-                /**
-                 * TabBar layout definition
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof TabBarTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-            export {};
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * A simple number sinner tag
-             *
-             * @export
-             * @class NSpinnerTag
-             * @extends {AFXTag}
-             */
-            class NSpinnerTag extends AFXTag {
-                /**
-                 * Placeholder for value change event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<number>}
-                 * @memberof NSpinnerTag
-                 */
-                private _onchange;
-                /**
-                 * Placeholder for the spinner data
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
                 private _value;
                 /**
-                 * Place holder for the spinner step
+                 * Placeholder of the on change event handle
                  *
-                 * @type {number}
-                 * @memberof NSpinnerTag
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof SliderTag
                  */
-                step: number;
+                private _onchange;
                 /**
-                 *Creates an instance of NSpinnerTag.
-                 * @memberof NSpinnerTag
+                 * Placeholder of the on changing event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<number>}
+                 * @memberof SliderTag
+                 */
+                private _onchanging;
+                /**
+                 * Creates an instance of SliderTag.
+                 * @memberof SliderTag
                  */
                 constructor();
                 /**
-                 * Init the spinner value to `0` and step to `1`
+                 *  Init the default value of the slider:
+                 * - `max`: 100
+                 * - `value`: 0
                  *
                  * @protected
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
                 protected init(): void;
                 /**
@@ -7794,611 +7630,78 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {*} [d]
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
                 protected reload(d?: any): void;
                 /**
-                 * Set the value change event handle
+                 * Set value change event handle.
+                 * This handle will be triggered when the
+                 * slider indicator is released
                  *
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
                 set onvaluechange(f: TagEventCallback<number>);
                 /**
-                 * Mount the tag and bind basic events
+                 * Set value changing event handle.
+                 * This handle is triggered when moving the
+                 * slider indicator
                  *
-                 * @protected
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
-                protected mount(): void;
+                set onvaluechanging(f: TagEventCallback<number>);
                 /**
-                 * Calibrate the layout of the spinner
+                 * Setter: Enable/disable the slider
                  *
-                 * @memberof NSpinnerTag
+                 * Getter: Check whether the slider is enabled
+                 *
+                 * @memberof SliderTag
                  */
-                calibrate(): void;
+                set enable(v: boolean);
+                get enable(): boolean;
                 /**
-                 * Setter: Set the spinner value
+                 * Setter: Set the slider value
                  *
-                 * Getter: Get the spinner value
+                 * Getter: Get the current slider value
                  *
-                 * @memberof NSpinnerTag
+                 * @memberof SliderTag
                  */
                 set value(v: number);
                 get value(): number;
                 /**
-                 * Spinner layout definition
+                 * Setter: Set the maximum value of the slider
+                 *
+                 * Getter: Get the maximum value of the slider
+                 *
+                 * @memberof SliderTag
+                 */
+                set max(v: number);
+                get max(): number;
+                /**
+                 * Mount the tag and bind some basic events
                  *
                  * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof NSpinnerTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        /**
-         *
-         * Interface for an application dock item
-         *
-         * @export
-         * @interface AppDockItemType
-         */
-        interface AppDockItemType {
-            /**
-             * Reference to the application process represented
-             * by the dock item
-             *
-             * @type {application.BaseApplication}
-             * @memberof AppDockItemType
-             */
-            app: application.BaseApplication;
-            /**
-             * Reference to the DOM element of
-             * the owner dock item
-             *
-             * @type {AFXTag}
-             * @memberof AppDockItemType
-             */
-            domel?: AFXTag;
-            [propName: string]: any;
-        }
-        namespace tag {
-            /**
-             * This class define the AntOS system application dock tag
-             *
-             * @export
-             * @class AppDockTag
-             * @extends {AFXTag}
-             */
-            class AppDockTag extends AFXTag {
-                /**
-                 * variable holds the application select event
-                 * callback handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<any>}
-                 * @memberof AppDockTag
-                 */
-                private _onappselect;
-                /**
-                 * Items data of the dock
-                 *
-                 * @private
-                 * @type {AppDockItemType[]}
-                 * @memberof AppDockTag
-                 */
-                private _items;
-                /**
-                 * Reference to the currently select application
-                 * process in the dock
-                 *
-                 * @private
-                 * @type {AppDockItemType}
-                 * @memberof AppDockTag
-                 */
-                private _selectedItem;
-                /**
-                 *Creates an instance of AppDockTag.
-                 * @memberof AppDockTag
-                 */
-                constructor();
-                /**
-                 * Implementation of the abstract function: Update the current tag.
-                 * It do nothing for this tag
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof AppDockTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Init the tag before mounting
-                 *
-                 * @protected
-                 * @memberof AppDockTag
-                 */
-                protected init(): void;
-                /**
-                 * The tag layout, it is empty on creation but elements will
-                 * be added automatically to it in operation
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof AppDockTag
-                 */
-                protected layout(): TagLayoutType[];
-                /**
-                 * getter to get the dock items
-                 *
-                 * @readonly
-                 * @type {AppDockItemType[]}
-                 * @memberof AppDockTag
-                 */
-                get items(): AppDockItemType[];
-                /**
-                 * Setter:
-                 *
-                 * set the selected application in the dock
-                 * this will trigger two event:
-                 * - `focus`: on the selected application
-                 * - `blur`: on all other applications on the dock
-                 *
-                 * Getter:
-                 *
-                 *  Get the current selected application
-                 * on the dock
-                 *
-                 * @memberof AppDockTag
-                 */
-                set selectedApp(v: application.BaseApplication);
-                get selectedApp(): application.BaseApplication;
-                /**
-                 * Get selected item of the dock
-                 *
-                 * @readonly
-                 * @type {AppDockItemType}
-                 * @memberof AppDockTag
-                 */
-                get selectedItem(): AppDockItemType;
-                /**
-                 * When a new application process is created, this function
-                 * will be called to add new application entry to the dock.
-                 * The added application will becomes the current selected
-                 * application
-                 *
-                 * @param {AppDockItemType} item an application dock item entry
-                 * @memberof AppDockTag
-                 */
-                newapp(item: AppDockItemType): void;
-                /**
-                 * Delete and application entry from the dock.
-                 * This function will be called when an application
-                 * is exit
-                 *
-                 * @param {BaseApplication} a the application to be removed from the dock
-                 * @memberof AppDockTag
-                 */
-                removeapp(a: application.BaseApplication): void;
-                /**
-                 * Mount the current dock tag
-                 *
-                 * @protected
-                 * @memberof AppDockTag
-                 */
-                protected mount(): void;
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * Tag that define system calendar widget
-             *
-             * @export
-             * @class CalendarTag
-             * @extends {AFXTag}
-             */
-            class CalendarTag extends AFXTag {
-                /**
-                 * The current selected day
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof CalendarTag
-                 */
-                private _day;
-                /**
-                 * The current selected month
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof CalendarTag
-                 */
-                private _month;
-                /**
-                 * The current selected year
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof CalendarTag
-                 */
-                private _year;
-                /**
-                 * The current selected date object
-                 *
-                 * @private
-                 * @type {Date}
-                 * @memberof CalendarTag
-                 */
-                private _selectedDate;
-                /**
-                 * placeholder for date select event callback
-                 *
-                 * @private
-                 * @type {TagEventCallback<Date>}
-                 * @memberof CalendarTag
-                 */
-                private _ondateselect;
-                /**
-                 *Creates an instance of CalendarTag.
-                 * @memberof CalendarTag
-                 */
-                constructor();
-                /**
-                 * Init the tag before mounting
-                 *
-                 * @protected
-                 * @memberof CalendarTag
-                 */
-                protected init(): void;
-                /**
-                 * Update the current tag, doing nothing in this tag
-                 *
-                 * @protected
-                 * @param {*} [d] any data object
-                 * @memberof CalendarTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Get the current selected date in the widget
-                 *
-                 * @readonly
-                 * @type {Date}
-                 * @memberof CalendarTag
-                 */
-                get selectedDate(): Date;
-                /**
-                 * Set the date select event callback handle for the widget
-                 *
-                 * @memberof CalendarTag
-                 */
-                set ondateselect(v: TagEventCallback<Date>);
-                /**
-                 * Mount the current widget to the DOM tree
-                 *
-                 * @protected
-                 * @memberof CalendarTag
+                 * @memberof SliderTag
                  */
                 protected mount(): void;
                 /**
-                 * This function triggers the date select event
+                 * Calibrate the slide based on its value and max value
                  *
-                 * @private
-                 * @param {TagEventType} e AFX tag event data [[TagEventType]]
-                 * @returns {void}
-                 * @memberof CalendarTag
-                 */
-                private dateselect;
-                /**
-                 * Calibrate the layout of the tag
-                 *
-                 * @protected
-                 * @memberof CalendarTag
-                 */
-                protected calibrate(): void;
-                /**
-                 * Display the previous month of the current month
-                 *
-                 * @private
-                 * @memberof CalendarTag
-                 */
-                private prevmonth;
-                /**
-                 * Display the next month of the current month
-                 *
-                 * @private
-                 * @returns
-                 * @memberof CalendarTag
-                 */
-                private nextmonth;
-                /**
-                 * Visualize the calendar base on input date
-                 *
-                 * @private
-                 * @param {Date} date
-                 * @memberof CalendarTag
-                 */
-                private calendar;
-                /**
-                 * Layout definition of the widget
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof CalendarTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * A float list is a list of items in which each
-             * item can be moved (drag and drop) freely
-             *
-             * @export
-             * @class FloatListTag
-             * @extends {ListViewTag}
-             */
-            class FloatListTag extends ListViewTag {
-                /**
-                 * Update the current tag, do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof FloatListTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Variable that hold the onready callback of
-                 * the tag. This callback will be called after
-                 * the tag is mounted
-                 *
-                 * @private
-                 * @memberof FloatListTag
-                 */
-                private _onready;
-                /**
-                 *Creates an instance of FloatListTag.
-                 * @memberof FloatListTag
-                 */
-                constructor();
-                /**
-                 * set the onready callback function to the tag.
-                 * This callback will be called after
-                 * the tag is mounted
-                 *
-                 * @memberof FloatListTag
-                 */
-                set onready(v: (e: FloatListTag) => void);
-                /**
-                 * Setter:
-                 *
-                 * Set the direction of the list item layout.
-                 * Two directions are available:
-                 * - `vertical`
-                 * - `horizontal`
-                 *
-                 * This setter acts as a DOM attribute
-                 *
-                 * Getter:
-                 *
-                 * Get the currently set direction of list
-                 * item layout
-                 *
-                 * @memberof FloatListTag
-                 */
-                set dir(v: string);
-                get dir(): string;
-                /**
-                 * Disable the dropdown option in this list
-                 *
-                 * @memberof FloatListTag
-                 */
-                set dropdown(v: boolean);
-                /**
-                 * Disable the list buttons configuration in this
-                 * list
-                 *
-                 * @memberof FloatListTag
-                 */
-                set buttons(v: GenericObject<any>[]);
-                /**
-                 * Disable the `showlist` behavior in this list
-                 *
-                 * @protected
-                 * @param {*} e
-                 * @memberof FloatListTag
-                 */
-                protected showlist(e: any): void;
-                /**
-                 * Disable the `dropoff` behavior in this list
-                 *
-                 * @protected
-                 * @param {*} e
-                 * @memberof FloatListTag
-                 */
-                protected dropoff(e: any): void;
-                /**
-                 * Function called when the data of the list
-                 * is changed
-                 *
-                 * @protected
-                 * @memberof FloatListTag
-                 */
-                protected ondatachange(): void;
-                /**
-                 * Mount the list to the DOM tree
-                 *
-                 * @protected
-                 * @returns {void}
-                 * @memberof FloatListTag
-                 */
-                protected mount(): void;
-                /**
-                 * Push an element to the list
-                 *
-                 * @param {GenericObject<any>} v an element data
-                 * @returns
-                 * @memberof FloatListTag
-                 */
-                push(v: GenericObject<any>): ListViewItemTag;
-                /**
-                 * Enable drag and drop on the list
-                 *
-                 * @private
-                 * @param {ListViewItemTag} el the list item DOM element
-                 * @memberof FloatListTag
-                 */
-                private enable_drag;
-                /**
-                 * Calibrate the view of the list
-                 *
-                 * @memberof FloatListTag
+                 * @memberof SliderTag
                  */
                 calibrate(): void;
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        /**
-         * Color type used by AFX API
-         *
-         * @export
-         * @interface ColorType
-         */
-        interface ColorType {
-            /**
-             * Red chanel
-             *
-             * @type {number}
-             * @memberof ColorType
-             */
-            r: number;
-            /**
-             * Green chanel
-             *
-             * @type {number}
-             * @memberof ColorType
-             */
-            g: number;
-            /**
-             * Blue chanel
-             *
-             * @type {number}
-             * @memberof ColorType
-             */
-            b: number;
-            /**
-             * Alpha chanel
-             *
-             * @type {number}
-             * @memberof ColorType
-             */
-            a?: number;
-            /**
-             * color text in CSS format
-             *
-             * @type {string}
-             * @memberof ColorType
-             */
-            text?: string;
-            /**
-             * Color in hex format
-             *
-             * @type {string}
-             * @memberof ColorType
-             */
-            hex?: string;
-        }
-        namespace tag {
-            /**
-             * Class definition of Color picker widget
-             *
-             * @export
-             * @class ColorPickerTag
-             * @extends {AFXTag}
-             */
-            class ColorPickerTag extends AFXTag {
                 /**
-                 * The current selected color object
+                 * enable dragging on the slider indicator
                  *
                  * @private
-                 * @type {ColorType}
-                 * @memberof ColorPickerTag
+                 * @memberof SliderTag
                  */
-                private _selectedColor;
+                private enable_dragging;
                 /**
-                 * placeholder for the color select event callback
-                 *
-                 * @private
-                 * @type {TagEventCallback<ColorType>}
-                 * @memberof ColorPickerTag
-                 */
-                private _oncolorselect;
-                /**
-                 * Creates an instance of ColorPickerTag.
-                 * @memberof ColorPickerTag
-                 */
-                constructor();
-                /**
-                 * Init tag before mounting, do nothing
-                 *
-                 * @protected
-                 * @memberof ColorPickerTag
-                 */
-                protected init(): void;
-                /**
-                 * Reload tag, do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof ColorPickerTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Get selected color value
-                 *
-                 * @readonly
-                 * @type {ColorType}
-                 * @memberof ColorPickerTag
-                 */
-                get selectedColor(): ColorType;
-                /**
-                 * Set the color select event handle
-                 *
-                 * @memberof ColorPickerTag
-                 */
-                set oncolorselect(v: TagEventCallback<ColorType>);
-                /**
-                 * Mount the widget to DOM tree
-                 *
-                 * @protected
-                 * @memberof ColorPickerTag
-                 */
-                protected mount(): void;
-                /**
-                 * Build the color palette
-                 *
-                 * @private
-                 * @memberof ColorPickerTag
-                 */
-                private build_palette;
-                /**
-                 * layout definition of the widget
+                 * Layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
-                 * @memberof ColorPickerTag
+                 * @memberof SliderTag
                  */
                 protected layout(): TagLayoutType[];
             }
@@ -8866,87 +8169,91 @@ declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
-             * A switch tag is basically used to visualize an boolean data value.
+             * A WindowTag represents a virtual window element
+             * used by AntOS applications and dialogs.
              *
              * @export
-             * @class SwitchTag
+             * @class WindowTag
              * @extends {AFXTag}
              */
-            class SwitchTag extends AFXTag {
+            class WindowTag extends AFXTag {
                 /**
-                 * Placeholder for the onchange event handle
+                 * The element ID of the virtual desktop element
+                 *
+                 * @type {string}
+                 * @memberof WindowTag
+                 */
+                desktop: string;
+                /**
+                 * Window width placeholder
                  *
                  * @private
-                 * @type {TagEventCallback<boolean>}
-                 * @memberof SwitchTag
+                 * @type {number}
+                 * @memberof WindowTag
                  */
-                private _onchange;
+                private _width;
                 /**
-                 * Setter: Turn on/off the switch
-                 *
-                 * Getter: Check whether the switch is turned on
-                 *
-                 * @memberof SwitchTag
-                 */
-                set swon(v: boolean);
-                get swon(): boolean;
-                /**
-                 * Setter: Enable the switch
-                 *
-                 * Getter: Check whether the switch is enabled
-                 *
-                 * @memberof SwitchTag
-                 */
-                set enable(v: boolean);
-                get enable(): boolean;
-                /**
-                 * Set the onchange event handle
-                 *
-                 * @memberof SwitchTag
-                 */
-                set onswchange(v: TagEventCallback<boolean>);
-                /**
-                 * Mount the tag and bind the click event to the switch
-                 *
-                 * @protected
-                 * @memberof SwitchTag
-                 */
-                protected mount(): void;
-                /**
-                 * This function will turn the switch (on/off)
-                 * and trigger the onchange event
+                 * Window height placeholder
                  *
                  * @private
-                 * @param {JQuery.ClickEvent} e
-                 * @returns
-                 * @memberof SwitchTag
+                 * @type {number}
+                 * @memberof WindowTag
                  */
-                private makechange;
+                private _height;
                 /**
-                 * Tag layout definition
+                 * Placeholder indicates whether the current window is shown
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
+                private _shown;
+                /**
+                 * Placeholder indicates whether the current window is maximized
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof WindowTag
+                 */
+                private _isMaxi;
+                /**
+                 * This placeholder stores the latest offset of the current window.
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof WindowTag
+                 */
+                private _history;
+                /**
+                 * This placeholder stores the offset of the virtual desktop element
+                 *
+                 * @private
+                 * @type {GenericObject<any>}
+                 * @memberof WindowTag
+                 */
+                private _desktop_pos;
+                /**
+                 * Creates an instance of WindowTag.
+                 * @memberof WindowTag
+                 */
+                constructor();
+                /**
+                 * Init window tag
+                 * - `shown`: false
+                 * - `isMaxi`: false
+                 * - `minimizable`: false
+                 * - `resizable`: true
+                 * - `apptitle`: Untitled
                  *
                  * @protected
-                 * @returns
-                 * @memberof SwitchTag
-                 */
-                protected layout(): {
-                    el: string;
-                    ref: string;
-                }[];
-                /**
-                 * Init the tag:
-                 * - switch is turn off
-                 * - switch is enabled
-                 *
-                 * @protected
-                 * @memberof SwitchTag
+                 * @memberof WindowTag
                  */
                 protected init(): void;
                 /**
                  * Do nothing
                  *
                  * @protected
-                 * @memberof SwitchTag
+                 * @memberof WindowTag
                  */
                 protected calibrate(): void;
                 /**
@@ -8954,9 +8261,531 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {*} [d]
-                 * @memberof SwitchTag
+                 * @memberof WindowTag
                  */
                 protected reload(d?: any): void;
+                /**
+                 * Setter: Set the window width
+                 *
+                 * Getter: Get the window width
+                 *
+                 * @memberof WindowTag
+                 */
+                set width(v: number);
+                get width(): number;
+                /**
+                 * Setter: Set the window height
+                 *
+                 * Getter: Get the window height
+                 *
+                 * @memberof WindowTag
+                 */
+                set height(v: number);
+                get height(): number;
+                /**
+                 * Setter: enable/disable window minimizable
+                 *
+                 * getter: Check whether the window is minimizable
+                 *
+                 * @memberof WindowTag
+                 */
+                set minimizable(v: boolean);
+                get minimizable(): boolean;
+                /**
+                 * Setter: enable/disable widow resizable
+                 *
+                 * Getter: Check whether the current window is resizable
+                 *
+                 * @memberof WindowTag
+                 */
+                set resizable(v: boolean);
+                get resizable(): boolean;
+                /**
+                 * Setter: Set the window title
+                 *
+                 * Getter: Get window title
+                 *
+                 * @memberof WindowTag
+                 */
+                set apptitle(v: string | FormattedString);
+                get apptitle(): string | FormattedString;
+                /**
+                 * Resize all the children of the window based on its width and height
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
+                private resize;
+                /**
+                 * Mount the window tag and bind basic events
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
+                protected mount(): void;
+                /**
+                 * Set the window size
+                 *
+                 * @private
+                 * @param {GenericObject<any>} o format: `{ w: window_width, h: window_height }`
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
+                private setsize;
+                /**
+                 * Enable to drag window on the virtual desktop
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
+                private enable_dragging;
+                /**
+                 * Enable window resize, this only works if the window
+                 * is resizable
+                 *
+                 * @private
+                 * @memberof WindowTag
+                 */
+                private enable_resize;
+                /**
+                 * Maximize the window or restore its previous width, height,
+                 * and position
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof WindowTag
+                 */
+                private toggle_window;
+                /**
+                 * Layout definition of the window tag
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof WindowTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * A tile layout organize it child elements
+             * in a fixed horizontal or vertical direction.
+             *
+             * The size of each child element is attributed based
+             * on its configuration of automatically based on the
+             * remaining space in the layout
+             *
+             *
+             * @export
+             * @class TileLayoutTag
+             * @extends {AFXTag}
+             */
+            class TileLayoutTag extends AFXTag {
+                /**
+                 *C reates an instance of TileLayoutTag.
+                 * @memberof TileLayoutTag
+                 */
+                constructor();
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof TileLayoutTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof TileLayoutTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Setter: Set the name of the tile container, should be: `hbox` or `vbox`
+                 *
+                 * Getter: Get the name of the tile container
+                 *
+                 * @memberof TileLayoutTag
+                 */
+                set name(v: string);
+                get name(): string;
+                /**
+                 * Setter:
+                 *
+                 * SET the layout direction, should be:
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
+                 *
+                 * Getter:
+                 *
+                 * Get layout direction
+                 *
+                 * @memberof TileLayoutTag
+                 */
+                set dir(v: "row" | "column");
+                get dir(): "row" | "column";
+                /**
+                 * Mount the element
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
+                protected mount(): void;
+                /**
+                 * re-organize the layout
+                 *
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
+                calibrate(): void;
+                /**
+                 * Organize the layout in horizontal direction, only work when
+                 * the layout direction set to horizontal
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
+                private hcalibrate;
+                /**
+                 * Organize the layout in vertical direction, only work when
+                 * the layout direction set to vertical
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof TileLayoutTag
+                 */
+                private vcalibrate;
+                /**
+                 * Layout definition
+                 *
+                 * @returns
+                 * @memberof TileLayoutTag
+                 */
+                layout(): {
+                    el: string;
+                    ref: string;
+                }[];
+            }
+            /**
+             * A HBox organize its child elements in horizontal direction
+             *
+             * @export
+             * @class HBoxTag
+             * @extends {TileLayoutTag}
+             */
+            class HBoxTag extends TileLayoutTag {
+                /**
+                 * Creates an instance of HBoxTag.
+                 * @memberof HBoxTag
+                 */
+                constructor();
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof HBoxTag
+                 */
+                protected mount(): void;
+            }
+            /**
+             * A VBox organize its child elements in vertical direction
+             *
+             * @export
+             * @class VBoxTag
+             * @extends {TileLayoutTag}
+             */
+            class VBoxTag extends TileLayoutTag {
+                /**
+                 *Creates an instance of VBoxTag.
+                 * @memberof VBoxTag
+                 */
+                constructor();
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof VBoxTag
+                 */
+                protected mount(): void;
+            }
+        }
+    }
+}
+/// <reference types="jquery" />
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * This tag define a basic button and its behavior
+             *
+             * @export
+             * @class ButtonTag
+             * @extends {AFXTag}
+             */
+            class ButtonTag extends AFXTag {
+                /**
+                 * Variable hold the button click callback handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<JQuery.MouseEventBase>}
+                 * @memberof ButtonTag
+                 */
+                private _onbtclick;
+                /**
+                 * Custom user data
+                 *
+                 * @type {GenericObject<any>}
+                 * @memberof ButtonTag
+                 */
+                data: GenericObject<any>;
+                /**
+                 *Creates an instance of ButtonTag.
+                 * @memberof ButtonTag
+                 */
+                constructor();
+                /**
+                 * Set the click callback handle for the target button
+                 *
+                 * @memberof ButtonTag
+                 */
+                set onbtclick(v: TagEventCallback<JQuery.MouseEventBase>);
+                /**
+                 * Set the path to the button icon, the path should be
+                 * a VFS file path
+                 *
+                 * @memberof ButtonTag
+                 */
+                set icon(v: string);
+                /**
+                 * Set the icon class to the button, this property
+                 * allows to style the button icon using CSS
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass(v: string);
+                /**
+                 * Setter: Set the text of the button
+                 *
+                 * Getter: Get the current button test
+                 *
+                 * @memberof ButtonTag
+                 */
+                set text(v: string | FormattedString);
+                get text(): string | FormattedString;
+                /**
+                 * Setter: Enable or disable the button
+                 *
+                 * Getter: Get the `enable` property of the button
+                 *
+                 * @memberof ButtonTag
+                 */
+                set enable(v: boolean);
+                get enable(): boolean;
+                /**
+                 * Setter: set or remove the attribute `selected` of the button
+                 *
+                 * Getter: check whether the attribute `selected` of the button is set
+                 *
+                 * @memberof ButtonTag
+                 */
+                set selected(v: boolean);
+                get selected(): boolean;
+                /**
+                 * Setter: activate or deactivate the toggle mode of the button
+                 *
+                 * Getter: Check whether the button is in toggle mode
+                 *
+                 * @memberof ButtonTag
+                 */
+                set toggle(v: boolean);
+                get toggle(): boolean;
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
+                protected mount(): void;
+                /**
+                 *  Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
+                protected init(): void;
+                /**
+                 * Re-calibrate the button, do nothing in this tag
+                 *
+                 * @protected
+                 * @memberof ButtonTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Update the current tag, do nothing in this tag
+                 *
+                 * @param {*} [d]
+                 * @memberof ButtonTag
+                 */
+                reload(d?: any): void;
+                /**
+                 * Button layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof ButtonTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * Tag that define system calendar widget
+             *
+             * @export
+             * @class CalendarTag
+             * @extends {AFXTag}
+             */
+            class CalendarTag extends AFXTag {
+                /**
+                 * The current selected day
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
+                private _day;
+                /**
+                 * The current selected month
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
+                private _month;
+                /**
+                 * The current selected year
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof CalendarTag
+                 */
+                private _year;
+                /**
+                 * The current selected date object
+                 *
+                 * @private
+                 * @type {Date}
+                 * @memberof CalendarTag
+                 */
+                private _selectedDate;
+                /**
+                 * placeholder for date select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<Date>}
+                 * @memberof CalendarTag
+                 */
+                private _ondateselect;
+                /**
+                 *Creates an instance of CalendarTag.
+                 * @memberof CalendarTag
+                 */
+                constructor();
+                /**
+                 * Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof CalendarTag
+                 */
+                protected init(): void;
+                /**
+                 * Update the current tag, doing nothing in this tag
+                 *
+                 * @protected
+                 * @param {*} [d] any data object
+                 * @memberof CalendarTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Get the current selected date in the widget
+                 *
+                 * @readonly
+                 * @type {Date}
+                 * @memberof CalendarTag
+                 */
+                get selectedDate(): Date;
+                /**
+                 * Set the date select event callback handle for the widget
+                 *
+                 * @memberof CalendarTag
+                 */
+                set ondateselect(v: TagEventCallback<Date>);
+                /**
+                 * Mount the current widget to the DOM tree
+                 *
+                 * @protected
+                 * @memberof CalendarTag
+                 */
+                protected mount(): void;
+                /**
+                 * This function triggers the date select event
+                 *
+                 * @private
+                 * @param {TagEventType} e AFX tag event data [[TagEventType]]
+                 * @returns {void}
+                 * @memberof CalendarTag
+                 */
+                private dateselect;
+                /**
+                 * Calibrate the layout of the tag
+                 *
+                 * @protected
+                 * @memberof CalendarTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Display the previous month of the current month
+                 *
+                 * @private
+                 * @memberof CalendarTag
+                 */
+                private prevmonth;
+                /**
+                 * Display the next month of the current month
+                 *
+                 * @private
+                 * @returns
+                 * @memberof CalendarTag
+                 */
+                private nextmonth;
+                /**
+                 * Visualize the calendar base on input date
+                 *
+                 * @private
+                 * @param {Date} date
+                 * @memberof CalendarTag
+                 */
+                private calendar;
+                /**
+                 * Layout definition of the widget
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof CalendarTag
+                 */
+                protected layout(): TagLayoutType[];
             }
         }
     }
@@ -9587,337 +9416,6 @@ declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
-             * This class defines basic AFX label tag.
-             * A label contains a text and an icon (optional)
-             *
-             * @export
-             * @class LabelTag
-             * @extends {AFXTag}
-             */
-            class LabelTag extends AFXTag {
-                /**
-                 * placeholder of the text to be displayed
-                 *
-                 * @private
-                 * @type {(string | FormattedString)}
-                 * @memberof LabelTag
-                 */
-                private _text;
-                /**
-                 *Creates an instance of LabelTag.
-                 * @memberof LabelTag
-                 */
-                constructor();
-                /**
-                 * this implementation does nothing in this tag
-                 *
-                 * @protected
-                 * @memberof LabelTag
-                 */
-                protected mount(): void;
-                /**
-                 * Refresh the text in the label
-                 *
-                 * @protected
-                 * @param {*} d
-                 * @memberof LabelTag
-                 */
-                protected reload(d: any): void;
-                /**
-                 * Reset to default some property value
-                 *
-                 * @protected
-                 * @memberof LabelTag
-                 */
-                protected init(): void;
-                /**
-                 * This implementation of the function does nothing
-                 *
-                 * @protected
-                 * @memberof LabelTag
-                 */
-                protected calibrate(): void;
-                /**
-                 * Set the VFS path of the label icon
-                 *
-                 * @memberof LabelTag
-                 */
-                set icon(v: string);
-                /**
-                 * Set the CSS class of the label icon
-                 *
-                 * @memberof LabelTag
-                 */
-                set iconclass(v: string);
-                /**
-                 * Setter: Set the text of the label
-                 *
-                 * Getter: Get the text displayed on the label
-                 *
-                 * @memberof LabelTag
-                 */
-                set text(v: string | FormattedString);
-                get text(): string | FormattedString;
-                /**
-                 * Lqbel layout definition
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof LabelTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * An overlay tag is a layout tag that alway stay on top of
-             * the virtual desktop environment. Tile layout elements ([[VBoxTag]], [[HboxTag]])
-             * can be used inside this tag to compose elements
-             *
-             * @export
-             * @class OverlayTag
-             * @extends {AFXTag}
-             */
-            class OverlayTag extends AFXTag {
-                /**
-                 * Tag width placeholder
-                 *
-                 * @private
-                 * @type {string}
-                 * @memberof OverlayTag
-                 */
-                private _width;
-                /**
-                 * Tag height place holder
-                 *
-                 * @private
-                 * @type {string}
-                 * @memberof OverlayTag
-                 */
-                private _height;
-                /**
-                 *Creates an instance of OverlayTag.
-                 * @memberof OverlayTag
-                 */
-                constructor();
-                /**
-                 * Put the tag on top of the virtual desktop environment
-                 *
-                 * @protected
-                 * @memberof OverlayTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof OverlayTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Setter:
-                 *
-                 * Set the width of the tag, the tag width should be in form of:
-                 * `100px` of `80%`
-                 *
-                 * Getter:
-                 *
-                 * Get the tag width
-                 *
-                 * @memberof OverlayTag
-                 */
-                set width(v: string);
-                get width(): string;
-                /**
-                 * Setter:
-                 *
-                 * Set the tag height, the tag height should be in form of:
-                 * `100px` of `80%`
-                 *
-                 * Getter:
-                 *
-                 * Get the tag height
-                 *
-                 * @memberof OverlayTag
-                 */
-                set height(v: string);
-                get height(): string;
-                /**
-                 * Calibrate the element when mounting
-                 *
-                 * @protected
-                 * @returns {void}
-                 * @memberof OverlayTag
-                 */
-                protected mount(): void;
-                /**
-                 * Calibrate the width and height of the tag
-                 *
-                 * @returns {void}
-                 * @memberof OverlayTag
-                 */
-                calibrate(): void;
-                /**
-                 * Layout definition of the tag
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof OverlayTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
-             * A slider or track bar is a graphical control element with which
-             * a user may set a value by moving an indicator, usually horizontally
-             *
-             * @class SliderTag
-             * @extends {AFXTag}
-             */
-            class SliderTag extends AFXTag {
-                /**
-                 * Slider max value placeholder
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof SliderTag
-                 */
-                private _max;
-                /**
-                 * Current slider value placeholder
-                 *
-                 * @private
-                 * @type {number}
-                 * @memberof SliderTag
-                 */
-                private _value;
-                /**
-                 * Placeholder of the on change event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<number>}
-                 * @memberof SliderTag
-                 */
-                private _onchange;
-                /**
-                 * Placeholder of the on changing event handle
-                 *
-                 * @private
-                 * @type {TagEventCallback<number>}
-                 * @memberof SliderTag
-                 */
-                private _onchanging;
-                /**
-                 * Creates an instance of SliderTag.
-                 * @memberof SliderTag
-                 */
-                constructor();
-                /**
-                 *  Init the default value of the slider:
-                 * - `max`: 100
-                 * - `value`: 0
-                 *
-                 * @protected
-                 * @memberof SliderTag
-                 */
-                protected init(): void;
-                /**
-                 * Do nothing
-                 *
-                 * @protected
-                 * @param {*} [d]
-                 * @memberof SliderTag
-                 */
-                protected reload(d?: any): void;
-                /**
-                 * Set value change event handle.
-                 * This handle will be triggered when the
-                 * slider indicator is released
-                 *
-                 * @memberof SliderTag
-                 */
-                set onvaluechange(f: TagEventCallback<number>);
-                /**
-                 * Set value changing event handle.
-                 * This handle is triggered when moving the
-                 * slider indicator
-                 *
-                 * @memberof SliderTag
-                 */
-                set onvaluechanging(f: TagEventCallback<number>);
-                /**
-                 * Setter: Enable/disable the slider
-                 *
-                 * Getter: Check whether the slider is enabled
-                 *
-                 * @memberof SliderTag
-                 */
-                set enable(v: boolean);
-                get enable(): boolean;
-                /**
-                 * Setter: Set the slider value
-                 *
-                 * Getter: Get the current slider value
-                 *
-                 * @memberof SliderTag
-                 */
-                set value(v: number);
-                get value(): number;
-                /**
-                 * Setter: Set the maximum value of the slider
-                 *
-                 * Getter: Get the maximum value of the slider
-                 *
-                 * @memberof SliderTag
-                 */
-                set max(v: number);
-                get max(): number;
-                /**
-                 * Mount the tag and bind some basic events
-                 *
-                 * @protected
-                 * @memberof SliderTag
-                 */
-                protected mount(): void;
-                /**
-                 * Calibrate the slide based on its value and max value
-                 *
-                 * @memberof SliderTag
-                 */
-                calibrate(): void;
-                /**
-                 * enable dragging on the slider indicator
-                 *
-                 * @private
-                 * @memberof SliderTag
-                 */
-                private enable_dragging;
-                /**
-                 * Layout definition
-                 *
-                 * @protected
-                 * @returns {TagLayoutType[]}
-                 * @memberof SliderTag
-                 */
-                protected layout(): TagLayoutType[];
-            }
-        }
-    }
-}
-declare namespace OS {
-    namespace GUI {
-        namespace tag {
-            /**
              * A system panel contains the following elements:
              * - Spotlight to access to applications menu
              * - Current focused application menu
@@ -10081,6 +9579,508 @@ declare namespace OS {
                  * @memberof SystemPanelTag
                  */
                 protected mount(): void;
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        /**
+         * Tab container data type definition
+         *
+         * @export
+         * @interface TabContainerTabType
+         */
+        interface TabContainerTabType {
+            /**
+             * Reference to the DOM element of the current container
+             *
+             * @type {HTMLElement}
+             * @memberof TabContainerTabType
+             */
+            container: HTMLElement;
+            [propName: string]: any;
+        }
+        namespace tag {
+            /**
+             * A tab container allows to attach each tab on a [[TabBarTag]]
+             * with a container widget. The attached container widget should be
+             * composed inside a [[HBoxTag]]
+             *
+             * The tab bar in a tab container can be configured to display tabs
+             * in horizontal (row) or vertical (column) order. Default to vertical order
+             *
+             * Once a tab is selected, its attached container will be shown
+             *
+             * @export
+             * @class TabContainerTag
+             * @extends {AFXTag}
+             */
+            class TabContainerTag extends AFXTag {
+                /**
+                 * Reference to the currently selected tab DOM element
+                 *
+                 * @private
+                 * @type {TabContainerTabType}
+                 * @memberof TabContainerTag
+                 */
+                private _selectedTab;
+                /**
+                 * Placeholder of the tab select event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<TabContainerTabType>}
+                 * @memberof TabContainerTag
+                 */
+                private _ontabselect;
+                /**
+                 *Creates an instance of TabContainerTag.
+                 * @memberof TabContainerTag
+                 */
+                constructor();
+                /**
+                 * Init the tab bar direction to vertical (column)
+                 *
+                 * @protected
+                 * @memberof TabContainerTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof TabContainerTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * Set the tab select event handle
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set ontabselect(f: TagEventCallback<TabContainerTabType>);
+                /**
+                 * Get all tab items in the container
+                 *
+                 * @readonly
+                 * @type {TabContainerTabType[]}
+                 * @memberof TabContainerTag
+                 */
+                get tabs(): TabContainerTabType[];
+                /**
+                 * Select a tab by its index
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set selectedIndex(i: number);
+                /**
+                 * Setter:
+                 *
+                 * Set the tab bar direction:
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
+                 *
+                 * Getter:
+                 *
+                 * Get the tab bar direction
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set dir(v: "row" | "column");
+                get dir(): "row" | "column";
+                /**
+                 * Setter:
+                 *
+                 * Select a tab using the its tab data type.
+                 * This will show the attached container to the tab
+                 *
+                 * Getter:
+                 *
+                 * Get the tab data of the currently selected Tab
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set selectedTab(v: TabContainerTabType);
+                get selectedTab(): TabContainerTabType;
+                /**
+                 * Set the tab bar width, this function only
+                 * works when the tab bar direction is set to
+                 * `row`
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set tabbarwidth(v: number);
+                /**
+                 * Set the tab bar height, this function only works
+                 * when the tab bar direction is set to `column`
+                 *
+                 * @memberof TabContainerTag
+                 */
+                set tabbarheight(v: number);
+                /**
+                 * Add a new tab with container to the container
+                 *
+                 * item should be in the following format:
+                 *
+                 * ```ts
+                 * {
+                 *  text: string,
+                 *  icon?: string,
+                 *  iconclass?: string,
+                 *  container: HTMLElement
+                 * }
+                 * ```
+                 *
+                 * @param {GenericObject<any>} item tab descriptor
+                 * @param {boolean} insert insert the tab content to the container ?
+                 * @returns {ListViewItemTag} the tab DOM element
+                 * @memberof TabContainerTag
+                 */
+                addTab(item: GenericObject<any>, insert: boolean): ListViewItemTag;
+                /**
+                 * Remove a tab from the container
+                 *
+                 * @param {ListViewItemTag} tab the tab item to be removed
+                 * @memberof TabContainerTag
+                 */
+                removeTab(tab: ListViewItemTag): void;
+                /**
+                 * Mount the tag and bind basic events
+                 *
+                 * @protected
+                 * @memberof TabContainerTag
+                 */
+                protected mount(): void;
+                /**
+                 * calibrate the  tab container
+                 *
+                 * @memberof TabContainerTag
+                 */
+                calibrate(): void;
+                /**
+                 * Layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof TabContainerTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * Definition of system file view widget
+             *
+             * @export
+             * @class FileViewTag
+             * @extends {AFXTag}
+             */
+            class FileViewTag extends AFXTag {
+                /**
+                 * placeholder for file select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.FileInfoType>}
+                 * @memberof FileViewTag
+                 */
+                private _onfileselect;
+                /**
+                 * placeholder for file open event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.FileInfoType>}
+                 * @memberof FileViewTag
+                 */
+                private _onfileopen;
+                /**
+                 * Reference to the currently selected file meta-data
+                 *
+                 * @private
+                 * @type {API.FileInfoType}
+                 * @memberof FileViewTag
+                 */
+                private _selectedFile;
+                /**
+                 * Data placeholder of the current working directory
+                 *
+                 * @private
+                 * @type {API.FileInfoType[]}
+                 * @memberof FileViewTag
+                 */
+                private _data;
+                /**
+                 * The path of the current working directory
+                 *
+                 * @private
+                 * @type {string}
+                 * @memberof FileViewTag
+                 */
+                private _path;
+                /**
+                 * Header definition of the widget grid view
+                 *
+                 * @private
+                 * @type {(GenericObject<string | number>[])}
+                 * @memberof FileViewTag
+                 */
+                private _header;
+                /**
+                 * placeholder for the user-specified meta-data fetch function
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
+                private _fetch;
+                /**
+                 *Creates an instance of FileViewTag.
+                 * @memberof FileViewTag
+                 */
+                constructor();
+                /**
+                 * Init the widget before mounting
+                 *
+                 * @protected
+                 * @memberof FileViewTag
+                 */
+                protected init(): void;
+                /**
+                 * Update the current widget, do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof FileViewTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                 * set the function that allows to fetch file entries.
+                 * This handle function should return a promise on
+                 * an arry of [[API.FileInfoType]]
+                 *
+                 * @memberof FileViewTag
+                 */
+                set fetch(v: (p: string) => Promise<API.FileInfoType[]>);
+                /**
+                 * set the callback handle for the file select event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 *
+                 * @memberof FileViewTag
+                 */
+                set onfileselect(e: TagEventCallback<API.FileInfoType>);
+                /**
+                 set the callback handle for the file open event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 *
+                 * @memberof FileViewTag
+                 */
+                set onfileopen(e: TagEventCallback<API.FileInfoType>);
+                /**
+                 * Setter:
+                 *
+                 * chang the view of the widget, there are three different views
+                 * - `icon`
+                 * - `list`
+                 * - `tree`
+                 *
+                 * Getter:
+                 *
+                 * Get the current view setting of the widget
+                 *
+                 * @memberof FileViewTag
+                 */
+                set view(v: string);
+                get view(): string;
+                /**
+                 * Setter:
+                 *
+                 * Turn on/off the changing current working directory feature
+                 * of the widget when a directory is double clicked. If enabled,
+                 * the widget will use the configured [[fetch]] function to query
+                 * the content of the selected directory
+                 *
+                 * Getter:
+                 *
+                 * check whether changing current working directory feature
+                 * is enabled
+                 *
+                 * @memberof FileViewTag
+                 */
+                set chdir(v: boolean);
+                get chdir(): boolean;
+                /**
+                 * Setter : Enable or disable the status bar of the widget
+                 *
+                 * Getter: Check whether the status bar is enabled
+                 *
+                 * @memberof FileViewTag
+                 */
+                set status(v: boolean);
+                get status(): boolean;
+                /**
+                 * Setter:
+                 *
+                 * Allow the widget to show or hide hidden file
+                 *
+                 * Getter:
+                 *
+                 * Check whether the hidden file should be shown in
+                 * the widget
+                 *
+                 * @memberof FileViewTag
+                 */
+                set showhidden(v: boolean);
+                get showhidden(): boolean;
+                /**
+                 * Get the current selected file
+                 *
+                 * @readonly
+                 * @type {API.FileInfoType}
+                 * @memberof FileViewTag
+                 */
+                get selectedFile(): API.FileInfoType;
+                /**
+                 * Setter:
+                 *
+                 * Set the path of the current working directory.
+                 * When called the widget will refresh the current
+                 * working directory using the configured [[fetch]]
+                 * function
+                 *
+                 * Getter:
+                 *
+                 * Get the path of the current working directory
+                 *
+                 * @memberof FileViewTag
+                 */
+                set path(v: string);
+                get path(): string;
+                /**
+                 * Setter: Set the data of the current working directory
+                 *
+                 * Getter: Get the data of the current working directory
+                 *
+                 * @memberof FileViewTag
+                 */
+                set data(v: API.FileInfoType[]);
+                get data(): API.FileInfoType[];
+                /**
+                 * Set the file drag and drop event handle. This allows application
+                 * to define custom behavior of the event
+                 *
+                 * @memberof FileViewTag
+                 */
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag | ListViewItemTag>>);
+                /**
+                 * Sort file by its type
+                 *
+                 * @private
+                 * @param {API.FileInfoType} a
+                 * @param {API.FileInfoType} b
+                 * @return {*}  {number}
+                 * @memberof FileViewTag
+                 */
+                private sortByType;
+                /**
+                 * sort file by its name
+                 *
+                 * @private
+                 * @param {API.FileInfoType} a first file meta-data
+                 * @param {API.FileInfoType} b second file meta-data
+                 * @returns {number}
+                 * @memberof FileViewTag
+                 */
+                private sortByName;
+                /**
+                 * calibrate the widget layout
+                 *
+                 * @memberof FileViewTag
+                 */
+                calibrate(): void;
+                /**
+                 * Refresh the list view of the widget. This function
+                 * is called when the view of the widget changed to `icon`
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
+                private refreshList;
+                /**
+                 * Refresh the grid view of the widget, this function is called
+                 * when the view of the widget set to `list`
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
+                private refreshGrid;
+                /**
+                 * Refresh the Treeview of the widget, this function is called
+                 * when the view of the widget set to `tree`
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
+                private refreshTree;
+                /**
+                 * Create the tree data from the list of input
+                 * file meta-data
+                 *
+                 * @private
+                 * @param {API.FileInfoType[]} data list of file meta-data
+                 * @returns {TreeViewDataType[]}
+                 * @memberof FileViewTag
+                 */
+                private getTreeData;
+                /**
+                 * Refresh data of the current widget view
+                 *
+                 * @private
+                 * @returns {void}
+                 * @memberof FileViewTag
+                 */
+                private refreshData;
+                /**
+                 * Switch between three view options
+                 *
+                 * @private
+                 * @memberof FileViewTag
+                 */
+                private switchView;
+                /**
+                 * This function triggers the file select event
+                 *
+                 * @private
+                 * @param {API.FileInfoType} e selected file meta-data
+                 * @memberof FileViewTag
+                 */
+                private fileselect;
+                /**
+                 * This function triggers the file open event
+                 *
+                 * @private
+                 * @param {API.FileInfoType} e selected file meta-data
+                 * @memberof FileViewTag
+                 */
+                private filedbclick;
+                /**
+                 * Mount the widget in the DOM tree
+                 *
+                 * @protected
+                 * @memberof FileViewTag
+                 */
+                protected mount(): void;
+                /**
+                 * Layout definition of the widget
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof FileViewTag
+                 */
+                protected layout(): TagLayoutType[];
             }
         }
     }

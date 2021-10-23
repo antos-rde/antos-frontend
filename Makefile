@@ -4,6 +4,9 @@ BUILDDIR?=/opt/www/htdocs/os
 DOCDIR?=/opt/www/htdocs/doc/antos
 BLUE=\033[1;34m
 NC=\033[0m
+TSC=./node_modules/typescript/bin/tsc
+UGLIFYJS=./node_modules/terser/bin/terser
+UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
 VERSION=1.2.1
 
@@ -68,7 +71,7 @@ lite: build_javascripts build_themes build_packages
 
 ts:
 	-rm -rf dist
-	tsc -p tsconfig.json
+	$(TSC) -p tsconfig.json
 	cat `find dist/core/ -name "*.d.ts"` > d.ts/antos.d.ts
 	rm `find dist/ -name "*.d.ts"`
 	cat d.ts/core.d.ts d.ts/jquery.d.ts d.ts/antos.d.ts > /tmp/corelib.d.ts
@@ -85,7 +88,7 @@ standalone_tags: ts
 		rm "$${f}";\
 	done
 	echo "var Ant=this;" >> dist/afx.js
-	terser dist/afx.js --compress --mangle --output $(BUILDDIR)/afx.js
+	$(UGLIFYJS) dist/afx.js --compress --mangle --output $(BUILDDIR)/afx.js
 	# standalone theme
 
 	@for f in src/themes/system/afx-*.css; do \
@@ -101,7 +104,7 @@ standalone_tags: ts
 			(cat "$${f}"; echo) >> $(BUILDDIR)/afx.css; \
 		fi;\
 	done
-	# uglifycss  --output $(BUILDDIR)/afx.css $(BUILDDIR)/afx.css
+	# $(UGLIFYCSS)  --output $(BUILDDIR)/afx.css $(BUILDDIR)/afx.css
 	rm -r dist/core
 
 build_javascripts: ts
@@ -173,27 +176,27 @@ package:
 pkgar:
 	read -r -p "Enter package name: " PKG;\
 	echo $$PKG | make package &&\
-	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  terser $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
-	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
+	test -f $(BUILDDIR)/packages/$$PKG/main.js  &&  $(UGLIFYJS) $(BUILDDIR)/packages/$$PKG/main.js --compress --mangle --output $(BUILDDIR)/packages/$$PKG/main.js;\
+	test -f $(BUILDDIR)/packages/$$PKG/main.css  &&  $(UGLIFYCSS) --output $(BUILDDIR)/packages/$$PKG/main.css $(BUILDDIR)/packages/$$PKG/main.css;\
 	cd $(BUILDDIR)/packages/$$PKG && zip -r "$$PKG.zip" ./ ; \
 	cd ../../ && (test -d repo/$$PKG || mkdir repo/$$PKG) && mv packages/$$PKG/"$$PKG.zip" repo/$$PKG && touch repo/$$PKG/$$PKG.md && rm -r packages/$$PKG
 
 uglify:
-	# sudo npm install terser -g
+	# sudo npm install $(UGLIFYJS) -g
 	# 
-	terser $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
+	$(UGLIFYJS) $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
 	# uglify tags
-	# npm install uglifycss -g
+	# npm install $(UGLIFYCSS) -g
 	# uglify the css
-	uglifycss  --output $(BUILDDIR)/resources/themes/antos_light/antos_light.css $(BUILDDIR)/resources/themes/antos_light/antos_light.css
-	uglifycss  --output $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css
-	uglifycss  --output $(BUILDDIR)/resources/themes/system/system.css $(BUILDDIR)/resources/themes/system/system.css
+	$(UGLIFYCSS)  --output $(BUILDDIR)/resources/themes/antos_light/antos_light.css $(BUILDDIR)/resources/themes/antos_light/antos_light.css
+	$(UGLIFYCSS)  --output $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css $(BUILDDIR)/resources/themes/antos_dark/antos_dark.css
+	$(UGLIFYCSS)  --output $(BUILDDIR)/resources/themes/system/system.css $(BUILDDIR)/resources/themes/system/system.css
 	#uglify each packages
 
 	for d in $(packages); do\
 		echo "Uglifying $$d";\
-		test -f $(BUILDDIR)/packages/$$d/main.js  &&  terser $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
-		test -f $(BUILDDIR)/packages/$$d/main.css  &&  uglifycss --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
+		test -f $(BUILDDIR)/packages/$$d/main.js  &&  $(UGLIFYJS) $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
+		test -f $(BUILDDIR)/packages/$$d/main.css  &&  $(UGLIFYCSS) --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
 	done
 
 ar:

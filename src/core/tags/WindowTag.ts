@@ -108,7 +108,7 @@ namespace OS {
                  * @protected
                  * @memberof WindowTag
                  */
-                protected calibrate(): void {}
+                protected calibrate(): void { }
 
                 /**
                  * Do nothing
@@ -117,7 +117,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof WindowTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * Setter: Set the window width
@@ -245,18 +245,18 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 protected mount(): void {
-                    this.contextmenuHandle = function (e) {};
-                    $(this.refs["minbt"]).on("click",(e) => {
+                    this.contextmenuHandle = function (e) { };
+                    $(this.refs["minbt"]).on("click", (e) => {
                         return this.observable.trigger("hide", {
                             id: this.aid,
                         });
                     });
 
-                    $(this.refs["maxbt"]).on("click",(e) => {
+                    $(this.refs["maxbt"]).on("click", (e) => {
                         return this.toggle_window();
                     });
 
-                    $(this.refs["closebt"]).on("click",(e) => {
+                    $(this.refs["closebt"]).on("click", (e) => {
                         return this.observable.trigger("exit", {
                             id: this.aid,
                         });
@@ -276,8 +276,8 @@ namespace OS {
                             id: this.aid,
                         });
                     });
-
-                    $(this.refs["dragger"]).on("dblclick",(e) => {
+                    //$(this.refs.win_overlay).css("background-color", "red");
+                    $(this.refs["dragger"]).on("dblclick", (e) => {
                         return this.toggle_window();
                     });
 
@@ -290,11 +290,13 @@ namespace OS {
                             .css("z-index", Ant.OS.GUI.zindex)
                             .removeClass("unactive");
                         this._shown = true;
+                        $(this.refs.win_overlay).hide();
                     });
 
                     this.observable.on("blur", () => {
                         this._shown = false;
-                        return $(this).addClass("unactive");
+                        $(this).addClass("unactive");
+                        $(this.refs.win_overlay).show();
                     });
                     this.observable.on("hide", () => {
                         $(this).hide();
@@ -408,12 +410,10 @@ namespace OS {
                         let w = $(this).width();
                         let h = $(this).height();
                         $(this.refs.win_overlay).show();
-                        if(target != this.refs.grip_bottom)
-                        {
-                            w +=  e.clientX - offset.left;
+                        if (target != this.refs.grip_bottom) {
+                            w += e.clientX - offset.left;
                         }
-                        if(target != this.refs.grip_right)
-                        {
+                        if (target != this.refs.grip_right) {
                             h += e.clientY - offset.top;
                         }
                         w = w < 100 ? 100 : w;

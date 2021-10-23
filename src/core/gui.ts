@@ -992,15 +992,9 @@ namespace OS {
                 //     desktop[0].set "selected", -1
 
                 $(desktop).on("click", function (e) {
-                    let el = $(e.target).parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    el = el.parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    if (el[0] !== desktop) {
+                    let el = $(e.target).closest("afx-app-window")[0];
+                    if(el)
+                    {
                         return;
                     }
                     desktop.unselect();
