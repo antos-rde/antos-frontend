@@ -8238,6 +8238,18 @@ declare namespace OS {
                  */
                 constructor();
                 /**
+                 * blur overlay: If active the window overlay will be shown
+                 * on inactive (blur event)
+                 *
+                 * Setter: Enable the switch
+                 *
+                 * Getter: Check whether the switch is enabled
+                 *
+                 * @memberof WindowTag
+                 */
+                set blur_overlay(v: boolean);
+                get blur_overlay(): boolean;
+                /**
                  * Init window tag
                  * - `shown`: false
                  * - `isMaxi`: false

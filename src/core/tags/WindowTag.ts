@@ -81,6 +81,23 @@ namespace OS {
                 }
 
                 /**
+                 * blur overlay: If active the window overlay will be shown
+                 * on inactive (blur event)
+                 * 
+                 * Setter: Enable the switch
+                 *
+                 * Getter: Check whether the switch is enabled
+                 *
+                 * @memberof WindowTag
+                 */
+                set blur_overlay(v: boolean) {
+                    this.attsw(v, "blur-overlay");
+                }
+                get blur_overlay(): boolean {
+                    return this.hasattr("blur-overlay");
+                }
+
+                /**
                  * Init window tag
                  * - `shown`: false
                  * - `isMaxi`: false
@@ -296,7 +313,8 @@ namespace OS {
                     this.observable.on("blur", () => {
                         this._shown = false;
                         $(this).addClass("unactive");
-                        $(this.refs.win_overlay).show();
+                        if(this.blur_overlay)
+                            $(this.refs.win_overlay).show();
                     });
                     this.observable.on("hide", () => {
                         $(this).hide();
