@@ -388,7 +388,8 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return;
                         }
-                        v.text = v.filename;
+                        if(!v.text)
+                            v.text = v.filename;
                         if (v.text.length > 10) {
                             v.text = v.text.substring(0, 9) + "...";
                         }
@@ -412,7 +413,8 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return;
                         }
-                        v.text = v.filename;
+                        if(!v.text)
+                            v.text = v.filename;
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
                         const row = [
                             v,
@@ -467,7 +469,8 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return undefined;
                         }
-                        v.text = v.filename;
+                        if(!v.text)
+                            v.text = v.filename;
                         if (v.type === "dir") {
                             v.nodes = [];
                             v.open = false;

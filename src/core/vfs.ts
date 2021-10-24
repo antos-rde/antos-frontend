@@ -1356,11 +1356,17 @@ namespace OS {
                 constructor(path: string) {
                     super(path);
                     if (this.basename) {
-                        let v: any = OS.setting.system.packages[this.basename];
-                        v.type = "app";
-                        v.mime = "antos/app";
-                        v.size = 0;
-                        this.info = v as FileInfoType;
+                        let v = OS.setting.system.packages[this.basename];
+                        this.info = {} as FileInfoType;
+                        for(const p in v)
+                        {
+                            this.info[p] = v[p];
+                        }
+
+                        this.info.type = "app";
+                        this.info.mime = "antos/app";
+                        this.info.size = 0;
+                        this.info.text = v.name;
                     }
                     this.ready = true;
                 }
