@@ -257,10 +257,7 @@ namespace OS {
                         return false;
                     });
                 } catch (e) {
-                    return announcer.osfail(
-                        __("Error find app by mimes {0}", mime),
-                        e
-                    );
+                    return false;
                 }
             };
             let arr: string[];
