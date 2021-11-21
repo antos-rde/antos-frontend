@@ -1216,38 +1216,28 @@ namespace OS {
                 o.on("change", function () {
                     const files = (o[0] as HTMLInputElement).files;
                     const n_files = files.length;
-                    const tasks = [];
                     if (n_files > 0)
                         API.loading(q, p);
-                    Array.from(files).forEach(file => {
-                        const formd = new FormData();
-                        formd.append("path", d);
-                        formd.append("upload", file);
-                        return $.ajax({
-                            url: p,
-                            data: formd,
-                            type: "POST",
-                            contentType: false,
-                            processData: false,
-                        })
-                            .done(function (data) {
-                                tasks.push("OK");
-                                if (tasks.length == n_files)
-                                {
-                                    API.loaded(q, p, "OK");
-                                    resolve(data);
-                                    o.remove();
-                                }
-                            })
-                            .fail(function (j, s, e) {
-                                tasks.push("FAIL");
-                                if (tasks.length == n_files)
-                                {
-                                    API.loaded(q, p, "FAIL");
-                                    o.remove();
-                                }
-                                reject(API.throwe(s));
-                            });
+                    const formd = new FormData();
+                    formd.append("path", d);
+                    jQuery.each(files, (i, file) => {
+                        formd.append(`upload-${i}`, file);
+                    });
+                    return $.ajax({
+                        url: p,
+                        data: formd,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                    })
+                    .done(function (data) {
+                        API.loaded(q, p, "OK");
+                        resolve(data);
+                    })
+                    .fail(function (j, s, e) {
+                        API.loaded(q, p, "FAIL");
+                        o.remove();
+                        reject(API.throwe(s));
                     });
                 });
                 return o.trigger("click");
