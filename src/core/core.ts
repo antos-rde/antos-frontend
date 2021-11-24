@@ -1275,11 +1275,12 @@ namespace OS {
          * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
-            announcer.trigger("loading", {
-                id: q,
-                data: { m: `${p}`, s: true },
-                name: "OS",
-            });
+            const data:API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
+            data.id = q;
+            data.message = p;
+            data.name = "OS";
+            data.u_data = true;
+            announcer.trigger("loading", data);
         }
 
         /**
@@ -1294,11 +1295,12 @@ namespace OS {
          * @param {string} m message status  (`OK` of `FAIL`)
          */
         export function loaded(q: number, p: string, m: string): void {
-            announcer.trigger("loaded", {
-                id: q,
-                data: { m: `${m}: ${p}`, s: false },
-                name: "OS",
-            });
+            const data:API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
+            data.id = q;
+            data.message = p;
+            data.name = "OS";
+            data.u_data = false;
+            announcer.trigger("loaded", data);
         }
 
         /**
