@@ -115,7 +115,7 @@ namespace OS {
              * @param {API.AnnouncementDataType} o
              * @memberof PushNotification
              */
-            private addLog(s: string, o: API.AnnouncementDataType): void {
+            private addLog(s: string, o: API.AnnouncementDataType<any>): void {
                 const logtime = new Date();
                 const log = {
                     type: s,
@@ -144,7 +144,7 @@ namespace OS {
              * @param {API.AnnouncementDataType} o
              * @memberof PushNotification
              */
-            private pushout(s: string, o: API.AnnouncementDataType): void {
+            private pushout(s: string, o: API.AnnouncementDataType<any>): void {
                 const d = {
                     text: `[${s}] ${o.name} (${o.id}): ${o.message}`,
                     icon: o.icon,

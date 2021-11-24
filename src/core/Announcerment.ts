@@ -25,7 +25,7 @@ namespace OS {
         * @export
         * @interface AnnouncementDataType
         */
-        export interface AnnouncementDataType {
+        export interface AnnouncementDataType<T> {
 
             /**
              *  message string
@@ -73,7 +73,7 @@ namespace OS {
              * @type {*}
              * @memberof AppAnnouncementDataType
              */
-            u_data?: any;
+            u_data?: T;
         }
         /**
          * Observable entry type definition
@@ -308,10 +308,10 @@ namespace OS {
          *
          * @export
          * @param {string} e event name
-         * @param {(d: API.AnnouncementDataType) => void} f event callback
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        export function on(e: string, f: (d: API.AnnouncementDataType) => void, a: BaseModel): void {
+        export function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a: BaseModel): void {
             if (!announcer.listeners[a.pid]) {
                 announcer.listeners[a.pid] = [];
             }
@@ -373,7 +373,7 @@ namespace OS {
          * @param {*} [d] user data
          */
         export function ostrigger(e: string, m: string| FormattedString, d?: any): void {
-            const aob: API.AnnouncementDataType = {} as API.AnnouncementDataType;
+            const aob: API.AnnouncementDataType<any> = {} as API.AnnouncementDataType<any>;
             aob.id = 0;
             aob.message = m;
             aob.u_data = d;

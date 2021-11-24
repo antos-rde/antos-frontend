@@ -920,7 +920,7 @@ declare namespace OS {
         * @export
         * @interface AnnouncementDataType
         */
-        interface AnnouncementDataType {
+        interface AnnouncementDataType<T> {
             /**
              *  message string
              *
@@ -962,7 +962,7 @@ declare namespace OS {
              * @type {*}
              * @memberof AppAnnouncementDataType
              */
-            u_data?: any;
+            u_data?: T;
         }
         /**
          * Observable entry type definition
@@ -1114,10 +1114,10 @@ declare namespace OS {
          *
          * @export
          * @param {string} e event name
-         * @param {(d: API.AnnouncementDataType) => void} f event callback
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        function on(e: string, f: (d: API.AnnouncementDataType) => void, a: BaseModel): void;
+        function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a: BaseModel): void;
         /**
          * Trigger a global event
          *
@@ -4716,11 +4716,11 @@ declare namespace OS {
          *
          * @protected
          * @param {string} e event name
-         * @param {(d: API.AnnouncementDataType) => void} f event callback
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @returns {void}
          * @memberof BaseModel
          */
-        subscribe(e: string, f: (d: API.AnnouncementDataType) => void): void;
+        subscribe(e: string, f: (d: API.AnnouncementDataType<any>) => void): void;
         /**
          * Open a dialog
          *

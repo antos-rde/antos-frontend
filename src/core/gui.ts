@@ -1058,13 +1058,13 @@ namespace OS {
                 };
 
                 dkfetch(desktop);
-                announcer.observable.on("VFS", function (d) {
-                    if (["read", "publish", "download"].includes(d.data.m)) {
+                announcer.observable.on("VFS", function (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) {
+                    if (["read", "publish", "download"].includes(d.message as string)) {
                         return;
                     }
                     if (
-                        d.data.file.hash() === fp.hash() ||
-                        d.data.file.parent().hash() === fp.hash()
+                        d.u_data.hash() === fp.hash() ||
+                        d.u_data.parent().hash() === fp.hash()
                     ) {
                         return dkfetch(desktop);
                     }

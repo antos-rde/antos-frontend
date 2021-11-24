@@ -525,11 +525,11 @@ namespace OS {
          *
          * @protected
          * @param {string} e event name
-         * @param {(d: API.AnnouncementDataType) => void} f event callback
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @returns {void}
          * @memberof BaseModel
          */
-        subscribe(e: string, f: (d: API.AnnouncementDataType) => void): void {
+        subscribe(e: string, f: (d: API.AnnouncementDataType<any>) => void): void {
             return announcer.on(e, f, this);
         }
 
@@ -598,7 +598,7 @@ namespace OS {
             u_data?: any
         ): void {
             const mt = this.meta();
-            const data: API.AnnouncementDataType = {} as API.AnnouncementDataType;
+            const data: API.AnnouncementDataType<any> = {} as API.AnnouncementDataType<any>;
             data.icon = undefined;
             if (mt && mt.icon) {
                 data.icon = `${mt.path}/${mt.icon}`;
