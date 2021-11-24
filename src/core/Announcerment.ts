@@ -263,7 +263,10 @@ namespace OS {
                         }
                         this.observable[evt].one.forEach((f) => f(d));
                         this.observable[evt].one = new Set();
-                        this.observable[evt].many.forEach((f) => f(d));
+                        this.observable[evt].many.forEach((f) => {
+                            console.log(f, d);
+                            f(d)
+                        });
                     }
                 };
                 if (evtName === "*") {
