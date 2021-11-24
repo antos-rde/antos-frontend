@@ -296,7 +296,7 @@ namespace OS {
                 if (this.setting.view) {
                     this.view.view = this.setting.view;
                 }
-                this.subscribe("VFS", (d) => {
+                this.subscribe("VFS", (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) => {
                     if (!this.vfs_event_flag) {
                         return;
                     }
@@ -305,7 +305,7 @@ namespace OS {
                     }
                     if (
                         d.u_data.hash() === this.currdir.hash() ||
-                        d.u_data.file.parent().hash() === this.currdir.hash()
+                        d.u_data.parent().hash() === this.currdir.hash()
                     ) {
                         return this.view.path = this.currdir.path;
                     }
