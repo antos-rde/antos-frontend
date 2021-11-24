@@ -85,7 +85,7 @@ namespace OS {
                 this.keycomb = {};
                 this.subscribe("appregistry", (m) => {
                     if (m.name === this.name) {
-                        this.applySetting(m.data.m);
+                        this.applySetting(m.message as string);
                     }
                 });
             }

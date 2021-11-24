@@ -914,6 +914,57 @@ declare namespace OS {
 declare namespace OS {
     namespace API {
         /**
+        * Data type exchanged via
+        * the global Announcement interface
+        *
+        * @export
+        * @interface AnnouncementDataType
+        */
+        interface AnnouncementDataType {
+            /**
+             *  message string
+             *
+             * @type {string| FormattedString}
+             * @memberof AppAnnouncementDataType
+             */
+            message: string | FormattedString;
+            /**
+             * Process ID
+             *
+             * @type {number}
+             * @memberof AppAnnouncementDataType
+             */
+            id: number;
+            /**
+             * App name
+             *
+             * @type {string | FormattedString}
+             * @memberof AppAnnouncementDataType
+             */
+            name: string | FormattedString;
+            /**
+             * Icon file
+             *
+             * @type {string}
+             * @memberof AppAnnouncementDataType
+             */
+            icon?: string;
+            /**
+             * App icon class
+             *
+             * @type {string}
+             * @memberof AppAnnouncementDataType
+             */
+            iconclass?: string;
+            /**
+             * User specific data
+             *
+             * @type {*}
+             * @memberof AppAnnouncementDataType
+             */
+            u_data?: any;
+        }
+        /**
          * Observable entry type definition
          *
          * @export
@@ -1063,10 +1114,10 @@ declare namespace OS {
          *
          * @export
          * @param {string} e event name
-         * @param {(d: any) => void} f event callback
+         * @param {(d: API.AnnouncementDataType) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        function on(e: string, f: (d: any) => void, a: BaseModel): void;
+        function on(e: string, f: (d: API.AnnouncementDataType) => void, a: BaseModel): void;
         /**
          * Trigger a global event
          *
@@ -1101,13 +1152,14 @@ declare namespace OS {
          */
         function osinfo(m: string | FormattedString): void;
         /**
-         * trigger a specific global event
+         *
          *
          * @export
          * @param {string} e event name
-         * @param {*} d event data
+         * @param {(string| FormattedString)} m event message
+         * @param {*} [d] user data
          */
-        function ostrigger(e: string, d: any): void;
+        function ostrigger(e: string, m: string | FormattedString, d?: any): void;
         /**
          * Unregister a process (application/service) from
          * the global announcement system
@@ -4664,11 +4716,11 @@ declare namespace OS {
          *
          * @protected
          * @param {string} e event name
-         * @param {(d: any) => void} f event callback
+         * @param {(d: API.AnnouncementDataType) => void} f event callback
          * @returns {void}
          * @memberof BaseModel
          */
-        subscribe(e: string, f: (d: any) => void): void;
+        subscribe(e: string, f: (d: API.AnnouncementDataType) => void): void;
         /**
          * Open a dialog
          *
@@ -4695,19 +4747,20 @@ declare namespace OS {
          * @protected
          * @param {string} t event name
          * @param {(string | FormattedString)} m event message
-         * @param {Error} [e] error object if any
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
-        protected publish(t: string, m: string | FormattedString, e?: Error): void;
+        protected publish(t: string, m: string | FormattedString, u_data?: any): void;
         /**
          * Publish a global notification
          *
          * @param {(string | FormattedString)} m notification string
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
-        notify(m: string | FormattedString): void;
+        notify(m: string | FormattedString, data?: any): void;
         /**
          * Publish a global warning
          *

@@ -112,19 +112,19 @@ namespace OS {
              *
              * @private
              * @param {string} s
-             * @param {GenericObject<any>} o
+             * @param {API.AnnouncementDataType} o
              * @memberof PushNotification
              */
-            private addLog(s: string, o: GenericObject<any>): void {
+            private addLog(s: string, o: API.AnnouncementDataType): void {
                 const logtime = new Date();
                 const log = {
                     type: s,
                     name: o.name,
-                    text: `${o.data.m}`,
+                    text: `${o.message}`,
                     id: o.id,
-                    icon: o.data.icon,
-                    iconclass: o.data.iconclass,
-                    error: o.data.e,
+                    icon: o.icon,
+                    iconclass: o.iconclass,
+                    error: o.u_data,
                     time: logtime,
                     closable: true,
                     tag: "afx-bug-list-item",
@@ -141,14 +141,14 @@ namespace OS {
              *
              * @private
              * @param {string} s
-             * @param {GenericObject<any>} o
+             * @param {API.AnnouncementDataType} o
              * @memberof PushNotification
              */
-            private pushout(s: string, o: GenericObject<any>): void {
+            private pushout(s: string, o: API.AnnouncementDataType): void {
                 const d = {
-                    text: `[${s}] ${o.name} (${o.id}): ${o.data.m}`,
-                    icon: o.data.icon,
-                    iconclass: o.data.iconclass,
+                    text: `[${s}] ${o.name} (${o.id}): ${o.message}`,
+                    icon: o.icon,
+                    iconclass: o.iconclass,
                     closable: true,
                 };
                 if (s !== "INFO") {

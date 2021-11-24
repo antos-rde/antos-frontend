@@ -1603,7 +1603,7 @@ namespace OS {
                     const d = await API.get(path, "json");
                     OS.setting.system.locale = name;
                     API.lang = d;
-                    announcer.trigger("systemlocalechange", name);
+                    announcer.ostrigger("systemlocalechange", name);
                     return resolve(d);
                 } catch (e) {
                     return reject(__e(e));

@@ -1145,7 +1145,7 @@ namespace OS {
             loadTheme(setting.appearance.theme, true);
             wallpaper(undefined);
             OS.announcer.observable.one("syspanelloaded", async function () {
-                OS.announcer.observable.on("systemlocalechange", (name) =>
+                OS.announcer.observable.on("systemlocalechange", (_) =>
                     $("#syspanel")[0].update()
                 );
 
@@ -1197,10 +1197,10 @@ namespace OS {
             // initDM
             API.setLocale(setting.system.locale).then(() => initDM());
             Ant.OS.announcer.observable.on("error", function (d) {
-                console.log(d.data.e);
+                console.log(d.u_data);
             });
             Ant.OS.announcer.observable.on("fail", function (d) {
-                console.log(d.data.e);
+                console.log(d.u_data);
             });
         }
         /**

@@ -595,10 +595,7 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r: RequestResult = await this._wr(t);
-                            announcer.ostrigger("VFS", {
-                                m: "write",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "write",this);
                             return resolve(r);
                         } catch (e) {
                             return reject(__e(e));
@@ -620,10 +617,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d_1 = await this._mk(d);
-                            announcer.ostrigger("VFS", {
-                                m: "mk",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS","mk",this);
                             return resolve(d_1);
                         } catch (e_1) {
                             return reject(__e(e_1));
@@ -644,10 +638,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d = await this._rm();
-                            announcer.ostrigger("VFS", {
-                                m: "remove",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "remove",this);
                             return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
@@ -670,10 +661,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d = await this._up();
-                            announcer.ostrigger("VFS", {
-                                m: "upload",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "upload", this);
                             return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
@@ -696,10 +684,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d = await this._pub();
-                            announcer.ostrigger("VFS", {
-                                m: "publish",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "publish",this);
                             return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
@@ -722,10 +707,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d = await this._down();
-                            announcer.ostrigger("VFS", {
-                                m: "download",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "download",this);
                             return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
@@ -747,10 +729,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const data = await this._mv(d);
-                            announcer.ostrigger("VFS", {
-                                m: "move",
-                                file: d.asFileHandle(),
-                            });
+                            announcer.ostrigger("VFS", "move",d.asFileHandle());
                             return resolve(data);
 
                         } catch (e_1) {
@@ -774,10 +753,7 @@ namespace OS {
                         try {
                             const r = await this.onready();
                             const d = await this._exec();
-                            announcer.ostrigger("VFS", {
-                                m: "execute",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "execute", this);
                             return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));

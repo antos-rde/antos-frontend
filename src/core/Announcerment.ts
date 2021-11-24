@@ -19,6 +19,63 @@
 namespace OS {
     export namespace API {
         /**
+        * Data type exchanged via
+        * the global Announcement interface
+        *
+        * @export
+        * @interface AnnouncementDataType
+        */
+        export interface AnnouncementDataType {
+
+            /**
+             *  message string
+             *
+             * @type {string| FormattedString}
+             * @memberof AppAnnouncementDataType
+             */
+            message: string | FormattedString;
+
+            /**
+             * Process ID
+             *
+             * @type {number}
+             * @memberof AppAnnouncementDataType
+             */
+            id: number;
+
+            /**
+             * App name
+             *
+             * @type {string | FormattedString}
+             * @memberof AppAnnouncementDataType
+             */
+            name: string | FormattedString;
+
+            /**
+             * Icon file
+             *
+             * @type {string}
+             * @memberof AppAnnouncementDataType
+             */
+            icon?: string;
+
+
+            /**
+             * App icon class
+             *
+             * @type {string}
+             * @memberof AppAnnouncementDataType
+             */
+            iconclass?: string;
+            /**
+             * User specific data
+             *
+             * @type {*}
+             * @memberof AppAnnouncementDataType
+             */
+            u_data?: any;
+        }
+        /**
          * Observable entry type definition
          *
          * @export
@@ -251,10 +308,10 @@ namespace OS {
          *
          * @export
          * @param {string} e event name
-         * @param {(d: any) => void} f event callback
+         * @param {(d: API.AnnouncementDataType) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        export function on(e: string, f: (d: any) => void, a: BaseModel): void {
+        export function on(e: string, f: (d: API.AnnouncementDataType) => void, a: BaseModel): void {
             if (!announcer.listeners[a.pid]) {
                 announcer.listeners[a.pid] = [];
             }
@@ -282,7 +339,7 @@ namespace OS {
          * @param {Error} e error to be reported
          */
         export function osfail(m: string | FormattedString, e: Error): void {
-            announcer.ostrigger("fail", { m, e });
+            announcer.ostrigger("fail", m, e );
         }
 
         /**
@@ -294,7 +351,7 @@ namespace OS {
          * @param {Error} e error to be reported
          */
         export function oserror(m: string | FormattedString, e: Error): void {
-            announcer.ostrigger("error", { m, e });
+            announcer.ostrigger("error",  m, e );
         }
 
         /**
@@ -304,18 +361,24 @@ namespace OS {
          * @param {(string | FormattedString)} m notification message
          */
         export function osinfo(m: string | FormattedString): void {
-            announcer.ostrigger("info", { m, e: null });
+            announcer.ostrigger("info", m);
         }
 
         /**
-         * trigger a specific global event
+         *
          *
          * @export
          * @param {string} e event name
-         * @param {*} d event data
+         * @param {(string| FormattedString)} m event message
+         * @param {*} [d] user data
          */
-        export function ostrigger(e: string, d: any): void {
-            announcer.trigger(e, { id: 0, data: d, name: "OS" });
+        export function ostrigger(e: string, m: string| FormattedString, d?: any): void {
+            const aob: API.AnnouncementDataType = {} as API.AnnouncementDataType;
+            aob.id = 0;
+            aob.message = m;
+            aob.u_data = d;
+            aob.name = "OS";
+            announcer.trigger(e, aob);
         }
 
         /**

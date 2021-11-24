@@ -300,12 +300,12 @@ namespace OS {
                     if (!this.vfs_event_flag) {
                         return;
                     }
-                    if (["read", "publish", "download"].includes(d.data.m)) {
+                    if (["read", "publish", "download"].includes(d.message as string)) {
                         return;
                     }
                     if (
-                        d.data.file.hash() === this.currdir.hash() ||
-                        d.data.file.parent().hash() === this.currdir.hash()
+                        d.u_data.hash() === this.currdir.hash() ||
+                        d.u_data.file.parent().hash() === this.currdir.hash()
                     ) {
                         return this.view.path = this.currdir.path;
                     }

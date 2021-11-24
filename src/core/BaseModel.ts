@@ -43,6 +43,7 @@ namespace OS {
          */
         [propName: string]: any;
     }
+
     /**
      * Enum definition of different model types
      *
@@ -295,8 +296,8 @@ namespace OS {
             this.on("exit", () => this.quit(false));
             this.host = this._gui.workspace;
             this.dialog = undefined;
-            this.subscribe("systemlocalechange", (name) => {
-                this.updateLocale(name);
+            this.subscribe("systemlocalechange", (d) => {
+                this.updateLocale(d.message as string);
                 return this.update();
             });
         }
@@ -524,11 +525,11 @@ namespace OS {
          *
          * @protected
          * @param {string} e event name
-         * @param {(d: any) => void} f event callback
+         * @param {(d: API.AnnouncementDataType) => void} f event callback
          * @returns {void}
          * @memberof BaseModel
          */
-        subscribe(e: string, f: (d: any) => void): void {
+        subscribe(e: string, f: (d: API.AnnouncementDataType) => void): void {
             return announcer.on(e, f, this);
         }
 
@@ -587,41 +588,39 @@ namespace OS {
          * @protected
          * @param {string} t event name
          * @param {(string | FormattedString)} m event message
-         * @param {Error} [e] error object if any
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
         protected publish(
             t: string,
             m: string | FormattedString,
-            e?: Error
+            u_data?: any
         ): void {
             const mt = this.meta();
-            let icon: string = undefined;
+            const data: API.AnnouncementDataType = {} as API.AnnouncementDataType;
+            data.icon = undefined;
             if (mt && mt.icon) {
-                icon = `${mt.path}/${mt.icon}`;
+                data.icon = `${mt.path}/${mt.icon}`;
             }
-            return announcer.trigger(t, {
-                id: this.pid,
-                name: this.name,
-                data: {
-                    m: m,
-                    icon: icon,
-                    iconclass: mt?mt.iconclass:undefined,
-                    e: e,
-                },
-            });
+            data.id = this.pid;
+            data.name = this.name;
+            data.message = m;
+            data.iconclass = mt?mt.iconclass:undefined;
+            data.u_data = u_data;
+            return announcer.trigger(t, data);
         }
 
         /**
          * Publish a global notification
          *
          * @param {(string | FormattedString)} m notification string
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
-        notify(m: string | FormattedString): void {
-            return this.publish("notification", m);
+        notify(m: string | FormattedString, data?: any): void {
+            return this.publish("notification", m, data);
         }
 
         /**
