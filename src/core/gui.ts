@@ -119,12 +119,12 @@ namespace OS {
             app: BaseModel,
             parent: Element | string
         ): void {
-            const scheme = $.parseHTML(html);
+            const scheme = $.parseHTML(html)[0];
             if (app.scheme) {
                 $(app.scheme).remove();
             }
-            $(parent as GenericObject<any>).append(scheme);
-            app.scheme = scheme[0] as HTMLElement;
+            (parent as HTMLElement).append(scheme);
+            app.scheme = scheme as HTMLElement;
             app.scheme.uify(app.observable, true);
             app.main();
             app.show();
@@ -182,6 +182,28 @@ namespace OS {
             $("head link#ostheme").attr("href", path);
         }
 
+
+        /**
+         * Get the system dock tag
+         *
+         * @export
+         * @return {*}  {GUI.tag.AppDockTag}
+         */
+        export function systemDock(): GUI.tag.AppDockTag
+        {
+            return $("#sysdock")[0] as tag.AppDockTag;
+        }
+
+        /**
+         * Get the current virtual desktop
+         *
+         * @export
+         * @return {*}  {GUI.tag.DesktopTag}
+         */
+        export function desktop(): GUI.tag.DesktopTag
+        {
+            return $(workspace)[0] as tag.DesktopTag;
+        }
         /**
          * Open a system dialog.
          *
@@ -452,25 +474,19 @@ namespace OS {
                 const srv = arr[1];
                 const app = arr[0];
                 try {
-                    if (application[srv]) {
-                        const d = await OS.PM.createProcess(
-                            srv,
-                            application[srv]
-                        );
-                        return resolve(d);
-                    } else {
+                    if (!application[srv]) {
                         await loadApp(app);
                         if (!application[srv]) {
                             return reject(
                                 API.throwe(__("Service not found: {0}", ph))
                             );
                         }
-                        const d_1 = await PM.createProcess(
-                            srv,
-                            application[srv]
-                        );
-                        return resolve(d_1);
                     }
+                    const d = await PM.createProcess(
+                        srv,
+                        application[srv]
+                    );
+                    return resolve(d);
                 }
                 catch (e) {
                     return reject(__e(e));
@@ -812,50 +828,6 @@ namespace OS {
         }
 
         /**
-         * Refresh the content of the virtual desktop
-         *
-         * @param {tag.FloatListTag} desktop
-         */
-        function dkfetch(desktop: tag.FloatListTag): void {
-            const file = setting.desktop.path.asFileHandle();
-            const fn = () =>
-                file.read().then(function (d) {
-                    if (d.error) {
-                        return announcer.osfail(d.error, API.throwe(d.error));
-                    }
-                    const items = [];
-                    $.each(d.result, function (i, v) {
-                        if (
-                            v.filename[0] === "." &&
-                            !setting.desktop.showhidden
-                        ) {
-                            return;
-                        }
-                        v.text = v.filename;
-                        //v.text = v.text.substring(0,9) + "..." ifv.text.length > 10
-                        v.iconclass = v.type;
-                        return items.push(v);
-                    });
-                    desktop.data = items;
-                    return desktop.calibrate();
-                });
-
-            file.onready()
-                .then(() => fn())
-                .catch(async function (e) {
-                    // try to create the path
-                    console.log(`${file.path} not found`);
-                    const name = file.basename;
-                    try {
-                        const r = await file.parent().asFileHandle().mk(name);
-                        return API.throwe("OS.VFS");
-                    } catch (e_1) {
-                        return announcer.osfail(e_1.toString(), e_1);
-                    }
-                });
-        }
-
-        /**
          * Init the virtual desktop on boot:
          *
          * - Register listener for system hotkey
@@ -927,119 +899,8 @@ namespace OS {
                     e
                 );
             });
-
-            const fp = setting.desktop.path.asFileHandle();
-            // desktop default file manager
-            const desktop = $(workspace)[0] as tag.FloatListTag;
-
-            desktop.onready = function (e: tag.FloatListTag) {
-                e.observable = OS.announcer.observable;
-                window.onresize = function () {
-                    announcer.trigger("desktopresize", undefined);
-                    return e.calibrate();
-                };
-
-                desktop.onlistselect = function (
-                    d: TagEventType<tag.ListItemEventData>
-                ) {
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                };
-
-                desktop.onlistdbclick = function (
-                    d: TagEventType<tag.ListItemEventData>
-                ) {
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                    const it = desktop.selectedItem;
-                    return openWith(it.data as AppArgumentsType);
-                };
-
-                //($ "#workingenv").on "click", (e) ->
-                //     desktop[0].set "selected", -1
-
-                $(desktop).on("click", function (e) {
-                    let el: any = $(e.target).closest("afx-app-window")[0];
-                    if (el) {
-                        return;
-                    }
-                    el = $(e.target).parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    el = el.parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    if (el[0] !== desktop) {
-                        return;
-                    }
-                    desktop.unselect();
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                });
-
-                desktop.contextmenuHandle = function (e, m) {
-                    if (e.target.tagName.toUpperCase() === "UL") {
-                        desktop.unselect();
-                    }
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                    let menu = [
-                        { text: __("Open"), dataid: "desktop-open" },
-                        { text: __("Refresh"), dataid: "desktop-refresh" },
-                    ];
-                    menu = menu.concat(
-                        (() => {
-                            const result = [];
-                            for (let k in setting.desktop.menu) {
-                                const v = setting.desktop.menu[k];
-                                result.push(v);
-                            }
-                            return result;
-                        })()
-                    );
-                    m.items = menu;
-                    m.onmenuselect = function (
-                        evt: TagEventType<tag.MenuEventData>
-                    ) {
-                        if (!evt.data || !evt.data.item) return;
-                        const item = evt.data.item.data;
-                        switch (item.dataid) {
-                            case "desktop-open":
-                                var it = desktop.selectedItem;
-                                if (it) {
-                                    return openWith(
-                                        it.data as AppArgumentsType
-                                    );
-                                }
-                                let arg = setting.desktop.path.asFileHandle() as AppArgumentsType;
-                                arg.mime = "dir";
-                                arg.type = "dir";
-                                return openWith(arg);
-                            case "desktop-refresh":
-                                return dkfetch(desktop);
-                            default:
-                                if (item.app) {
-                                    return launch(item.app, item.args);
-                                }
-                        }
-                    };
-                    return m.show(e);
-                };
-
-                dkfetch(desktop);
-                announcer.observable.on("VFS", function (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) {
-                    if (["read", "publish", "download"].includes(d.message as string)) {
-                        return;
-                    }
-                    if (
-                        d.u_data.hash() === fp.hash() ||
-                        d.u_data.parent().hash() === fp.hash()
-                    ) {
-                        return dkfetch(desktop);
-                    }
-                });
-                return announcer.ostrigger("desktoploaded", undefined);
-            };
             // mount it
-            desktop.uify(undefined);
+            desktop().uify(undefined);
         }
 
         /**
@@ -1048,7 +909,7 @@ namespace OS {
          * @export
          */
         export function refreshDesktop(): void {
-            dkfetch($(workspace)[0] as tag.FloatListTag);
+            desktop().refresh();
         }
 
         /**
@@ -1184,7 +1045,7 @@ namespace OS {
 <afx-sys-panel id = "syspanel"></afx-sys-panel>
 <div id = "workspace">
     <afx-apps-dock id="sysdock"></afx-apps-dock>
-    <afx-float-list id = "desktop" dir="vertical" ></afx-float-list>
+    <afx-desktop id = "desktop" dir="vertical" ></afx-desktop>
 </div>
 <afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>

@@ -109,6 +109,7 @@ namespace OS {
                     ): void => {
                         return this.trigger("menuselect", d);
                     };
+                    this.trigger("focused", undefined);
                     if (this.dialog) {
                         return this.dialog.show();
                     }

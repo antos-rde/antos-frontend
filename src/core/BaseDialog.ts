@@ -116,7 +116,7 @@ namespace OS {
              */
             show(): void {
                 this.trigger("focus");
-                $(this.scheme).css("z-index", GUI.zindex + 2);
+                this.trigger("focused", undefined);
                 if (this.dialog) {
                     this.dialog.show();
                 }

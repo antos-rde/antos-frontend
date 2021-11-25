@@ -248,11 +248,6 @@ namespace OS {
          */
         export type TagEventCallback<T> = (e: TagEventType<T>) => void;
         /**
-         * Top most element z index value, start by 10
-         */
-        export var zindex: number = 10;
-
-        /**
          * Base abstract class for tag implementation, any AFX tag should be
          * subclass of this class
          *

@@ -193,10 +193,10 @@ namespace OS {
          * The HTML element ID of the virtual desktop
          *
          * @protected
-         * @type {string}
+         * @type {HTMLElement}
          * @memberof BaseModel
          */
-        protected host: string;
+        protected host: HTMLElement;
 
         /**
          * The process number of the current model.
@@ -294,7 +294,7 @@ namespace OS {
             this._gui = GUI;
             this.systemsetting = setting;
             this.on("exit", () => this.quit(false));
-            this.host = this._gui.workspace;
+            this.host = this._gui.desktop();
             this.dialog = undefined;
         }
 
@@ -504,7 +504,6 @@ namespace OS {
         /**
          * trigger a local event
          *
-         * @protected
          * @param {string} e event name
          * @param {*} [d] event data
          * @returns {void}

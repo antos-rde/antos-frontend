@@ -37,7 +37,8 @@ tags = 	dist/core/tags/tag.js \
 		dist/core/tags/FileViewTag.js \
 		dist/core/tags/OverlayTag.js \
 		dist/core/tags/AppDockTag.js \
-		dist/core/tags/SystemPanelTag.js
+		dist/core/tags/SystemPanelTag.js \
+		dist/core/tags/DesktopTag.js
 
 javascripts= 	dist/core/core.js \
 				dist/core/settings.js \

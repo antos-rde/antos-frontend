@@ -711,6 +711,20 @@ declare namespace OS {
          */
         function loadTheme(name: string, force: boolean): void;
         /**
+         * Get the system dock tag
+         *
+         * @export
+         * @return {*}  {GUI.tag.AppDockTag}
+         */
+        function systemDock(): GUI.tag.AppDockTag;
+        /**
+         * Get the current virtual desktop
+         *
+         * @export
+         * @return {*}  {GUI.tag.DesktopTag}
+         */
+        function desktop(): GUI.tag.DesktopTag;
+        /**
          * Open a system dialog.
          *
          * @export
@@ -4463,10 +4477,10 @@ declare namespace OS {
          * The HTML element ID of the virtual desktop
          *
          * @protected
-         * @type {string}
+         * @type {HTMLElement}
          * @memberof BaseModel
          */
-        protected host: string;
+        protected host: HTMLElement;
         /**
          * The process number of the current model.
          * For sub-window this number is the number
@@ -4702,7 +4716,6 @@ declare namespace OS {
         /**
          * trigger a local event
          *
-         * @protected
          * @param {string} e event name
          * @param {*} [d] event data
          * @returns {void}
@@ -5522,6 +5535,89 @@ declare namespace OS {
                  * @memberof ResizerTag
                  */
                 protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * Meta tag that represents the  virtual desktop environment.
+             * In near future, we may have multiple virtual desktop environments.
+             * Each desktop environment has a simple file manager and a window
+             * manager that render the window in a specific order.
+             *
+             * @export
+             * @class DesktopTag
+             * @extends {FloatListTag}
+             */
+            class DesktopTag extends FloatListTag {
+                /**
+                 * internal handle to the desktop file location
+                 *
+                 * @private
+                 * @type {API.VFS.BaseFileHandle}
+                 * @memberof DesktopTag
+                 */
+                private file;
+                /**
+                 * local observer that detect if a new child element is
+                 * added or removed
+                 *
+                 * @private
+                 * @type {MutationObserver}
+                 * @memberof DesktopTag
+                 */
+                private observer;
+                /**
+                 * Internal list of the current opened window
+                 *
+                 * @private
+                 * @type {Set<WindowTag>}
+                 * @memberof DesktopTag
+                 */
+                private window_list;
+                /**
+                 * Creates an instance of DesktopTag.
+                 * @memberof DesktopTag
+                 */
+                constructor();
+                /**
+                 * Mount the virtual desktop to the DOM tree
+                 *
+                 * @protected
+                 * @memberof DesktopTag
+                 */
+                protected mount(): void;
+                /**
+                 * Display all files and folders in the specific desktop location
+                 *
+                 * @return {*}  {Promise<any>}
+                 * @memberof DesktopTag
+                 */
+                refresh(): Promise<any>;
+                /**
+                 * Remove this element from its parent
+                 *
+                 * @memberof DesktopTag
+                 */
+                remove(): void;
+                /**
+                 * Active a window above all other windows
+                 *
+                 * @private
+                 * @param {WindowTag} win
+                 * @memberof DesktopTag
+                 */
+                private selectWindow;
+                /**
+                 * Render all windows in order from bottom to top
+                 *
+                 * @private
+                 * @memberof DesktopTag
+                 */
+                private render;
             }
         }
     }
@@ -7988,10 +8084,6 @@ declare namespace OS {
          * Tag event callback type
          */
         type TagEventCallback<T> = (e: TagEventType<T>) => void;
-        /**
-         * Top most element z index value, start by 10
-         */
-        var zindex: number;
         /**
          * Base abstract class for tag implementation, any AFX tag should be
          * subclass of this class

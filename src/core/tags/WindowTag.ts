@@ -284,7 +284,7 @@ namespace OS {
                         .css("position", "absolute")
                         .css("left", `${left}px`)
                         .css("top", `${top}px`)
-                        .css("z-index", Ant.OS.GUI.zindex++);
+                        .css("z-index", 10);
                     $(this).on("mousedown", (e) => {
                         if (this._shown) {
                             return;
@@ -301,10 +301,8 @@ namespace OS {
                     this.observable.on("resize", (e) => this.resize());
 
                     this.observable.on("focus", () => {
-                        Ant.OS.GUI.zindex++;
                         $(this)
                             .show()
-                            .css("z-index", Ant.OS.GUI.zindex)
                             .removeClass("unactive");
                         this._shown = true;
                         $(this.refs.win_overlay).hide();
