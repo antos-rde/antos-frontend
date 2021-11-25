@@ -63,6 +63,10 @@ namespace OS {
                         obj.birth = new Date().getTime();
                         PM.pidalloc++;
                         obj.pid = PM.pidalloc;
+                        obj.subscribe("systemlocalechange", (d) => {
+                            obj.updateLocale(d.message as string);
+                            return obj.update();
+                        });
                         PM.processes[app].push(obj);
                         if (metaclass.type === ModelType.Application) {
                             GUI.dock(
@@ -149,7 +153,11 @@ namespace OS {
             if (!PM.processes[app]) {
                 return;
             }
-            PM.processes[app].map((a) => a.quit(force));
+            const arr = PM.processes[app].map( e => e);
+            for(const p of arr)
+            {
+                p.quit(force);
+            }
         }
     }
 }

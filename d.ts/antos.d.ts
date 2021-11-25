@@ -3225,12 +3225,11 @@ declare namespace OS {
              * Update the application local from the system
              * locale or application specific locale configuration
              *
-             * @private
              * @param {string} name locale name e.g. `en_GB`
              * @returns {void}
              * @memberof BaseApplication
              */
-            protected updateLocale(name: string): void;
+            updateLocale(name: string): void;
             /**
              * Execute the callback subscribed to a
              * keyboard shortcut
@@ -4559,11 +4558,10 @@ declare namespace OS {
         /**
          * Update the model locale
          *
-         * @protected
          * @param {string} name
          * @memberof BaseModel
          */
-        protected updateLocale(name: string): void;
+        updateLocale(name: string): void;
         /**
          * Render the model's UI
          *

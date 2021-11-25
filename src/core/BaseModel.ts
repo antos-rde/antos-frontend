@@ -296,10 +296,6 @@ namespace OS {
             this.on("exit", () => this.quit(false));
             this.host = this._gui.workspace;
             this.dialog = undefined;
-            this.subscribe("systemlocalechange", (d) => {
-                this.updateLocale(d.message as string);
-                return this.update();
-            });
         }
 
         /**
@@ -315,11 +311,10 @@ namespace OS {
         /**
          * Update the model locale
          *
-         * @protected
          * @param {string} name
          * @memberof BaseModel
          */
-        protected updateLocale(name: string) {}
+        updateLocale(name: string) {}
         /**
          * Render the model's UI
          *
@@ -532,7 +527,7 @@ namespace OS {
         subscribe(e: string, f: (d: API.AnnouncementDataType<any>) => void): void {
             return announcer.on(e, f, this);
         }
-
+        
         /**
          * Open a dialog
          *
@@ -676,7 +671,11 @@ namespace OS {
          */
         update(): void {
             if (this.scheme) {
-                return this.scheme.update();
+                this.scheme.update();
+            }
+            if(this.dialog)
+            {
+                this.dialog.update();
             }
         }
 

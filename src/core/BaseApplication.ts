@@ -83,11 +83,6 @@ namespace OS {
                 }
                 this.setting = setting.applications[this.name];
                 this.keycomb = {};
-                this.subscribe("appregistry", (m) => {
-                    if (m.name === this.name) {
-                        this.applySetting(m.message as string);
-                    }
-                });
             }
 
             /**
@@ -135,6 +130,11 @@ namespace OS {
                     }
                 });
                 this.on("apptitlechange", () => this.sysdock.update(this));
+                this.subscribe("appregistry", (m) => {
+                    if (m.name === this.name) {
+                        this.applySetting(m.message as string);
+                    }
+                });
                 this.updateLocale(this.systemsetting.system.locale);
                 return this.loadScheme();
             }
@@ -225,12 +225,11 @@ namespace OS {
              * Update the application local from the system
              * locale or application specific locale configuration
              *
-             * @private
              * @param {string} name locale name e.g. `en_GB`
              * @returns {void}
              * @memberof BaseApplication
              */
-            protected updateLocale(name: string): void {
+            updateLocale(name: string): void {
                 const meta = this.meta();
                 if (!meta || !meta.locales) {
                     return;

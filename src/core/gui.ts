@@ -405,41 +405,33 @@ namespace OS {
                 const js = path + "/main.js";
                 try {
                     const d = await js.asFileHandle().read("script");
-                    try {
-                        const data: API.PackageMetaType = await `${path}/package.json`
-                            .asFileHandle()
-                            .read("json");
-                        data.path = path;
-                        if (application[app]) {
-                            application[app].meta = data;
-                        }
-                        if (data.services) {
-                            for (let v of data.services) {
-                                application[v].meta = data;
-                            }
-                        }
-                        //load css file
-                        const css = `${path}/main.css`;
-                        try {
-                            const d_1 = await css.asFileHandle().onready();
-                            const stamp = new Date().timestamp();
-                            const el = $("<link>", {
-                                rel: "stylesheet",
-                                type: "text/css",
-                                href: `${API.handle.get}/${css}?stamp=${stamp}`,
-                            }).appendTo("head");
-                            if (application[app]) {
-                                application[app].style = el[0];
-                            }
-                            return resolve(app);
-                        } catch (e) {
-                            return resolve(app);
-                        }
-                    } catch (e_1) {
-                        return reject(__e(e_1));
+                    const data: API.PackageMetaType = await `${path}/package.json`
+                        .asFileHandle()
+                        .read("json");
+                    data.path = path;
+                    if (application[app]) {
+                        application[app].meta = data;
                     }
-                } catch (e_2) {
-                    return reject(__e(e_2));
+                    if (data.services) {
+                        for (let v of data.services) {
+                            application[v].meta = data;
+                        }
+                    }
+                    //load css file
+                    const css = `${path}/main.css`;
+                    const d_1 = await css.asFileHandle().onready();
+                    const stamp = new Date().timestamp();
+                    const el = $("<link>", {
+                        rel: "stylesheet",
+                        type: "text/css",
+                        href: `${API.handle.get}/${css}?stamp=${stamp}`,
+                    }).appendTo("head");
+                    if (application[app]) {
+                        application[app].style = el[0];
+                    }
+                    return resolve(app);
+                } catch (e) {
+                    return reject(__e(e));
                 }
             });
         }
@@ -459,36 +451,29 @@ namespace OS {
                 const arr = ph.split("/");
                 const srv = arr[1];
                 const app = arr[0];
-                if (application[srv]) {
-                    try {
+                try {
+                    if (application[srv]) {
                         const d = await OS.PM.createProcess(
                             srv,
                             application[srv]
                         );
                         return resolve(d);
-                    } catch (e) {
-                        return reject(__e(e));
-                    }
-                } else {
-                    try {
+                    } else {
                         await loadApp(app);
                         if (!application[srv]) {
                             return reject(
                                 API.throwe(__("Service not found: {0}", ph))
                             );
                         }
-                        try {
-                            const d_1 = await PM.createProcess(
-                                srv,
-                                application[srv]
-                            );
-                            return resolve(d_1);
-                        } catch (e_1) {
-                            return reject(__e(e_1));
-                        }
-                    } catch (e_2) {
-                        return reject(__e(e_2));
+                        const d_1 = await PM.createProcess(
+                            srv,
+                            application[srv]
+                        );
+                        return resolve(d_1);
                     }
+                }
+                catch (e) {
+                    return reject(__e(e));
                 }
             });
         }
@@ -529,59 +514,42 @@ namespace OS {
          * @param {AppArgumentsType[]} args application arguments
          */
         export function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType> {
-            return new Promise((resolve, reject) => {
-                if (!application[app]) {
-                    // first load it
-                    loadApp(app)
-                        .then((a) => {
-                            if (!application[app]) {
-                                const e = API.throwe(__("Application not found"));
-                                announcer.oserror(
-                                    __("{0} is not an application", app),
-                                    e);
-                                return reject(e);
-                            }
-                            PM.createProcess(
-                                app,
-                                application[app],
-                                args
-                            ).catch((e) => {
-                                announcer.osfail(
-                                    __("Unable to launch: {0}", app),
-                                    e
-                                );
-                                return reject(e);
-                            }
-                            ).then((p: PM.ProcessType) => resolve(p));
+            return new Promise(async (resolve, reject) => {
+                try {
+                    if (!application[app]) {
+                        // first load it
+                        await loadApp(app);
+                        if (!application[app]) {
+                            const e = API.throwe(__("Application not found"));
+                            announcer.oserror(
+                                __("{0} is not an application", app),
+                                e);
+                            return reject(e);
                         }
-                        )
-                        .catch((e) => {
-                            announcer.osfail(__("Unable to launch: {0}", app), e);
-                            reject(e);
-                        }
-                        );
-                } else {
-                    // now launch it
-                    if (application[app]) {
-                        PM.createProcess(
+                        const p = await PM.createProcess(
                             app,
                             application[app],
                             args
-                        ).catch((e: Error) => {
-                            announcer.osfail(__("Unable to launch: {0}", app), e);
-                            return reject(e);
-                        }
-
                         );
+                        resolve(p);
                     } else {
-                        const e = API.throwe(__("Application not found"));
-                        announcer.osfail(
-                            __("Unable to find: {0}", app),
-                            e
+                        // now launch it
+                        const p = await PM.createProcess(
+                            app,
+                            application[app],
+                            args
                         );
-                        return reject(e);
+                        resolve(p);
                     }
                 }
+                catch (e) {
+                    announcer.osfail(
+                        __("Unable to launch: {0}", app),
+                        e
+                    );
+                    return reject(__e(e));
+                }
+
             });
         }
 
@@ -989,9 +957,8 @@ namespace OS {
                 //     desktop[0].set "selected", -1
 
                 $(desktop).on("click", function (e) {
-                    let el:any = $(e.target).closest("afx-app-window")[0];
-                    if(el)
-                    {
+                    let el: any = $(e.target).closest("afx-app-window")[0];
+                    if (el) {
                         return;
                     }
                     el = $(e.target).parent();
