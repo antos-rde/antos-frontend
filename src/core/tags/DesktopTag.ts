@@ -246,7 +246,6 @@ namespace OS {
                         });
                     }
                     this.window_list.add(win);
-                    console.log("number of windows", this.window_list.size);
                     this.render();
                 }
 
