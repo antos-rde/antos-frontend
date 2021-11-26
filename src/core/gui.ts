@@ -440,17 +440,19 @@ namespace OS {
                         }
                     }
                     //load css file
-                    const css = `${path}/main.css`;
-                    const d_1 = await css.asFileHandle().onready();
-                    const stamp = new Date().timestamp();
-                    const el = $("<link>", {
-                        rel: "stylesheet",
-                        type: "text/css",
-                        href: `${API.handle.get}/${css}?stamp=${stamp}`,
-                    }).appendTo("head");
-                    if (application[app]) {
-                        application[app].style = el[0];
-                    }
+                    try{
+                        const css = `${path}/main.css`;
+                        const d_1 = await css.asFileHandle().onready();
+                        const stamp = new Date().timestamp();
+                        const el = $("<link>", {
+                            rel: "stylesheet",
+                            type: "text/css",
+                            href: `${API.handle.get}/${css}?stamp=${stamp}`,
+                        }).appendTo("head");
+                        if (application[app]) {
+                            application[app].style = el[0];
+                        }
+                    } catch(e_1){}
                     return resolve(app);
                 } catch (e) {
                     return reject(__e(e));
