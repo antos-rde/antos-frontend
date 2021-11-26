@@ -442,7 +442,7 @@ namespace OS {
                     //load css file
                     try{
                         const css = `${path}/main.css`;
-                        const d_1 = await css.asFileHandle().onready();
+                        await css.asFileHandle().onready();
                         const stamp = new Date().timestamp();
                         const el = $("<link>", {
                             rel: "stylesheet",
