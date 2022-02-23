@@ -618,7 +618,7 @@ namespace OS {
                     };
                     grid.onrowselect = (e) => {
                         this.fileselect(
-                            $(e.data.item).children()[0]
+                            ($(e.data.item).children()[0] as GridCellPrototype)
                                 .data as API.FileInfoType
                         );
                     };
