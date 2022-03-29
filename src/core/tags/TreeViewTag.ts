@@ -586,10 +586,10 @@ namespace OS {
                  * Private data object passing between dragndrop mouse event
                  *
                  * @private
-                 * @type {{ from: TreeViewTag; to: TreeViewTag }}
+                 * @type {{ from: TreeViewTag[]; to: TreeViewTag }}
                  * @memberof TreeViewTag
                  */
-                private _dnd: { from: TreeViewTag; to: TreeViewTag };
+                private _dnd: { from: TreeViewTag[]; to: TreeViewTag };
 
                 /**
                  * Reference to parent tree of the current tree.
@@ -638,7 +638,7 @@ namespace OS {
                  * current tree. This function should return a promise on
                  * a list of [[TreeViewDataType]]
                  *
-                 * @memberof TreeViewItemPrototype
+                 * @memberof TreeViewTag
                  */
                 fetch: (
                     d: TreeViewItemPrototype
@@ -920,7 +920,7 @@ namespace OS {
                  */
                 protected mount(): void {
                     this._dnd = {
-                        from: undefined,
+                        from: [],
                         to: undefined,
                     };
                     this._treemousedown = (e) => {
@@ -932,7 +932,7 @@ namespace OS {
                         if (el === this) {
                             return;
                         }
-                        this._dnd.from = el;
+                        this._dnd.from = [el];
                         this._dnd.to = undefined;
                         $(window).on("mouseup", this._treemouseup);
                         return $(window).on("mousemove", this._treemousemove);
@@ -951,8 +951,8 @@ namespace OS {
                             el = el.parent;
                         }
                         if (
-                            el === this._dnd.from ||
-                            el === this._dnd.from.parent
+                            el === this._dnd.from[0] ||
+                            el === this._dnd.from[0].parent
                         ) {
                             return;
                         }
@@ -962,7 +962,7 @@ namespace OS {
                             data: this._dnd,
                         });
                         this._dnd = {
-                            from: undefined,
+                            from: [],
                             to: undefined,
                         };
                     };
@@ -974,7 +974,7 @@ namespace OS {
                         if (!this._dnd.from) {
                             return;
                         }
-                        const data = this._dnd.from.data;
+                        const data = this._dnd.from[0].data;
                         const $label = $("#systooltip");
                         const top = e.clientY + 5;
                         const left = e.clientX + 5;

@@ -233,7 +233,7 @@ namespace OS {
              * @type {T}
              * @memberof DnDEventDataType
              */
-            from: T;
+            from: T[];
 
             /**
              * Reference to the target DOM element

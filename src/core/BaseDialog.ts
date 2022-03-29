@@ -264,7 +264,6 @@ namespace OS {
              */
             main(): void {
                 const win = this.scheme as tag.WindowTag;
-                $(win).attr("tabindex", 0);
                 $(win).on('keydown', (e) => {
                     switch (e.which) {
                         case 27:
@@ -672,7 +671,7 @@ namespace OS {
                     }
                     for (let k in this.data) {
                         const v = this.data[k];
-                        rows.push([{ text: k }, { text: v }]);
+                        rows.push([{ text: k }, { text: v, selectable: true }]);
                     }
                     const grid = this.find("grid") as tag.GridViewTag;
                     grid.header = [
@@ -1052,7 +1051,7 @@ namespace OS {
                                 __("Resource not found: {0}", path)
                             );
                         }
-                        return (fileview.path = path);
+                        fileview.path = path;
                     };
 
                     if (!this.data || !this.data.root) {
@@ -1088,11 +1087,14 @@ namespace OS {
                         }
                     };
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
-                        const f = fileview.selectedFile;
+                        let f = fileview.selectedFile;
                         if (!f) {
-                            return this.notify(
-                                __("Please select a file/fofler")
-                            );
+                            const sel = location.selectedItem;
+                            if(!sel)
+                                return this.notify(
+                                    __("Please select a file/fofler")
+                                );
+                            f = sel.data as API.FileInfoType;
                         }
                         if (
                             this.data &&

@@ -306,6 +306,7 @@ namespace OS {
                             .removeClass("unactive");
                         this._shown = true;
                         $(this.refs.win_overlay).hide();
+                        $(this).trigger("focus");
                     });
 
                     this.observable.on("blur", () => {
@@ -336,6 +337,7 @@ namespace OS {
                         w: this.width,
                         h: this.height,
                     });
+                    $(this).attr("tabindex", 0).css("outline", "none");
                     return this.observable.trigger("rendered", {
                         id: this.aid,
                     });

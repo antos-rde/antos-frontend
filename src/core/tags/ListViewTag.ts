@@ -444,10 +444,10 @@ namespace OS {
                  * drag and drop on the list
                  *
                  * @private
-                 * @type {{ from: ListViewItemTag; to: ListViewItemTag }}
+                 * @type {{ from: ListViewItemTag[]; to: ListViewItemTag }}
                  * @memberof ListViewTag
                  */
-                private _dnd: { from: ListViewItemTag; to: ListViewItemTag };
+                private _dnd: { from: ListViewItemTag[]; to: ListViewItemTag };
 
                 /**
                  *Creates an instance of ListViewTag.
@@ -990,6 +990,16 @@ namespace OS {
                         this.selectedItems.push(e.data);
                         edata.items = this.selectedItems;
                     } else {
+                        if(this.selectedItems.length > 0)
+                        {
+                            for(const item of this.selectedItems)
+                            {
+                                if(item != e.data)
+                                {
+                                    item.selected = false;
+                                }
+                            }
+                        }
                         if (this.selectedItem === e.data) {
                             return;
                         }
@@ -1044,14 +1054,22 @@ namespace OS {
                         to: undefined,
                     };
                     this._onmousedown = (e) => {
+                        if(this.multiselect || this.selectedItems == undefined || this.selectedItems.length == 0)
+                        {
+                            return;
+                        }
                         let el: any = $(e.target).closest(
                             "li[dataref='afx-list-item']"
                         );
                         if (el.length === 0) {
                             return;
                         }
-                        el = el.parent()[0] as ListViewItemTag;
-                        this._dnd.from = el;
+                        el = el.parent()[0];
+                        if(!this.selectedItems.includes(el))
+                        {
+                            return;
+                        }
+                        this._dnd.from = this.selectedItems;
                         this._dnd.to = undefined;
                         $(window).on("mouseup", this._onmouseup);
                         $(window).on("mousemove", this._onmousemove);
@@ -1068,7 +1086,7 @@ namespace OS {
                             return;
                         }
                         el = el.parent()[0];
-                        if (el === this._dnd.from) {
+                        if (this._dnd.from.includes(el)) {
                             return;
                         }
                         this._dnd.to = el;
@@ -1086,7 +1104,18 @@ namespace OS {
                         if (!this._dnd.from) {
                             return;
                         }
-                        const data = this._dnd.from.data;
+                        const data = {
+                            text: '',
+                            items: this._dnd.from
+                        };
+                        if(this._dnd.from.length == 1)
+                        {
+                            data.text = this._dnd.from[0].data.text;
+                        }
+                        else
+                        {
+                            data.text = __("{0} selected elements", this._dnd.from.length).__();
+                        }
                         const $label = $("#systooltip");
                         const top = e.clientY + 5;
                         const left = e.clientX + 5;

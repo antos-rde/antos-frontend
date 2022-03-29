@@ -3089,13 +3089,13 @@ declare namespace OS {
                  */
                 private _onfileopen;
                 /**
-                 * Reference to the currently selected file meta-data
+                 * Reference to the all selected files meta-datas
                  *
                  * @private
-                 * @type {API.FileInfoType}
+                 * @type {API.FileInfoType[]}
                  * @memberof FileViewTag
                  */
-                private _selectedFile;
+                private _selectedFiles;
                 /**
                  * Data placeholder of the current working directory
                  *
@@ -3116,7 +3116,7 @@ declare namespace OS {
                  * Header definition of the widget grid view
                  *
                  * @private
-                 * @type {(GenericObject<string | number>[])}
+                 * @type {(GenericObject<any>[])}
                  * @memberof FileViewTag
                  */
                 private _header;
@@ -3228,6 +3228,19 @@ declare namespace OS {
                 set showhidden(v: boolean);
                 get showhidden(): boolean;
                 /**
+                 * Setter:
+                 *
+                 * Allow multiple selection on file view
+                 *
+                 * Getter:
+                 *
+                 * Check whether the  multiselection is actived
+                 *
+                 * @memberof FileViewTag
+                 */
+                set multiselect(v: boolean);
+                get multiselect(): boolean;
+                /**
                  * Get the current selected file
                  *
                  * @readonly
@@ -3235,6 +3248,14 @@ declare namespace OS {
                  * @memberof FileViewTag
                  */
                 get selectedFile(): API.FileInfoType;
+                /**
+                 * Get all selected files
+                 *
+                 * @readonly
+                 * @type {API.FileInfoType[]}
+                 * @memberof FileViewTag
+                 */
+                get selectedFiles(): API.FileInfoType[];
                 /**
                  * Setter:
                  *
@@ -3266,7 +3287,7 @@ declare namespace OS {
                  *
                  * @memberof FileViewTag
                  */
-                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag | ListViewItemTag>>);
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<TreeViewTag | ListViewItemTag | GridCellPrototype>>);
                 /**
                  * Sort file by its type
                  *
@@ -3593,7 +3614,7 @@ declare namespace OS {
              * @type {T}
              * @memberof DnDEventDataType
              */
-            from: T;
+            from: T[];
             /**
              * Reference to the target DOM element
              *
@@ -4148,7 +4169,7 @@ declare namespace OS {
                  * drag and drop on the list
                  *
                  * @private
-                 * @type {{ from: ListViewItemTag; to: ListViewItemTag }}
+                 * @type {{ from: ListViewItemTag[]; to: ListViewItemTag }}
                  * @memberof ListViewTag
                  */
                 private _dnd;
@@ -5057,6 +5078,15 @@ declare namespace OS {
                 set text(v: string | FormattedString);
                 get text(): string | FormattedString;
                 /**
+                 * Setter: Turn on/off text selection
+                 *
+                 * Getter: Check whether the label is selectable
+                 *
+                 * @memberof LabelTag
+                 */
+                set selectable(v: boolean);
+                get swon(): boolean;
+                /**
                  * Lqbel layout definition
                  *
                  * @protected
@@ -5276,6 +5306,10 @@ declare namespace OS {
     namespace GUI {
         namespace tag {
             /**
+             * Row item event data type
+             */
+            type GridRowEventData = TagEventDataType<GridRowTag>;
+            /**
              * A grid Row is a simple element that
              * contains a group of grid cell
              *
@@ -5292,10 +5326,33 @@ declare namespace OS {
                  */
                 data: GenericObject<any>[];
                 /**
+                 * placeholder for the row select event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<GridRowEventData>}
+                 * @memberof ListViewItemTag
+                 */
+                private _onselect;
+                /**
                  *Creates an instance of GridRowTag.
                  * @memberof GridRowTag
                  */
                 constructor();
+                /**
+                 * Set item select event handle
+                 *
+                 * @memberof ListViewItemTag
+                 */
+                set onrowselect(v: TagEventCallback<GridRowEventData>);
+                /**
+                 * Setter: select/unselect the current item
+                 *
+                 * Getter: Check whether the current item is selected
+                 *
+                 * @memberof ListViewItemTag
+                 */
+                set selected(v: boolean);
+                get selected(): boolean;
                 /**
                  * Mount the tag, do nothing
                  *
@@ -5577,10 +5634,63 @@ declare namespace OS {
                  */
                 private _oncelldbclick;
                 /**
+                 * Event data passing between mouse event when performing
+                 * drag and drop on the list
+                 *
+                 * @private
+                 * @type {{ from: GridRowTag[]; to: GridRowTag }}
+                 * @memberof GridViewTag
+                 */
+                private _dnd;
+                /**
+                 * placeholder of list drag and drop event handle
+                 *
+                 * @private
+                 * @type {TagEventCallback<DnDEventDataType<GridRowTag>>}
+                 * @memberof GridViewTag
+                 */
+                private _ondragndrop;
+                /**
                  * Creates an instance of GridViewTag.
                  * @memberof GridViewTag
                  */
                 constructor();
+                /**
+                 * Set drag and drop event handle
+                 *
+                 * @memberof GridViewTag
+                 */
+                set ondragndrop(v: TagEventCallback<DnDEventDataType<GridRowTag>>);
+                /**
+                 * Setter: Enable/disable drag and drop event in the list
+                 *
+                 * Getter: Check whether the drag and drop event is enabled
+                 *
+                 * @memberof GridViewTag
+                 */
+                set dragndrop(v: boolean);
+                get dragndrop(): boolean;
+                /**
+                 * placeholder of drag and drop mouse down event handle
+                 *
+                 * @private
+                 * @memberof GridViewTag
+                 */
+                private _onmousedown;
+                /**
+                 * placeholder of drag and drop mouse up event handle
+                 *
+                 * @private
+                 * @memberof GridViewTag
+                 */
+                private _onmouseup;
+                /**
+                 * placeholder of drag and drop mouse move event handle
+                 *
+                 * @private
+                 * @memberof GridViewTag
+                 */
+                private _onmousemove;
                 /**
                  * Init the grid view before mounting.
                  * Reset all the placeholders to default values
@@ -5695,6 +5805,16 @@ declare namespace OS {
                 set resizable(v: boolean);
                 get resizable(): boolean;
                 /**
+                * Sort the grid using a sort function
+                *
+                * @param {context: any} context of the executed function
+                * @param {(a:GenericObject<any>[], b:GenericObject<any>[]) => boolean} a sort function that compares two rows data
+                * * @param {index: number} current header index
+                * @returns {void}
+                * @memberof GridViewTag
+                */
+                sort(context: any, fn: (a: GenericObject<any>[], b: GenericObject<any>[], index?: number) => number): void;
+                /**
                  * Delete a grid rows
                  *
                  * @param {GridRowTag} row row DOM element
@@ -5732,11 +5852,18 @@ declare namespace OS {
                  * This function triggers the row select event, a cell select
                  * event will also trigger this event
                  *
-                 * @param {TagEventType<CellEventData>} e
+                 * @param {TagEventType<GridRowEventData>} e
                  * @returns {void}
                  * @memberof GridViewTag
                  */
                 private rowselect;
+                /**
+                 * Unselect all the selected rows in the grid
+                 *
+                 * @returns {void}
+                 * @memberof GridViewTag
+                 */
+                unselect(): void;
                 /**
                  * Check whether the grid has header
                  *
@@ -6584,7 +6711,7 @@ declare namespace OS {
                  * Private data object passing between dragndrop mouse event
                  *
                  * @private
-                 * @type {{ from: TreeViewTag; to: TreeViewTag }}
+                 * @type {{ from: TreeViewTag[]; to: TreeViewTag }}
                  * @memberof TreeViewTag
                  */
                 private _dnd;
@@ -6631,7 +6758,7 @@ declare namespace OS {
                  * current tree. This function should return a promise on
                  * a list of [[TreeViewDataType]]
                  *
-                 * @memberof TreeViewItemPrototype
+                 * @memberof TreeViewTag
                  */
                 fetch: (d: TreeViewItemPrototype) => Promise<TreeViewDataType[]>;
                 /**

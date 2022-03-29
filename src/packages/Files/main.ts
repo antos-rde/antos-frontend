@@ -21,7 +21,7 @@ namespace OS {
 
         interface FilesClipboardType {
             cut: boolean;
-            file: API.VFS.BaseFileHandle;
+            files: API.VFS.BaseFileHandle[];
         }
         interface FilesViewType {
             icon: boolean;
@@ -228,43 +228,54 @@ namespace OS {
                 };
 
                 this.vfs_event_flag = true;
-                this.view.ondragndrop = (e) => {
+                this.view.ondragndrop = async (e) => {
                     if (!e) {
                         return;
                     }
-                    const src = e.data.from.data;
+                    const src = e.data.from;
                     const des = e.data.to.data;
                     if (des.type === "file") {
                         return;
                     }
-                    const file = src.path.asFileHandle();
+                    // ask to confirm
+                    const r = await this.ask({
+                        title: __("Move files"),
+                        text: __("Move selected file to {0}?", des.text)
+                    });
+                    if(!r)
+                    {
+                        return;
+                    }
                     // disable the vfs event on
                     // we update it manually
                     this.vfs_event_flag = false;
-                    return file
-                        .move(`${des.path}/${file.basename}`)
-                        .then(() => {
-                            if (this.view.view === "icon") {
-                                this.view.path = this.view.path;
-                            } else {
-                                this.view.update(file.parent().path);
-                                this.view.update(des.path);
-                            }
-                            //reenable the vfs event
-                            return (this.vfs_event_flag = true);
-                        })
-                        .catch((e: Error) => {
-                            // reenable the vfs event
-                            this.vfs_event_flag = true;
-                            return this.error(
+                    const promises = [];
+                    for(const item of src)
+                    {
+                        let file = item.data.path.asFileHandle();
+                        promises.push(
+                            file.move(`${des.path}/${file.basename}`));
+                    }
+                    try{
+                        await Promise.all(promises);
+                        if (this.view.view === "tree") {
+                            this.view.update(src[0].data.path.asFileHandle().parent().path);
+                            this.view.update(des.path);
+                        } else {
+                            this.view.path = this.view.path;
+                        }
+                    }
+                    catch(error)
+                    {
+                        this.error(
                                 __(
-                                    "Unable to move: {0} -> {1}",
-                                    src.path,
+                                    "Unable to move files to: {0}",
                                     des.path
                                 ),
-                                e
+                                error
                             );
-                        });
+                    }
+                    this.vfs_event_flag = true;
                 };
 
                 // application setting
@@ -355,6 +366,23 @@ namespace OS {
                     this.view.view = "list";
                     this.viewType.list = true;
                 };
+                // enable or disable multi-select by CTRL key
+                $(this.scheme).on("keydown", (evt)=>{
+                    if(evt.ctrlKey && evt.which == 17)
+                    {
+                        this.view.multiselect = true;
+                    }
+                    else
+                    {
+                        this.view.multiselect = false;
+                    }
+                });
+                 $(this.scheme).on("keyup", (evt)=>{
+                    if(!evt.ctrlKey)
+                    {
+                        this.view.multiselect = false;
+                    }
+                });
                 this.view.path = this.currdir.path;
             }
 
@@ -585,20 +613,22 @@ namespace OS {
                             title: "__(Delete)",
                             iconclass: "fa fa-question-circle",
                             text: __(
-                                "Do you really want to delete: {0}?",
-                                file.filename
+                                "Do you really want to delete selected files?"
                             ),
                         }).then(async (d) => {
                             if (!d) {
                                 return;
                             }
+                            const promises = [];
+                            for(const f of this.view.selectedFiles)
+                            {
+                                promises.push(f.path.asFileHandle().remove());
+                            }
                             try {
-                                return file.path
-                                    .asFileHandle()
-                                    .remove();
+                                await Promise.all(promises);
                             }
                             catch (e) {
-                                return this.error(__("Fail to delete: {0}", file.path), e);
+                                return this.error(__("Fail to delete selected files"), e);
                             }
                         });
                         break;
@@ -609,9 +639,9 @@ namespace OS {
                         }
                         this.clipboard = {
                             cut: true,
-                            file: file.path.asFileHandle(),
+                            files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
-                        return this.notify(__("File {0} cut", file.filename));
+                        return this.notify(__("{0} files cut", this.clipboard.files.length));
 
                     case `${this.name}-copy`:
                         if (!file) {
@@ -619,10 +649,10 @@ namespace OS {
                         }
                         this.clipboard = {
                             cut: false,
-                            file: file.path.asFileHandle(),
+                            files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
                         return this.notify(
-                            __("File {0} copied", file.filename)
+                            __("{0} files copied", this.clipboard.files.length)
                         );
 
                     case `${this.name}-paste`:
@@ -630,29 +660,33 @@ namespace OS {
                             return;
                         }
                         if (this.clipboard.cut) {
-                            this.clipboard.file
-                                .move(
-                                    `${this.currdir.path}/${this.clipboard.file.basename}`
-                                )
+                            const promises = [];
+                            for(const file of this.clipboard.files)
+                            {
+                                promises.push(file.move(
+                                    `${this.currdir.path}/${file.basename}`
+                                ));
+                            }
+                            Promise.all(promises)
                                 .then((r) => {
                                     return (this.clipboard = undefined);
                                 })
                                 .catch((e) => {
                                     return this.error(
                                         __(
-                                            "Fail to paste: {0}",
-                                            this.clipboard.file.path
+                                            "Fail to paste to: {0}",
+                                            this.currdir.path
                                         ),
                                         e
                                     );
                                 });
                         } else {
-                            API.VFS.copy([this.clipboard.file.path],this.currdir.path)
+                            API.VFS.copy(this.clipboard.files.map(x => x.path),this.currdir.path)
                                 .then(() => {
                                     return (this.clipboard = undefined);
                                 })
                                 .catch((e) => {
-                                    return this.error(__("Fail to paste: {0}", this.clipboard.file.path), e);
+                                    return this.error(__("Fail to paste to: {0}", this.currdir.path), e);
                                 });
                         }
                         break;
