@@ -71,7 +71,7 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 private _desktop_pos: GenericObject<any>;
-
+                
                 /**
                  * Creates an instance of WindowTag.
                  * @memberof WindowTag
@@ -331,6 +331,15 @@ namespace OS {
                             });
                         }
                     });
+                    this.observable.on("loaded", ()=>{
+                        $(this.refs.panel).removeClass("loading");
+                        $(this).css("cursor", "auto");
+                    });
+                    this.observable.on("loading", ()=>{
+                        if(!$(this.refs.panel).hasClass("loading"))
+                            $(this.refs.panel).addClass("loading");
+                        $(this).css("cursor", "wait");
+                    });
                     this.enable_dragging();
                     this.enable_resize();
                     this.setsize({
@@ -524,6 +533,7 @@ namespace OS {
                             children: [
                                 {
                                     el: "ul",
+                                    ref: 'panel',
                                     class: "afx-window-top",
                                     children: [
                                         {

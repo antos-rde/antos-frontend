@@ -15,6 +15,21 @@ afx-app-window ul.afx-window-top{
     width: 100%;
     padding:0;
 }
+
+afx-app-window ul.loading::before{
+    background-color: orangered;
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 0%;
+}
+
+afx-app-window ul.loading::before {
+    right: 0;
+    top:0;
+    animation: sys-loading 1s linear infinite;
+}
+
 afx-app-window ul.afx-window-top li{
     list-style: none;
 }

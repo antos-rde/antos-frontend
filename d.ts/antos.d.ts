@@ -2256,6 +2256,20 @@ declare namespace OS {
              */
             appmenu: GUI.tag.MenuTag;
             /**
+             * Loading animation check timeout
+             *
+             * @memberof BaseApplication
+             */
+            private _loading_toh;
+            /**
+         * Store pending loading task
+         *
+         * @private
+         * @type {number[]}
+         * @memberof BaseApplication
+         */
+            private _pending_task;
+            /**
              *Creates an instance of BaseApplication.
              * @param {string} name application name
              * @param {AppArgumentsType[]} args application arguments
@@ -2446,6 +2460,14 @@ declare namespace OS {
              * @memberof BaseApplication
              */
             protected cleanup(e: BaseEvent): void;
+            /**
+             * Check if the loading tasks ended,
+             * if it the case, stop the animation
+             *
+             * @private
+             * @memberof BaseApplication
+             */
+            private animation_check;
         }
     }
 }
@@ -10329,6 +10351,10 @@ declare namespace OS {
         /**
          * All running processes is stored in this variables
          */
+        /**
+         * Current active process ID
+         */
+        var pidactive: number;
         var processes: GenericObject<BaseModel[]>;
         /**
          * Create a new process of application or service
@@ -10365,5 +10391,11 @@ declare namespace OS {
          * @returns {void}
          */
         function killAll(app: string, force: boolean): void;
+        /**
+         * Get the current active application
+         *  @export
+         * @returns {BaseModel}
+         */
+        function getActiveApp(): BaseModel;
     }
 }

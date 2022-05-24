@@ -52,7 +52,7 @@ afx-sys-panel > div.loading::before {
     100% {
         right: auto;
         left: 100%;
-        width: 12.5%;
+        width: 0%;
     }
 }
 

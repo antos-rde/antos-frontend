@@ -71,6 +71,21 @@ namespace OS {
             appmenu: GUI.tag.MenuTag;
 
             /**
+             * Loading animation check timeout
+             *
+             * @memberof BaseApplication
+             */
+            private _loading_toh: any;
+                /**
+             * Store pending loading task
+             *
+             * @private
+             * @type {number[]}
+             * @memberof BaseApplication
+             */
+            private _pending_task: number[];
+
+            /**
              *Creates an instance of BaseApplication.
              * @param {string} name application name
              * @param {AppArgumentsType[]} args application arguments
@@ -83,6 +98,8 @@ namespace OS {
                 }
                 this.setting = setting.applications[this.name];
                 this.keycomb = {};
+                this._loading_toh = undefined;
+                this._pending_task = [];
             }
 
             /**
@@ -104,6 +121,7 @@ namespace OS {
                     this.sysdock.selectedApp = this;
                     this.appmenu.pid = this.pid;
                     this.appmenu.items = this.baseMenu() || [];
+                    OS.PM.pidactive = this.pid;
                     this.appmenu.onmenuselect = (
                         d: GUI.tag.MenuEventData
                     ): void => {
@@ -134,6 +152,26 @@ namespace OS {
                 this.subscribe("appregistry", (m) => {
                     if (m.name === this.name) {
                         this.applySetting(m.message as string);
+                    }
+                });
+                this.subscribe("loading", (o: API.AnnouncementDataType<number>) => {
+                    if(o.u_data != this.pid)
+                    {
+                        return;
+                    }
+                    this._pending_task.push(o.id);
+                    this.trigger("loading", undefined);
+                });
+    
+                this.subscribe("loaded", (o: API.AnnouncementDataType<number>) => {
+                    const i = this._pending_task.indexOf(o.id);
+                    if (i >= 0) {
+                        this._pending_task.splice(i, 1);
+                    }
+                    if (this._pending_task.length === 0) {
+                        // set time out
+                        if(!this._loading_toh)
+                            this._loading_toh = setTimeout(() => this.animation_check(),1000);
                     }
                 });
                 this.updateLocale(this.systemsetting.system.locale);
@@ -446,6 +484,23 @@ namespace OS {
              * @memberof BaseApplication
              */
             protected cleanup(e: BaseEvent): void {}
+
+            /**
+             * Check if the loading tasks ended,
+             * if it the case, stop the animation
+             *
+             * @private
+             * @memberof BaseApplication
+             */
+            private animation_check(): void {
+                if(this._pending_task.length === 0)
+                {
+                    this.trigger("loaded", undefined);
+                }
+                if(this._loading_toh)
+                    clearTimeout(this._loading_toh);
+                this._loading_toh = undefined;
+            }
         }
 
         BaseApplication.type = ModelType.Application;

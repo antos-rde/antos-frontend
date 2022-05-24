@@ -533,7 +533,9 @@ namespace OS {
          */
         export function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType> {
             return new Promise(async (resolve, reject) => {
+                const pidactive = PM.pidactive;
                 try {
+                    PM.pidactive = 0;
                     if (!application[app]) {
                         // first load it
                         await loadApp(app);
@@ -565,6 +567,7 @@ namespace OS {
                         __("Unable to launch: {0}", app),
                         e
                     );
+                    PM.pidactive = pidactive;
                     return reject(__e(e));
                 }
 

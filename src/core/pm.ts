@@ -24,6 +24,10 @@ namespace OS {
         /**
          * All running processes is stored in this variables
          */
+        /**
+         * Current active process ID
+         */
+        export var pidactive: number = 0;
         export var processes: GenericObject<BaseModel[]> = {};
         /**
          * Create a new process of application or service
@@ -158,6 +162,20 @@ namespace OS {
             {
                 p.quit(force);
             }
+        }
+
+        /**
+         * Get the current active application
+         *  @export
+         * @returns {BaseModel}
+         */
+        export function getActiveApp():BaseModel
+        {
+            if(PM.pidactive === 0)
+            {
+                return undefined;
+            }
+            return PM.appByPid(PM.pidactive);
         }
     }
 }

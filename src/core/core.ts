@@ -1275,11 +1275,11 @@ namespace OS {
          * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
-            const data:API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
+            const data:API.AnnouncementDataType<number> = {} as API.AnnouncementDataType<number>;
             data.id = q;
             data.message = p;
-            data.name = "OS";
-            data.u_data = true;
+            data.name = p;
+            data.u_data = PM.pidactive;
             announcer.trigger("loading", data);
         }
 
