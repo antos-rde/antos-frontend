@@ -44,6 +44,7 @@ namespace OS {
              */
             parent: BaseModel | typeof GUI;
 
+
             /**
              *Creates an instance of SubWindow.
              * @param {string} name SubWindow (class) name
@@ -82,10 +83,26 @@ namespace OS {
              *
              * Need to be implemented by subclasses
              *
-             * @abstract
-             * @memberof SubWindow
+             * 
+             * @returns {void}
+             * @memberof BaseDialog
              */
-            abstract init(): void;
+            init(): void {
+                // show the app if it is not active
+                this.on("focus",() => {
+                    if((this.pid == -1) || (PM.pidactive == this.pid))
+                    {
+                        return;
+                    }
+                    
+                    const app = PM.appByPid(this.pid);
+                    if(app)
+                    {
+                        app.show();
+                    }
+                });
+                
+            }
 
             /**
              * Main entry point after rendering of the sub-window
@@ -115,7 +132,7 @@ namespace OS {
              * @memberof SubWindow
              */
             show(): void {
-                this.trigger("focus");
+                this.trigger("focus", undefined);
                 this.trigger("focused", undefined);
                 if (this.dialog) {
                     this.dialog.show();
@@ -129,8 +146,25 @@ namespace OS {
              * @memberof SubWindow
              */
             hide(): void {
-                return this.trigger("hide");
+                this.trigger("hide", undefined);
+                if (this.dialog) {
+                    this.dialog.hide();
+                }
             }
+
+            /**
+             * blur the sub-window
+             *
+             * @returns {void}
+             * @memberof SubWindow
+             */
+            blur(): void {
+                this.trigger("blur", undefined);
+                if (this.dialog) {
+                    this.dialog.blur();
+                }
+            }
+
         }
 
         SubWindow.type = ModelType.SubWindow;
@@ -182,6 +216,7 @@ namespace OS {
                     return (this.parent.dialog = undefined);
                 }
             }
+
         }
 
         /**
@@ -238,6 +273,7 @@ namespace OS {
              * @memberof BasicDialog
              */
             init(): void {
+                super.init();
                 //this._onenter = undefined;
                 if (this.markup) {
                     if (typeof this.markup === "string") {

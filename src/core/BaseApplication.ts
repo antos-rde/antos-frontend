@@ -362,7 +362,11 @@ namespace OS {
                 if (this.appmenu && this.pid === this.appmenu.pid) {
                     this.appmenu.items = [];
                 }
-                return this.trigger("blur", undefined);
+                this.trigger("blur", undefined);
+                if(this.dialog)
+                {
+                    this.dialog.blur();
+                }
             }
 
             /**

@@ -380,10 +380,11 @@ declare namespace OS {
              *
              * Need to be implemented by subclasses
              *
-             * @abstract
-             * @memberof SubWindow
+             *
+             * @returns {void}
+             * @memberof BaseDialog
              */
-            abstract init(): void;
+            init(): void;
             /**
              * Main entry point after rendering of the sub-window
              *
@@ -412,6 +413,13 @@ declare namespace OS {
              * @memberof SubWindow
              */
             hide(): void;
+            /**
+             * blur the sub-window
+             *
+             * @returns {void}
+             * @memberof SubWindow
+             */
+            blur(): void;
         }
         /**
          * Abstract prototype of all AntOS dialogs widget
