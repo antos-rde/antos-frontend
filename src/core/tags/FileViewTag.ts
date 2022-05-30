@@ -463,9 +463,10 @@ namespace OS {
                         }
                         if(!v.text)
                             v.text = v.filename;
+                        /*
                         if (v.text.length > 10) {
                             v.text = v.text.substring(0, 9) + "...";
-                        }
+                        }*/
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
                         v.icon = v.icon;
                         items.push(v);
