@@ -212,12 +212,6 @@ namespace OS {
                                 if (d.error) {
                                     return reject(d.error);
                                 }
-                                if (!dir.isRoot()) {
-                                    const p = dir.parent();
-                                    p.filename = "[..]";
-                                    p.type = "dir";
-                                    d.result.unshift(p);
-                                }
                                 this.currdir = dir;
                                 $(this.navinput).val(dir.path);
                                 (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;

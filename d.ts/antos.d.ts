@@ -9233,6 +9233,14 @@ declare namespace OS {
                  */
                 meta(): Promise<RequestResult>;
                 /**
+                 * Load the file meta-data before performing
+                 * any task
+                 *
+                 * @returns {Promise<FileInfoType>} a promise on file meta-data
+                 * @memberof BufferFileHandle
+                 */
+                onready(): Promise<FileInfoType>;
+                /**
                  * Read file content stored in the file cached
                  *
                  * @protected
@@ -9246,11 +9254,40 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {*} d data
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
-                protected _wr(t: string, d: any): Promise<RequestResult>;
+                protected _wr(t: string): Promise<RequestResult>;
+                /**
+                 * Create sub directory
+                 *
+                 * Only work on directory file handle
+                 *
+                 * @protected
+                 * @param {string} d sub directory name
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mk(d: string): Promise<RequestResult>;
+                /**
+                 * Delete file/folder
+                 *
+                 * @protected
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _rm(): Promise<RequestResult>;
+                setPath(p: string): void;
+                private updatePath;
+                /**
+                 * Move file/folder
+                 *
+                 * @protected
+                 * @param {string} d
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mv(d: string): Promise<RequestResult>;
                 /**
                  * Download the buffer file
                  *

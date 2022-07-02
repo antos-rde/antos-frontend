@@ -1459,14 +1459,14 @@ namespace OS {
                 constructor(path: string, mime: string, data: any) {
                     super(path);
                     this.info = {
-                        mime: mime,
+                        mime: mime?mime:'application/octet-stream',
                         path: path,
                         size: data ? data.length : 0,
                         name: this.basename,
                         filename:this.basename,
                         ctime: (new Date()).toGMTString(),
                         mtime: (new Date()).toGMTString(),
-                        type: undefined,
+                        type: 'file',
                     };
                     if (data) {
                         this.cache = data;
@@ -1491,7 +1491,14 @@ namespace OS {
                     for(let i = 0;i<this.genealogy.length - 1;i++)
                     {
                         const segment = this.genealogy[i];
-                        let handle = curr_level.cache[segment];
+                        let handle = undefined;
+                        if(segment == "..")
+                        {
+                            curr_level = curr_level.parent();
+                            continue;
+                        }
+
+                        handle = curr_level.cache[segment];
                         if(!handle)
                         {
                             handle = new BufferFileHandle(`${curr_level.path}/${segment}`, 'dir', {});
@@ -1502,6 +1509,10 @@ namespace OS {
                         {
                             curr_level.cache = {};
                         }
+                    }
+                    if(this.basename == "..")
+                    {
+                        return curr_level.parent() as BufferFileHandle;
                     }
                     if(!curr_level.cache[this.basename])
                         curr_level.cache[this.basename] = this;
@@ -1517,13 +1528,23 @@ namespace OS {
                     {
                         return;
                     }
+                    this.info.mime =  (new Date()).toGMTString();
                     if(typeof this.cache === "string" || this.cache instanceof Blob || this.cache instanceof Uint8Array)
                     {
                         this.info.type = "file";
+                        if(typeof this.cache === "string")
+                        {
+                            this.info.mime = "text/plain";
+                        }
+                        else
+                        {
+                            this.info.mime = "application/octet-stream";
+                        }
                     }
                     else
                     {
                         this.info.type = "dir";
+                        this.info.mime = "dir";
                     }
                     this.info.size = this.cache.length;
                 }
@@ -1535,11 +1556,39 @@ namespace OS {
                  */
                 meta(): Promise<RequestResult> {
                     return new Promise((resolve, reject) =>
+                    {
+                        const data = {};
+                        for(const k in this.info)
+                        {
+                            data[k] = this.info[k];
+                        }
                         resolve({
-                            result: this.info,
+                            result: data,
                             error: false,
                         })
-                    );
+                    });
+                }
+
+                /**
+                 * Load the file meta-data before performing
+                 * any task
+                 *
+                 * @returns {Promise<FileInfoType>} a promise on file meta-data
+                 * @memberof BufferFileHandle
+                 */
+                onready(): Promise<FileInfoType> {
+                    // read meta data
+                    return new Promise(async (resolve, reject) => {
+                        try
+                        {
+                            const d = await this.meta();
+                            resolve(d.result as FileInfoType);
+                        }
+                        catch(e)
+                        {
+                            reject(__e(e));
+                        }
+                    });
                 }
                 
                 /**
@@ -1568,12 +1617,10 @@ namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {*} d data
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
-                protected _wr(t: string, d: any): Promise<RequestResult> {
-                    this.cache = d;
+                protected _wr(t: string): Promise<RequestResult> {
                     return new Promise((resolve, reject) =>
                         resolve({
                             result: true,
@@ -1581,6 +1628,106 @@ namespace OS {
                         })
                     );
                 }
+                
+                /**
+                 * Create sub directory
+                 *
+                 * Only work on directory file handle
+                 *
+                 * @protected
+                 * @param {string} d sub directory name
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mk(d: string): Promise<RequestResult> {
+                    return new Promise((resolve, reject) => {
+                        if (this.info.type === "file") {
+                            return reject(
+                                API.throwe(
+                                    __("{0} is not a directory", this.path)
+                                )
+                            );
+                        }
+                        const handle = `${this.path}/${d}`.asFileHandle();
+                        if(handle.info.type === "file")
+                        {
+                            handle.cache = {};
+                        }
+                        resolve({result: true, error: false});
+                    });
+                }
+
+                /**
+                 * Delete file/folder
+                 *
+                 * @protected
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _rm(): Promise<RequestResult> {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            const parent = this.parent();
+                            parent.cache[this.basename] = undefined;
+                            delete parent.cache[this.basename];
+                            return resolve({result: true, error: false});
+                        } catch (e) {
+                            return reject(__e(e));
+                        }
+                    });
+                }
+
+                setPath(p: string): void
+                {
+                    super.setPath(p);
+                    if(this.info)
+                        this.info.path = this.path;
+                }
+
+                private updatePath(path: string)
+                {
+                    this.setPath(path);
+                    if(this.info.type == "file")
+                    {
+                        return;
+                    }
+                    for(const k in this.cache)
+                    {
+                        const child = this.cache[k];
+                        child.updatePath(`${this.path}/${child.basename}`);
+                    }
+                }
+
+                /**
+                 * Move file/folder
+                 *
+                 * @protected
+                 * @param {string} d
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mv(d: string): Promise<RequestResult> {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            if(d.includes(this.path))
+                            {
+                                return reject(API.throwe(__("Unable to move file/folder from {0} to {1}", this.path, d)));
+                            }
+                            const parent = this.parent()
+                            parent.cache[this.basename] = undefined;
+                            delete parent.cache[this.basename];
+
+                            const dest = d.asFileHandle();
+                            this.updatePath(dest.path);
+                            dest.parent().cache[dest.basename] = this;
+                            return resolve({result: true, error: false});
+                        } catch (e) {
+                            console.log(this);
+                            return reject(__e(e));
+                        }
+                    });
+                }
+
 
                 /**
                  * Download the buffer file
@@ -1924,11 +2071,11 @@ namespace OS {
                     promises.push(new Promise(async (resolve, reject) => {
                         try {
                             const file = path.asFileHandle();
-                            const tof = `${to}/${file.basename}`.asFileHandle();
                             const meta = await file.onready();
                             if (meta.type === "dir") {
                                 const desdir = to.asFileHandle();
                                 await desdir.mk(file.basename);
+                                console.log(desdir, to);
                                 const ret = await file.read();
                                 const files = ret.result.map((v: API.FileInfoType) => v.path);
                                 if (files.length > 0) {
@@ -1940,6 +2087,7 @@ namespace OS {
                                 }
                             }
                             else {
+                                const tof = `${to}/${file.basename}`.asFileHandle();
                                 const content = await file.read("binary");
                                 await tof
                                     .setCache(
