@@ -73,6 +73,7 @@ namespace OS {
             /**
              * Loading animation check timeout
              *
+             * @private
              * @memberof BaseApplication
              */
             private _loading_toh: any;

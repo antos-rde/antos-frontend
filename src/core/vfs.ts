@@ -272,11 +272,12 @@ namespace OS {
 
                 /**
                  * Once read, file content will be cached in this placeholder
-                 *
+                 * 
+                 * @private
                  * @type {*}
                  * @memberof BaseFileHandle
                  */
-                cache: any;
+                private _cache: any;
 
                 /**
                  * Flag indicated whether the file meta-data is loaded
@@ -355,6 +356,8 @@ namespace OS {
                     this.setPath(path);
                 }
 
+
+
                 /**
                  * Set a file path to the current file handle
                  *
@@ -408,6 +411,22 @@ namespace OS {
                 set filename(v: string) {
                     this.basename = v;
                 }
+
+                /**
+                 * Getter: Get the file cache
+                 * Setter: set the file cache
+                 *
+                 * @returns {any}
+                 * @memberof BaseFileHandle
+                 */
+                get cache(): any {
+                    return this._cache;
+                }
+                set cache(v: any) {
+                    this._cache = v;
+                    this._cache_changed();
+                }
+
                 /**
                  * Set data to the file cache
                  *
@@ -791,6 +810,17 @@ namespace OS {
                             )
                         );
                     });
+                }
+
+                /**
+                 * trigger cache changed event
+                 *
+                 * This function triggered when the file cached changed
+                 *
+                 * @protected
+                 * @memberof BaseFileHandle
+                 */
+                protected _cache_changed():void {
                 }
 
                 /**
@@ -1405,6 +1435,8 @@ namespace OS {
 
             register("^app$", ApplicationHandle);
 
+            
+            var MEM_PARTITION: BufferFileHandle = undefined;
             /**
              * A buffer file handle represents a virtual file that is stored
              * on the system memory. Its protocol pattern is defined as:
@@ -1426,19 +1458,75 @@ namespace OS {
                  */
                 constructor(path: string, mime: string, data: any) {
                     super(path);
-                    if (data) {
-                        this.cache = data;
-                    }
                     this.info = {
                         mime: mime,
                         path: path,
                         size: data ? data.length : 0,
                         name: this.basename,
-                        type: "file",
+                        filename:this.basename,
+                        ctime: (new Date()).toGMTString(),
+                        mtime: (new Date()).toGMTString(),
+                        type: undefined,
                     };
+                    if (data) {
+                        this.cache = data;
+                    }
+                    return this.init_file_tree();
                 }
-                
-                
+                /**
+                 * init the mem file tree if necessary
+                 */
+                private init_file_tree(): BufferFileHandle
+                {
+                    if(this.isRoot())
+                    {
+                        if(!MEM_PARTITION)
+                        {
+                            this.cache = {};
+                            MEM_PARTITION = this;
+                        }
+                        return MEM_PARTITION;
+                    }
+                    let curr_level = "mem://".asFileHandle(); 
+                    for(let i = 0;i<this.genealogy.length - 1;i++)
+                    {
+                        const segment = this.genealogy[i];
+                        let handle = curr_level.cache[segment];
+                        if(!handle)
+                        {
+                            handle = new BufferFileHandle(`${curr_level.path}/${segment}`, 'dir', {});
+                            curr_level.cache[segment] = handle;
+                        }
+                        curr_level = handle;
+                        if(!curr_level.cache)
+                        {
+                            curr_level.cache = {};
+                        }
+                    }
+                    if(!curr_level.cache[this.basename])
+                        curr_level.cache[this.basename] = this;
+                    return curr_level.cache[this.basename];
+                }
+
+                /**
+                 * cache changed handle
+                 */
+                protected _cache_changed(): void
+                {
+                    if(!this.cache)
+                    {
+                        return;
+                    }
+                    if(typeof this.cache === "string" || this.cache instanceof Blob || this.cache instanceof Uint8Array)
+                    {
+                        this.info.type = "file";
+                    }
+                    else
+                    {
+                        this.info.type = "dir";
+                    }
+                    this.info.size = this.cache.length;
+                }
                 /**
                  * Read the file meta-data
                  *
@@ -1455,16 +1543,6 @@ namespace OS {
                 }
                 
                 /**
-                 * Get the parent file handle of the current file
-                 *
-                 */
-                parent(): BaseFileHandle {
-                    const handle = super.parent();
-                    handle.info.type = "dir";
-                    return handle;
-                }
-
-                /**
                  * Read file content stored in the file cached
                  *
                  * @protected
@@ -1477,7 +1555,7 @@ namespace OS {
                         // read dir
                         if (this.info.type === "dir") {
                             return resolve({
-                                result: [],
+                                result: (Object.values(this.cache) as BufferFileHandle[]).map(o=>o.info),
                                 error: false,
                             });
                         }
@@ -1513,6 +1591,10 @@ namespace OS {
                  */
                 protected _down(): Promise<void> {
                     return new Promise((resolve, reject) => {
+                        if(this.info.type == "dir")
+                        {
+                            return reject(API.throwe(__("{0} is a directory", this.path)));
+                        }
                         const blob = new Blob([this.cache], {
                             type: "octet/stream",
                         });

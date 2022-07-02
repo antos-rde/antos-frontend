@@ -171,6 +171,13 @@ interface Date {
      * @memberof Date
      */
     timestamp(): number;
+    /**
+     * Covnert to GMTString
+     * 
+     * @returns {number}
+     * @memberof Date
+     */
+    toGMTString(): string;
 }
 
 /**
