@@ -1437,7 +1437,8 @@ namespace OS {
                         type: "file",
                     };
                 }
-
+                
+                
                 /**
                  * Read the file meta-data
                  *
@@ -1452,6 +1453,16 @@ namespace OS {
                         })
                     );
                 }
+                
+                /**
+                 * Get the parent file handle of the current file
+                 *
+                 */
+                parent(): BaseFileHandle {
+                    const handle = super.parent();
+                    handle.info.type = "dir";
+                    return handle;
+                }
 
                 /**
                  * Read file content stored in the file cached
@@ -1463,6 +1474,13 @@ namespace OS {
                  */
                 protected _rd(t: string): Promise<any> {
                     return new Promise((resolve, reject) => {
+                        // read dir
+                        if (this.info.type === "dir") {
+                            return resolve({
+                                result: [],
+                                error: false,
+                            });
+                        }
                         return resolve(this.cache);
                     });
                 }
