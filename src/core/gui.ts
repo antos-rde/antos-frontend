@@ -128,6 +128,7 @@ namespace OS {
             app.scheme.uify(app.observable, true);
             app.main();
             app.show();
+            app.observable.trigger("launched",undefined);
         }
 
         /**

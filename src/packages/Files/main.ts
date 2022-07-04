@@ -372,6 +372,15 @@ namespace OS {
                     }
                 });
                  $(this.scheme).on("keyup", (evt)=>{
+                    if(evt.which === 38)
+                    {
+                        if (this.currdir.isRoot()) {
+                            return;
+                        }
+                        const p = this.currdir.parent();
+                        this.favo.selected = -1;
+                        return this.view.path = p.path;
+                    }
                     if(!evt.ctrlKey)
                     {
                         this.view.multiselect = false;

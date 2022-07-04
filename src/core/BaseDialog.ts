@@ -1070,12 +1070,6 @@ namespace OS {
                                         return reject(d);
                                     }
                                     FileDialog.last_opened = path;
-                                    if (!dir.isRoot()) {
-                                        const p = dir.parent();
-                                        p.filename = "[..]";
-                                        p.type = "dir";
-                                        d.result.unshift(p);
-                                    }
                                     return resolve(d.result);
                                 })
                                 .catch((e: Error): void => reject(__e(e)));
@@ -1188,6 +1182,18 @@ namespace OS {
                     if (this.data && this.data.hidden) {
                         return (fileview.showhidden = this.data.hidden);
                     }
+
+                    $(this.scheme).on("keyup", (evt)=>{
+                        if(evt.which === 38)
+                        {
+                            const currdir = fileview.path.asFileHandle();
+                            if (currdir.isRoot()) {
+                                return;
+                            }
+                            const p = currdir.parent();
+                            return fileview.path = p.path;
+                        }
+                    });
                 }
             }
 
