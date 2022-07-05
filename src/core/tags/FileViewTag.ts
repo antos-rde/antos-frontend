@@ -468,7 +468,8 @@ namespace OS {
                             v.text = v.text.substring(0, 9) + "...";
                         }*/
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
-                        v.icon = v.icon;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         items.push(v);
                     });
                     (this.refs.listview as ListViewTag).data = items;
@@ -489,7 +490,10 @@ namespace OS {
                         }
                         if(!v.text)
                             v.text = v.filename;
+                        
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         const row = [
                             v,
                             {
@@ -550,7 +554,8 @@ namespace OS {
                             v.open = false;
                         }
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
-                        v.icon = v.icon;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         return nodes.push(v);
                     });
                     return nodes;

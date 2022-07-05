@@ -346,6 +346,9 @@ namespace OS {
                  * @memberof SimpleGridCellTag
                  */
                 protected ondatachange(): void {
+                    const label = (this.refs.cell as LabelTag);
+                    label.icon = undefined;
+                    label.iconclass = undefined;
                     (this.refs.cell as LabelTag).set(this.data);
                 }
 

@@ -97,3 +97,9 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
     border-radius: 0;
     border: 0px;
 }
+
+afx-sys-panel afx-list-view[data-id="applist"] afx-label span,
+afx-sys-panel afx-list-view[data-id="catlist"] afx-label span
+{
+    white-space: nowrap;
+}
