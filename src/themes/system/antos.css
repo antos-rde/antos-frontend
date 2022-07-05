@@ -130,3 +130,7 @@ body
     height: 1px;
     box-sizing: border-box;
 }
+
+afx-desktop > .list-container > ul > afx-list-item afx-label span {
+    flex-direction: column;
+}

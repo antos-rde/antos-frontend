@@ -294,7 +294,8 @@ namespace OS {
                         .css("padding", 0)
                         .css("margin", 0)
                         .css("background-color", "transparent")
-                        .css("width", v * 15 + "px");
+                        .css("width", v * 15 + "px")
+                        .css("flex-shrink", 0);
                 }
 
                 /**
@@ -375,6 +376,9 @@ namespace OS {
                     $(this.refs.container)
                         .css("padding", 0)
                         .css("margin", 0)
+                        .css("display","flex")
+                        .css("flex-direction", "row")
+                        .css("align-items", "center")
                         .css("white-space", "nowrap");
                     $(this.refs.itemholder).css("display", "inline-block");
                     $(this.refs.wrapper).on("click",(e) => {
@@ -388,6 +392,7 @@ namespace OS {
                     $(this.refs.toggle)
                         .css("display", "inline-block")
                         .css("width", "15px")
+                        .css("flex-shrink", 0)
                         .addClass("afx-tree-view-item")
                         .on("click",(e) => {
                             this.open = !this.open;

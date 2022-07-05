@@ -25,6 +25,11 @@ afx-file-view afx-list-view i.label-text{
     word-break: break-word;
 }
 
+afx-file-view afx-list-view afx-label span
+{
+    flex-direction: column;
+}
+
 afx-file-view afx-grid-view i{
     display: inline-block;
 }

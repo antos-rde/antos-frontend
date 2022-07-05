@@ -71,24 +71,26 @@ namespace OS {
 
                 this.view.contextmenuHandle = (e, m) => {
                     const file = this.view.selectedFile;
-                    if (!file) {
-                        return;
-                    }
                     const apps = [];
-                    if (file.type === "dir") {
-                        file.mime = "dir";
-                    }
-
-                    for (let v of this._gui.appsByMime(file.mime)) {
-                        apps.push({
-                            text: v.text,
-                            app: v.app,
-                            icon: v.icon,
-                            iconclass: v.iconclass,
-                        });
-                    }
                     let ctx_menu = [
-                        {
+                        this.mnFile(),
+                    ];
+                    if(file)
+                    {
+                        ctx_menu.push(this.mnEdit());
+                        if (file.type === "dir") {
+                            file.mime = "dir";
+                        }
+
+                        for (let v of this._gui.appsByMime(file.mime)) {
+                            apps.push({
+                                text: v.text,
+                                app: v.app,
+                                icon: v.icon,
+                                iconclass: v.iconclass,
+                            });
+                        }
+                        ctx_menu.unshift( {
                             text: "__(Open with)",
                             nodes: apps,
                             onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
@@ -98,77 +100,76 @@ namespace OS {
                                 const it = e.data.item.data;
                                 return this._gui.launch(it.app, [file]);
                             },
-                        },
-                        this.mnFile(),
-                        this.mnEdit(),
-                    ];
-                    if(file.mime === "application/zip")
-                    {
-                        ctx_menu = ctx_menu.concat([
-                            {
-                                text: "__(Extract Here)",
-                                onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    API.VFS.extractZip(file.path,
-                                        (z) => new Promise((r,e) => r(file.path.asFileHandle().parent().path)))
-                                    .catch((err) => this.error(__("Unable to extract file"), err));
-                                },
-                            },
-                            {
-                                text: "__(Extract to)",
-                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    try {
-                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
-                                        const d = await this.openDialog("FileDialog", {
-                                            title: __("Select extract destination"),
-                                            type: "dir",
-                                            file: file.path.replace(".zip","").asFileHandle()
-                                        });
-                                        const path = `${d.file.path}/${d.name}`;
-                                        await API.VFS.mkdirAll([path]);
-                                        await API.VFS.extractZip(file.path,
-                                            (z) => new Promise((r,e) => r(path)));
-                                    } catch (error) {
-                                        this.error(__("Unable to extract file"), error);
-                                    }
-                                },
-                            },
-                        ]);
-                    }
-                    else
-                    {
-                        ctx_menu.push(
-                            {
-                                text: "__(Compress)",
-                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    try {
-                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
-                                        const d = await this.openDialog("FileDialog", {
-                                            title: __("Save compressed file to"),
-                                            type: "dir",
-                                            file: `${this.currdir.path}/${file.name}.zip`.asFileHandle()
-                                        });
-                                        if(d.name.trim() === "")
-                                        {
-                                            return this.error(__("Invalid file name"));
+                        });
+                        if(file.mime === "application/zip")
+                        {
+                            ctx_menu = ctx_menu.concat([
+                                {
+                                    text: "__(Extract Here)",
+                                    onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
                                         }
-                                        const path = `${d.file.path}/${d.name}`;
-                                        await API.VFS.mkar(file.path, path);
-                                        this.notify(__("Archive file created: {0}",path ));
-                                    } catch (error) {
-                                        this.error(__("Unable to compress file, folder"), error);
+                                        API.VFS.extractZip(file.path,
+                                            (z) => new Promise((r,e) => r(file.path.asFileHandle().parent().path)))
+                                        .catch((err) => this.error(__("Unable to extract file"), err));
+                                    },
+                                },
+                                {
+                                    text: "__(Extract to)",
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
+                                        }
+                                        try {
+                                            OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                            const d = await this.openDialog("FileDialog", {
+                                                title: __("Select extract destination"),
+                                                type: "dir",
+                                                file: file.path.replace(".zip","").asFileHandle()
+                                            });
+                                            const path = `${d.file.path}/${d.name}`;
+                                            await API.VFS.mkdirAll([path]);
+                                            await API.VFS.extractZip(file.path,
+                                                (z) => new Promise((r,e) => r(path)));
+                                        } catch (error) {
+                                            this.error(__("Unable to extract file"), error);
+                                        }
+                                    },
+                                },
+                            ]);
+                        }
+                        else
+                        {
+                            ctx_menu.push(
+                                {
+                                    text: "__(Compress)",
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
+                                        }
+                                        try {
+                                            OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                            const d = await this.openDialog("FileDialog", {
+                                                title: __("Save compressed file to"),
+                                                type: "dir",
+                                                file: `${this.currdir.path}/${file.name}.zip`.asFileHandle()
+                                            });
+                                            if(d.name.trim() === "")
+                                            {
+                                                return this.error(__("Invalid file name"));
+                                            }
+                                            const path = `${d.file.path}/${d.name}`;
+                                            await API.VFS.mkar(file.path, path);
+                                            this.notify(__("Archive file created: {0}",path ));
+                                        } catch (error) {
+                                            this.error(__("Unable to compress file, folder"), error);
+                                        }
                                     }
                                 }
-                            }
-                        );
+                            );
+                        }
+
                     }
                     m.items = ctx_menu;
                     m.show(e);
@@ -764,7 +765,7 @@ namespace OS {
                             });
                         break;
                     case `${this.name}-download`:
-                        if (file.type !== "file") {
+                        if (!file || file.type !== "file") {
                             return;
                         }
                         file.path
