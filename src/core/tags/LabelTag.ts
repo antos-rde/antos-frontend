@@ -35,8 +35,7 @@ namespace OS {
                  */
                 protected mount() {
                     $(this.refs.container)
-                        .css("display", "flex")
-                        .css("flex-direction", "row");
+                        .css("display", "flex");
                     $(this.refs.iclass)
                         .css("flex-shrink",0);
                     $(this.refs.i)
