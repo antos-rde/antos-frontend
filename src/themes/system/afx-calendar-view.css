@@ -5,3 +5,6 @@ afx-calendar-view afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
 afx-calendar-view afx-grid-view .grid_row_header afx-grid-cell{
     border-right: 0;
 }
+afx-calendar-view afx-label {
+    display: inline-block;
+}

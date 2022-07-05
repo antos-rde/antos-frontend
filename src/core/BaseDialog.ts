@@ -567,7 +567,7 @@ namespace OS {
              * Scheme definition
              */
             CalendarDialog.scheme = `\
-<afx-app-window  width='300' height='230' apptitle = "Calendar" >
+<afx-app-window  width='300' height='250' apptitle = "Calendar" >
     <afx-vbox>
         <afx-hbox>
             <div data-width = "10" ></div>

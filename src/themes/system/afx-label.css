@@ -1,16 +1,12 @@
 afx-label  i.icon-style {
     display: inline-block;
-    flex-shrink: 0;
 }
 afx-label span {
-    display: flex;
-    flex-direction: row;
-    align-items:center;
+    align-items:  center;
     justify-content: center;
 }
 afx-label  i.label-text{
     font-weight: normal;
     font-style: normal;
     margin-left: 3px;
-    flex: 1;
 }

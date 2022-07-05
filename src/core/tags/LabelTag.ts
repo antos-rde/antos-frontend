@@ -33,7 +33,17 @@ namespace OS {
                  * @protected
                  * @memberof LabelTag
                  */
-                protected mount() {}
+                protected mount() {
+                    $(this.refs.container)
+                        .css("display", "flex")
+                        .css("flex-direction", "row");
+                    $(this.refs.iclass)
+                        .css("flex-shrink",0);
+                    $(this.refs.i)
+                        .css("flex-shrink",0);
+                    $(this.refs.text)
+                        .css("flex",1);
+                }
 
                 /**
                  * Refresh the text in the label
