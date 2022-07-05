@@ -54,3 +54,7 @@ afx-list-view.dropdown > div.list-container > ul  li{
     display: inline-block;
     width:100%;
 }
+
+afx-list-view afx-list-item afx-label {
+    display: inline-block;
+}
