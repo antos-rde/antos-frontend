@@ -11,3 +11,7 @@ afx-label  i.label-text{
     font-style: normal;
     margin-left: 3px;
 }
+
+afx-label {
+    display: inline-block;
+}
