@@ -97,8 +97,24 @@ namespace OS {
                         let t1 = r1[i].text;
                         let t2 = r2[i].text;
                         if(!t1 || !t2) return 0;
-                        t1 = t1.toString().toLowerCase();
-                        t2 = t2.toString().toLowerCase();
+                        if(i == 1)
+                        {
+                            // sort by date
+                            t1 = new Date(t1);
+                            t2 = new Date(t2);
+                        }
+                        else if(i==2)
+                        {
+                            // sort by size
+                            t1 = parseInt(t1);
+                            t2 = parseInt(t2);
+                        }
+                        else
+                        {
+                            // sort by name
+                            t1 = t1.toString().toLowerCase();
+                            t2 = t2.toString().toLowerCase();
+                        }
                         if(this.__f)
                         {
                             this.desc = ! this.desc;
@@ -118,7 +134,10 @@ namespace OS {
                             text: "__(File name)", 
                             sort: fn
                         },
-                        { text: "__(Type)" },
+                        {
+                            text: "__(Modified)",
+                            sort: fn
+                        },
                         {
                             text: "__(Size)",
                             sort: fn
@@ -497,7 +516,7 @@ namespace OS {
                         const row = [
                             v,
                             {
-                                text: v.mime,
+                                text: v.mtime,
                                 data: v,
                             },
                             {

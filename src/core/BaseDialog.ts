@@ -980,7 +980,7 @@ namespace OS {
     <afx-vbox>
         <div style="text-align:center; margin-top:10px;" data-height="50">
             <h3 style = "margin:0;padding:0;">
-                <afx-label data-id = 'mylabel'></afx-label>
+                <afx-label data-id = 'mylabel' style="display: inline-block;"></afx-label>
             </h3>
             <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
         </div>
