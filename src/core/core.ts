@@ -761,7 +761,7 @@ namespace OS {
      * Variable represents the current AntOS version, it
      * is an instance of [[Version]]
      */
-    export const VERSION: Version = "1.0.0-a".__v();
+    export const VERSION: Version = "1.2.1-b".__v();
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
