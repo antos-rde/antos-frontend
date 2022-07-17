@@ -8,7 +8,7 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION=1.2.1
+VERSION=$(shell grep -e "export const VERSION" src/core/core.ts | cut -d '"' -f 2 | cut -d "-" -f 1)
 
 GSED=sed
 UNAME_S := $(shell uname -s)
