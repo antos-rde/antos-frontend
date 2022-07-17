@@ -5,6 +5,7 @@ afx-menu afx-switch span{
 }
 afx-menu span.shortcut{
    text-align: right;
+   margin-left: 3px;
 }
 afx-menu li:hover > a afx-switch span:before{
     color:white;
@@ -25,6 +26,7 @@ afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
 }
 afx-menu  afx-menu li{
     min-width: 150px;
+    width: calc(100% - 10px);
 }
 
 afx-menu li:hover  {
@@ -53,6 +55,7 @@ afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before
  }
  afx-menu  ul.context li{
     min-width: 150px;
+    width: calc(100% - 10px);
  }
 
 afx-menu afx-label span {

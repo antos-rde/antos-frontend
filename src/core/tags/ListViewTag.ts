@@ -1126,7 +1126,7 @@ namespace OS {
                             .css("top", top + "px")
                             .css("left", left + "px");
                     };
-
+                    $(this.refs.drlabel).css("display", "inline-block");
                     $(this.refs.btlist).hide();
                     this.observable.on("resize", (e) => this.calibrate());
                     return this.calibrate();
