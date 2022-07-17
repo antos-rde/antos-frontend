@@ -1060,7 +1060,7 @@ namespace OS {
 
         schemes.login = `\
 <div id = "login_form">
-    <p>Welcome to AntOS, please login</p>
+    <p>Welcome to AntOS v${OS.VERSION.toString()}, please login</p>
     <input id = "txtuser" type = "text" value = "demo" ></input>
     <input id = "txtpass" type = "password" value = "demo" ></input>
     <button id = "btlogin">Login</button>
