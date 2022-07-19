@@ -507,14 +507,16 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return;
                         }
-                        if(!v.text)
-                            v.text = v.filename;
-                        
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
                         if(v.icon)
                             v.iconclass = undefined;
                         const row = [
-                            v,
+                            {
+                                text: v.filename,
+                                icon: v.icon,
+                                iconclass: v.iconclass,
+                                data: v
+                            },
                             {
                                 text: v.mtime,
                                 data: v,
@@ -720,7 +722,7 @@ namespace OS {
                             ($(e.data.item).children()[0] as GridCellPrototype)
                                 .data as API.FileInfoType
                         );
-                        this._selectedFiles = e.data.items.map( x => ($(x).children()[0] as GridCellPrototype).data as API.FileInfoType);
+                        this._selectedFiles = e.data.items.map( x => ($(x).children()[0] as GridCellPrototype).data.data as API.FileInfoType);
                     };
                     tree.ontreeselect = (e) => {
                         this.fileselect(e.data.item.data as API.FileInfoType);
@@ -731,7 +733,7 @@ namespace OS {
                         this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     grid.oncelldbclick = (e) => {
-                        this.filedbclick(e.data.item.data as API.FileInfoType);
+                        this.filedbclick(e.data.item.data.data as API.FileInfoType);
                     };
                     tree.ontreedbclick = (e) => {
                         this.filedbclick(e.data.item.data as API.FileInfoType);

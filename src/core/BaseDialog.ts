@@ -17,6 +17,7 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 namespace OS {
     export namespace GUI {
+        declare var showdown: any;
         /**
          * the SubWindow class is the abstract prototype of all
          * modal windows or dialogs definition in AntOS
@@ -957,14 +958,25 @@ namespace OS {
                     if (!mt.info) {
                         return;
                     }
-                    const rows = [];
-                    for (let k in mt.info) {
-                        const v = mt.info[k];
-                        rows.push([{ text: k }, { text: v }]);
-                    }
+                    const rows = [
+                        [{ text: __("Author") }, { text: mt.info.author }],
+                        [{ text: __("Email") }, { text: mt.info.email }]
+                    ];
                     const grid = this.find("mygrid") as tag.GridViewTag;
                     grid.header = [{ text: "", width: 100 }, { text: "" }];
                     grid.rows = rows;
+                    `pkg://${mt.pkgname?mt.pkgname:mt.app}/README.md`
+                        .asFileHandle()
+                        .read()
+                        .then(async (data) => {
+                            let _ = await API.requires("os://scripts/showdown.min.js");
+                            const converter = new showdown.Converter();
+                            const html = converter.makeHtml(data);
+                            const el = this.find("read-me");
+                            $(el).html(html);
+                            $("img", el).css("width", "100%");
+                        })
+                        .catch(e => {});
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
                         _e
                     ): void => {
@@ -976,7 +988,7 @@ namespace OS {
              * Scheme definition
              */
             AboutDialog.scheme = `\
-<afx-app-window data-id = 'about-window'  width='300' height='200'>
+<afx-app-window data-id = 'about-window'  width='450' height='400'>
     <afx-vbox>
         <div style="text-align:center; margin-top:10px;" data-height="50">
             <h3 style = "margin:0;padding:0;">
@@ -984,11 +996,12 @@ namespace OS {
             </h3>
             <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
         </div>
-        <afx-hbox>
+        <afx-hbox data-height="60">
             <div data-width="10"></div>
             <afx-grid-view data-id = 'mygrid'></afx-grid-view>
         </afx-hbox>
-        
+        <div data-id="read-me" style="overflow-x: hidden; overflow-y: auto;"></div>
+        <div data-height="10"></div>
         <afx-hbox data-height="30">
             <div ></div>
             <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" ></afx-button>

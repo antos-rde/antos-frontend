@@ -4,7 +4,7 @@ libfiles =
 
 cssfiles = main.css
 
-copyfiles = package.json scheme.html
+copyfiles = package.json scheme.html README.md
 
 
 PKG_NAME=Syslog

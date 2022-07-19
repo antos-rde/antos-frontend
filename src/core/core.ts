@@ -259,7 +259,7 @@ namespace OS {
     };
 
     Ant.__e = function (e: Error): Error {
-        const reason = new Error(e.toString());
+        const reason = new Error(e.toString().replace(/^Error: /g, ""));
         reason.stack += "\nCaused By:\n" + e.stack;
         return reason;
     };

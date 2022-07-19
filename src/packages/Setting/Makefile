@@ -4,7 +4,7 @@ libfiles =
 
 cssfiles = main.css
 
-copyfiles = scheme.html package.json
+copyfiles = scheme.html package.json README.md
 
 
 PKG_NAME=Setting

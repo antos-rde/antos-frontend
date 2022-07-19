@@ -184,8 +184,13 @@ pkgar:
 
 uglify:
 	# sudo npm install $(UGLIFYJS) -g
-	# 
-	$(UGLIFYJS) $(BUILDDIR)/scripts/antos.js --compress --mangle --output $(BUILDDIR)/scripts/antos.js
+	#
+	mv $(BUILDDIR)/scripts/antos.js $(BUILDDIR)/scripts/antos_src.js
+	cp $(BUILDDIR)/scripts/antos_src.js ./
+	$(UGLIFYJS) antos_src.js  --compress --mangle --output antos.js --source-map "url='antos.js.map'"
+	mv antos.js* $(BUILDDIR)/scripts/
+	rm antos_src.js
+
 	# uglify tags
 	# npm install $(UGLIFYCSS) -g
 	# uglify the css
@@ -196,7 +201,9 @@ uglify:
 
 	for d in $(packages); do\
 		echo "Uglifying $$d";\
-		test -f $(BUILDDIR)/packages/$$d/main.js  &&  $(UGLIFYJS) $(BUILDDIR)/packages/$$d/main.js --compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
+		test -f $(BUILDDIR)/packages/$$d/main.js  &&  \
+			$(UGLIFYJS) $(BUILDDIR)/packages/$$d/main.js \
+			--compress --mangle --output $(BUILDDIR)/packages/$$d/main.js;\
 		test -f $(BUILDDIR)/packages/$$d/main.css  &&  $(UGLIFYCSS) --output $(BUILDDIR)/packages/$$d/main.css $(BUILDDIR)/packages/$$d/main.css;\
 	done
 
