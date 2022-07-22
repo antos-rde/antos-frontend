@@ -1622,12 +1622,15 @@ declare namespace OS {
         build_id: string;
         /**
          *Creates an instance of Version.
+         *
          * @param {string} string string represents the version
          * @memberof Version
          */
         constructor(string: string);
         /**
-         * Setter getter to set the version string to the object
+         * Setter/getter to set the version string to the object
+         *
+         * @memberof Version
          */
         set version_string(v: string);
         get version_string(): string;
