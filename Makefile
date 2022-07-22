@@ -64,6 +64,7 @@ packages = Syslog Files MarketPlace  Setting  NotePad
 
 main: initd build_javascripts build_themes libs  build_packages languages
 	- cp src/index.html $(BUILDDIR)/
+	- cp README.md $(BUILDDIR)/
 
 initd:
 	- mkdir -p $(BUILDDIR)

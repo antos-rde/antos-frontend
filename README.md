@@ -1,4 +1,4 @@
-# antOS v1.2.0
+# antOS v1.2.1
 
 [![Build Status](https://travis-ci.org/lxsang/antos.svg?branch=master)](https://travis-ci.org/lxsang/antos)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
@@ -12,7 +12,8 @@ development and deployment of user specific applications inside de VDE environme
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
 ## Change logs
-* Improvement GUI API
+* V.1.2.1 WIP
+* V.1.2.0 Improvement GUI API
    - [x] File dialog should remember last opened folder
    - [x] Add dynamic key-value dialog that work on any object
    - [x] Window list panel should show window title in tooltip when mouse hovering on application icon
