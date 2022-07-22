@@ -1559,13 +1559,14 @@ declare namespace OS {
      * AntOS version number is in the following format:
      *
      * ```
-     * [major_number].[minor_number].[patch]-[branch]
+     * [major_number].[minor_number].[patch]-[branch]-[build ID])
      *
-     * e.g.: 1.2.3-r means that:
+     * e.g.: 1.2.3-r-b means that:
      * - version major number is 1
      * - version minor number is 2
      * - patch version is 3
      * - the current branch is release `r`
+     * - build ID (optional)
      * ```
      *
      * @export
@@ -1575,10 +1576,11 @@ declare namespace OS {
         /**
          * The version string
          *
+         * @private
          * @type {string}
          * @memberof Version
          */
-        string: string;
+        private string;
         /**
          * The current branch
          * - 1: `a` - alpha branch
@@ -1612,11 +1614,23 @@ declare namespace OS {
          */
         patch: number;
         /**
+         * Version build ID (optional): usually the current git commit hash
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        build_id: string;
+        /**
          *Creates an instance of Version.
          * @param {string} string string represents the version
          * @memberof Version
          */
         constructor(string: string);
+        /**
+         * Setter getter to set the version string to the object
+         */
+        set version_string(v: string);
+        get version_string(): string;
         /**
          * Compare the current version with another version.
          *
@@ -1670,6 +1684,11 @@ declare namespace OS {
      * is an instance of [[Version]]
      */
     const VERSION: Version;
+    /**
+     * Variable represents the current AntOS source code repository
+     * is an instance of [[string]]
+     */
+    const REPOSITORY: string;
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model

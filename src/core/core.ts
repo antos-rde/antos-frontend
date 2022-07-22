@@ -424,13 +424,14 @@ namespace OS {
      * AntOS version number is in the following format:
      *
      * ```
-     * [major_number].[minor_number].[patch]-[branch]
+     * [major_number].[minor_number].[patch]-[branch]-[build ID])
      *
-     * e.g.: 1.2.3-r means that:
+     * e.g.: 1.2.3-r-b means that:
      * - version major number is 1
      * - version minor number is 2
      * - patch version is 3
      * - the current branch is release `r`
+     * - build ID (optional)
      * ```
      *
      * @export
@@ -440,10 +441,11 @@ namespace OS {
         /**
          * The version string
          *
+         * @private
          * @type {string}
          * @memberof Version
          */
-        string: string;
+        private string: string;
 
         /**
          * The current branch
@@ -482,12 +484,39 @@ namespace OS {
         patch: number;
 
         /**
+         * Version build ID (optional): usually the current git commit hash
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        build_id: string;
+
+        /**
          *Creates an instance of Version.
+         *
          * @param {string} string string represents the version
          * @memberof Version
          */
         constructor(string: string) {
-            this.string = string;
+            this.version_string = string;
+        }
+        /**
+         * Setter/getter to set the version string to the object
+         * 
+         * @memberof Version
+         */
+        set version_string(v: string)
+        {
+            if(!v)
+            {
+                this.string = undefined;
+                this.major = undefined;
+                this.minor = undefined;
+                this.patch = undefined;
+                this.build_id = undefined;
+                return;
+            }
+            this.string = v;
             const arr = this.string.split("-");
             const br = {
                 r: 3,
@@ -495,9 +524,14 @@ namespace OS {
                 a: 1,
             };
             this.branch = 3;
-            if (arr.length === 2 && br[arr[1]]) {
+            if (arr.length >= 2 && br[arr[1]]) {
                 this.branch = br[arr[1]];
+                if(arr[2])
+                {
+                    this.build_id = arr[2];
+                }
             }
+            
             const mt = arr[0].match(/\d+/g);
             if (!mt) {
                 API.throwe(
@@ -516,6 +550,10 @@ namespace OS {
             if (mt.length >= 3) {
                 this.patch = Number(mt[2]);
             }
+        }
+        get version_string(): string
+        {
+            return this.string;
         }
 
         /**
@@ -761,7 +799,14 @@ namespace OS {
      * Variable represents the current AntOS version, it
      * is an instance of [[Version]]
      */
-    export const VERSION: Version = "1.2.1-b".__v();
+    export const VERSION: Version = new Version(undefined);
+
+    /**
+     * Variable represents the current AntOS source code repository
+     * is an instance of [[string]]
+     */
+    export const REPOSITORY: string = "https://github.com/lxsang/antos";
+
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model

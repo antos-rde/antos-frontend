@@ -926,7 +926,11 @@ namespace OS {
          * @export
          */
         export function login(): void {
-            const scheme = $.parseHTML(schemes.login);
+            const scheme = $.parseHTML(
+                schemes.login
+                    .replace("[ANTOS_BUILD_ID]", OS.VERSION.build_id)
+                    .replace("[ANTOS_VERSION]", OS.VERSION.version_string)
+            );
             $("#wrapper").append(scheme);
             $("#btlogin").on("click", async function () {
                 const data: API.UserLoginType = {
@@ -1060,12 +1064,13 @@ namespace OS {
 
         schemes.login = `\
 <div id = "login_form">
-    <p>Welcome to AntOS v${OS.VERSION.toString()}, please login</p>
+    <p>Welcome to AntOS, please login</p>
     <input id = "txtuser" type = "text" value = "demo" ></input>
     <input id = "txtpass" type = "password" value = "demo" ></input>
     <button id = "btlogin">Login</button>
     <div id = "login_error"></div>
-</div>\
+</div>
+<div id = "antos_build_id"><a href="${OS.REPOSITORY}/tree/[ANTOS_BUILD_ID]">AntOS v[ANTOS_VERSION]</div>\
 `;
     }
 }

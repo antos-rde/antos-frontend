@@ -8,7 +8,7 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION=$(shell grep -e "export const VERSION" src/core/core.ts | cut -d '"' -f 2 | cut -d "-" -f 1)
+VERSION=1.2.1-b-$(shell git rev-parse  --short HEAD)
 
 GSED=sed
 UNAME_S := $(shell uname -s)
@@ -117,6 +117,7 @@ build_javascripts: ts
 		(cat "$${f}"; echo) >> dist/antos.js;\
 		rm "$${f}";\
 	done
+	echo 'OS.VERSION.version_string = "$(VERSION)";' >> dist/antos.js
 	cp dist/antos.js $(BUILDDIR)/scripts/
 	echo "if(exports){ exports.__esModule = true;exports.OS = OS; }" >> dist/antos.js
 	rm -r dist/core
