@@ -12,7 +12,7 @@ development and deployment of user specific applications inside de VDE environme
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
 ## Change logs
-* V.1.2.1 WIP with jenkinsfile support
+* V.1.2.1 WIP with Jenkinsfile support
 * V.1.2.0 Improvement GUI API
    - [x] File dialog should remember last opened folder
    - [x] Add dynamic key-value dialog that work on any object
