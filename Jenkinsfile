@@ -32,17 +32,20 @@ pipeline{
         sshCommand remote: remote, command: '''
             set -e
             export WORKSPACE=$(realpath "./jenkins/workspace/antos")
+            [ -d build ] && rm -rf build
+            mkdir build
             cd $WORKSPACE
             npm install terser
             npm install uglifycss
             npm install typescript
             npm install @types/jquery
-            make ar
+            export BUILDDIR="$WORKSPACE/build"
+            make release
           '''
         script {
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
-            archiveArtifacts artifacts: 'd.ts/, release/antos-1.1.2.tar.gz', fingerprint: true
+            archiveArtifacts artifacts: 'd.ts/, build/', fingerprint: true
             //}
         }
       }
