@@ -33,7 +33,7 @@ pipeline{
             set -e
             export WORKSPACE=$(realpath "./jenkins/workspace/antos")
             [ -d build ] && rm -rf build
-            mkdir build/opt/www/htdocs/os
+            mkdir -p build/opt/www/htdocs/os
             cd $WORKSPACE
             npm install terser
             npm install uglifycss
