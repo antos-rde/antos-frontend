@@ -48,7 +48,7 @@ pipeline{
             set -e
             export WORKSPACE=$(realpath "./jenkins/workspace/antos")
             cd $WORKSPACE
-            export BUILDDIR="BUILDDIR=/home/dany/docker/antos/htdocs/os"
+            export BUILDDIR="/home/dany/docker/antos/htdocs/os"
             make
           '''
       }
