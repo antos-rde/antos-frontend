@@ -27,7 +27,7 @@ pipeline{
   }
   stages
   {
-    stage('Build') {
+    stage('Prebuild build') {
       steps {
         sshCommand remote: remote, command: '''
             set -e
@@ -39,6 +39,26 @@ pipeline{
             npm install uglifycss
             npm install typescript
             npm install @types/jquery
+          '''
+      }
+    }
+    stage('Build demo') {
+      steps {
+        sshCommand remote: remote, command: '''
+            set -e
+            export WORKSPACE=$(realpath "./jenkins/workspace/antos")
+            cd $WORKSPACE
+            export BUILDDIR="BUILDDIR=/home/dany/docker/antos/htdocs/os"
+            make
+          '''
+      }
+    }
+    stage('Build release') {
+      steps {
+        sshCommand remote: remote, command: '''
+            set -e
+            export WORKSPACE=$(realpath "./jenkins/workspace/antos")
+            cd $WORKSPACE
             export BUILDDIR="$WORKSPACE/build/opt/www/htdocs/os"
             make release
           '''

@@ -720,7 +720,7 @@ namespace OS {
                     grid.onrowselect = (e) => {
                         this.fileselect(
                             ($(e.data.item).children()[0] as GridCellPrototype)
-                                .data as API.FileInfoType
+                                .data.data as API.FileInfoType
                         );
                         this._selectedFiles = e.data.items.map( x => ($(x).children()[0] as GridCellPrototype).data.data as API.FileInfoType);
                     };
