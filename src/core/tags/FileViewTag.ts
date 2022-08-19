@@ -515,6 +515,7 @@ namespace OS {
                                 text: v.filename,
                                 icon: v.icon,
                                 iconclass: v.iconclass,
+                                path: v.path,
                                 data: v
                             },
                             {
