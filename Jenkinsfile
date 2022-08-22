@@ -42,17 +42,6 @@ pipeline{
           '''
       }
     }
-    stage('Build demo') {
-      steps {
-        sshCommand remote: remote, command: '''
-            set -e
-            export WORKSPACE=$(realpath "./jenkins/workspace/antos")
-            cd $WORKSPACE
-            export BUILDDIR="/home/dany/docker/antos/htdocs/os"
-            make
-          '''
-      }
-    }
     stage('Build release') {
       steps {
         sshCommand remote: remote, command: '''
