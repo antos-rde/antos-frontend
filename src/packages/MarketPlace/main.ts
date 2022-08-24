@@ -41,7 +41,7 @@ namespace OS {
             main(): void {
                 this.installdir = this.systemsetting.system.pkgpaths.user;
                 // test repository
-                this.apps_meta = [];
+                this.apps_meta = {};
 
                 this.applist = this.find("applist") as GUI.tag.ListViewTag;
                 this.catlist = this.find("catlist") as GUI.tag.ListViewTag;
@@ -108,8 +108,8 @@ namespace OS {
                         return;
                     }
                     const app = el.data;
-                    if (app.pkgname) {
-                        return this._gui.launch(app.pkgname, []);
+                    if (app.app) {
+                        return this._gui.launch(app.app, []);
                     }
                 };
 
@@ -273,6 +273,7 @@ namespace OS {
                                 if (this.apps_meta[name]) {
                                     pkg.icon = this.apps_meta[name].icon;
                                     pkg.iconclass = this.apps_meta[name].iconclass;
+                                    pkg.app = this.apps_meta[name].app;
                                 }
                                 this.apps_meta[name] = pkg;
                             }
@@ -328,7 +329,25 @@ namespace OS {
                 this.catlist.data = cat_list_data;
                 this.catlist.selected = 0;
             }
-
+            private add_meta_from(k:string, v: API.PackageMetaType)
+            {
+                const mt = {
+                    pkgname: v.pkgname ? v.pkgname : v.app,
+                    app: v.app,
+                    name: v.name,
+                    text: `${v.name} ${v.version}`,
+                    icon: v.icon,
+                    iconclass: v.iconclass,
+                    category: v.category,
+                    author: v.info.author,
+                    version: v.version,
+                    description: `${v.path}/README.md`,
+                    dependencies: v.dependencies ? Array.from(v.dependencies) : [],
+                    dependBy: []
+                };
+                this.apps_meta[`${k}@${v.version}`] = mt;
+                return mt;
+            }
             fetchApps(): Promise<GenericObject<any>> {
                 return new Promise((resolve, _reject) => {
                     let v: API.PackageMetaType;
@@ -336,19 +355,7 @@ namespace OS {
                     const pkgcache = this.systemsetting.system.packages;
                     for (let k in pkgcache) {
                         v = pkgcache[k];
-                        this.apps_meta[`${k}@${v.version}`] = {
-                            pkgname: v.pkgname ? v.pkgname : v.app,
-                            name: v.name,
-                            text: `${v.name} ${v.version}`,
-                            icon: v.icon,
-                            iconclass: v.iconclass,
-                            category: v.category,
-                            author: v.info.author,
-                            version: v.version,
-                            description: `${v.path}/README.md`,
-                            dependencies: v.dependencies ? Array.from(v.dependencies) : [],
-                            dependBy: []
-                        };
+                        this.add_meta_from(k,v);
                     }
 
                     const list: string[] = []
@@ -551,7 +558,8 @@ namespace OS {
                         return reject(this._api.throwe(__("Unable to find package: {0}", pkgname)));
                     }
                     try {
-                        const n = await this.install(meta.download + "?_=" + new Date().getTime(), meta);
+                        const mt = await this.install(meta.download + "?_=" + new Date().getTime(), meta);
+                        meta.app = mt.app;
                         return resolve(meta);
                     } catch (e_1) {
                         return reject(__e(e_1));
@@ -621,12 +629,18 @@ namespace OS {
                             mimes: [".*/zip"],
                         });
                         const n = await this.install(d.file.path);
+                        const name = n.pkgname?n.pkgname:n.app;
                         const apps = this.applist.data.map(
                             (v) => v.pkgname
                         );
-                        const idx = apps.indexOf(n);
+                        const idx = apps.indexOf(name);
                         if (idx >= 0) {
                             this.applist.selected = idx;
+                        }
+                        else
+                        {
+                            const mt = this.add_meta_from(name,n);
+                            this.appDetail(mt);
                         }
                         return resolve(n.name);
                     } catch (error) {
@@ -638,7 +652,7 @@ namespace OS {
             private install(
                 zfile: string,
                 meta?: GenericObject<any>
-            ): Promise<GenericObject<any>> {
+            ): Promise<API.PackageMetaType> {
                 return new Promise(async (resolve, reject) => {
                     try {
                         let v: API.PackageMetaType;
@@ -657,22 +671,6 @@ namespace OS {
                             });
 
                         });
-                        const app_meta = {
-                            pkgname: v.pkgname ? v.pkgname : v.app,
-                            name: v.name,
-                            text: v.name,
-                            icon: v.icon,
-                            iconclass: v.iconclass,
-                            category: v.category,
-                            author: v.info.author,
-                            version: v.version,
-                            description: meta
-                                ? meta.description
-                                : undefined,
-                            download: meta
-                                ? meta.download
-                                : undefined,
-                        };
                         v.text = v.name;
                         v.filename = v.pkgname ? v.pkgname : v.app;
                         v.type = "app";
@@ -692,7 +690,7 @@ namespace OS {
                         this.systemsetting.system.packages[
                             v.pkgname ? v.pkgname : v.app
                         ] = v;
-                        return resolve(app_meta);
+                        return resolve(v);
                     } catch (error) {
                         reject(__e(error));
                     }
@@ -708,20 +706,21 @@ namespace OS {
             private uninstallPkg(pkgname: string): Promise<any> {
                 return new Promise(async (resolve, reject) => {
                     const meta = this.apps_meta[pkgname];
-                    if (!meta) {
-                        return reject(this._api.throwe(__("Unable to find application meta-data: {0}", pkgname)));
-                    }
-                    const app = this.systemsetting.system.packages[meta.pkgname];
-                    if (!app) {
-                        return reject(this._api.throwe(__("Application {0} is not installed", pkgname)));
-                    }
+                    
                     // got the app meta
                     try {
+                        if (!meta) {
+                            throw __("Unable to find application meta-data: {0}", pkgname).__();
+                        }
+                        const app = this.systemsetting.system.packages[meta.pkgname];
+                        if (!app) {
+                            throw __("Application {0} is not installed", pkgname).__();
+                        }
                         const r = await app.path
                             .asFileHandle()
                             .remove();
                         if (r.error) {
-                            return reject(this._api.throwe(__("Cannot uninstall package: {0}", r.error)));
+                            throw __("Cannot uninstall package: {0}", r.error).__();
                         }
                         this.notify(__("Package uninstalled"));
                         // stop all the services if any
@@ -739,6 +738,7 @@ namespace OS {
                             if (meta.domel)
                                 this.applist.delete(meta.domel);
                             $(this.container).css("visibility", "hidden");
+                            delete this.apps_meta[pkgname];
                         }
                         return resolve(meta);
                     }

@@ -447,18 +447,37 @@ namespace OS {
          * This function fist loads and registers the application prototype
          * definition in the [[application]] namespace, then update
          * the system packages meta-data
+         * 
+         * First it tries to load the package with the app name is also the
+         * pkgname, if its fail, it will search the app name by pkg name and load
+         * it
          *
          * @param {string} app application class name
          * @returns {Promise<string>}
          */
         function loadApp(app: string): Promise<string> {
             return new Promise(async function (resolve, reject) {
-                let path: string;
-                if (setting.system.packages[app].path) {
-                    path = setting.system.packages[app].path;
-                }
-                const js = path + "/main.js";
+                let path: string = undefined;
                 try {
+                    if(!setting.system.packages[app])
+                    {
+                        for(const key in setting.system.packages)
+                        {
+                            const pkg = setting.system.packages[key];
+                            if(pkg.app == app && pkg.path)
+                            {
+                                path = pkg.path;
+                            }
+                        }
+                    }
+                    else if (setting.system.packages[app].path) {
+                        path = setting.system.packages[app].path;
+                    }
+                    if(!path)
+                    {
+                        throw __("Unable to locate package of {0}", app).__();
+                    }
+                    const js = path + "/main.js";
                     const d = await js.asFileHandle().read("script");
                     const data: API.PackageMetaType = await `${path}/package.json`
                         .asFileHandle()
