@@ -400,11 +400,43 @@ namespace OS {
          * @export
          * @param {string} app
          */
-        export function unloadApp(app: string): void {
+        export function unloadApp(app: string, save?: boolean): void {
             PM.killAll(app, true);
             if (application[app] && application[app].style) {
                 $(application[app].style).remove();
             }
+            if(save)
+            {
+                // remove pinned application if any
+                if(OS.setting.system.startup.pinned)
+                    OS.setting.system.startup.pinned = OS.setting.system.startup.pinned.filter((e) => e != app);
+                // remove service if it is the service
+                if(OS.setting.system.startup.services)
+                    OS.setting.system.startup.services = OS.setting.system.startup.services.filter((e) => e != app);
+                // remove startup app if any
+                if(OS.setting.system.startup.apps)
+                    OS.setting.system.startup.apps = OS.setting.system.startup.apps.filter((e) => e != app);
+                // refresh pinned list
+                announcer.ostrigger("app-pinned", "app-pinned", undefined);
+                // remove application setting
+                if(OS.setting.applications[app])
+                    delete OS.setting.applications[app];
+                OS.API.setting()
+                    .then((d) =>{
+                        if(d.error)
+                        {
+                            announcer.oserror(
+                                __("Error when save system setting {0}:{1}", app, d.error),
+                                undefined);
+                        }
+                    })
+                    .catch((e)=> {
+                        announcer.oserror(
+                                __("Error when save system setting {0}: {1}", app, e.toString()),
+                                e);
+                    });
+            }
+            
             delete application[app];
         }
 

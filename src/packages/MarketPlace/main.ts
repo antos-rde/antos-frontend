@@ -684,6 +684,10 @@ namespace OS {
                             v.iconclass =
                                 "fa fa-adn";
                         }
+                        if(v.icon)
+                        {
+                            v.icon = `${pth}/${v.icon}`;
+                        }
                         v.path = pth;
                         this.systemsetting.system.packages[
                             v.pkgname ? v.pkgname : v.app
@@ -727,7 +731,7 @@ namespace OS {
                             }
                         }
                         delete this.systemsetting.system.packages[meta.pkgname];
-                        this._gui.unloadApp(meta.pkgname);
+                        this._gui.unloadApp(meta.pkgname, true);
                         if (meta.download) {
                             this.appDetail(meta);
                         }

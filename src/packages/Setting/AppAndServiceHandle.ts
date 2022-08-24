@@ -101,6 +101,7 @@ namespace OS {
                                         text: v.name,
                                         app: k,
                                         iconclass: v.iconclass,
+                                        icon: v.icon
                                     });
                                 }
                             }

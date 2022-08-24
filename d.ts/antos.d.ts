@@ -1140,7 +1140,7 @@ declare namespace OS {
          * @export
          * @param {string} app
          */
-        function unloadApp(app: string): void;
+        function unloadApp(app: string, save?: boolean): void;
         /**
          * Create a service process.
          *

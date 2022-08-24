@@ -10,4 +10,5 @@ In case of system anormaly after the modification, the system settings can be re
 by simply removing the setting file
 
 ## Change logs
+-v0.1.2-b: minor bug fix on UI
 -v0.1.2-b: add README
