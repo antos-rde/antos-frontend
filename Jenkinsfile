@@ -27,39 +27,28 @@ pipeline{
   }
   stages
   {
-    stage('Prebuild build') {
-      steps {
-        sh'''
-        export -p | tee env.source
-        '''
-        sshCommand remote: remote, command: '''
-            set -e
-            export WORKSPACE=$(realpath "./jenkins/workspace/antos")
-            cd $WORKSPACE
-            npm install terser
-            npm install uglifycss
-            npm install typescript
-            npm install @types/jquery
-          '''
-      }
-    }
     stage('Build release') {
       steps {
-        sshCommand remote: remote, command: '''
-            set -e
-            export WORKSPACE=$(realpath "./jenkins/workspace/antos")
-            cd $WORKSPACE
-            source env.source
-            buildir="build/$GIT_BRANCH"
-             [ -d "$buildir" ] && rm -rf "$buildir"
-            export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
-            make release
-            cp -rf d.ts "$WORKSPACE/$buildir"
-          '''
+        sh'''
+          export -p | tee build.source
+cat <<"EOF" >>build.source
+          cd $WORKSPACE
+          npm install terser
+          npm install uglifycss
+          npm install typescript
+          npm install @types/jquery
+          
+          buildir="build"
+          [ -d "$buildir" ] && rm -rf "$buildir"
+          export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
+          make release
+EOF
+        '''
+        sshScript remote: remote, script: "build.source"
         script {
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
-            archiveArtifacts artifacts: 'build/', fingerprint: true
+            archiveArtifacts artifacts: 'd.ts/, build/', fingerprint: true
             //}
         }
       }
