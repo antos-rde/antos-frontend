@@ -130,3 +130,27 @@ body
     height: 1px;
     box-sizing: border-box;
 }
+#antos_build_id {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    right: 0;
+    padding: 2px;
+    background-color: #d6d4d4;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 12px;
+}
+#antos_build_id a:link,
+#antos_build_id a:visited,
+#antos_build_id a:hover
+{
+    color:#df3154;
+    text-decoration: none;
+}
+afx-desktop > .list-container > ul > afx-list-item afx-label span {
+    flex-direction: column;
+}
+
+afx-desktop > .list-container > ul > afx-list-item afx-label i.label-text{
+    word-break: break-word;
+}

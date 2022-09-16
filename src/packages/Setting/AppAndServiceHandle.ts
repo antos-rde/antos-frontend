@@ -101,6 +101,7 @@ namespace OS {
                                         text: v.name,
                                         app: k,
                                         iconclass: v.iconclass,
+                                        icon: v.icon
                                     });
                                 }
                             }
@@ -160,7 +161,7 @@ namespace OS {
                 }
                 return result1;
             })();
-            announcer.ostrigger("app-pinned", this.applist.data);
+            announcer.ostrigger("app-pinned", "app-pinned", this.applist.data);
         }
     }
     App.AppAndServiceHandle = AppAndServiceHandle;

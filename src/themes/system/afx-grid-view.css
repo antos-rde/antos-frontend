@@ -14,3 +14,7 @@ afx-grid-view .grid_row_header afx-grid-cell{
 afx-grid-view {
     display: block;
 }
+
+afx-grid-view afx-grid-cell afx-label {
+    display: inline-block;
+}

@@ -536,17 +536,21 @@ namespace OS {
                         }
                         m.show(e);
                     };
-                    announcer.observable.on("app-pinned", (d) => {
+                    announcer.observable.on("app-pinned", (_) => {
                         this.RefreshPinnedApp();
                     });
-                    announcer.observable.on("loading", (o) => {
+                    announcer.observable.on("loading", (o: API.AnnouncementDataType<number>) => {
+                        if(o.u_data != 0)
+                        {
+                            return;
+                        }
                         this._pending_task.push(o.id);
                         if(!$(this.refs.panel).hasClass("loading"))
                             $(this.refs.panel).addClass("loading");
                         $(GUI.workspace).css("cursor", "wait");
                     });
     
-                    announcer.observable.on("loaded", (o) => {
+                    announcer.observable.on("loaded", (o: API.AnnouncementDataType<number>) => {
                         const i = this._pending_task.indexOf(o.id);
                         if (i >= 0) {
                             this._pending_task.splice(i, 1);

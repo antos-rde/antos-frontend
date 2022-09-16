@@ -71,13 +71,30 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 private _desktop_pos: GenericObject<any>;
-
+                
                 /**
                  * Creates an instance of WindowTag.
                  * @memberof WindowTag
                  */
                 constructor() {
                     super();
+                }
+
+                /**
+                 * blur overlay: If active the window overlay will be shown
+                 * on inactive (blur event)
+                 * 
+                 * Setter: Enable the switch
+                 *
+                 * Getter: Check whether the switch is enabled
+                 *
+                 * @memberof WindowTag
+                 */
+                set blur_overlay(v: boolean) {
+                    this.attsw(v, "blur-overlay");
+                }
+                get blur_overlay(): boolean {
+                    return this.hasattr("blur-overlay");
                 }
 
                 /**
@@ -108,7 +125,7 @@ namespace OS {
                  * @protected
                  * @memberof WindowTag
                  */
-                protected calibrate(): void {}
+                protected calibrate(): void { }
 
                 /**
                  * Do nothing
@@ -117,7 +134,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof WindowTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * Setter: Set the window width
@@ -245,18 +262,18 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 protected mount(): void {
-                    this.contextmenuHandle = function (e) {};
-                    $(this.refs["minbt"]).on("click",(e) => {
+                    this.contextmenuHandle = function (e) { };
+                    $(this.refs["minbt"]).on("click", (e) => {
                         return this.observable.trigger("hide", {
                             id: this.aid,
                         });
                     });
 
-                    $(this.refs["maxbt"]).on("click",(e) => {
+                    $(this.refs["maxbt"]).on("click", (e) => {
                         return this.toggle_window();
                     });
 
-                    $(this.refs["closebt"]).on("click",(e) => {
+                    $(this.refs["closebt"]).on("click", (e) => {
                         return this.observable.trigger("exit", {
                             id: this.aid,
                         });
@@ -267,7 +284,7 @@ namespace OS {
                         .css("position", "absolute")
                         .css("left", `${left}px`)
                         .css("top", `${top}px`)
-                        .css("z-index", Ant.OS.GUI.zindex++);
+                        .css("z-index", 10);
                     $(this).on("mousedown", (e) => {
                         if (this._shown) {
                             return;
@@ -276,25 +293,27 @@ namespace OS {
                             id: this.aid,
                         });
                     });
-
-                    $(this.refs["dragger"]).on("dblclick",(e) => {
+                    //$(this.refs.win_overlay).css("background-color", "red");
+                    $(this.refs["dragger"]).on("dblclick", (e) => {
                         return this.toggle_window();
                     });
 
                     this.observable.on("resize", (e) => this.resize());
 
                     this.observable.on("focus", () => {
-                        Ant.OS.GUI.zindex++;
                         $(this)
                             .show()
-                            .css("z-index", Ant.OS.GUI.zindex)
                             .removeClass("unactive");
                         this._shown = true;
+                        $(this.refs.win_overlay).hide();
+                        $(this).trigger("focus");
                     });
 
                     this.observable.on("blur", () => {
                         this._shown = false;
-                        return $(this).addClass("unactive");
+                        $(this).addClass("unactive");
+                        if(this.blur_overlay)
+                            $(this.refs.win_overlay).show();
                     });
                     this.observable.on("hide", () => {
                         $(this).hide();
@@ -312,12 +331,22 @@ namespace OS {
                             });
                         }
                     });
+                    this.observable.on("loaded", ()=>{
+                        $(this.refs.panel).removeClass("loading");
+                        $(this).css("cursor", "auto");
+                    });
+                    this.observable.on("loading", ()=>{
+                        if(!$(this.refs.panel).hasClass("loading"))
+                            $(this.refs.panel).addClass("loading");
+                        $(this).css("cursor", "wait");
+                    });
                     this.enable_dragging();
                     this.enable_resize();
                     this.setsize({
                         w: this.width,
                         h: this.height,
                     });
+                    $(this).attr("tabindex", 0).css("outline", "none");
                     return this.observable.trigger("rendered", {
                         id: this.aid,
                     });
@@ -408,12 +437,10 @@ namespace OS {
                         let w = $(this).width();
                         let h = $(this).height();
                         $(this.refs.win_overlay).show();
-                        if(target != this.refs.grip_bottom)
-                        {
-                            w +=  e.clientX - offset.left;
+                        if (target != this.refs.grip_bottom) {
+                            w += e.clientX - offset.left;
                         }
-                        if(target != this.refs.grip_right)
-                        {
+                        if (target != this.refs.grip_right) {
                             h += e.clientY - offset.top;
                         }
                         w = w < 100 ? 100 : w;
@@ -506,6 +533,7 @@ namespace OS {
                             children: [
                                 {
                                     el: "ul",
+                                    ref: 'panel',
                                     class: "afx-window-top",
                                     children: [
                                         {

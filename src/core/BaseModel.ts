@@ -43,6 +43,7 @@ namespace OS {
          */
         [propName: string]: any;
     }
+
     /**
      * Enum definition of different model types
      *
@@ -192,10 +193,10 @@ namespace OS {
          * The HTML element ID of the virtual desktop
          *
          * @protected
-         * @type {string}
+         * @type {HTMLElement}
          * @memberof BaseModel
          */
-        protected host: string;
+        protected host: HTMLElement;
 
         /**
          * The process number of the current model.
@@ -293,12 +294,8 @@ namespace OS {
             this._gui = GUI;
             this.systemsetting = setting;
             this.on("exit", () => this.quit(false));
-            this.host = this._gui.workspace;
+            this.host = this._gui.desktop();
             this.dialog = undefined;
-            this.subscribe("systemlocalechange", (name) => {
-                this.updateLocale(name);
-                return this.update();
-            });
         }
 
         /**
@@ -314,11 +311,10 @@ namespace OS {
         /**
          * Update the model locale
          *
-         * @protected
          * @param {string} name
          * @memberof BaseModel
          */
-        protected updateLocale(name: string) {}
+        updateLocale(name: string) {}
         /**
          * Render the model's UI
          *
@@ -508,7 +504,6 @@ namespace OS {
         /**
          * trigger a local event
          *
-         * @protected
          * @param {string} e event name
          * @param {*} [d] event data
          * @returns {void}
@@ -524,14 +519,14 @@ namespace OS {
          *
          * @protected
          * @param {string} e event name
-         * @param {(d: any) => void} f event callback
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @returns {void}
          * @memberof BaseModel
          */
-        subscribe(e: string, f: (d: any) => void): void {
+        subscribe(e: string, f: (d: API.AnnouncementDataType<any>) => void): void {
             return announcer.on(e, f, this);
         }
-
+        
         /**
          * Open a dialog
          *
@@ -587,41 +582,39 @@ namespace OS {
          * @protected
          * @param {string} t event name
          * @param {(string | FormattedString)} m event message
-         * @param {Error} [e] error object if any
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
         protected publish(
             t: string,
             m: string | FormattedString,
-            e?: Error
+            u_data?: any
         ): void {
             const mt = this.meta();
-            let icon: string = undefined;
+            const data: API.AnnouncementDataType<any> = {} as API.AnnouncementDataType<any>;
+            data.icon = undefined;
             if (mt && mt.icon) {
-                icon = `${mt.path}/${mt.icon}`;
+                data.icon = `${mt.path}/${mt.icon}`;
             }
-            return announcer.trigger(t, {
-                id: this.pid,
-                name: this.name,
-                data: {
-                    m: m,
-                    icon: icon,
-                    iconclass: mt?mt.iconclass:undefined,
-                    e: e,
-                },
-            });
+            data.id = this.pid;
+            data.name = this.name;
+            data.message = m;
+            data.iconclass = mt?mt.iconclass:undefined;
+            data.u_data = u_data;
+            return announcer.trigger(t, data);
         }
 
         /**
          * Publish a global notification
          *
          * @param {(string | FormattedString)} m notification string
+         * @param {any} u_data user data object if any
          * @returns {void}
          * @memberof BaseModel
          */
-        notify(m: string | FormattedString): void {
-            return this.publish("notification", m);
+        notify(m: string | FormattedString, data?: any): void {
+            return this.publish("notification", m, data);
         }
 
         /**
@@ -677,7 +670,11 @@ namespace OS {
          */
         update(): void {
             if (this.scheme) {
-                return this.scheme.update();
+                this.scheme.update();
+            }
+            if(this.dialog)
+            {
+                this.dialog.update();
             }
         }
 

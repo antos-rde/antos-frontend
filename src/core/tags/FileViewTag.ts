@@ -28,13 +28,13 @@ namespace OS {
                 private _onfileopen: TagEventCallback<API.FileInfoType>;
 
                 /**
-                 * Reference to the currently selected file meta-data
+                 * Reference to the all selected files meta-datas
                  *
                  * @private
-                 * @type {API.FileInfoType}
+                 * @type {API.FileInfoType[]}
                  * @memberof FileViewTag
                  */
-                private _selectedFile: API.FileInfoType;
+                private _selectedFiles: API.FileInfoType[];
 
                 /**
                  * Data placeholder of the current working directory
@@ -58,10 +58,10 @@ namespace OS {
                  * Header definition of the widget grid view
                  *
                  * @private
-                 * @type {(GenericObject<string | number>[])}
+                 * @type {(GenericObject<any>[])}
                  * @memberof FileViewTag
                  */
-                private _header: GenericObject<string | number>[];
+                private _header: GenericObject<any>[];
 
                 /**
                  * placeholder for the user-specified meta-data fetch function
@@ -92,10 +92,56 @@ namespace OS {
                     this.chdir = true;
                     this.view = "list";
                     this._onfileopen = this._onfileselect = (e) => { };
+                    this._selectedFiles = [];
+                    const fn = function(r1, r2, i) {
+                        let t1 = r1[i].text;
+                        let t2 = r2[i].text;
+                        if(!t1 || !t2) return 0;
+                        if(i == 1)
+                        {
+                            // sort by date
+                            t1 = new Date(t1);
+                            t2 = new Date(t2);
+                        }
+                        else if(i==2)
+                        {
+                            // sort by size
+                            t1 = parseInt(t1);
+                            t2 = parseInt(t2);
+                        }
+                        else
+                        {
+                            // sort by name
+                            t1 = t1.toString().toLowerCase();
+                            t2 = t2.toString().toLowerCase();
+                        }
+                        if(this.__f)
+                        {
+                            this.desc = ! this.desc;
+                            if(t1 < t2) { return -1; }
+                            if(t1 > t2) { return 1; }
+                        }
+                        else
+                        {
+                            this.desc = ! this.desc;
+                            if(t1 > t2) { return -1; }
+                            if(t1 < t2) { return 1; }
+                        }
+                        return 0;
+                    };
                     this._header = [
-                        { text: "__(File name)" },
-                        { text: "__(Type)" },
-                        { text: "__(Size)" },
+                        { 
+                            text: "__(File name)", 
+                            sort: fn
+                        },
+                        {
+                            text: "__(Modified)",
+                            sort: fn
+                        },
+                        {
+                            text: "__(Size)",
+                            sort: fn
+                        },
                     ];
                 }
 
@@ -228,6 +274,28 @@ namespace OS {
                 }
 
                 /**
+                 * Setter:
+                 *
+                 * Allow multiple selection on file view
+                 *
+                 * Getter:
+                 *
+                 * Check whether the  multiselection is actived
+                 *
+                 * @memberof FileViewTag
+                 */
+                set multiselect(v: boolean) {
+                    this.attsw(v, "multiselect");
+                    (this.refs.listview as ListViewTag).multiselect = v;
+                    (this.refs.gridview as GridViewTag).multiselect = v;
+                }
+                get multiselect(): boolean {
+                    return this.hasattr("multiselect");
+                }
+
+                
+
+                /**
                  * Get the current selected file
                  *
                  * @readonly
@@ -235,7 +303,21 @@ namespace OS {
                  * @memberof FileViewTag
                  */
                 get selectedFile(): API.FileInfoType {
-                    return this._selectedFile;
+                    if(this._selectedFiles.length == 0)
+                        return undefined;
+                    return this._selectedFiles[this._selectedFiles.length - 1];
+                }
+
+
+                /**
+                 * Get all selected files
+                 *
+                 * @readonly
+                 * @type {API.FileInfoType[]}
+                 * @memberof FileViewTag
+                 */
+                get selectedFiles(): API.FileInfoType[] {
+                    return this._selectedFiles;
                 }
 
                 /**
@@ -286,7 +368,7 @@ namespace OS {
                  *
                  * @memberof FileViewTag
                  */
-                set data(v: API.FileInfoType[]) {
+                set data(v: API.FileInfoType[]) { 
                     if (!v) {
                         return;
                     }
@@ -305,11 +387,21 @@ namespace OS {
                  */
                 set ondragndrop(
                     v: TagEventCallback<
-                        DnDEventDataType<TreeViewTag | ListViewItemTag>
+                        DnDEventDataType<TreeViewTag | ListViewItemTag | GridCellPrototype>
                     >
                 ) {
                     (this.refs.treeview as TreeViewTag).ondragndrop = v;
                     (this.refs.listview as ListViewTag).ondragndrop = v;
+                    (this.refs.gridview as GridViewTag).ondragndrop = (e) => {
+                        const evt = {
+                            id: this.aid,
+                            data: {
+                                from: e.data.from.map(x => x.data[0].domel),
+                                to: e.data.to.data[0].domel
+                            }
+                        };
+                        v(evt);
+                    };
                 }
 
                 /**
@@ -388,12 +480,15 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return;
                         }
-                        v.text = v.filename;
+                        if(!v.text)
+                            v.text = v.filename;
+                        /*
                         if (v.text.length > 10) {
                             v.text = v.text.substring(0, 9) + "...";
-                        }
+                        }*/
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
-                        v.icon = v.icon;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         items.push(v);
                     });
                     (this.refs.listview as ListViewTag).data = items;
@@ -412,12 +507,19 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return;
                         }
-                        v.text = v.filename;
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         const row = [
-                            v,
                             {
-                                text: v.mime,
+                                text: v.filename,
+                                icon: v.icon,
+                                iconclass: v.iconclass,
+                                path: v.path,
+                                data: v
+                            },
+                            {
+                                text: v.mtime,
                                 data: v,
                             },
                             {
@@ -467,13 +569,15 @@ namespace OS {
                         if (v.filename[0] === "." && !this.showhidden) {
                             return undefined;
                         }
-                        v.text = v.filename;
+                        if(!v.text)
+                            v.text = v.filename;
                         if (v.type === "dir") {
                             v.nodes = [];
                             v.open = false;
                         }
                         v.iconclass = v.iconclass ? v.iconclass : v.type;
-                        v.icon = v.icon;
+                        if(v.icon)
+                            v.iconclass = undefined;
                         return nodes.push(v);
                     });
                     return nodes;
@@ -511,7 +615,7 @@ namespace OS {
                     $(this.refs.listview).hide();
                     $(this.refs.gridview).hide();
                     $(this.refs.treecontainer).hide();
-                    this._selectedFile = undefined;
+                    this._selectedFiles = [];
                     switch (this.view) {
                         case "icon":
                             $(this.refs.listview).show();
@@ -549,7 +653,6 @@ namespace OS {
                         );
                     }
                     const evt = { id: this.aid, data: e };
-                    this._selectedFile = e;
                     this._onfileselect(evt);
                     this.observable.trigger("fileselect", evt);
                 }
@@ -609,25 +712,29 @@ namespace OS {
                     grid.header = this._header;
                     tree.dragndrop = true;
                     list.dragndrop = true;
+                    grid.dragndrop = true;
                     // even handles
                     list.onlistselect = (e) => {
                         this.fileselect(e.data.item.data as API.FileInfoType);
+                        this._selectedFiles = e.data.items.map( x => x.data as API.FileInfoType);
                     };
                     grid.onrowselect = (e) => {
                         this.fileselect(
-                            $(e.data.item).children()[0]
-                                .data as API.FileInfoType
+                            ($(e.data.item).children()[0] as GridCellPrototype)
+                                .data.data as API.FileInfoType
                         );
+                        this._selectedFiles = e.data.items.map( x => ($(x).children()[0] as GridCellPrototype).data.data as API.FileInfoType);
                     };
                     tree.ontreeselect = (e) => {
                         this.fileselect(e.data.item.data as API.FileInfoType);
+                        this._selectedFiles = [e.data.item.data as API.FileInfoType];
                     };
                     // dblclick
                     list.onlistdbclick = (e) => {
                         this.filedbclick(e.data.item.data as API.FileInfoType);
                     };
                     grid.oncelldbclick = (e) => {
-                        this.filedbclick(e.data.item.data as API.FileInfoType);
+                        this.filedbclick(e.data.item.data.data as API.FileInfoType);
                     };
                     tree.ontreedbclick = (e) => {
                         this.filedbclick(e.data.item.data as API.FileInfoType);

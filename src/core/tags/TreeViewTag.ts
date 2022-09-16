@@ -294,7 +294,8 @@ namespace OS {
                         .css("padding", 0)
                         .css("margin", 0)
                         .css("background-color", "transparent")
-                        .css("width", v * 15 + "px");
+                        .css("width", v * 15 + "px")
+                        .css("flex-shrink", 0);
                 }
 
                 /**
@@ -375,6 +376,9 @@ namespace OS {
                     $(this.refs.container)
                         .css("padding", 0)
                         .css("margin", 0)
+                        .css("display","flex")
+                        .css("flex-direction", "row")
+                        .css("align-items", "center")
                         .css("white-space", "nowrap");
                     $(this.refs.itemholder).css("display", "inline-block");
                     $(this.refs.wrapper).on("click",(e) => {
@@ -388,6 +392,7 @@ namespace OS {
                     $(this.refs.toggle)
                         .css("display", "inline-block")
                         .css("width", "15px")
+                        .css("flex-shrink", 0)
                         .addClass("afx-tree-view-item")
                         .on("click",(e) => {
                             this.open = !this.open;
@@ -586,10 +591,10 @@ namespace OS {
                  * Private data object passing between dragndrop mouse event
                  *
                  * @private
-                 * @type {{ from: TreeViewTag; to: TreeViewTag }}
+                 * @type {{ from: TreeViewTag[]; to: TreeViewTag }}
                  * @memberof TreeViewTag
                  */
-                private _dnd: { from: TreeViewTag; to: TreeViewTag };
+                private _dnd: { from: TreeViewTag[]; to: TreeViewTag };
 
                 /**
                  * Reference to parent tree of the current tree.
@@ -638,7 +643,7 @@ namespace OS {
                  * current tree. This function should return a promise on
                  * a list of [[TreeViewDataType]]
                  *
-                 * @memberof TreeViewItemPrototype
+                 * @memberof TreeViewTag
                  */
                 fetch: (
                     d: TreeViewItemPrototype
@@ -920,7 +925,7 @@ namespace OS {
                  */
                 protected mount(): void {
                     this._dnd = {
-                        from: undefined,
+                        from: [],
                         to: undefined,
                     };
                     this._treemousedown = (e) => {
@@ -932,7 +937,7 @@ namespace OS {
                         if (el === this) {
                             return;
                         }
-                        this._dnd.from = el;
+                        this._dnd.from = [el];
                         this._dnd.to = undefined;
                         $(window).on("mouseup", this._treemouseup);
                         return $(window).on("mousemove", this._treemousemove);
@@ -951,8 +956,8 @@ namespace OS {
                             el = el.parent;
                         }
                         if (
-                            el === this._dnd.from ||
-                            el === this._dnd.from.parent
+                            el === this._dnd.from[0] ||
+                            el === this._dnd.from[0].parent
                         ) {
                             return;
                         }
@@ -962,7 +967,7 @@ namespace OS {
                             data: this._dnd,
                         });
                         this._dnd = {
-                            from: undefined,
+                            from: [],
                             to: undefined,
                         };
                     };
@@ -974,7 +979,7 @@ namespace OS {
                         if (!this._dnd.from) {
                             return;
                         }
-                        const data = this._dnd.from.data;
+                        const data = this._dnd.from[0].data;
                         const $label = $("#systooltip");
                         const top = e.clientY + 5;
                         const left = e.clientX + 5;

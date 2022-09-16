@@ -1,9 +1,13 @@
 afx-label  i.icon-style {
-    float: left;
+    display: inline-block;
+}
+afx-label span {
+    align-items:  center;
+    justify-content: center;
+    flex-direction: row;
 }
 afx-label  i.label-text{
     font-weight: normal;
     font-style: normal;
     margin-left: 3px;
-    user-select:text;
 }

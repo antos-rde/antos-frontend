@@ -17,6 +17,7 @@
 //along with this program. If not, see https://www.gnu.org/licenses/.
 namespace OS {
     export namespace GUI {
+        declare var showdown: any;
         /**
          * the SubWindow class is the abstract prototype of all
          * modal windows or dialogs definition in AntOS
@@ -43,6 +44,7 @@ namespace OS {
              * @memberof SubWindow
              */
             parent: BaseModel | typeof GUI;
+
 
             /**
              *Creates an instance of SubWindow.
@@ -82,10 +84,26 @@ namespace OS {
              *
              * Need to be implemented by subclasses
              *
-             * @abstract
-             * @memberof SubWindow
+             * 
+             * @returns {void}
+             * @memberof BaseDialog
              */
-            abstract init(): void;
+            init(): void {
+                // show the app if it is not active
+                this.on("focus",() => {
+                    if((this.pid == -1) || (PM.pidactive == this.pid))
+                    {
+                        return;
+                    }
+                    
+                    const app = PM.appByPid(this.pid);
+                    if(app)
+                    {
+                        app.show();
+                    }
+                });
+                
+            }
 
             /**
              * Main entry point after rendering of the sub-window
@@ -115,8 +133,8 @@ namespace OS {
              * @memberof SubWindow
              */
             show(): void {
-                this.trigger("focus");
-                $(this.scheme).css("z-index", GUI.zindex + 2);
+                this.trigger("focus", undefined);
+                this.trigger("focused", undefined);
                 if (this.dialog) {
                     this.dialog.show();
                 }
@@ -129,8 +147,25 @@ namespace OS {
              * @memberof SubWindow
              */
             hide(): void {
-                return this.trigger("hide");
+                this.trigger("hide", undefined);
+                if (this.dialog) {
+                    this.dialog.hide();
+                }
             }
+
+            /**
+             * blur the sub-window
+             *
+             * @returns {void}
+             * @memberof SubWindow
+             */
+            blur(): void {
+                this.trigger("blur", undefined);
+                if (this.dialog) {
+                    this.dialog.blur();
+                }
+            }
+
         }
 
         SubWindow.type = ModelType.SubWindow;
@@ -182,6 +217,7 @@ namespace OS {
                     return (this.parent.dialog = undefined);
                 }
             }
+
         }
 
         /**
@@ -238,6 +274,7 @@ namespace OS {
              * @memberof BasicDialog
              */
             init(): void {
+                super.init();
                 //this._onenter = undefined;
                 if (this.markup) {
                     if (typeof this.markup === "string") {
@@ -264,7 +301,6 @@ namespace OS {
              */
             main(): void {
                 const win = this.scheme as tag.WindowTag;
-                $(win).attr("tabindex", 0);
                 $(win).on('keydown', (e) => {
                     switch (e.which) {
                         case 27:
@@ -532,7 +568,7 @@ namespace OS {
              * Scheme definition
              */
             CalendarDialog.scheme = `\
-<afx-app-window  width='300' height='230' apptitle = "Calendar" >
+<afx-app-window  width='300' height='250' apptitle = "Calendar" >
     <afx-vbox>
         <afx-hbox>
             <div data-width = "10" ></div>
@@ -672,7 +708,7 @@ namespace OS {
                     }
                     for (let k in this.data) {
                         const v = this.data[k];
-                        rows.push([{ text: k }, { text: v }]);
+                        rows.push([{ text: k }, { text: v, selectable: true }]);
                     }
                     const grid = this.find("grid") as tag.GridViewTag;
                     grid.header = [
@@ -922,14 +958,25 @@ namespace OS {
                     if (!mt.info) {
                         return;
                     }
-                    const rows = [];
-                    for (let k in mt.info) {
-                        const v = mt.info[k];
-                        rows.push([{ text: k }, { text: v }]);
-                    }
+                    const rows = [
+                        [{ text: __("Author") }, { text: mt.info.author }],
+                        [{ text: __("Email") }, { text: mt.info.email }]
+                    ];
                     const grid = this.find("mygrid") as tag.GridViewTag;
                     grid.header = [{ text: "", width: 100 }, { text: "" }];
                     grid.rows = rows;
+                    `pkg://${mt.pkgname?mt.pkgname:mt.app}/README.md`
+                        .asFileHandle()
+                        .read()
+                        .then(async (data) => {
+                            let _ = await API.requires("os://scripts/showdown.min.js");
+                            const converter = new showdown.Converter();
+                            const html = converter.makeHtml(data);
+                            const el = this.find("read-me");
+                            $(el).html(html);
+                            $("img", el).css("width", "100%");
+                        })
+                        .catch(e => {});
                     (this.find("btnCancel") as tag.ButtonTag).onbtclick = (
                         _e
                     ): void => {
@@ -941,19 +988,20 @@ namespace OS {
              * Scheme definition
              */
             AboutDialog.scheme = `\
-<afx-app-window data-id = 'about-window'  width='300' height='200'>
+<afx-app-window data-id = 'about-window'  width='450' height='400'>
     <afx-vbox>
         <div style="text-align:center; margin-top:10px;" data-height="50">
             <h3 style = "margin:0;padding:0;">
-                <afx-label data-id = 'mylabel'></afx-label>
+                <afx-label data-id = 'mylabel' style="display: inline-block;"></afx-label>
             </h3>
             <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
         </div>
-        <afx-hbox>
+        <afx-hbox data-height="60">
             <div data-width="10"></div>
             <afx-grid-view data-id = 'mygrid'></afx-grid-view>
         </afx-hbox>
-        
+        <div data-id="read-me" style="overflow-x: hidden; overflow-y: auto;"></div>
+        <div data-height="10"></div>
         <afx-hbox data-height="30">
             <div ></div>
             <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" ></afx-button>
@@ -1035,12 +1083,6 @@ namespace OS {
                                         return reject(d);
                                     }
                                     FileDialog.last_opened = path;
-                                    if (!dir.isRoot()) {
-                                        const p = dir.parent();
-                                        p.filename = "[..]";
-                                        p.type = "dir";
-                                        d.result.unshift(p);
-                                    }
                                     return resolve(d.result);
                                 })
                                 .catch((e: Error): void => reject(__e(e)));
@@ -1052,7 +1094,7 @@ namespace OS {
                                 __("Resource not found: {0}", path)
                             );
                         }
-                        return (fileview.path = path);
+                        fileview.path = path;
                     };
 
                     if (!this.data || !this.data.root) {
@@ -1088,11 +1130,14 @@ namespace OS {
                         }
                     };
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
-                        const f = fileview.selectedFile;
+                        let f = fileview.selectedFile;
                         if (!f) {
-                            return this.notify(
-                                __("Please select a file/fofler")
-                            );
+                            const sel = location.selectedItem;
+                            if(!sel)
+                                return this.notify(
+                                    __("Please select a file/fofler")
+                                );
+                            f = sel.data as API.FileInfoType;
                         }
                         if (
                             this.data &&
@@ -1150,6 +1195,18 @@ namespace OS {
                     if (this.data && this.data.hidden) {
                         return (fileview.showhidden = this.data.hidden);
                     }
+
+                    $(this.scheme).on("keyup", (evt)=>{
+                        if(evt.which === 38)
+                        {
+                            const currdir = fileview.path.asFileHandle();
+                            if (currdir.isRoot()) {
+                                return;
+                            }
+                            const p = currdir.parent();
+                            return fileview.path = p.path;
+                        }
+                    });
                 }
             }
 

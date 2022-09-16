@@ -386,14 +386,14 @@ namespace OS {
                  * @memberof SimpleMenuEntryTag
                  */
                 set icon(v: string) {
-                    $(this.refs.container).removeClass("fix_padding");
+                    //$(this.refs.container).removeClass("fix_padding");
                     if (!v) {
                         return;
                     }
                     //$(this).attr("icon", v);
                     const label = this.refs.label as LabelTag;
                     label.icon = v;
-                    $(this.refs.container).addClass("fix_padding");
+                    //$(this.refs.container).addClass("fix_padding");
                 }
 
                 /**

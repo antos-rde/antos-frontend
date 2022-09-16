@@ -171,6 +171,13 @@ interface Date {
      * @memberof Date
      */
     timestamp(): number;
+    /**
+     * Covnert to GMTString
+     * 
+     * @returns {number}
+     * @memberof Date
+     */
+    toGMTString(): string;
 }
 
 /**
@@ -252,7 +259,7 @@ namespace OS {
     };
 
     Ant.__e = function (e: Error): Error {
-        const reason = new Error(e.toString());
+        const reason = new Error(e.toString().replace(/^Error: /g, ""));
         reason.stack += "\nCaused By:\n" + e.stack;
         return reason;
     };
@@ -417,13 +424,14 @@ namespace OS {
      * AntOS version number is in the following format:
      *
      * ```
-     * [major_number].[minor_number].[patch]-[branch]
+     * [major_number].[minor_number].[patch]-[branch]-[build ID])
      *
-     * e.g.: 1.2.3-r means that:
+     * e.g.: 1.2.3-r-b means that:
      * - version major number is 1
      * - version minor number is 2
      * - patch version is 3
      * - the current branch is release `r`
+     * - build ID (optional)
      * ```
      *
      * @export
@@ -433,10 +441,11 @@ namespace OS {
         /**
          * The version string
          *
+         * @private
          * @type {string}
          * @memberof Version
          */
-        string: string;
+        private string: string;
 
         /**
          * The current branch
@@ -475,12 +484,39 @@ namespace OS {
         patch: number;
 
         /**
+         * Version build ID (optional): usually the current git commit hash
+         *
+         * @type {number}
+         * @memberof Version
+         */
+        build_id: string;
+
+        /**
          *Creates an instance of Version.
+         *
          * @param {string} string string represents the version
          * @memberof Version
          */
         constructor(string: string) {
-            this.string = string;
+            this.version_string = string;
+        }
+        /**
+         * Setter/getter to set the version string to the object
+         * 
+         * @memberof Version
+         */
+        set version_string(v: string)
+        {
+            if(!v)
+            {
+                this.string = undefined;
+                this.major = undefined;
+                this.minor = undefined;
+                this.patch = undefined;
+                this.build_id = undefined;
+                return;
+            }
+            this.string = v;
             const arr = this.string.split("-");
             const br = {
                 r: 3,
@@ -488,9 +524,14 @@ namespace OS {
                 a: 1,
             };
             this.branch = 3;
-            if (arr.length === 2 && br[arr[1]]) {
+            if (arr.length >= 2 && br[arr[1]]) {
                 this.branch = br[arr[1]];
+                if(arr[2])
+                {
+                    this.build_id = arr[2];
+                }
             }
+            
             const mt = arr[0].match(/\d+/g);
             if (!mt) {
                 API.throwe(
@@ -509,6 +550,10 @@ namespace OS {
             if (mt.length >= 3) {
                 this.patch = Number(mt[2]);
             }
+        }
+        get version_string(): string
+        {
+            return this.string;
         }
 
         /**
@@ -754,7 +799,14 @@ namespace OS {
      * Variable represents the current AntOS version, it
      * is an instance of [[Version]]
      */
-    export const VERSION: Version = "1.0.0-a".__v();
+    export const VERSION: Version = new Version(undefined);
+
+    /**
+     * Variable represents the current AntOS source code repository
+     * is an instance of [[string]]
+     */
+    export const REPOSITORY: string = "https://github.com/lxsang/antos";
+
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
@@ -843,7 +895,7 @@ namespace OS {
      * exits. These callbacks are useful when an application or service wants
      * to perform a particular task before shuting down the system
      */
-    export const cleanupHandles: { [index: string]: () => void } = {};
+    export const cleanupHandles: { [index: string]: () => Promise<any> } = {};
 
     /**
      * Perform the system shutdown operation. This function calls all
@@ -854,15 +906,16 @@ namespace OS {
      */
     export function exit(): void {
         //do clean up first
+        const promises: Promise<any>[] = [];
         for (let n in cleanupHandles) {
-            const f = cleanupHandles[n];
-            f();
+            promises.push(cleanupHandles[n]());
         }
-        API.handle
-            .setting()
-            .then(function (r: any) {
+        promises.push(API.handle.setting());
+        Promise.all(promises)
+            .then(async function (r: any) {
                 cleanup();
-                return API.handle.logout().then((d: any) => boot());
+                const d = await API.handle.logout();
+                return boot();
             })
             .catch((e: Error) => console.error(e));
     }
@@ -875,7 +928,7 @@ namespace OS {
      * @param {() => void} f the callback handle
      * @returns
      */
-    export function onexit(n: string, f: () => void) {
+    export function onexit(n: string, f: () => Promise<any>) {
         if (!cleanupHandles[n]) {
             return (cleanupHandles[n] = f);
         }
@@ -1215,38 +1268,28 @@ namespace OS {
                 o.on("change", function () {
                     const files = (o[0] as HTMLInputElement).files;
                     const n_files = files.length;
-                    const tasks = [];
                     if (n_files > 0)
                         API.loading(q, p);
-                    Array.from(files).forEach(file => {
-                        const formd = new FormData();
-                        formd.append("path", d);
-                        formd.append("upload", file);
-                        return $.ajax({
-                            url: p,
-                            data: formd,
-                            type: "POST",
-                            contentType: false,
-                            processData: false,
-                        })
-                            .done(function (data) {
-                                tasks.push("OK");
-                                if (tasks.length == n_files)
-                                {
-                                    API.loaded(q, p, "OK");
-                                    resolve(data);
-                                    o.remove();
-                                }
-                            })
-                            .fail(function (j, s, e) {
-                                tasks.push("FAIL");
-                                if (tasks.length == n_files)
-                                {
-                                    API.loaded(q, p, "FAIL");
-                                    o.remove();
-                                }
-                                reject(API.throwe(s));
-                            });
+                    const formd = new FormData();
+                    formd.append("path", d);
+                    jQuery.each(files, (i, file) => {
+                        formd.append(`upload-${i}`, file);
+                    });
+                    return $.ajax({
+                        url: p,
+                        data: formd,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                    })
+                    .done(function (data) {
+                        API.loaded(q, p, "OK");
+                        resolve(data);
+                    })
+                    .fail(function (j, s, e) {
+                        API.loaded(q, p, "FAIL");
+                        o.remove();
+                        reject(API.throwe(s));
                     });
                 });
                 return o.trigger("click");
@@ -1284,11 +1327,12 @@ namespace OS {
          * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
-            announcer.trigger("loading", {
-                id: q,
-                data: { m: `${p}`, s: true },
-                name: "OS",
-            });
+            const data:API.AnnouncementDataType<number> = {} as API.AnnouncementDataType<number>;
+            data.id = q;
+            data.message = p;
+            data.name = p;
+            data.u_data = PM.pidactive;
+            announcer.trigger("loading", data);
         }
 
         /**
@@ -1303,11 +1347,12 @@ namespace OS {
          * @param {string} m message status  (`OK` of `FAIL`)
          */
         export function loaded(q: number, p: string, m: string): void {
-            announcer.trigger("loaded", {
-                id: q,
-                data: { m: `${m}: ${p}`, s: false },
-                name: "OS",
-            });
+            const data:API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
+            data.id = q;
+            data.message = p;
+            data.name = "OS";
+            data.u_data = false;
+            announcer.trigger("loaded", data);
         }
 
         /**
@@ -1612,7 +1657,7 @@ namespace OS {
                     const d = await API.get(path, "json");
                     OS.setting.system.locale = name;
                     API.lang = d;
-                    announcer.trigger("systemlocalechange", name);
+                    announcer.ostrigger("systemlocalechange", name);
                     return resolve(d);
                 } catch (e) {
                     return reject(__e(e));

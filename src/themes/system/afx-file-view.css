@@ -7,13 +7,27 @@ afx-file-view afx-label.status{
     left:0px;
     transform: translateZ(0);
 }
+afx-file-view afx-list-view > div.list-container > ul
+{
+    display: flex;
+    flex-flow: row wrap;
+}
 afx-file-view afx-list-view > div.list-container > ul  li{
     float:left;
-    display: block;
+    /*display: block;*/
 }
 
 afx-file-view afx-list-view i{
     display: block;
+}
+
+afx-file-view afx-list-view i.label-text{
+    word-break: break-word;
+}
+
+afx-file-view afx-list-view afx-label span
+{
+    flex-direction: column;
 }
 
 afx-file-view afx-grid-view i{

@@ -1,11 +1,11 @@
 afx-menu afx-switch span{
-    width: 20px;
-    height: 16px;
+    padding-top: 3px;
     font-size: 16px;
-    /*margin-top:5px;*/
+    height: 19px;
 }
 afx-menu span.shortcut{
    text-align: right;
+   margin-left: 3px;
 }
 afx-menu li:hover > a afx-switch span:before{
     color:white;
@@ -21,12 +21,12 @@ afx-menu afx-menu ul {
     background-color: #e7e7e7;
 }
 afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
-    padding:3px;
     padding-left: 5px;
     padding-right: 5px;
 }
 afx-menu  afx-menu li{
     min-width: 150px;
+    width: calc(100% - 10px);
 }
 
 afx-menu li:hover  {
@@ -55,4 +55,9 @@ afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before
  }
  afx-menu  ul.context li{
     min-width: 150px;
+    width: calc(100% - 10px);
+ }
+
+afx-menu afx-label span {
+     height: 22px !important;
  }

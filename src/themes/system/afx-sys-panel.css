@@ -52,7 +52,7 @@ afx-sys-panel > div.loading::before {
     100% {
         right: auto;
         left: 100%;
-        width: 12.5%;
+        width: 0%;
     }
 }
 
@@ -96,4 +96,10 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
     height: 100%;
     border-radius: 0;
     border: 0px;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] afx-label span,
+afx-sys-panel afx-list-view[data-id="catlist"] afx-label span
+{
+    white-space: nowrap;
 }

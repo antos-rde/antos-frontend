@@ -165,7 +165,9 @@ namespace OS {
          */
         export namespace VFS {
             declare var JSZip: any;
-
+            /** path for custom VFS protocol handles */
+            const VFSX_PATH = "pkg://vfsx/vfsx.js";
+            
             String.prototype.asFileHandle = function (): BaseFileHandle {
                 const list = this.split("://");
                 const handles = API.VFS.findHandles(list[0]);
@@ -198,7 +200,27 @@ namespace OS {
             ): void {
                 handles[protos] = cls;
             }
-
+            /**
+             * Load custom VFS handles if the package vfsx available
+             *
+             * @export
+             * @param {boolean} [force] force load the file
+             * @return {*}  {Promise<any>}
+             */
+            export function loadVFSX(force?: boolean): Promise<any>
+            {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await API.requires(VFSX_PATH, force);
+                        resolve(true);
+                    }
+                    catch(e)
+                    {
+                        console.warn("No custom VFS protocol loaded");
+                        resolve(true);
+                    }
+                })
+            }
             /**
              * Looking for a attached file handle class of a string protocol
              *
@@ -250,11 +272,12 @@ namespace OS {
 
                 /**
                  * Once read, file content will be cached in this placeholder
-                 *
+                 * 
+                 * @private
                  * @type {*}
                  * @memberof BaseFileHandle
                  */
-                cache: any;
+                private _cache: any;
 
                 /**
                  * Flag indicated whether the file meta-data is loaded
@@ -333,6 +356,8 @@ namespace OS {
                     this.setPath(path);
                 }
 
+
+
                 /**
                  * Set a file path to the current file handle
                  *
@@ -355,7 +380,7 @@ namespace OS {
                     if (re === "") {
                         return;
                     }
-                    this.genealogy = re.split("/").filter(s=> s!="");
+                    this.genealogy = re.split("/").filter(s => s != "");
                     this.path = `${this.protocol}://${this.genealogy.join("/")}`;
                     if (!this.isRoot()) {
                         this.basename = this.genealogy[
@@ -386,6 +411,22 @@ namespace OS {
                 set filename(v: string) {
                     this.basename = v;
                 }
+
+                /**
+                 * Getter: Get the file cache
+                 * Setter: set the file cache
+                 *
+                 * @returns {any}
+                 * @memberof BaseFileHandle
+                 */
+                get cache(): any {
+                    return this._cache;
+                }
+                set cache(v: any) {
+                    this._cache = v;
+                    this._cache_changed();
+                }
+
                 /**
                  * Set data to the file cache
                  *
@@ -548,12 +589,8 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._rd(t);
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._rd(t);
+                            resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -577,10 +614,7 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r: RequestResult = await this._wr(t);
-                            announcer.ostrigger("VFS", {
-                                m: "write",
-                                file: this,
-                            });
+                            announcer.ostrigger("VFS", "write",this);
                             return resolve(r);
                         } catch (e) {
                             return reject(__e(e));
@@ -601,16 +635,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d_1 = await this._mk(d);
-                                announcer.ostrigger("VFS", {
-                                    m: "mk",
-                                    file: this,
-                                });
-                                return resolve(d_1);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d_1 = await this._mk(d);
+                            announcer.ostrigger("VFS","mk",this);
+                            return resolve(d_1);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -629,16 +656,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._rm();
-                                announcer.ostrigger("VFS", {
-                                    m: "remove",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._rm();
+                            announcer.ostrigger("VFS", "remove",this);
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -659,16 +679,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._up();
-                                announcer.ostrigger("VFS", {
-                                    m: "upload",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._up();
+                            announcer.ostrigger("VFS", "upload", this);
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -689,16 +702,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._pub();
-                                announcer.ostrigger("VFS", {
-                                    m: "publish",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._pub();
+                            announcer.ostrigger("VFS", "publish",this);
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -719,16 +725,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._down();
-                                announcer.ostrigger("VFS", {
-                                    m: "download",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._down();
+                            announcer.ostrigger("VFS", "download",this);
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -748,16 +747,10 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const data = await this._mv(d);
-                                announcer.ostrigger("VFS", {
-                                    m: "move",
-                                    file: d.asFileHandle(),
-                                });
-                                return resolve(data);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const data = await this._mv(d);
+                            announcer.ostrigger("VFS", "move",d.asFileHandle());
+                            return resolve(data);
+
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -778,16 +771,9 @@ namespace OS {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            try {
-                                const d = await this._exec();
-                                announcer.ostrigger("VFS", {
-                                    m: "execute",
-                                    file: this,
-                                });
-                                return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
+                            const d = await this._exec();
+                            announcer.ostrigger("VFS", "execute", this);
+                            return resolve(d);
                         } catch (e_1) {
                             return reject(__e(e_1));
                         }
@@ -824,6 +810,17 @@ namespace OS {
                             )
                         );
                     });
+                }
+
+                /**
+                 * trigger cache changed event
+                 *
+                 * This function triggered when the file cached changed
+                 *
+                 * @protected
+                 * @memberof BaseFileHandle
+                 */
+                protected _cache_changed():void {
                 }
 
                 /**
@@ -1066,8 +1063,8 @@ namespace OS {
                 protected _wr(t: string): Promise<RequestResult> {
                     // t is base64 or undefined
                     return new Promise(async (resolve, reject) => {
-                        if (t === "base64") {
-                            try {
+                        try {
+                            if (t === "base64") {
                                 const d = await API.handle.write(
                                     this.path,
                                     this.cache
@@ -1080,11 +1077,7 @@ namespace OS {
                                     );
                                 }
                                 return resolve(d);
-                            } catch (e) {
-                                return reject(__e(e));
-                            }
-                        } else {
-                            try {
+                            } else {
                                 const r = await this.b64(t);
                                 const result = await API.handle.write(
                                     this.path,
@@ -1102,9 +1095,9 @@ namespace OS {
                                     );
                                 }
                                 return resolve(result);
-                            } catch (e_2) {
-                                return reject(__e(e_2));
                             }
+                        } catch (e) {
+                            return reject(__e(e));
                         }
                     });
                 }
@@ -1369,11 +1362,17 @@ namespace OS {
                 constructor(path: string) {
                     super(path);
                     if (this.basename) {
-                        let v: any = OS.setting.system.packages[this.basename];
-                        v.type = "app";
-                        v.mime = "antos/app";
-                        v.size = 0;
-                        this.info = v as FileInfoType;
+                        let v = OS.setting.system.packages[this.basename];
+                        this.info = {} as FileInfoType;
+                        for(const p in v)
+                        {
+                            this.info[p] = v[p];
+                        }
+
+                        this.info.type = "app";
+                        this.info.mime = "antos/app";
+                        this.info.size = 0;
+                        this.info.text = v.name;
                     }
                     this.ready = true;
                 }
@@ -1436,6 +1435,8 @@ namespace OS {
 
             register("^app$", ApplicationHandle);
 
+            
+            var MEM_PARTITION: BufferFileHandle = undefined;
             /**
              * A buffer file handle represents a virtual file that is stored
              * on the system memory. Its protocol pattern is defined as:
@@ -1457,18 +1458,96 @@ namespace OS {
                  */
                 constructor(path: string, mime: string, data: any) {
                     super(path);
-                    if (data) {
-                        this.cache = data;
-                    }
                     this.info = {
-                        mime: mime,
+                        mime: mime?mime:'application/octet-stream',
                         path: path,
                         size: data ? data.length : 0,
                         name: this.basename,
-                        type: "file",
+                        filename:this.basename,
+                        ctime: (new Date()).toGMTString(),
+                        mtime: (new Date()).toGMTString(),
+                        type: 'file',
                     };
+                    if (data) {
+                        this.cache = data;
+                    }
+                    return this.init_file_tree();
+                }
+                /**
+                 * init the mem file tree if necessary
+                 */
+                private init_file_tree(): BufferFileHandle
+                {
+                    if(this.isRoot())
+                    {
+                        if(!MEM_PARTITION)
+                        {
+                            this.cache = {};
+                            MEM_PARTITION = this;
+                        }
+                        return MEM_PARTITION;
+                    }
+                    let curr_level = "mem://".asFileHandle(); 
+                    for(let i = 0;i<this.genealogy.length - 1;i++)
+                    {
+                        const segment = this.genealogy[i];
+                        let handle = undefined;
+                        if(segment == "..")
+                        {
+                            curr_level = curr_level.parent();
+                            continue;
+                        }
+
+                        handle = curr_level.cache[segment];
+                        if(!handle)
+                        {
+                            handle = new BufferFileHandle(`${curr_level.path}/${segment}`, 'dir', {});
+                            curr_level.cache[segment] = handle;
+                        }
+                        curr_level = handle;
+                        if(!curr_level.cache)
+                        {
+                            curr_level.cache = {};
+                        }
+                    }
+                    if(this.basename == "..")
+                    {
+                        return curr_level.parent() as BufferFileHandle;
+                    }
+                    if(!curr_level.cache[this.basename])
+                        curr_level.cache[this.basename] = this;
+                    return curr_level.cache[this.basename];
                 }
 
+                /**
+                 * cache changed handle
+                 */
+                protected _cache_changed(): void
+                {
+                    if(!this.cache)
+                    {
+                        return;
+                    }
+                    this.info.mime =  (new Date()).toGMTString();
+                    if(typeof this.cache === "string" || this.cache instanceof Blob || this.cache instanceof Uint8Array)
+                    {
+                        this.info.type = "file";
+                        if(typeof this.cache === "string")
+                        {
+                            this.info.mime = "text/plain";
+                        }
+                        else
+                        {
+                            this.info.mime = "application/octet-stream";
+                        }
+                    }
+                    else
+                    {
+                        this.info.type = "dir";
+                        this.info.mime = "dir";
+                    }
+                    this.info.size = this.cache.length;
+                }
                 /**
                  * Read the file meta-data
                  *
@@ -1477,13 +1556,41 @@ namespace OS {
                  */
                 meta(): Promise<RequestResult> {
                     return new Promise((resolve, reject) =>
+                    {
+                        const data = {};
+                        for(const k in this.info)
+                        {
+                            data[k] = this.info[k];
+                        }
                         resolve({
-                            result: this.info,
+                            result: data,
                             error: false,
                         })
-                    );
+                    });
                 }
 
+                /**
+                 * Load the file meta-data before performing
+                 * any task
+                 *
+                 * @returns {Promise<FileInfoType>} a promise on file meta-data
+                 * @memberof BufferFileHandle
+                 */
+                onready(): Promise<FileInfoType> {
+                    // read meta data
+                    return new Promise(async (resolve, reject) => {
+                        try
+                        {
+                            const d = await this.meta();
+                            resolve(d.result as FileInfoType);
+                        }
+                        catch(e)
+                        {
+                            reject(__e(e));
+                        }
+                    });
+                }
+                
                 /**
                  * Read file content stored in the file cached
                  *
@@ -1494,6 +1601,13 @@ namespace OS {
                  */
                 protected _rd(t: string): Promise<any> {
                     return new Promise((resolve, reject) => {
+                        // read dir
+                        if (this.info.type === "dir") {
+                            return resolve({
+                                result: (Object.values(this.cache) as BufferFileHandle[]).map(o=>o.info),
+                                error: false,
+                            });
+                        }
                         return resolve(this.cache);
                     });
                 }
@@ -1503,12 +1617,10 @@ namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {*} d data
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
-                protected _wr(t: string, d: any): Promise<RequestResult> {
-                    this.cache = d;
+                protected _wr(t: string): Promise<RequestResult> {
                     return new Promise((resolve, reject) =>
                         resolve({
                             result: true,
@@ -1516,6 +1628,106 @@ namespace OS {
                         })
                     );
                 }
+                
+                /**
+                 * Create sub directory
+                 *
+                 * Only work on directory file handle
+                 *
+                 * @protected
+                 * @param {string} d sub directory name
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mk(d: string): Promise<RequestResult> {
+                    return new Promise((resolve, reject) => {
+                        if (this.info.type === "file") {
+                            return reject(
+                                API.throwe(
+                                    __("{0} is not a directory", this.path)
+                                )
+                            );
+                        }
+                        const handle = `${this.path}/${d}`.asFileHandle();
+                        if(handle.info.type === "file")
+                        {
+                            handle.cache = {};
+                        }
+                        resolve({result: true, error: false});
+                    });
+                }
+
+                /**
+                 * Delete file/folder
+                 *
+                 * @protected
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _rm(): Promise<RequestResult> {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            const parent = this.parent();
+                            parent.cache[this.basename] = undefined;
+                            delete parent.cache[this.basename];
+                            return resolve({result: true, error: false});
+                        } catch (e) {
+                            return reject(__e(e));
+                        }
+                    });
+                }
+
+                setPath(p: string): void
+                {
+                    super.setPath(p);
+                    if(this.info)
+                        this.info.path = this.path;
+                }
+
+                private updatePath(path: string)
+                {
+                    this.setPath(path);
+                    if(this.info.type == "file")
+                    {
+                        return;
+                    }
+                    for(const k in this.cache)
+                    {
+                        const child = this.cache[k];
+                        child.updatePath(`${this.path}/${child.basename}`);
+                    }
+                }
+
+                /**
+                 * Move file/folder
+                 *
+                 * @protected
+                 * @param {string} d
+                 * @returns {Promise<RequestResult>}
+                 * @memberof BufferFileHandle
+                 */
+                protected _mv(d: string): Promise<RequestResult> {
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            if(d.includes(this.path))
+                            {
+                                return reject(API.throwe(__("Unable to move file/folder from {0} to {1}", this.path, d)));
+                            }
+                            const parent = this.parent()
+                            parent.cache[this.basename] = undefined;
+                            delete parent.cache[this.basename];
+
+                            const dest = d.asFileHandle();
+                            this.updatePath(dest.path);
+                            dest.parent().cache[dest.basename] = this;
+                            return resolve({result: true, error: false});
+                        } catch (e) {
+                            console.log(this);
+                            return reject(__e(e));
+                        }
+                    });
+                }
+
 
                 /**
                  * Download the buffer file
@@ -1526,6 +1738,10 @@ namespace OS {
                  */
                 protected _down(): Promise<void> {
                     return new Promise((resolve, reject) => {
+                        if(this.info.type == "dir")
+                        {
+                            return reject(API.throwe(__("{0} is a directory", this.path)));
+                        }
                         const blob = new Blob([this.cache], {
                             type: "octet/stream",
                         });
@@ -1855,11 +2071,11 @@ namespace OS {
                     promises.push(new Promise(async (resolve, reject) => {
                         try {
                             const file = path.asFileHandle();
-                            const tof = `${to}/${file.basename}`.asFileHandle();
                             const meta = await file.onready();
                             if (meta.type === "dir") {
                                 const desdir = to.asFileHandle();
                                 await desdir.mk(file.basename);
+                                console.log(desdir, to);
                                 const ret = await file.read();
                                 const files = ret.result.map((v: API.FileInfoType) => v.path);
                                 if (files.length > 0) {
@@ -1871,6 +2087,7 @@ namespace OS {
                                 }
                             }
                             else {
+                                const tof = `${to}/${file.basename}`.asFileHandle();
                                 const content = await file.read("binary");
                                 await tof
                                     .setCache(
@@ -1945,14 +2162,12 @@ namespace OS {
                     try {
                         await API.requires("os://scripts/jszip.min.js");
                         const zip = new JSZip();
-                        const fhd =  src.asFileHandle();
+                        const fhd = src.asFileHandle();
                         const meta = await fhd.onready();
-                        if(meta.type === "file")
-                        {
+                        if (meta.type === "file") {
                             await aradd([src], zip, "/");
                         }
-                        else
-                        {
+                        else {
                             const ret = await fhd.read();
                             await aradd(
                                 ret.result.map((v: API.FileInfoType) => v.path), zip, "/");

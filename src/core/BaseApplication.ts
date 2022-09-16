@@ -71,6 +71,22 @@ namespace OS {
             appmenu: GUI.tag.MenuTag;
 
             /**
+             * Loading animation check timeout
+             *
+             * @private
+             * @memberof BaseApplication
+             */
+            private _loading_toh: any;
+                /**
+             * Store pending loading task
+             *
+             * @private
+             * @type {number[]}
+             * @memberof BaseApplication
+             */
+            private _pending_task: number[];
+
+            /**
              *Creates an instance of BaseApplication.
              * @param {string} name application name
              * @param {AppArgumentsType[]} args application arguments
@@ -83,11 +99,8 @@ namespace OS {
                 }
                 this.setting = setting.applications[this.name];
                 this.keycomb = {};
-                this.subscribe("appregistry", (m) => {
-                    if (m.name === this.name) {
-                        this.applySetting(m.data.m);
-                    }
-                });
+                this._loading_toh = undefined;
+                this._pending_task = [];
             }
 
             /**
@@ -109,11 +122,13 @@ namespace OS {
                     this.sysdock.selectedApp = this;
                     this.appmenu.pid = this.pid;
                     this.appmenu.items = this.baseMenu() || [];
+                    OS.PM.pidactive = this.pid;
                     this.appmenu.onmenuselect = (
                         d: GUI.tag.MenuEventData
                     ): void => {
                         return this.trigger("menuselect", d);
                     };
+                    this.trigger("focused", undefined);
                     if (this.dialog) {
                         return this.dialog.show();
                     }
@@ -135,6 +150,31 @@ namespace OS {
                     }
                 });
                 this.on("apptitlechange", () => this.sysdock.update(this));
+                this.subscribe("appregistry", (m) => {
+                    if (m.name === this.name) {
+                        this.applySetting(m.message as string);
+                    }
+                });
+                this.subscribe("loading", (o: API.AnnouncementDataType<number>) => {
+                    if(o.u_data != this.pid)
+                    {
+                        return;
+                    }
+                    this._pending_task.push(o.id);
+                    this.trigger("loading", undefined);
+                });
+    
+                this.subscribe("loaded", (o: API.AnnouncementDataType<number>) => {
+                    const i = this._pending_task.indexOf(o.id);
+                    if (i >= 0) {
+                        this._pending_task.splice(i, 1);
+                    }
+                    if (this._pending_task.length === 0) {
+                        // set time out
+                        if(!this._loading_toh)
+                            this._loading_toh = setTimeout(() => this.animation_check(),1000);
+                    }
+                });
                 this.updateLocale(this.systemsetting.system.locale);
                 return this.loadScheme();
             }
@@ -225,12 +265,11 @@ namespace OS {
              * Update the application local from the system
              * locale or application specific locale configuration
              *
-             * @private
              * @param {string} name locale name e.g. `en_GB`
              * @returns {void}
              * @memberof BaseApplication
              */
-            protected updateLocale(name: string): void {
+            updateLocale(name: string): void {
                 const meta = this.meta();
                 if (!meta || !meta.locales) {
                     return;
@@ -324,7 +363,11 @@ namespace OS {
                 if (this.appmenu && this.pid === this.appmenu.pid) {
                     this.appmenu.items = [];
                 }
-                return this.trigger("blur", undefined);
+                this.trigger("blur", undefined);
+                if(this.dialog)
+                {
+                    this.dialog.blur();
+                }
             }
 
             /**
@@ -446,6 +489,23 @@ namespace OS {
              * @memberof BaseApplication
              */
             protected cleanup(e: BaseEvent): void {}
+
+            /**
+             * Check if the loading tasks ended,
+             * if it the case, stop the animation
+             *
+             * @private
+             * @memberof BaseApplication
+             */
+            private animation_check(): void {
+                if(this._pending_task.length === 0)
+                {
+                    this.trigger("loaded", undefined);
+                }
+                if(this._loading_toh)
+                    clearTimeout(this._loading_toh);
+                this._loading_toh = undefined;
+            }
         }
 
         BaseApplication.type = ModelType.Application;

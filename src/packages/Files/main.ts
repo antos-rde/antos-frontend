@@ -21,7 +21,7 @@ namespace OS {
 
         interface FilesClipboardType {
             cut: boolean;
-            file: API.VFS.BaseFileHandle;
+            files: API.VFS.BaseFileHandle[];
         }
         interface FilesViewType {
             icon: boolean;
@@ -71,24 +71,26 @@ namespace OS {
 
                 this.view.contextmenuHandle = (e, m) => {
                     const file = this.view.selectedFile;
-                    if (!file) {
-                        return;
-                    }
                     const apps = [];
-                    if (file.type === "dir") {
-                        file.mime = "dir";
-                    }
-
-                    for (let v of this._gui.appsByMime(file.mime)) {
-                        apps.push({
-                            text: v.text,
-                            app: v.app,
-                            icon: v.icon,
-                            iconclass: v.iconclass,
-                        });
-                    }
                     let ctx_menu = [
-                        {
+                        this.mnFile(),
+                    ];
+                    if(file)
+                    {
+                        ctx_menu.push(this.mnEdit());
+                        if (file.type === "dir") {
+                            file.mime = "dir";
+                        }
+
+                        for (let v of this._gui.appsByMime(file.mime)) {
+                            apps.push({
+                                text: v.text,
+                                app: v.app,
+                                icon: v.icon,
+                                iconclass: v.iconclass,
+                            });
+                        }
+                        ctx_menu.unshift( {
                             text: "__(Open with)",
                             nodes: apps,
                             onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
@@ -98,77 +100,76 @@ namespace OS {
                                 const it = e.data.item.data;
                                 return this._gui.launch(it.app, [file]);
                             },
-                        },
-                        this.mnFile(),
-                        this.mnEdit(),
-                    ];
-                    if(file.mime === "application/zip")
-                    {
-                        ctx_menu = ctx_menu.concat([
-                            {
-                                text: "__(Extract Here)",
-                                onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    API.VFS.extractZip(file.path,
-                                        (z) => new Promise((r,e) => r(file.path.asFileHandle().parent().path)))
-                                    .catch((err) => this.error(__("Unable to extract file"), err));
-                                },
-                            },
-                            {
-                                text: "__(Extract to)",
-                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    try {
-                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
-                                        const d = await this.openDialog("FileDialog", {
-                                            title: __("Select extract destination"),
-                                            type: "dir",
-                                            file: file.path.replace(".zip","").asFileHandle()
-                                        });
-                                        const path = `${d.file.path}/${d.name}`;
-                                        await API.VFS.mkdirAll([path]);
-                                        await API.VFS.extractZip(file.path,
-                                            (z) => new Promise((r,e) => r(path)));
-                                    } catch (error) {
-                                        this.error(__("Unable to extract file"), error);
-                                    }
-                                },
-                            },
-                        ]);
-                    }
-                    else
-                    {
-                        ctx_menu.push(
-                            {
-                                text: "__(Compress)",
-                                onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
-                                    if (!e) {
-                                        return;
-                                    }
-                                    try {
-                                        OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
-                                        const d = await this.openDialog("FileDialog", {
-                                            title: __("Save compressed file to"),
-                                            type: "dir",
-                                            file: `${this.currdir.path}/${file.name}.zip`.asFileHandle()
-                                        });
-                                        if(d.name.trim() === "")
-                                        {
-                                            return this.error(__("Invalid file name"));
+                        });
+                        if(file.mime === "application/zip")
+                        {
+                            ctx_menu = ctx_menu.concat([
+                                {
+                                    text: "__(Extract Here)",
+                                    onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
                                         }
-                                        const path = `${d.file.path}/${d.name}`;
-                                        await API.VFS.mkar(file.path, path);
-                                        this.notify(__("Archive file created: {0}",path ));
-                                    } catch (error) {
-                                        this.error(__("Unable to compress file, folder"), error);
+                                        API.VFS.extractZip(file.path,
+                                            (z) => new Promise((r,e) => r(file.path.asFileHandle().parent().path)))
+                                        .catch((err) => this.error(__("Unable to extract file"), err));
+                                    },
+                                },
+                                {
+                                    text: "__(Extract to)",
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
+                                        }
+                                        try {
+                                            OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                            const d = await this.openDialog("FileDialog", {
+                                                title: __("Select extract destination"),
+                                                type: "dir",
+                                                file: file.path.replace(".zip","").asFileHandle()
+                                            });
+                                            const path = `${d.file.path}/${d.name}`;
+                                            await API.VFS.mkdirAll([path]);
+                                            await API.VFS.extractZip(file.path,
+                                                (z) => new Promise((r,e) => r(path)));
+                                        } catch (error) {
+                                            this.error(__("Unable to extract file"), error);
+                                        }
+                                    },
+                                },
+                            ]);
+                        }
+                        else
+                        {
+                            ctx_menu.push(
+                                {
+                                    text: "__(Compress)",
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                        if (!e) {
+                                            return;
+                                        }
+                                        try {
+                                            OS.GUI.dialogs.FileDialog.last_opened = this.currdir.path;
+                                            const d = await this.openDialog("FileDialog", {
+                                                title: __("Save compressed file to"),
+                                                type: "dir",
+                                                file: `${this.currdir.path}/${file.name}.zip`.asFileHandle()
+                                            });
+                                            if(d.name.trim() === "")
+                                            {
+                                                return this.error(__("Invalid file name"));
+                                            }
+                                            const path = `${d.file.path}/${d.name}`;
+                                            await API.VFS.mkar(file.path, path);
+                                            this.notify(__("Archive file created: {0}",path ));
+                                        } catch (error) {
+                                            this.error(__("Unable to compress file, folder"), error);
+                                        }
                                     }
                                 }
-                            }
-                        );
+                            );
+                        }
+
                     }
                     m.items = ctx_menu;
                     m.show(e);
@@ -212,12 +213,6 @@ namespace OS {
                                 if (d.error) {
                                     return reject(d.error);
                                 }
-                                if (!dir.isRoot()) {
-                                    const p = dir.parent();
-                                    p.filename = "[..]";
-                                    p.type = "dir";
-                                    d.result.unshift(p);
-                                }
                                 this.currdir = dir;
                                 $(this.navinput).val(dir.path);
                                 (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;
@@ -228,43 +223,54 @@ namespace OS {
                 };
 
                 this.vfs_event_flag = true;
-                this.view.ondragndrop = (e) => {
+                this.view.ondragndrop = async (e) => {
                     if (!e) {
                         return;
                     }
-                    const src = e.data.from.data;
+                    const src = e.data.from;
                     const des = e.data.to.data;
                     if (des.type === "file") {
                         return;
                     }
-                    const file = src.path.asFileHandle();
+                    // ask to confirm
+                    const r = await this.ask({
+                        title: __("Move files"),
+                        text: __("Move selected file to {0}?", des.text)
+                    });
+                    if(!r)
+                    {
+                        return;
+                    }
                     // disable the vfs event on
                     // we update it manually
                     this.vfs_event_flag = false;
-                    return file
-                        .move(`${des.path}/${file.basename}`)
-                        .then(() => {
-                            if (this.view.view === "icon") {
-                                this.view.path = this.view.path;
-                            } else {
-                                this.view.update(file.parent().path);
-                                this.view.update(des.path);
-                            }
-                            //reenable the vfs event
-                            return (this.vfs_event_flag = true);
-                        })
-                        .catch((e: Error) => {
-                            // reenable the vfs event
-                            this.vfs_event_flag = true;
-                            return this.error(
+                    const promises = [];
+                    for(const item of src)
+                    {
+                        let file = item.data.path.asFileHandle();
+                        promises.push(
+                            file.move(`${des.path}/${file.basename}`));
+                    }
+                    try{
+                        await Promise.all(promises);
+                        if (this.view.view === "tree") {
+                            this.view.update(src[0].data.path.asFileHandle().parent().path);
+                            this.view.update(des.path);
+                        } else {
+                            this.view.path = this.view.path;
+                        }
+                    }
+                    catch(error)
+                    {
+                        this.error(
                                 __(
-                                    "Unable to move: {0} -> {1}",
-                                    src.path,
+                                    "Unable to move files to: {0}",
                                     des.path
                                 ),
-                                e
+                                error
                             );
-                        });
+                    }
+                    this.vfs_event_flag = true;
                 };
 
                 // application setting
@@ -296,16 +302,16 @@ namespace OS {
                 if (this.setting.view) {
                     this.view.view = this.setting.view;
                 }
-                this.subscribe("VFS", (d) => {
+                this.subscribe("VFS", (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) => {
                     if (!this.vfs_event_flag) {
                         return;
                     }
-                    if (["read", "publish", "download"].includes(d.data.m)) {
+                    if (["read", "publish", "download"].includes(d.message as string)) {
                         return;
                     }
                     if (
-                        d.data.file.hash() === this.currdir.hash() ||
-                        d.data.file.parent().hash() === this.currdir.hash()
+                        d.u_data.hash() === this.currdir.hash() ||
+                        d.u_data.parent().hash() === this.currdir.hash()
                     ) {
                         return this.view.path = this.currdir.path;
                     }
@@ -355,6 +361,32 @@ namespace OS {
                     this.view.view = "list";
                     this.viewType.list = true;
                 };
+                // enable or disable multi-select by CTRL key
+                $(this.scheme).on("keydown", (evt)=>{
+                    if(evt.ctrlKey && evt.which == 17)
+                    {
+                        this.view.multiselect = true;
+                    }
+                    else
+                    {
+                        this.view.multiselect = false;
+                    }
+                });
+                 $(this.scheme).on("keyup", (evt)=>{
+                    if(evt.which === 38)
+                    {
+                        if (this.currdir.isRoot()) {
+                            return;
+                        }
+                        const p = this.currdir.parent();
+                        this.favo.selected = -1;
+                        return this.view.path = p.path;
+                    }
+                    if(!evt.ctrlKey)
+                    {
+                        this.view.multiselect = false;
+                    }
+                });
                 this.view.path = this.currdir.path;
             }
 
@@ -585,20 +617,22 @@ namespace OS {
                             title: "__(Delete)",
                             iconclass: "fa fa-question-circle",
                             text: __(
-                                "Do you really want to delete: {0}?",
-                                file.filename
+                                "Do you really want to delete selected files?"
                             ),
                         }).then(async (d) => {
                             if (!d) {
                                 return;
                             }
+                            const promises = [];
+                            for(const f of this.view.selectedFiles)
+                            {
+                                promises.push(f.path.asFileHandle().remove());
+                            }
                             try {
-                                return file.path
-                                    .asFileHandle()
-                                    .remove();
+                                await Promise.all(promises);
                             }
                             catch (e) {
-                                return this.error(__("Fail to delete: {0}", file.path), e);
+                                return this.error(__("Fail to delete selected files"), e);
                             }
                         });
                         break;
@@ -609,9 +643,9 @@ namespace OS {
                         }
                         this.clipboard = {
                             cut: true,
-                            file: file.path.asFileHandle(),
+                            files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
-                        return this.notify(__("File {0} cut", file.filename));
+                        return this.notify(__("{0} files cut", this.clipboard.files.length));
 
                     case `${this.name}-copy`:
                         if (!file) {
@@ -619,10 +653,10 @@ namespace OS {
                         }
                         this.clipboard = {
                             cut: false,
-                            file: file.path.asFileHandle(),
+                            files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
                         return this.notify(
-                            __("File {0} copied", file.filename)
+                            __("{0} files copied", this.clipboard.files.length)
                         );
 
                     case `${this.name}-paste`:
@@ -630,29 +664,33 @@ namespace OS {
                             return;
                         }
                         if (this.clipboard.cut) {
-                            this.clipboard.file
-                                .move(
-                                    `${this.currdir.path}/${this.clipboard.file.basename}`
-                                )
+                            const promises = [];
+                            for(const file of this.clipboard.files)
+                            {
+                                promises.push(file.move(
+                                    `${this.currdir.path}/${file.basename}`
+                                ));
+                            }
+                            Promise.all(promises)
                                 .then((r) => {
                                     return (this.clipboard = undefined);
                                 })
                                 .catch((e) => {
                                     return this.error(
                                         __(
-                                            "Fail to paste: {0}",
-                                            this.clipboard.file.path
+                                            "Fail to paste to: {0}",
+                                            this.currdir.path
                                         ),
                                         e
                                     );
                                 });
                         } else {
-                            API.VFS.copy([this.clipboard.file.path],this.currdir.path)
+                            API.VFS.copy(this.clipboard.files.map(x => x.path),this.currdir.path)
                                 .then(() => {
                                     return (this.clipboard = undefined);
                                 })
                                 .catch((e) => {
-                                    return this.error(__("Fail to paste: {0}", this.clipboard.file.path), e);
+                                    return this.error(__("Fail to paste to: {0}", this.currdir.path), e);
                                 });
                         }
                         break;
@@ -727,7 +765,7 @@ namespace OS {
                             });
                         break;
                     case `${this.name}-download`:
-                        if (file.type !== "file") {
+                        if (!file || file.type !== "file") {
                             return;
                         }
                         file.path

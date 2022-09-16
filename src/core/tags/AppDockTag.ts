@@ -162,6 +162,7 @@ namespace OS {
                     }
                     this._selectedItem = el;
                     if (!el) {
+                        PM.pidactive = 0;
                         return;
                     }
                     $(el.domel).addClass("selected");

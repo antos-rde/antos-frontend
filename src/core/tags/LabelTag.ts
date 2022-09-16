@@ -33,7 +33,16 @@ namespace OS {
                  * @protected
                  * @memberof LabelTag
                  */
-                protected mount() {}
+                protected mount() {
+                    $(this.refs.container)
+                        .css("display", "flex");
+                    $(this.refs.iclass)
+                        .css("flex-shrink",0);
+                    $(this.refs.i)
+                        .css("flex-shrink",0);
+                    $(this.refs.text)
+                        .css("flex",1);
+                }
 
                 /**
                  * Refresh the text in the label
@@ -56,6 +65,7 @@ namespace OS {
                     this.icon = undefined;
                     this.iconclass = undefined;
                     this.text = undefined;
+                    this.selectable = false;
                 }
 
                 /**
@@ -119,6 +129,33 @@ namespace OS {
                 }
                 get text(): string | FormattedString {
                     return this._text;
+                }
+
+
+                /**
+                 * Setter: Turn on/off text selection
+                 *
+                 * Getter: Check whether the label is selectable
+                 *
+                 * @memberof LabelTag
+                 */
+                set selectable(v: boolean) {
+                    this.attsw(v, "selectable");
+                    if(v)
+                    {
+                        $(this.refs.text)
+                            .css("user-select", "text")
+                            .css("cursor", "text");
+                    }
+                    else
+                    {
+                        $(this.refs.text)
+                            .css("user-select", "none")
+                            .css("cursor", "default");
+                    }
+                }
+                get swon(): boolean {
+                    return this.hasattr("selectable");
                 }
 
                 /**

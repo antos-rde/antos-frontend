@@ -119,15 +119,16 @@ namespace OS {
             app: BaseModel,
             parent: Element | string
         ): void {
-            const scheme = $.parseHTML(html);
+            const scheme = $.parseHTML(html)[0];
             if (app.scheme) {
                 $(app.scheme).remove();
             }
-            $(parent as GenericObject<any>).append(scheme);
-            app.scheme = scheme[0] as HTMLElement;
+            (parent as HTMLElement).append(scheme);
+            app.scheme = scheme as HTMLElement;
             app.scheme.uify(app.observable, true);
             app.main();
             app.show();
+            app.observable.trigger("launched",undefined);
         }
 
         /**
@@ -182,6 +183,28 @@ namespace OS {
             $("head link#ostheme").attr("href", path);
         }
 
+
+        /**
+         * Get the system dock tag
+         *
+         * @export
+         * @return {*}  {GUI.tag.AppDockTag}
+         */
+        export function systemDock(): GUI.tag.AppDockTag
+        {
+            return $("#sysdock")[0] as tag.AppDockTag;
+        }
+
+        /**
+         * Get the current virtual desktop
+         *
+         * @export
+         * @return {*}  {GUI.tag.DesktopTag}
+         */
+        export function desktop(): GUI.tag.DesktopTag
+        {
+            return $(workspace)[0] as tag.DesktopTag;
+        }
         /**
          * Open a system dialog.
          *
@@ -257,10 +280,7 @@ namespace OS {
                         return false;
                     });
                 } catch (e) {
-                    return announcer.osfail(
-                        __("Error find app by mimes {0}", mime),
-                        e
-                    );
+                    return false;
                 }
             };
             let arr: string[];
@@ -380,11 +400,43 @@ namespace OS {
          * @export
          * @param {string} app
          */
-        export function unloadApp(app: string): void {
+        export function unloadApp(app: string, save?: boolean): void {
             PM.killAll(app, true);
             if (application[app] && application[app].style) {
                 $(application[app].style).remove();
             }
+            if(save)
+            {
+                // remove pinned application if any
+                if(OS.setting.system.startup.pinned)
+                    OS.setting.system.startup.pinned = OS.setting.system.startup.pinned.filter((e) => e != app);
+                // remove service if it is the service
+                if(OS.setting.system.startup.services)
+                    OS.setting.system.startup.services = OS.setting.system.startup.services.filter((e) => e != app);
+                // remove startup app if any
+                if(OS.setting.system.startup.apps)
+                    OS.setting.system.startup.apps = OS.setting.system.startup.apps.filter((e) => e != app);
+                // refresh pinned list
+                announcer.ostrigger("app-pinned", "app-pinned", undefined);
+                // remove application setting
+                if(OS.setting.applications[app])
+                    delete OS.setting.applications[app];
+                OS.API.setting()
+                    .then((d) =>{
+                        if(d.error)
+                        {
+                            announcer.oserror(
+                                __("Error when save system setting {0}:{1}", app, d.error),
+                                undefined);
+                        }
+                    })
+                    .catch((e)=> {
+                        announcer.oserror(
+                                __("Error when save system setting {0}: {1}", app, e.toString()),
+                                e);
+                    });
+            }
+            
             delete application[app];
         }
 
@@ -395,54 +447,67 @@ namespace OS {
          * This function fist loads and registers the application prototype
          * definition in the [[application]] namespace, then update
          * the system packages meta-data
+         * 
+         * First it tries to load the package with the app name is also the
+         * pkgname, if its fail, it will search the app name by pkg name and load
+         * it
          *
          * @param {string} app application class name
          * @returns {Promise<string>}
          */
         function loadApp(app: string): Promise<string> {
             return new Promise(async function (resolve, reject) {
-                let path: string;
-                if (setting.system.packages[app].path) {
-                    path = setting.system.packages[app].path;
-                }
-                const js = path + "/main.js";
+                let path: string = undefined;
                 try {
-                    const d = await js.asFileHandle().read("script");
-                    try {
-                        const data: API.PackageMetaType = await `${path}/package.json`
-                            .asFileHandle()
-                            .read("json");
-                        data.path = path;
-                        if (application[app]) {
-                            application[app].meta = data;
-                        }
-                        if (data.services) {
-                            for (let v of data.services) {
-                                application[v].meta = data;
+                    if(!setting.system.packages[app])
+                    {
+                        for(const key in setting.system.packages)
+                        {
+                            const pkg = setting.system.packages[key];
+                            if(pkg.app == app && pkg.path)
+                            {
+                                path = pkg.path;
                             }
                         }
-                        //load css file
-                        const css = `${path}/main.css`;
-                        try {
-                            const d_1 = await css.asFileHandle().onready();
-                            const stamp = new Date().timestamp();
-                            const el = $("<link>", {
-                                rel: "stylesheet",
-                                type: "text/css",
-                                href: `${API.handle.get}/${css}?stamp=${stamp}`,
-                            }).appendTo("head");
-                            if (application[app]) {
-                                application[app].style = el[0];
-                            }
-                            return resolve(app);
-                        } catch (e) {
-                            return resolve(app);
-                        }
-                    } catch (e_1) {
-                        return reject(__e(e_1));
                     }
-                } catch (e_2) {
-                    return reject(__e(e_2));
+                    else if (setting.system.packages[app].path) {
+                        path = setting.system.packages[app].path;
+                    }
+                    if(!path)
+                    {
+                        throw __("Unable to locate package of {0}", app).__();
+                    }
+                    const js = path + "/main.js";
+                    const d = await js.asFileHandle().read("script");
+                    const data: API.PackageMetaType = await `${path}/package.json`
+                        .asFileHandle()
+                        .read("json");
+                    data.path = path;
+                    if (application[app]) {
+                        application[app].meta = data;
+                    }
+                    if (data.services) {
+                        for (let v of data.services) {
+                            application[v].meta = data;
+                        }
+                    }
+                    //load css file
+                    try{
+                        const css = `${path}/main.css`;
+                        await css.asFileHandle().onready();
+                        const stamp = new Date().timestamp();
+                        const el = $("<link>", {
+                            rel: "stylesheet",
+                            type: "text/css",
+                            href: `${API.handle.get}/${css}?stamp=${stamp}`,
+                        }).appendTo("head");
+                        if (application[app]) {
+                            application[app].style = el[0];
+                        }
+                    } catch(e_1){}
+                    return resolve(app);
+                } catch (e) {
+                    return reject(__e(e));
                 }
             });
         }
@@ -462,36 +527,23 @@ namespace OS {
                 const arr = ph.split("/");
                 const srv = arr[1];
                 const app = arr[0];
-                if (application[srv]) {
-                    try {
-                        const d = await OS.PM.createProcess(
-                            srv,
-                            application[srv]
-                        );
-                        return resolve(d);
-                    } catch (e) {
-                        return reject(__e(e));
-                    }
-                } else {
-                    try {
+                try {
+                    if (!application[srv]) {
                         await loadApp(app);
                         if (!application[srv]) {
                             return reject(
                                 API.throwe(__("Service not found: {0}", ph))
                             );
                         }
-                        try {
-                            const d_1 = await PM.createProcess(
-                                srv,
-                                application[srv]
-                            );
-                            return resolve(d_1);
-                        } catch (e_1) {
-                            return reject(__e(e_1));
-                        }
-                    } catch (e_2) {
-                        return reject(__e(e_2));
                     }
+                    const d = await PM.createProcess(
+                        srv,
+                        application[srv]
+                    );
+                    return resolve(d);
+                }
+                catch (e) {
+                    return reject(__e(e));
                 }
             });
         }
@@ -532,59 +584,45 @@ namespace OS {
          * @param {AppArgumentsType[]} args application arguments
          */
         export function launch(app: string, args: AppArgumentsType[]): Promise<OS.PM.ProcessType> {
-            return new Promise((resolve, reject) => {
-                if (!application[app]) {
-                    // first load it
-                    loadApp(app)
-                        .then((a) => {
-                            if (!application[app]) {
-                                const e = API.throwe(__("Application not found"));
-                                announcer.oserror(
-                                    __("{0} is not an application", app),
-                                    e);
-                                return reject(e);
-                            }
-                            PM.createProcess(
-                                app,
-                                application[app],
-                                args
-                            ).catch((e) => {
-                                announcer.osfail(
-                                    __("Unable to launch: {0}", app),
-                                    e
-                                );
-                                return reject(e);
-                            }
-                            ).then((p: PM.ProcessType) => resolve(p));
+            return new Promise(async (resolve, reject) => {
+                const pidactive = PM.pidactive;
+                try {
+                    PM.pidactive = 0;
+                    if (!application[app]) {
+                        // first load it
+                        await loadApp(app);
+                        if (!application[app]) {
+                            const e = API.throwe(__("Application not found"));
+                            announcer.oserror(
+                                __("{0} is not an application", app),
+                                e);
+                            return reject(e);
                         }
-                        )
-                        .catch((e) => {
-                            announcer.osfail(__("Unable to launch: {0}", app), e);
-                            reject(e);
-                        }
-                        );
-                } else {
-                    // now launch it
-                    if (application[app]) {
-                        PM.createProcess(
+                        const p = await PM.createProcess(
                             app,
                             application[app],
                             args
-                        ).catch((e: Error) => {
-                            announcer.osfail(__("Unable to launch: {0}", app), e);
-                            return reject(e);
-                        }
-
                         );
+                        resolve(p);
                     } else {
-                        const e = API.throwe(__("Application not found"));
-                        announcer.osfail(
-                            __("Unable to find: {0}", app),
-                            e
+                        // now launch it
+                        const p = await PM.createProcess(
+                            app,
+                            application[app],
+                            args
                         );
-                        return reject(e);
+                        resolve(p);
                     }
                 }
+                catch (e) {
+                    announcer.osfail(
+                        __("Unable to launch: {0}", app),
+                        e
+                    );
+                    PM.pidactive = pidactive;
+                    return reject(__e(e));
+                }
+
             });
         }
 
@@ -847,50 +885,6 @@ namespace OS {
         }
 
         /**
-         * Refresh the content of the virtual desktop
-         *
-         * @param {tag.FloatListTag} desktop
-         */
-        function dkfetch(desktop: tag.FloatListTag): void {
-            const file = setting.desktop.path.asFileHandle();
-            const fn = () =>
-                file.read().then(function (d) {
-                    if (d.error) {
-                        return announcer.osfail(d.error, API.throwe(d.error));
-                    }
-                    const items = [];
-                    $.each(d.result, function (i, v) {
-                        if (
-                            v.filename[0] === "." &&
-                            !setting.desktop.showhidden
-                        ) {
-                            return;
-                        }
-                        v.text = v.filename;
-                        //v.text = v.text.substring(0,9) + "..." ifv.text.length > 10
-                        v.iconclass = v.type;
-                        return items.push(v);
-                    });
-                    desktop.data = items;
-                    return desktop.calibrate();
-                });
-
-            file.onready()
-                .then(() => fn())
-                .catch(async function (e) {
-                    // try to create the path
-                    console.log(`${file.path} not found`);
-                    const name = file.basename;
-                    try {
-                        const r = await file.parent().asFileHandle().mk(name);
-                        return API.throwe("OS.VFS");
-                    } catch (e_1) {
-                        return announcer.osfail(e_1.toString(), e_1);
-                    }
-                });
-        }
-
-        /**
          * Init the virtual desktop on boot:
          *
          * - Register listener for system hotkey
@@ -949,7 +943,7 @@ namespace OS {
             $("#systooltip")[0].uify(undefined);
             $("#contextmenu")[0].uify(undefined);
 
-            $("#wrapper").on("contextmenu",(e) => bindContextMenu(e));
+            $("#wrapper").on("contextmenu", (e) => bindContextMenu(e));
             // tooltip
             $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");
@@ -962,115 +956,8 @@ namespace OS {
                     e
                 );
             });
-
-            const fp = setting.desktop.path.asFileHandle();
-            // desktop default file manager
-            const desktop = $(workspace)[0] as tag.FloatListTag;
-
-            desktop.onready = function (e: tag.FloatListTag) {
-                e.observable = OS.announcer.observable;
-                window.onresize = function () {
-                    announcer.trigger("desktopresize", undefined);
-                    return e.calibrate();
-                };
-
-                desktop.onlistselect = function (
-                    d: TagEventType<tag.ListItemEventData>
-                ) {
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                };
-
-                desktop.onlistdbclick = function (
-                    d: TagEventType<tag.ListItemEventData>
-                ) {
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                    const it = desktop.selectedItem;
-                    return openWith(it.data as AppArgumentsType);
-                };
-
-                //($ "#workingenv").on "click", (e) ->
-                //     desktop[0].set "selected", -1
-
-                $(desktop).on("click", function (e) {
-                    let el = $(e.target).parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    el = el.parent();
-                    if (!(el.length > 0)) {
-                        return;
-                    }
-                    if (el[0] !== desktop) {
-                        return;
-                    }
-                    desktop.unselect();
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                });
-
-                desktop.contextmenuHandle = function (e, m) {
-                    if (e.target.tagName.toUpperCase() === "UL") {
-                        desktop.unselect();
-                    }
-                    ($("#sysdock")[0] as tag.AppDockTag).selectedApp = null;
-                    let menu = [
-                        { text: __("Open"), dataid: "desktop-open" },
-                        { text: __("Refresh"), dataid: "desktop-refresh" },
-                    ];
-                    menu = menu.concat(
-                        (() => {
-                            const result = [];
-                            for (let k in setting.desktop.menu) {
-                                const v = setting.desktop.menu[k];
-                                result.push(v);
-                            }
-                            return result;
-                        })()
-                    );
-                    m.items = menu;
-                    m.onmenuselect = function (
-                        evt: TagEventType<tag.MenuEventData>
-                    ) {
-                        if (!evt.data || !evt.data.item) return;
-                        const item = evt.data.item.data;
-                        switch (item.dataid) {
-                            case "desktop-open":
-                                var it = desktop.selectedItem;
-                                if (it) {
-                                    return openWith(
-                                        it.data as AppArgumentsType
-                                    );
-                                }
-                                let arg = setting.desktop.path.asFileHandle() as AppArgumentsType;
-                                arg.mime = "dir";
-                                arg.type = "dir";
-                                return openWith(arg);
-                            case "desktop-refresh":
-                                return dkfetch(desktop);
-                            default:
-                                if (item.app) {
-                                    return launch(item.app, item.args);
-                                }
-                        }
-                    };
-                    return m.show(e);
-                };
-
-                dkfetch(desktop);
-                announcer.observable.on("VFS", function (d) {
-                    if (["read", "publish", "download"].includes(d.data.m)) {
-                        return;
-                    }
-                    if (
-                        d.data.file.hash() === fp.hash() ||
-                        d.data.file.parent().hash() === fp.hash()
-                    ) {
-                        return dkfetch(desktop);
-                    }
-                });
-                return announcer.ostrigger("desktoploaded", undefined);
-            };
             // mount it
-            desktop.uify(undefined);
+            desktop().uify(undefined);
         }
 
         /**
@@ -1079,7 +966,7 @@ namespace OS {
          * @export
          */
         export function refreshDesktop(): void {
-            dkfetch($(workspace)[0] as tag.FloatListTag);
+            desktop().refresh();
         }
 
         /**
@@ -1090,7 +977,11 @@ namespace OS {
          * @export
          */
         export function login(): void {
-            const scheme = $.parseHTML(schemes.login);
+            const scheme = $.parseHTML(
+                schemes.login
+                    .replace("[ANTOS_BUILD_ID]", OS.VERSION.build_id)
+                    .replace("[ANTOS_VERSION]", OS.VERSION.version_string)
+            );
             $("#wrapper").append(scheme);
             $("#btlogin").on("click", async function () {
                 const data: API.UserLoginType = {
@@ -1143,7 +1034,7 @@ namespace OS {
             loadTheme(setting.appearance.theme, true);
             wallpaper(undefined);
             OS.announcer.observable.one("syspanelloaded", async function () {
-                OS.announcer.observable.on("systemlocalechange", (name) =>
+                OS.announcer.observable.on("systemlocalechange", (_) =>
                     $("#syspanel")[0].update()
                 );
 
@@ -1152,9 +1043,7 @@ namespace OS {
                     return API.packages.fetch().then(function (r) {
                         let v: API.PackageMetaType;
                         if (r.result) {
-                            const result = r.result as GenericObject<
-                                API.PackageMetaType
-                            >;
+                            const result = r.result as GenericObject<API.PackageMetaType>;
                             for (let k in result) {
                                 v = result[k];
                                 v.text = v.name;
@@ -1172,35 +1061,35 @@ namespace OS {
                                 ? result
                                 : undefined;
                         }
-
-                        // GUI.refreshSystemMenu()
-                        // GUI.buildSystemMenu()
-                        // push startup services
-                        // TODO: get services list from user setting
-                        pushServices(
-                            (() => {
-                                const result = [];
-                                for (let v of setting.system.startup.services) {
-                                    result.push(v);
-                                }
-                                return result;
-                            })()
-                        ).then(function () {
-                            setting.system.startup.apps.map((a) => {
-                                launch(a, []);
+                        // load services + VFSX
+                        Promise.all(
+                            [
+                                OS.API.VFS.loadVFSX(true),
+                                pushServices(
+                                    (() => {
+                                        const result = [];
+                                        for (let v of setting.system.startup.services) {
+                                            result.push(v);
+                                        }
+                                        return result;
+                                    })()
+                                )
+                            ])
+                            .then(function () {
+                                setting.system.startup.apps.map((a) => {
+                                    launch(a, []);
+                                });
                             });
-                        });
                     });
                 }
             });
-            //GUI.launch "DummyApp"
             // initDM
             API.setLocale(setting.system.locale).then(() => initDM());
             Ant.OS.announcer.observable.on("error", function (d) {
-                console.log(d.data.e);
+                console.log(d.u_data);
             });
             Ant.OS.announcer.observable.on("fail", function (d) {
-                console.log(d.data.e);
+                console.log(d.u_data);
             });
         }
         /**
@@ -1217,7 +1106,7 @@ namespace OS {
 <afx-sys-panel id = "syspanel"></afx-sys-panel>
 <div id = "workspace">
     <afx-apps-dock id="sysdock"></afx-apps-dock>
-    <afx-float-list id = "desktop" dir="vertical" ></afx-float-list>
+    <afx-desktop id = "desktop" dir="vertical" ></afx-desktop>
 </div>
 <afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>
@@ -1231,7 +1120,8 @@ namespace OS {
     <input id = "txtpass" type = "password" value = "demo" ></input>
     <button id = "btlogin">Login</button>
     <div id = "login_error"></div>
-</div>\
+</div>
+<div id = "antos_build_id"><a href="${OS.REPOSITORY}/tree/[ANTOS_BUILD_ID]">AntOS v[ANTOS_VERSION]</div>\
 `;
     }
 }
