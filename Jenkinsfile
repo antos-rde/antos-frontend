@@ -54,11 +54,12 @@ pipeline{
              [ -d "$buildir" ] && rm -rf "$buildir"
             export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
             make release
+            cp -rf d.ts "$WORKSPACE/$buildir"
           '''
         script {
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
-            archiveArtifacts artifacts: 'd.ts/, build/', fingerprint: true
+            archiveArtifacts artifacts: 'build/', fingerprint: true
             //}
         }
       }
