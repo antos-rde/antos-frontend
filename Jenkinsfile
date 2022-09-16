@@ -29,6 +29,9 @@ pipeline{
   {
     stage('Prebuild build') {
       steps {
+        sh'''
+        export -p | tee env.source
+        '''
         sshCommand remote: remote, command: '''
             set -e
             export WORKSPACE=$(realpath "./jenkins/workspace/antos")
@@ -46,8 +49,10 @@ pipeline{
             set -e
             export WORKSPACE=$(realpath "./jenkins/workspace/antos")
             cd $WORKSPACE
-             [ -d build ] && rm -rf build
-            export BUILDDIR="$WORKSPACE/build/opt/www/htdocs/os"
+            source env.source
+            buildir="build/$GIT_BRANCH"
+             [ -d "$buildir" ] && rm -rf "$buildir"
+            export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
             make release
           '''
         script {
