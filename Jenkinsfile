@@ -1,14 +1,5 @@
-def remote = [:]
-remote.name = 'workstation'
-remote.host = 'workstation'
-remote.user = 'dany'
-remote.identityFile = '/var/jenkins_home/.ssh/id_rsa'
-remote.allowAnyHosts = true
-remote.agent = false
-remote.logLevel = 'INFO'
-
 pipeline{
-  agent { node{ label'master' }}
+  agent { node{ label'workstation' }}
   options {
     // Limit build history with buildDiscarder option:
     // daysToKeepStr: history is only kept up to this many days.
@@ -30,8 +21,6 @@ pipeline{
     stage('Build release') {
       steps {
         sh'''
-          export -p | tee build.source
-cat <<"EOF" >>build.source
           cd $WORKSPACE
           npm install terser
           npm install uglifycss
@@ -42,9 +31,7 @@ cat <<"EOF" >>build.source
           [ -d "$buildir" ] && rm -rf "$buildir"
           export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
           make release
-EOF
         '''
-        sshScript remote: remote, script: "build.source"
         script {
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
