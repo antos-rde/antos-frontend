@@ -1,5 +1,5 @@
 # antOS v1.2.1
-
+[![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2Fmaster)](https://ci.iohub.dev/job/gitea-sync/job/antos/job/master/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
 AntOS is a front-end system and API that implement the traditional desktop UI environment on the web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). The original purpose of AntOS is to offer: (1) visual tools to access and control resource on remote server
