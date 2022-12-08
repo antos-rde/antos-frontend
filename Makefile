@@ -8,8 +8,8 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION=1.2.1
-BRANCH = b
+VERSION=2.0.0
+BRANCH = a
 BUILDID=$(shell git rev-parse  --short HEAD)
 
 GSED=sed
