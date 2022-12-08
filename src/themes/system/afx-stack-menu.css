@@ -1,0 +1,51 @@
+afx-stack-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+afx-stack-menu .afx-list-view
+{
+    flex: 1;
+}
+afx-stack-menu > afx-button button
+{
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+afx-stack-menu > afx-button .label-text
+{
+    font-weight: bold;
+}
+afx-stack-menu.context
+{
+    position: absolute;
+    z-index: 1000000;
+}
+afx-stack-menu.context .afx-list-view > div.list-container
+{
+    overflow: unset;
+}
+afx-stack-menu-item  div 
+{
+    display: flex;
+    flex-direction: row;
+}
+
+afx-stack-menu-item afx-label {
+    flex: 1;
+    display: flex;
+}
+afx-stack-menu-item .shortcut
+{
+    margin-left: 10px;
+    font-size: 13px;
+}
+afx-stack-menu-item .afx-submenu:before
+{
+    content: "\f054"; 
+    font-family: "FontAwesome";
+    margin-left: 5px;
+}

@@ -1,6 +1,5 @@
 afx-nspinner ul li{
     border: 1px solid #262626;
-    width: 100%;
 }
 
 afx-nspinner ul li.incr{
@@ -16,10 +15,4 @@ afx-nspinner ul li.decr{
 
 afx-nspinner ul li:hover{
     color:#116cD6;
-}
-afx-nspinner ul li.incr i:before{
-    font-size: 16px;
-}
-afx-nspinner ul li.decr i:before{
-    font-size: 16px;
 }

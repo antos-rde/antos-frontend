@@ -37,7 +37,6 @@ namespace OS {
          */
         export class Files extends BaseApplication {
             private view: GUI.tag.FileViewTag;
-            private navinput: HTMLInputElement;
             private navbar: GUI.tag.HBoxTag;
             private currdir: API.VFS.BaseFileHandle;
             private favo: GUI.tag.ListViewTag;
@@ -57,13 +56,7 @@ namespace OS {
              */
             main(): void {
                 this.view = this.find("fileview") as GUI.tag.FileViewTag;
-                this.navinput = this.find("navinput") as HTMLInputElement;
                 this.navbar = this.find("nav-bar") as GUI.tag.HBoxTag;
-                if (this.args && this.args.length > 0) {
-                    this.currdir = this.args[0].path.asFileHandle();
-                } else {
-                    this.currdir = "home://".asFileHandle();
-                }
                 this.favo = this.find("favouri") as GUI.tag.ListViewTag;
                 this.clipboard = undefined;
                 this.viewType = this._api.switcher("icon", "list", "tree");
@@ -93,7 +86,7 @@ namespace OS {
                         ctx_menu.unshift( {
                             text: "__(Open with)",
                             nodes: apps,
-                            onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                            onchildselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => {
                                 if (!e) {
                                     return;
                                 }
@@ -106,7 +99,7 @@ namespace OS {
                             ctx_menu = ctx_menu.concat([
                                 {
                                     text: "__(Extract Here)",
-                                    onmenuselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    onmenuselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => {
                                         if (!e) {
                                             return;
                                         }
@@ -117,7 +110,7 @@ namespace OS {
                                 },
                                 {
                                     text: "__(Extract to)",
-                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => {
                                         if (!e) {
                                             return;
                                         }
@@ -144,7 +137,7 @@ namespace OS {
                             ctx_menu.push(
                                 {
                                     text: "__(Compress)",
-                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                    onmenuselect: async (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => {
                                         if (!e) {
                                             return;
                                         }
@@ -171,7 +164,7 @@ namespace OS {
                         }
 
                     }
-                    m.items = ctx_menu;
+                    m.nodes = ctx_menu;
                     m.show(e);
                 };
 
@@ -186,6 +179,10 @@ namespace OS {
                 };
 
                 this.favo.onlistselect = (e) => {
+                    if(this.currdir.path == e.data.item.data.path)
+                    {
+                        return;
+                    }
                     return this.view.path = e.data.item.data.path;
                 };
 
@@ -198,12 +195,6 @@ namespace OS {
                     return this.view.path = p.path;
                 };
 
-                $(this.navinput).keyup((e) => {
-                    if (e.keyCode === 13) {
-                        return this.view.path = $(this.navinput).val() as string;
-                    }
-                }); //enter
-
                 this.view.fetch = (path) => {
                     return new Promise((resolve, reject) => {
                         let dir = path.asFileHandle();
@@ -213,15 +204,41 @@ namespace OS {
                                 if (d.error) {
                                     return reject(d.error);
                                 }
-                                this.currdir = dir;
-                                $(this.navinput).val(dir.path);
-                                (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;
                                 return resolve(d.result);
                             })
                             .catch((e) => reject(__e(e)));
                     });
                 };
-
+                this.view.onchdir = (e) => {
+                    const dir = e.data.path.asFileHandle();
+                    this.currdir = dir;
+                    (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;
+                    // update the current favo
+                    const matched = this.favo.data.map((e,i) => {
+                        return {
+                            path: e.path,
+                            index:i
+                        }
+                    })
+                    .filter(e => {
+                        return e.path == dir.path
+                    });
+                    if(matched.length == 0)
+                    {
+                        this.favo.push({
+                            text: dir.basename,
+                            path: dir.path,
+                            description: {text: dir.path},
+                            selected: true,
+                            tag: "afx-dbline-list-item",
+                            iconclass: "fa fa-folder"
+                        }, true);
+                    }
+                    else
+                    {
+                        this.favo.selected = matched[0].index;
+                    }
+                }
                 this.vfs_event_flag = true;
                 this.view.ondragndrop = async (e) => {
                     if (!e) {
@@ -272,11 +289,6 @@ namespace OS {
                     }
                     this.vfs_event_flag = true;
                 };
-
-                // application setting
-                if (this.setting.sidebar === undefined) {
-                    this.setting.sidebar = true;
-                }
                 if (this.setting.nav === undefined) {
                     this.setting.nav = true;
                 }
@@ -286,19 +298,16 @@ namespace OS {
                 this.applyAllSetting();
 
                 // VFS mount point and event
-                const mntpoints =  [];
-                for(let v of this.systemsetting.VFS.mountpoints)
-                {
-                    mntpoints.push({
-                        text: v.text,
-                        path: v.path,
-                        icon: v.icon,
-                        iconclass: v.iconclass,
+                const mntpoints =  this.systemsetting.VFS.mountpoints.map(e => {
+                    return {
+                        text: e.text,
+                        path: e.path,
+                        icon: e.icon,
+                        iconclass: e.iconclass,
                         selected: false
-                    });
-                }
+                    }
+                });
                 this.favo.data = mntpoints;
-                //@favo.set "selected", -1
                 if (this.setting.view) {
                     this.view.view = this.setting.view;
                 }
@@ -387,6 +396,11 @@ namespace OS {
                         this.view.multiselect = false;
                     }
                 });
+                if (this.args && this.args.length > 0) {
+                    this.currdir = this.args[0].path.asFileHandle();
+                } else {
+                    this.currdir = "home://".asFileHandle();
+                }
                 this.view.path = this.currdir.path;
             }
 
@@ -397,8 +411,6 @@ namespace OS {
                         return this.view.showhidden = this.setting.showhidden;
                     case "nav":
                         return this.toggleNav(this.setting.nav);
-                    case "sidebar":
-                        return this.toggleSidebar(this.setting.sidebar);
                 }
             }
 
@@ -437,7 +449,7 @@ namespace OS {
                             shortcut: "C-I",
                         },
                     ],
-                    onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) =>
+                    onchildselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) =>
                         this.actionFile(e.data.item.data.dataid),
                 };
                 return arr;
@@ -472,7 +484,7 @@ namespace OS {
                             shortcut: "C-P",
                         },
                     ],
-                    onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) =>
+                    onchildselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) =>
                         this.actionEdit(e.data.item.data.dataid),
                 };
             }
@@ -487,12 +499,6 @@ namespace OS {
                                 text: "__(Refresh)",
                                 dataid: `${this.name}-refresh`,
                                 shortcut: "C-A-R"
-                            },
-                            {
-                                text: "__(Sidebar)",
-                                switch: true,
-                                checked: this.setting.sidebar,
-                                dataid: `${this.name}-side`,
                             },
                             {
                                 text: "__(Navigation bar)",
@@ -531,26 +537,17 @@ namespace OS {
                                         type: "tree",
                                     },
                                 ],
-                                onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => {
+                                onchildselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => {
                                     const { type } = e.data.item.data;
                                     this.view.view = type;
                                     return (this.viewType[type] = true);
                                 },
                             },
                         ],
-                        onchildselect: (e: GUI.TagEventType<GUI.tag.MenuEventData>) => this.actionView(e),
+                        onchildselect: (e: GUI.TagEventType<GUI.tag.StackMenuEventData>) => this.actionView(e),
                     },
                 ];
                 return menu;
-            }
-
-            private toggleSidebar(b: boolean): void {
-                if (b) {
-                    $(this.favo).show();
-                } else {
-                    $(this.favo).hide();
-                }
-                return this.trigger("resize");
             }
 
             private toggleNav(b: boolean): void {
@@ -562,7 +559,7 @@ namespace OS {
                 return this.trigger("resize");
             }
 
-            private actionView(e: GUI.TagEventType<GUI.tag.MenuEventData>): void{
+            private actionView(e: GUI.TagEventType<GUI.tag.StackMenuEventData>): void{
                 const data = e.data.item.data;
                 switch (data.dataid) {
                     case `${this.name}-hidden`:
@@ -572,10 +569,6 @@ namespace OS {
                     case `${this.name}-refresh`:
                         this.view.path = this.currdir.path;
                         return;
-                    case `${this.name}-side`:
-                        return this.registry("sidebar", data.checked);
-                    //@setting.sidebar = e.item.data.checked
-                    //@toggleSidebar e.item.data.checked
                     case `${this.name}-nav`:
                         return this.registry("nav", data.checked);
                 }

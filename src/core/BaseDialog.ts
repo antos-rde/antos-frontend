@@ -58,22 +58,15 @@ namespace OS {
             }
 
             /**
-             * Exit the sub-window
+             * Purge the model from the system
              *
-             * @returns {void}
-             * @memberof SubWindow
+             * @protected
+             * @memberof BaseModel
              */
-            quit(): void {
-                const evt = new BaseEvent("exit", false);
-                this.onexit(evt);
-                if (!evt.prevent) {
-                    delete this._observable;
-                    if (this.scheme) {
-                        $(this.scheme).remove();
-                    }
-                    if (this.dialog) {
-                        return this.dialog.quit();
-                    }
+            protected destroy(): void
+            {
+                if (this.scheme) {
+                    $(this.scheme).remove();
                 }
             }
 
@@ -218,6 +211,19 @@ namespace OS {
                 }
             }
 
+             /**
+             * Show the dialog
+             *
+             * @memberof BaseDialog
+             */
+            show(): void {
+                this.trigger("focus", undefined);
+                this.trigger("focused", undefined);
+                if (this.dialog) {
+                    this.dialog.show();
+                }
+            }
+
         }
 
         /**
@@ -320,6 +326,7 @@ namespace OS {
                 }
                 win.resizable = false;
                 win.minimizable = false;
+                win.menu = undefined;
                 $(win).trigger("focus");
             }
         }
@@ -1216,20 +1223,18 @@ namespace OS {
              */
             FileDialog.scheme = `\
 <afx-app-window width='400' height='300'>
-    <afx-hbox>
-        <afx-list-view data-id = "location" dropdown = "false" data-width = "120"></afx-list-view>
-        <afx-vbox>
-            <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
-            <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
-            <afx-hbox data-height = '30'>
-                <div style=' text-align:right;'>
-                    <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
-                    <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-                </div>
-                <div data-width="5"></div>
-            </afx-hbox>
-        </afx-vbox>
-    </afx-hbox>
+    <afx-vbox>
+        <afx-list-view data-id = "location" dropdown = "true" data-height = "40"></afx-list-view>
+        <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
+        <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
+        <afx-hbox data-height = '30'>
+            <div style=' text-align:right;'>
+                <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+            <div data-width="5"></div>
+        </afx-hbox>
+    </afx-vbox>
 </afx-app-window>\
             `;
 

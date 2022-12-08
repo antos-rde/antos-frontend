@@ -1,15 +1,14 @@
 
-afx-tab-bar afx-list-view > div.list-container > ul > afx-list-item > li.selected
+afx-tab-bar[dir="horizontal"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
 {
     background-color: #464646;
     color:white;
+    border-bottom:1px solid #262626;
 }
 
-afx-tab-bar afx-list-view  > div.list-container > ul  li{
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    padding-bottom: 2px;
-    padding-right:15px;
-    padding-top:2px;
-    border:1px solid #262626;
+afx-tab-bar[dir="vertical"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
+{
+    background-color: #464646;
+    color:white;
+    border-right:1px solid #262626;
 }

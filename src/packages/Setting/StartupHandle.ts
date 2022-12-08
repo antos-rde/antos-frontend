@@ -47,7 +47,7 @@ namespace OS {
             this.applist = this.find("applist") as GUI.tag.ListViewTag;
             this.srvlist.buttons = [
                 {
-                    text: "+",
+                    iconclass: "bi bi-plus",
                     onbtclick: () => {
                         let services = [];
                         for (var k in setting.system.packages) {
@@ -75,7 +75,7 @@ namespace OS {
                     },
                 },
                 {
-                    text: "-",
+                    iconclass: "bi bi-dash",
                     onbtclick: () => {
                         const item = this.srvlist.selectedItem;
                         if (!item) {
@@ -90,7 +90,7 @@ namespace OS {
 
             this.applist.buttons = [
                 {
-                    text: "+",
+                    iconclass: "bi bi-plus",
                     onbtclick: () => {
                         const apps = (() => {
                             const result = [];
@@ -127,7 +127,7 @@ namespace OS {
                     },
                 },
                 {
-                    text: "-",
+                    iconclass: "bi bi-dash",
                     onbtclick: () => {
                         const item = this.applist.selectedItem;
                         if (!item) {

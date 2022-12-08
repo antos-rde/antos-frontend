@@ -11,9 +11,18 @@ afx-slider div.progress {
 }
 
 afx-slider div.dragpoint {
-    width: 15px;
-    height: 15px;
     border:1px solid #6b6b6b;
-    border-radius: 15px;
     background-color:#e6e6e6;
+}
+
+afx-slider div.dragpoint::before
+{
+    content: "\f0d7";
+    font-family: "FontAwesome";
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color:#868686;
 }

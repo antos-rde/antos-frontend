@@ -128,9 +128,7 @@ namespace OS {
                 private hcalibrate(): void {
                     const auto_width = [];
                     let ocwidth = 0;
-                    const avaiheight = $(this).height();
                     const avaiWidth = $(this).width();
-                    //$(this.refs.yield).css("height", `${avaiheight}px`);
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -160,10 +158,6 @@ namespace OS {
                             $(v).css("width", `${csize}px`)
                         );
                     }
-                    return this.observable.trigger("hboxchange", {
-                        id: this.aid,
-                        data: { w: avaiWidth, h: avaiheight },
-                    });
                 }
 
                 /**
@@ -178,8 +172,6 @@ namespace OS {
                     const auto_height = [];
                     let ocheight = 0;
                     const avaiheight = $(this).height();
-                    const avaiwidth = $(this).width();
-                    //$(this.refs.yield).css("height", `${avaiheight}px`);
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -209,11 +201,6 @@ namespace OS {
                             $(v).css("height", `${csize}px`)
                         );
                     }
-
-                    return this.observable.trigger("vboxchange", {
-                        id: this.aid,
-                        data: { w: avaiwidth, h: avaiheight },
-                    });
                 }
 
                 /**

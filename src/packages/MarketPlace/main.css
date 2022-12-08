@@ -83,3 +83,8 @@ afx-app-window[data-id = "repository-dialog-win"] afx-list-view[data-id="repo-li
     font-size: 11px;
     font-style: italic;
 }
+
+afx-app-window[data-id="marketplace-win"] afx-tab-bar[data-id="catlist"] i.label-text
+{
+    font-weight: bold;
+}

@@ -40,6 +40,13 @@ namespace OS {
                 private _ontabselect: TagEventCallback<TabEventData>;
 
                 /**
+                 * Cache of touch event
+                 * 
+                 * @private
+                 * @meberof TabBarTag
+                 */
+                private _previous_touch: {x: number, y: number};
+                /**
                  *Creates an instance of TabBarTag.
                  * @memberof TabBarTag
                  */
@@ -57,6 +64,8 @@ namespace OS {
                  */
                 protected init(): void {
                     this.selected = -1;
+                    this.dir = "horizontal";
+                    this._previous_touch = {x: 0, y:0};
                 }
 
                 /**
@@ -80,6 +89,30 @@ namespace OS {
                 }
                 get closable(): boolean {
                     return this.hasattr("closable");
+                }
+
+                /**
+                 * Setter:
+                 * 
+                 * Set the tab bar direction:
+                 * - `horizontal`: horizontal direction
+                 * - `vertical`: vertical direction
+                 * 
+                 * Getter:
+                 * 
+                 * Get the tab bar direction
+                 *
+                 * @memberof TabBarTag
+                 */
+                set dir(v: string) {
+                    $(this).attr("dir", v);
+                    if (!v) {
+                        return;
+                    }
+                    (this.refs.list as ListViewTag).dir = v;
+                }
+                get dir(): string {
+                    return $(this).attr("dir") as any;
                 }
 
                 /**
@@ -144,6 +177,16 @@ namespace OS {
                 get selected(): number | number[] {
                     return (this.refs.list as ListViewTag).selected;
                 }
+                /**
+                 * Get the latest selected item
+                 *
+                 * @readonly
+                 * @type {ListViewItemTag}
+                 * @memberof TabBarTag
+                 */
+                get selectedItem(): ListViewItemTag {
+                    return (this.refs.list as ListViewTag).selectedItem;
+                }
 
                 /**
                  * Set the tab close event handle
@@ -179,6 +222,39 @@ namespace OS {
                         this._ontabselect(e);
                         return this.observable.trigger("tabselect", e);
                     };
+                    
+                    const list_container = $(".list-container", this.refs.list);
+                    list_container.each((i,el) => {
+                        $(el).on("touchstart", e => {
+                            this._previous_touch.x = e.touches[0].pageX;
+                            this._previous_touch.y = e.touches[0].pageY;
+                        });
+                        $(el).on("touchmove", e => {
+                            const offset = {x:0, y:0};
+                            offset.x = this._previous_touch.x - e.touches[0].pageX ;
+                            offset.y = this._previous_touch.y - e.touches[0].pageY; 
+                            if(this.dir == "horizontal")
+                            {
+                                el.scrollLeft += offset.x;
+                            }
+                            else
+                            {
+                                el.scrollTop += offset.y;
+                            }
+                            this._previous_touch.x = e.touches[0].pageX;
+                            this._previous_touch.y = e.touches[0].pageY;
+                        });
+                        $(el).on("wheel", (evt)=>{
+                            if(this.dir == "horizontal")
+                            {
+                                el.scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
+                            }
+                            else
+                            {
+                                el.scrollTop += (evt.originalEvent as WheelEvent).deltaY;
+                            }
+                        });
+                    });
                 }
 
                 /**

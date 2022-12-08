@@ -65,6 +65,7 @@ namespace OS {
                     this.enable = true;
                     this._max = 100;
                     this._value = 0;
+                    this.precision = false;
                     this._onchange = this._onchanging = () => {};
                 }
 
@@ -98,7 +99,17 @@ namespace OS {
                 set onvaluechanging(f: TagEventCallback<number>) {
                     this._onchanging = f;
                 }
-
+                /**
+                 * Setter/Getter: set and get precision reading
+                 * 
+                 * @memberof SliderTag
+                 */
+                set precision(v: boolean) {
+                    this.attsw(v, "precision");
+                }
+                get precision(): boolean {
+                    return this.hasattr("precision");
+                }
                 /**
                  * Setter: Enable/disable the slider
                  * 
@@ -110,15 +121,15 @@ namespace OS {
                     this.attsw(v, "enable");
                     if (v) {
                         $(this)
-                            .on("mouseover",() => {
+                            .on("pointerover",() => {
                                 return $(this.refs.point).show();
                             })
-                            .on("mouseout",() => {
+                            .on("pointerout",() => {
                                 return $(this.refs.point).hide();
                             });
                     } else {
                         $(this.refs.point).hide();
-                        $(this).off("mouseover").off("mouseout");
+                        $(this).off("pointerover").off("pointerout");
                     }
                 }
                 get enable(): boolean {
@@ -188,7 +199,16 @@ namespace OS {
                  */
                 calibrate(): void {
                     if (this.value > this.max) {
-                        this.value = this.max;
+                        this._value = this.max;
+                    }
+                    if(! this.precision)
+                    {
+                        this._value = Math.round(this.value);
+                        $(this.refs.point).text(this.value);
+                    }
+                    else
+                    {
+                        $(this.refs.point).text((Math.round(this.value * 100) / 100).toFixed(2));
                     }
                     $(this.refs.container).css("width", $(this).width() + "px");
                     const w =
@@ -197,17 +217,17 @@ namespace OS {
                     $(this.refs.prg)
                         .css("width", w + "px")
                         .css("height", $(this.refs.container).height() + "px");
-                    if (this.enable) {
-                        const ow = w - $(this.refs.point).width() / 2;
-                        const top = Math.floor(
-                            ($(this.refs.prg).height() -
-                                $(this.refs.point).height()) /
-                                2
-                        );
-                        $(this.refs.point)
-                            .css("left", ow + "px")
-                            .css("top", top + "px");
-                    }
+                    //if (this.enable) {
+                    const ow = w - ($(this.refs.point).outerWidth() / 2.0);
+                    const top = Math.floor(
+                        ($(this.refs.prg).height() +
+                            $(this.refs.point).height()) /
+                            2 + 3
+                    );
+                    $(this.refs.point)
+                        .css("left", ow + "px")
+                        .css("bottom", top + "px");
+                    //}
                 }
 
                 /**
@@ -220,10 +240,10 @@ namespace OS {
                     $(this.refs.point)
                         .css("user-select", "none")
                         .css("cursor", "default");
-                    $(this.refs.point).on("mousedown", (e) => {
+                    $(this).on("pointerdown", (e) => {
                         e.preventDefault();
                         const offset = $(this.refs.container).offset();
-                        $(window).on("mousemove", (e) => {
+                        $(window).on("pointermove", (e) => {
                             let left = e.clientX - offset.left;
                             left = left < 0 ? 0 : left;
                             const maxw = $(this.refs.container).width();
@@ -236,13 +256,13 @@ namespace OS {
                             });
                         });
 
-                        $(window).on("mouseup", (e) => {
+                        $(window).on("pointerup", (e) => {
                             this._onchange({
                                 id: this.aid,
                                 data: this.value,
                             });
-                            $(window).off("mousemove", null);
-                            return $(window).off("mouseup", null);
+                            $(window).off("pointermove", null);
+                            return $(window).off("pointerup", null);
                         });
                     });
                 }

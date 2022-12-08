@@ -1,29 +1,16 @@
 html,body{
     font-family: "Ubuntu";
-    font-size: 13px;
     color:#414339;
 }
-#workspace {
-    top: 23px;
-}
 
-#desktop{
-    top:0;
-    left: 35px;
-}
 #desktop > div > ul afx-list-item {
-    width: 70px;
     color: white;
-    padding:3px;
 }
 
 #desktop > div > ul afx-list-item li.selected {
     background-color: #116cd6;
-    color:white;
     border-radius: 6px;
-    width: 70px;
     color: white;
-    padding:3px;
 }
 
 #desktop > div > ul afx-list-item i.file:before{

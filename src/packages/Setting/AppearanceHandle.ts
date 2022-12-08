@@ -67,7 +67,7 @@ namespace OS {
 
                 this.wplist.buttons = [
                     {
-                        text: "+",
+                        iconclass: "bi bi-plus",
                         onbtclick: (e) => {
                             return this.parent
                                 .openDialog("FileDialog", {

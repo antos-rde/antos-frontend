@@ -6,25 +6,36 @@ afx-nspinner ul{
     padding:0;
     margin: 0;
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    width: 40px;
 }
 afx-nspinner input{
     margin: 0;
+    height: 100%;
+    width: calc(100% - 40px);
+    flex: 1;
 }
 afx-nspinner ul li{
-    display: block;
+    display: flex;
     padding:0;
     margin: 0;
+    flex: 1;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 afx-nspinner ul li.incr i:before{
     content: "\f0d8"; 
     font-family: "FontAwesome";
     font-style: normal;
+    font-size: 20px;
 
 }
 afx-nspinner ul li.decr i:before{
     content: "\f0d7"; 
     font-family: "FontAwesome";
     font-style: normal;
-
+    font-size: 20px;
 }

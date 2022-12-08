@@ -380,7 +380,7 @@ namespace OS {
                         .css("flex-direction", "row")
                         .css("align-items", "center")
                         .css("white-space", "nowrap");
-                    $(this.refs.itemholder).css("display", "inline-block");
+                    //$(this.refs.itemholder).css("display", "inline-block");
                     $(this.refs.wrapper).on("click",(e) => {
                         this.selected = true;
                     });
@@ -390,7 +390,7 @@ namespace OS {
                     });
 
                     $(this.refs.toggle)
-                        .css("display", "inline-block")
+                        //.css("display", "inline-block")
                         .css("width", "15px")
                         .css("flex-shrink", 0)
                         .addClass("afx-tree-view-item")

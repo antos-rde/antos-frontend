@@ -142,21 +142,21 @@ namespace OS {
                  */
                 private search(e: JQuery.KeyboardEventBase): void {
                     const applist = this.refs.applist as ListViewTag;
-                    const catlist = this.refs.catlist as ListViewTag;
+                    const catlist = this.refs.catlist as TabBarTag;
                     switch (e.which) {
                         case 27:
                             // escape key
                             return this.toggle(false);
 
                         case 37:
-                            return e.preventDefault();
-                        case 38:
                             applist.selectPrev();
                             return e.preventDefault();
+                        case 38:
+                            return e.preventDefault();
                         case 39:
+                            applist.selectNext();
                             return e.preventDefault();
                         case 40:
-                            applist.selectNext();
                             return e.preventDefault();
                         case 13:
                             e.preventDefault();
@@ -216,10 +216,9 @@ namespace OS {
                                     class: "afx-panel-os-pinned-app",
                                 },
                                 {
-                                    el: "afx-menu",
-                                    id: "appmenu",
-                                    ref: "appmenu",
-                                    class: "afx-panel-os-app",
+                                    el: "afx-apps-dock",
+                                    ref: "sysdock",
+                                    id: "sysdock"
                                 },
                                 {
                                     el: "afx-menu",
@@ -247,17 +246,13 @@ namespace OS {
                                     ],
                                 },
                                 {
-                                    el: "afx-hbox",
+                                    el: "afx-vbox",
                                     children: [
                                         {
-                                            el: "afx-list-view",
+                                            el: "afx-tab-bar",
                                             id: "catlist",
                                             ref: "catlist",
-                                            width:"40%"
-                                        },
-                                        {
-                                            el: "afx-resizer",
-                                            width: 3,
+                                            height:45
                                         },
                                         {
                                             el: "afx-list-view",
@@ -269,7 +264,7 @@ namespace OS {
                                 {
                                     el: "afx-hbox",
                                     id: "btlist",
-                                    height: 30,
+                                    height: 40,
                                     children: [
                                         {
                                             el: "afx-button",
@@ -293,6 +288,7 @@ namespace OS {
                                 },
                             ],
                         },
+                        
                     ];
                 }
 
@@ -304,7 +300,7 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private refreshAppList(): void {
-                    let catlist_el = (this.refs.catlist as tag.ListViewTag);
+                    let catlist_el = (this.refs.catlist as tag.TabBarTag);
                     let k: string, v: API.PackageMetaType;
                     const catlist = new Set();
                     this.app_list = [];
@@ -349,7 +345,7 @@ namespace OS {
                             iconclass: "bi bi-gear-wide"
                         });
                     });
-                    catlist_el.data = cat_list_data;
+                    catlist_el.items = cat_list_data;
                     catlist_el.selected = 0;
                 }
 
@@ -369,7 +365,7 @@ namespace OS {
                         this.calibrate();
                         $(document).on("click", this._cb);
                         (this.refs.search as HTMLInputElement).value = "";
-                        $(this.refs.search).trigger("focus");
+                        $(this.refs.search).focus();
                     } else {
                         $(this.refs.overlay).hide();
                         $(document).off("click", this._cb);
@@ -445,11 +441,8 @@ namespace OS {
                             !$(e.target).closest(this.refs.osmenu).length
                         ) {
                             return this.toggle(false);
-                        } else {
-                            return $(this.refs.search).trigger("focus");
                         }
                     };
-                    $(this.refs.appmenu).css("z-index", 1000000);
                     $(this.refs.systray).css("z-index", 1000000);
                     (this.refs.btscreen as ButtonTag).set({
                         iconclass: "fa fa-tv",
@@ -476,7 +469,14 @@ namespace OS {
                         },
                     });
                     (this.refs.osmenu as MenuTag).onmenuselect = (e) => {
-                        return this.toggle(true);
+                        if($(this.refs.overlay).is(":hidden"))
+                        {
+                            this.toggle(true);
+                        }
+                        else
+                        {
+                            this.toggle(false);
+                        }
                     };
 
                     $(this.refs.search).on("keyup", (e) => {
@@ -493,8 +493,8 @@ namespace OS {
                             return this.toggle(false);
                         }
                     });
-                    const catlist = (this.refs.catlist as tag.ListViewTag);
-                    catlist.onlistselect = (e) => {
+                    const catlist = (this.refs.catlist as tag.TabBarTag);
+                    catlist.ontabselect = (e) => {
                         const applist = (this.refs.applist as ListViewTag);
                         if(catlist.selected === 0)
                         {
@@ -510,9 +510,6 @@ namespace OS {
                         applist.selected = -1;
                     };
                     $(this.refs.overlay)
-                        .css("left", 0)
-                        .css("top", `${$(this.refs.panel).height()}px`)
-                        .css("bottom", "0")
                         .hide();
                     (this.refs.pinned as GUI.tag.MenuTag).onmenuselect = (e) => {
                         const app = e.data.item.data.app;
@@ -520,7 +517,6 @@ namespace OS {
                             return;
                         GUI.launch(app, []);
                     };
-                    this.refs.appmenu.contextmenuHandle = (e, m) => { }
                     this.refs.osmenu.contextmenuHandle = (e, m) => { }
                     this.refs.systray.contextmenuHandle = (e, m) => { }
                     this.refs.pinned.contextmenuHandle = (e, m) => { }
@@ -528,18 +524,16 @@ namespace OS {
                         let menu = [
                             { text: __("Applications and services setting"), dataid: "app&srv" }
                         ];
-                        m.items = menu;
-                        m.onmenuselect = function (
-                            evt: TagEventType<tag.MenuEventData>
-                        ) {
+                        m.nodes = menu;
+                        m.onmenuselect =  (evt) => {
                             GUI.launch("Setting",[]);
                         }
                         m.show(e);
                     };
-                    announcer.observable.on("app-pinned", (_) => {
+                    announcer.on("app-pinned", (_) => {
                         this.RefreshPinnedApp();
                     });
-                    announcer.observable.on("loading", (o: API.AnnouncementDataType<number>) => {
+                    announcer.on("loading", (o: API.AnnouncementDataType<number>) => {
                         if(o.u_data != 0)
                         {
                             return;
@@ -550,7 +544,7 @@ namespace OS {
                         $(GUI.workspace).css("cursor", "wait");
                     });
     
-                    announcer.observable.on("loaded", (o: API.AnnouncementDataType<number>) => {
+                    announcer.on("loaded", (o: API.AnnouncementDataType<number>) => {
                         const i = this._pending_task.indexOf(o.id);
                         if (i >= 0) {
                             this._pending_task.splice(i, 1);
@@ -560,6 +554,9 @@ namespace OS {
                             if(!this._loading_toh)
                                 this._loading_toh = setTimeout(() => this.animation_check(),1000);
                         }
+                    });
+                    announcer.on("desktopresize", (e) => {
+                        this.calibrate();
                     });
                     this.RefreshPinnedApp();
                     Ant.OS.announcer.trigger("syspanelloaded", undefined);

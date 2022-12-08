@@ -5,6 +5,7 @@ afx-label span {
     align-items:  center;
     justify-content: center;
     flex-direction: row;
+    height: 100%;
 }
 afx-label  i.label-text{
     font-weight: normal;

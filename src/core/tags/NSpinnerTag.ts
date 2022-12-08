@@ -114,38 +114,6 @@ namespace OS {
                  * @memberof NSpinnerTag
                  */
                 calibrate(): void {
-                    $(this.refs.holder).css(
-                        "width",
-                        $(this).width() - 20 + "px"
-                    );
-                    $(this.refs.holder).css("height", $(this).height() + "px");
-                    $(this.refs.spinner)
-                        .css("width", "20px")
-                        .css("height", $(this).height() + "px");
-                    $(this.refs.incr)
-                        .css("height", $(this).height() / 2 - 2 + "px")
-                        .css("position", "relative");
-                    $(this.refs.decr)
-                        .css("height", $(this).height() / 2 - 2 + "px")
-                        .css("position", "relative");
-                    $(this.refs.spinner)
-                        .find("li")
-                        .css("display", "block")
-                        .css("text-align", "center")
-                        .css("vertical-align", "middle");
-                    $(this.refs.spinner)
-                        .find("i")
-                        .css("font-size", "16px")
-                        .css("position", "absolute");
-                    const fn = function (ie: HTMLElement, pos: string) {
-                        const el = $(ie).find("i");
-                        el.css(
-                            pos,
-                            ($(ie).height() - el.height()) / 2 + "px"
-                        ).css("left", ($(ie).width() - el.width()) / 2 + "px");
-                    };
-                    fn(this.refs.decr, "bottom");
-                    fn(this.refs.incr, "top");
                 }
 
                 /**

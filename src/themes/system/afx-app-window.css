@@ -14,6 +14,9 @@ afx-app-window ul.afx-window-top{
     padding: 0;
     width: 100%;
     padding:0;
+    display: flex;
+    flex-direction: row;
+    height: 40px;
 }
 
 afx-app-window ul.loading::before{
@@ -33,10 +36,12 @@ afx-app-window ul.loading::before {
 afx-app-window ul.afx-window-top li{
     list-style: none;
 }
-
 afx-app-window ul li.afx-window-title{
-    float:none;
+    flex: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 afx-app-window div.afx-window-content
@@ -81,8 +86,31 @@ afx-app-window div.afx-window-overlay {
     background-color: transparent;
     display: none;
     position: absolute;
-    top: 0;
     left: 0;
     bottom: 5px;
     right: 5px;
+    top: 42px;
+}
+
+afx-app-window div.afx-window-wrapper > afx-stack-menu.context {
+    top: 42px;
+    left: 5px;
+}
+
+afx-app-window ul.afx-window-top afx-button button{
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+    margin-bottom: 0;
+    padding:0px;
+    background-color: transparent;
+    border:0;
+    border-radius: 0;
+}
+afx-app-window ul.afx-window-top afx-button afx-label i.icon-style{
+    width: 24px;
+    height: 24px;
+    margin-left: 2px;
+    margin-bottom: 0px;
+    border:0;
 }

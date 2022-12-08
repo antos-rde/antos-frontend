@@ -2,17 +2,26 @@
 afx-sys-panel{
     padding:0;
     margin: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 afx-sys-panel > div{
      width: 100%;
      margin:0;
      padding: 0;
-     position:absolute;
+     display: flex;
+     flex-direction: row;
+     height: 35px;
 }
 
 afx-sys-panel afx-overlay
 {
-    width: 400px;
+    bottom: 35px;
+    overflow: hidden;
+    margin: 0;
+    left: 0;
+    right: 0;
 }
 afx-sys-panel > div.loading::before{
     background-color: orangered;
@@ -24,7 +33,7 @@ afx-sys-panel > div.loading::before{
 
 afx-sys-panel > div.loading::before {
     right: 0;
-    bottom:0;
+    top:0;
     animation: sys-loading 1s linear infinite;
 }
 
@@ -59,12 +68,10 @@ afx-sys-panel > div.loading::before {
 afx-sys-panel .afx-panel-os-menu {
     padding:0;
     margin: 0;
-    float:left;
     margin-right: 5px;
 }
 
 afx-sys-panel .afx-panel-os-stray{
-    float:right;
     position: relative;
 }
 
@@ -83,13 +90,6 @@ afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  afx-menu{
     top:-4px;
 }
 
-afx-sys-panel afx-overlay
-{
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 0;
-}
-
 afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
 {
     width: 100%;
@@ -98,8 +98,45 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
     border: 0px;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] afx-label span,
-afx-sys-panel afx-list-view[data-id="catlist"] afx-label span
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container {
+    margin: 0 auto;
+}
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul
 {
-    white-space: nowrap;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul  li{
+    /*display: block;*/
+    width: 70px;
+    text-align: center;
+    font-size: 40px;
+    justify-content: normal !important;
+}
+
+afx-sys-panel afx-list-view[data-id="applist"] i{
+    display: block;
+    width: 100%;
+}
+
+
+afx-sys-panel afx-list-view[data-id="applist"] i.label-text{
+    word-break: break-word;
+    font-size: 14px;
+}
+afx-sys-panel afx-list-view[data-id="applist"] i.icon-style {
+    width: 40px;
+    height: 40px;
+}
+afx-sys-panel afx-list-view[data-id="applist"] afx-label span
+{
+    flex-direction: column;
+}
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover {
+    background-color: transparent;
+}
+afx-sys-panel afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item:nth-child(even) li
+{
+    background-color: transparent;
 }

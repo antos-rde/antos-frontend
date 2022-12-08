@@ -107,21 +107,19 @@ namespace OS {
          * @interface AnnouncerListenerType
          */
         export interface AnnouncerListenerType {
-            [index: number]: {
-                /**
-                 * The event name
-                 *
-                 * @type {string}
-                 */
-                e: string;
+            /**
+             * The event name
+             *
+             * @type {string}
+             */
+            e: string;
 
-                /**
-                 * The event callback
-                 *
-                 */
-                f: (d: any) => void;
-            }[];
-        }
+            /**
+             * The event callback
+             *
+             */
+            f: (d: any) => void;
+        };
 
         /**
          * This class is the based class used in AntOS event
@@ -301,7 +299,7 @@ namespace OS {
         /**
          * Placeholder of all global events listeners
          */
-        export var listeners: API.AnnouncerListenerType = {};
+        export var listeners: Map<BaseModel | 0, API.AnnouncerListenerType[]> = new Map();
 
         /**
          * Subscribe to a global event
@@ -311,12 +309,27 @@ namespace OS {
          * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        export function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a: BaseModel): void {
-            if (!announcer.listeners[a.pid]) {
-                announcer.listeners[a.pid] = [];
+        export function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a?: BaseModel): void {
+            let key: BaseModel | 0 = 0;
+            if(a)
+                key = a;
+            if (!announcer.listeners.has(key)) {
+                announcer.listeners.set(key, []);
             }
-            announcer.listeners[a.pid].push({ e, f });
+            const collection = announcer.listeners.get(key);
+            collection.push({ e, f });
             announcer.observable.on(e, f);
+        }
+
+        /**
+         * Subscribe to a global event once
+         *
+         * @export
+         * @param {string} e event name
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
+         */
+        export function one(e: string, f: (d: API.AnnouncementDataType<any>) => void): void {
+            announcer.observable.one(e, f);
         }
 
         /**
@@ -390,16 +403,14 @@ namespace OS {
          * @returns {void}
          */
         export function unregister(app: BaseModel): void {
-            if (
-                !announcer.listeners[app.pid] ||
-                !(announcer.listeners[app.pid].length > 0)
-            ) {
+            if (!announcer.listeners.has(app)) {
                 return;
             }
-            for (let i of announcer.listeners[app.pid]) {
+            const collection = announcer.listeners.get(app);
+            for (let i of collection) {
                 announcer.observable.off(i.e, i.f);
             }
-            delete announcer.listeners[app.pid];
+            announcer.listeners.delete(app);
         }
 
         /**

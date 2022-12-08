@@ -1,12 +1,4 @@
 
-afx-tree-view div{
-    padding:3px;
-}
-
-afx-tree-view i.icon-style {
-    width: 16px;
-    height: 16px;
-}
 afx-tree-view div.afx_tree_item_selected{
     background-color: #116cd6;
     color:white;

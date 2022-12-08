@@ -94,7 +94,6 @@ namespace OS {
          * is allowed at a time. A dialog may have sub dialog
          */
         export var dialog: BaseDialog;
-
         /**
          * Placeholder for system shortcuts
          */
@@ -192,7 +191,7 @@ namespace OS {
          */
         export function systemDock(): GUI.tag.AppDockTag
         {
-            return $("#sysdock")[0] as tag.AppDockTag;
+            return $("[data-id='sysdock']")[0] as tag.AppDockTag;
         }
 
         /**
@@ -657,14 +656,10 @@ namespace OS {
             if (!meta.icon && !meta.iconclass) {
                 data.iconclass = "fa fa-cogs";
             }
-            const dock = $("#sysdock")[0] as tag.AppDockTag;
+            const dock = systemDock();
             app.sysdock = dock;
             app.init();
             app.observable.one("rendered", function () {
-                app.appmenu = $(
-                    "[data-id = 'appmenu']",
-                    "#syspanel"
-                )[0] as tag.MenuTag;
                 dock.newapp(data);
             });
         }
@@ -714,7 +709,7 @@ namespace OS {
          * @returns
          */
         export function undock(app: application.BaseApplication) {
-            return ($("#sysdock")[0] as tag.AppDockTag).removeapp(app);
+            return systemDock().removeapp(app);
         }
 
         /**
@@ -753,7 +748,7 @@ namespace OS {
         function bindContextMenu(event: JQuery.MouseEventBase): void {
             var handle = function (e: HTMLElement) {
                 if (e.contextmenuHandle) {
-                    const m = $("#contextmenu")[0] as tag.MenuTag;
+                    const m = $("#contextmenu")[0] as tag.StackMenuTag;
                     m.onmenuselect = () => { };
                     return e.contextmenuHandle(event, m);
                 } else {
@@ -896,9 +891,9 @@ namespace OS {
             const scheme = $.parseHTML(schemes.ws);
             $("#wrapper").append(scheme);
 
-            announcer.observable.one("sysdockloaded", () => {
+            announcer.one("sysdockloaded", () => {
                 $(window).on("keydown", function (event) {
-                    const dock = $("#sysdock")[0] as tag.AppDockTag;
+                    const dock = systemDock();
                     if (!dock) {
                         return;
                     }
@@ -939,10 +934,10 @@ namespace OS {
             });
             // system menu and dock
             $("#syspanel")[0].uify(undefined);
-            $("#sysdock")[0].uify(undefined);
             $("#systooltip")[0].uify(undefined);
-            $("#contextmenu")[0].uify(undefined);
-
+            
+            const ctxmenu = $("#contextmenu")[0];
+            ctxmenu.uify(undefined);
             $("#wrapper").on("contextmenu", (e) => bindContextMenu(e));
             // tooltip
             $(document).on("mouseover", function (e) {
@@ -1033,8 +1028,8 @@ namespace OS {
             // load theme
             loadTheme(setting.appearance.theme, true);
             wallpaper(undefined);
-            OS.announcer.observable.one("syspanelloaded", async function () {
-                OS.announcer.observable.on("systemlocalechange", (_) =>
+            OS.announcer.one("syspanelloaded", async function () {
+                OS.announcer.on("systemlocalechange", (_) =>
                     $("#syspanel")[0].update()
                 );
 
@@ -1085,10 +1080,10 @@ namespace OS {
             });
             // initDM
             API.setLocale(setting.system.locale).then(() => initDM());
-            Ant.OS.announcer.observable.on("error", function (d) {
+            Ant.OS.announcer.on("error", function (d) {
                 console.log(d.u_data);
             });
-            Ant.OS.announcer.observable.on("fail", function (d) {
+            Ant.OS.announcer.on("fail", function (d) {
                 console.log(d.u_data);
             });
         }
@@ -1105,10 +1100,9 @@ namespace OS {
         schemes.ws = `\
 <afx-sys-panel id = "syspanel"></afx-sys-panel>
 <div id = "workspace">
-    <afx-apps-dock id="sysdock"></afx-apps-dock>
     <afx-desktop id = "desktop" dir="vertical" ></afx-desktop>
 </div>
-<afx-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-menu>
+<afx-stack-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-stack-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>
 <textarea id="clipboard"></textarea>\
 `;
