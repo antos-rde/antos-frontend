@@ -144,7 +144,7 @@ namespace OS {
             this.ppath = this.find("ppath") as GUI.tag.LabelTag;
             this.mplist.buttons = [
                 {
-                    text: "+",
+                    iconclass: "bi bi-plus",
                     onbtclick: async () => {
                         const d = await this.parent.openDialog(
                             new VFSSettingDialog(),
@@ -162,7 +162,7 @@ namespace OS {
                     },
                 },
                 {
-                    text: "-",
+                    iconclass: "bi bi-dash",
                     onbtclick: async () => {
                         const item = this.mplist.selectedItem;
                         if (!item) {

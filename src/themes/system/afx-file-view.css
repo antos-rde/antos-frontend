@@ -39,6 +39,7 @@ afx-file-view afx-tree-view{
     margin:0;
     overflow: hidden;
     background-color: transparent;
+    padding-left: 5px;
 }
 
 afx-file-view afx-tree-view .afx_tree_item_odd{
@@ -57,4 +58,47 @@ afx-file-view  div.treecontainer{
     overflow: auto;
     padding:0;
     margin:0;
+}
+
+afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
+    font-size: 22px;
+}
+afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
+    font-size: 22px;
+}
+
+afx-file-view afx-tree-view .afx-tree-view-item:before{
+    font-size: 22px;
+}
+
+afx-file-view afx-grid-view i.file:before{
+    font-size: 21px;
+    font-style: normal;
+    font-weight: normal;
+}
+afx-file-view afx-grid-view i.dir:before{
+    font-size: 22px;
+    font-style: normal;
+    font-weight: normal;
+}
+afx-file-view afx-tree-view li.itemname{
+    padding-left: 10px;
+    padding-right: 5px;
+}
+afx-file-view afx-label.status{
+    font-size: 13px;
+    height: 24px;
+    display: flex;
+    width: 100%;
+}
+
+afx-file-view afx-label.status span{
+    white-space: nowrap;
+    width: 100%;
+    text-align: right;
+}
+
+afx-file-view afx-label.status i.label-text
+{
+    padding-right: 5px;
 }

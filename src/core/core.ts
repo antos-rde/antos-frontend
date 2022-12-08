@@ -807,6 +807,10 @@ namespace OS {
      */
     export const REPOSITORY: string = "https://github.com/lxsang/antos";
 
+     /**
+     * Indicate whether the current de
+     */
+    export var mobile: boolean = false;
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
@@ -875,6 +879,7 @@ namespace OS {
     export function boot(): void {
         //first login
         console.log("Booting system");
+        // check whether we are on mobile device
         API.handle
             .auth()
             .then(function (d: API.RequestResult) {
@@ -1331,7 +1336,7 @@ namespace OS {
             data.id = q;
             data.message = p;
             data.name = p;
-            data.u_data = PM.pidactive;
+            data.u_data = 0; //PM.pidactive;
             announcer.trigger("loading", data);
         }
 
@@ -1612,11 +1617,11 @@ namespace OS {
             for (let k in searchHandle) {
                 const ret = searchHandle[k](text);
                 if (ret.length > 0) {
-                    ret.unshift({
+                    /*ret.unshift({
                         text: k,
                         class: "search-header",
                         dataid: "header",
-                    });
+                    });*/
                     r = r.concat(ret);
                 }
             }

@@ -98,14 +98,14 @@ namespace OS {
              * @memberof Setting
              */
             main(): void{
-                //this.containter = this.find("container") as GUI.tag.TabContainerTag;
+                const containter = this.find("container") as GUI.tag.TabContainerTag;
 
                 new Setting.AppearanceHandle(this.find("appearance"), this);
                 new Setting.VFSHandle(this.find("vfs"), this);
                 new Setting.LocaleHandle(this.find("locale"), this);
                 new Setting.StartupHandle(this.find("startup"), this);
                 new Setting.AppAndServiceHandle(this.find("app-services"), this);
-
+                containter.selectedIndex = 0;
                 (this.find("btnsave") as GUI.tag.ButtonTag ).onbtclick = (e) => {
                     this._api
                         .setting()

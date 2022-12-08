@@ -62,15 +62,6 @@ namespace OS {
             sysdock: GUI.tag.AppDockTag;
 
             /**
-             * Reference to the system application menu located
-             * on the system panel
-             *
-             * @type {GUI.tag.MenuTag}
-             * @memberof BaseApplication
-             */
-            appmenu: GUI.tag.MenuTag;
-
-            /**
              * Loading animation check timeout
              *
              * @private
@@ -120,14 +111,8 @@ namespace OS {
                 // first register some base event to the app
                 this.on("focus", () => {
                     this.sysdock.selectedApp = this;
-                    this.appmenu.pid = this.pid;
-                    this.appmenu.items = this.baseMenu() || [];
+                    (this.scheme as GUI.tag.WindowTag).onmenuopen = (el) => el.nodes = this.baseMenu() || [];
                     OS.PM.pidactive = this.pid;
-                    this.appmenu.onmenuselect = (
-                        d: GUI.tag.MenuEventData
-                    ): void => {
-                        return this.trigger("menuselect", d);
-                    };
                     this.trigger("focused", undefined);
                     if (this.dialog) {
                         return this.dialog.show();
@@ -135,8 +120,6 @@ namespace OS {
                 });
                 this.on("hide", () => {
                     this.sysdock.selectedApp = null;
-                    this.appmenu.items = [];
-                    this.appmenu.pid = -1;
                     if (this.dialog) {
                         return this.dialog.hide();
                     }
@@ -163,7 +146,6 @@ namespace OS {
                     this._pending_task.push(o.id);
                     this.trigger("loading", undefined);
                 });
-    
                 this.subscribe("loaded", (o: API.AnnouncementDataType<number>) => {
                     const i = this._pending_task.indexOf(o.id);
                     if (i >= 0) {
@@ -360,9 +342,6 @@ namespace OS {
              * @memberof BaseApplication
              */
             blur(): void {
-                if (this.appmenu && this.pid === this.appmenu.pid) {
-                    this.appmenu.items = [];
-                }
                 this.trigger("blur", undefined);
                 if(this.dialog)
                 {
@@ -414,9 +393,6 @@ namespace OS {
             protected onexit(evt: BaseEvent): void {
                 this.cleanup(evt);
                 if (!evt.prevent) {
-                    if (this.pid === this.appmenu.pid) {
-                        this.appmenu.items = [];
-                    }
                     $(this.scheme).remove();
                 }
             }

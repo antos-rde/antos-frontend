@@ -28,6 +28,15 @@ namespace OS {
                 private _onfileopen: TagEventCallback<API.FileInfoType>;
 
                 /**
+                 * placeholder for directory changed event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.VFS.BaseFileHandle>}
+                 * @memberof FileViewTag
+                 */
+                private _ondirchanged: TagEventCallback<API.VFS.BaseFileHandle>;
+
+                /**
                  * Reference to the all selected files meta-datas
                  *
                  * @private
@@ -92,6 +101,7 @@ namespace OS {
                     this.chdir = true;
                     this.view = "list";
                     this._onfileopen = this._onfileselect = (e) => { };
+                    this._ondirchanged = (e) => { };
                     this._selectedFiles = [];
                     const fn = function(r1, r2, i) {
                         let t1 = r1[i].text;
@@ -115,17 +125,17 @@ namespace OS {
                             t1 = t1.toString().toLowerCase();
                             t2 = t2.toString().toLowerCase();
                         }
-                        if(this.__f)
+                        if(this.desc)
                         {
-                            this.desc = ! this.desc;
                             if(t1 < t2) { return -1; }
                             if(t1 > t2) { return 1; }
+                            
                         }
                         else
                         {
-                            this.desc = ! this.desc;
                             if(t1 > t2) { return -1; }
-                            if(t1 < t2) { return 1; }
+                            if(t1 < t2) { return 1; };
+                            
                         }
                         return 0;
                     };
@@ -174,6 +184,17 @@ namespace OS {
                  */
                 set onfileselect(e: TagEventCallback<API.FileInfoType>) {
                     this._onfileselect = e;
+                }
+
+                /**
+                 * set the callback handle for the directory changed event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.VFS.BaseFileHandle]]
+                 *
+                 * @memberof FileViewTag
+                 */
+                set onchdir(e: TagEventCallback<API.VFS.BaseFileHandle>) {
+                    this._ondirchanged = e;
                 }
 
                 /**
@@ -352,6 +373,9 @@ namespace OS {
                             if (this.status) {
                                 (this.refs.status as LabelTag).text = " ";
                             }
+                            const evt = { id: this.aid, data: v.asFileHandle() };
+                            this._ondirchanged(evt);
+                            this.observable.trigger("chdir", evt);
                         })
                         .catch((e: Error) =>
                             announcer.oserror(e.toString(), e)
@@ -457,7 +481,7 @@ namespace OS {
                     let h = $(this).outerHeight();
                     const w = $(this).width();
                     if (this.status) {
-                        h -= $(this.refs.status).height() + 10;
+                        h -= $(this.refs.status).height();
                     }
                     $(this.refs.listview).css("height", h + "px");
                     $(this.refs.gridview).css("height", h + "px");
@@ -647,7 +671,7 @@ namespace OS {
                     }
                     if (this.status) {
                         (this.refs.status as LabelTag).text = __(
-                            "Selected: {0} ({1} bytes)",
+                            "{0} ({1} bytes)",
                             e.filename,
                             e.size ? e.size : "0"
                         );
@@ -669,10 +693,11 @@ namespace OS {
                         e.type = "dir";
                         e.mime = "dir";
                     }
+                    const evt = { id: this.aid, data: e };
                     if (e.type === "dir" && this.chdir) {
                         this.path = e.path;
                     } else {
-                        const evt = { id: this.aid, data: e };
+                        
                         this._onfileopen(evt);
                         this.observable.trigger("fileopen", evt);
                     }

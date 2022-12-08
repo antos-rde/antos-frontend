@@ -139,7 +139,7 @@ namespace OS {
                 } else {
                     GUI.detachservice(app as application.BaseService);
                 }
-                announcer.unregister(app);
+                // announcer.unregister(app);
                 delete PM.processes[app.name][i];
                 PM.processes[app.name].splice(i, 1);
             }

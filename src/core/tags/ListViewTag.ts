@@ -173,6 +173,7 @@ namespace OS {
                  */
                 protected mount(): void {
                     $(this.refs.item).attr("dataref", "afx-list-item");
+                    $(this).addClass("afx-list-item");
                     $(this.refs.item).on("contextmenu", (e) => {
                         this._onctxmenu({ id: this.aid, data: this });
                     });
@@ -202,14 +203,22 @@ namespace OS {
                  * @memberof ListViewItemTag
                  */
                 protected layout(): TagLayoutType[] {
+                    let children = [{el: "i", class: "closable", ref: "btcl"}] as TagLayoutType[];
+                    const itemlayout = this.itemlayout();
+                    if(Array.isArray(itemlayout))
+                    {
+                        children = children.concat(itemlayout);
+                    }
+                    else
+                    {
+                        children.unshift(itemlayout);
+                    }
+
                     return [
                         {
                             el: "li",
                             ref: "item",
-                            children: [
-                                this.itemlayout(),
-                                { el: "i", class: "closable", ref: "btcl" },
-                            ],
+                            children:children,
                         },
                     ];
                 }
@@ -240,10 +249,10 @@ namespace OS {
                  *
                  * @protected
                  * @abstract
-                 * @returns {TagLayoutType}
+                 * @returns {TagLayoutType | TagLayoutType[]}
                  * @memberof ListViewItemTag
                  */
-                protected abstract itemlayout(): TagLayoutType;
+                protected abstract itemlayout(): TagLayoutType | TagLayoutType[];
 
                 /**
                  * This function is called when the item data is changed.
@@ -329,11 +338,98 @@ namespace OS {
                  * List item custom layout definition
                  *
                  * @protected
-                 * @returns {TagLayoutType}
+                 * @returns {TagLayoutType | TagLayoutType[]}
                  * @memberof SimpleListItemTag
                  */
-                protected itemlayout(): TagLayoutType {
+                protected itemlayout(): TagLayoutType | TagLayoutType[] {
                     return { el: "afx-label", ref: "label" };
+                }
+            }
+
+
+            /**
+             * The layout of a double line list item contains two
+             * AFX labels
+             *
+             * @export
+             * @class DoubleLineListItemTag
+             * @extends {ListViewItemTag}
+             */
+            export class DoubleLineListItemTag extends ListViewItemTag {
+                /**
+                 *Creates an instance of DoubleLineListItemTag.
+                 * @memberof DoubleLineListItemTag
+                 */
+                constructor() {
+                    super();
+                }
+
+                /**
+                 * Reset some property to default
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected init(): void {
+                    this.closable = false;
+                    this.data = {};
+                }
+
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected calibrate(): void {}
+
+                /**
+                 * Refresh the inner label when the item data
+                 * is changed
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected ondatachange(): void {
+                    const v = this.data;
+                    if (!v) {
+                        return;
+                    }
+                    const line1 = this.refs.line1 as LabelTag;
+                    const line2 = this.refs.line2 as LabelTag;
+                    line1.set(v);
+                    if(v.description)
+                    {
+                        line2.set(v.description);
+                    }
+                    if (v.selected) {
+                        this.selected = v.selected;
+                    }
+                    if (v.closable) {
+                        this.closable = v.closable;
+                    }
+                }
+
+                /**
+                 * Re-render the list item
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected reload(): void {
+                    this.data = this.data;
+                }
+
+                /**
+                 * List item custom layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType | TagLayoutType[]}
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected itemlayout(): TagLayoutType | TagLayoutType[] {
+                    return [{ el: "afx-label", ref: "line1", class:"title" }, { el: "afx-label", ref: "line2", class:"description" }];
                 }
             }
 
@@ -482,10 +578,8 @@ namespace OS {
                     this.dropdown = false;
                     this.selected = -1;
                     this.dragndrop = false;
-                    $(this)
-                        .css("display", "flex")
-                        .css("flex-direction", "column");
                     this.itemtag = "afx-list-item";
+                    $(this).addClass("afx-list-view");
                 }
 
                 /**
@@ -508,7 +602,6 @@ namespace OS {
                     this.attsw(v, "dropdown");
                     $(this.refs.container).removeAttr("style");
                     $(this.refs.mlist).removeAttr("style");
-                    $(this.refs.container).css("flex", 1);
                     $(this).removeClass("dropdown");
                     const drop = (e: any) => {
                         return this.dropoff(e);
@@ -521,14 +614,7 @@ namespace OS {
                         $(this.refs.current).show();
                         $(document).on("click", drop);
                         $(this.refs.current).on("click", show);
-                        $(this.refs.container)
-                            .css("position", "absolute")
-                            .css("display", "inline-block");
-                        $(this.refs.mlist)
-                            .css("position", "absolute")
-                            .css("display", "none")
-                            .css("top", "100%")
-                            .css("left", "0");
+                        $(this.refs.mlist).hide();
                         this.calibrate();
                     } else {
                         $(this.refs.current).hide();
@@ -676,7 +762,28 @@ namespace OS {
                         (bt[0] as ButtonTag).set(item);
                     }
                 }
-
+                /**
+                 * Getter: Get list direction: horizontal or vertical (default)
+                 *
+                 * Setter: Get list direction: horizontal or vertical
+                 *
+                 * @type {string}
+                 * @memberof ListViewTag
+                 */
+                set dir(v: string) {
+                    if(this.dropdown)
+                    {
+                        $(this).attr("dir", "vertical");
+                    }
+                    else
+                    {
+                        $(this).attr("dir", v);
+                    }
+                    this.calibrate();
+                }
+                get dir(): string {
+                    return $(this).attr("dir");
+                }
                 /**
                  * Getter: Get data of the list
                  *
@@ -769,7 +876,13 @@ namespace OS {
                 get selectedItems(): ListViewItemTag[] {
                     return this._selectedItems;
                 }
-
+                /**
+                 * get the selected item index
+                 * 
+                 * @readonly
+                 * @type {number}
+                 * @memberof ListViewTag
+                 */
                 get selected(): number | number[] {
                     if (this.multiselect) {
                         return this.selectedItems.map(function (
@@ -808,7 +921,7 @@ namespace OS {
                  * Add an item to the beginning or end of the list
                  *
                  * @param {GenericObject<any>} item list item data
-                 * @param {boolean} [flag] indicates whether to add the item in the beginning of the list
+                 * @param {boolean} flag indicates whether to add the item in the beginning of the list
                  * @returns {ListViewItemTag} the added list item element
                  * @memberof ListViewTag
                  */
@@ -832,6 +945,7 @@ namespace OS {
                     }
                     el[0].uify(this.observable);
                     const element = el[0] as ListViewItemTag;
+                    $(element).attr("list-id",this.aid);
                     element.onctxmenu = (e) => {
                         return this.iclick(e, true);
                     };
@@ -955,12 +1069,12 @@ namespace OS {
                 /**
                  * This function triggers the double click event on an item
                  *
-                 * @private
+                 * @protected
                  * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
-                private idbclick(e: TagEventType<ListViewItemTag>) {
+                protected idbclick(e: TagEventType<ListViewItemTag>) {
                     const evt: TagEventType<ListItemEventData> = {
                         id: this.aid,
                         data: { item: e.data },
@@ -972,12 +1086,12 @@ namespace OS {
                 /**
                  * This function triggers the list item select event
                  *
-                 * @private
+                 * @protected
                  * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
-                private iselect(e: TagEventType<ListViewItemTag>) {
+                protected iselect(e: TagEventType<ListViewItemTag>) {
                     if (!e.data) {
                         return;
                     }
@@ -1167,16 +1281,22 @@ namespace OS {
                     if (!this.dropdown) {
                         return;
                     }
-                    const desktoph = $(Ant.OS.GUI.workspace).height();
+                    if(! $(this.refs.mlist).is(":hidden"))
+                    {
+                        $(this.refs.mlist).hide();
+                        return;
+                    }
+
+                    const desktoph = $(Ant.OS.GUI.workspace).outerHeight();
                     const offset =
-                        $(this).offset().top + $(this.refs.mlist).height();
+                        $(this).offset().top + $(this.refs.mlist).outerHeight()*1.5;
                     if (offset > desktoph) {
                         $(this.refs.mlist).css(
                             "top",
                             `-${$(this.refs.mlist).outerHeight()}px`
                         );
                     } else {
-                        $(this.refs.mlist).css("top", "100%");
+                        $(this.refs.mlist).css("top", "98%");
                     }
                     $(this.refs.mlist).show();
                 }
@@ -1208,7 +1328,9 @@ namespace OS {
                         return;
                     }
                     const w = `${$(this).width()}px`;
+                    const h = `${$(this).outerHeight()}px`;
                     $(this.refs.container).css("width", w);
+                    $(this.refs.container).css("height", h);
                     $(this.refs.current).css("width", w);
                     $(this.refs.mlist).css("width", w);
                 }
@@ -1244,6 +1366,7 @@ namespace OS {
 
             define("afx-list-view", ListViewTag);
             define("afx-list-item", SimpleListItemTag);
+            define("afx-dbline-list-item", DoubleLineListItemTag);
         }
     }
 }

@@ -279,7 +279,7 @@ namespace OS {
                         e: TagEventType<GridCellPrototype>
                     ): void => {};
                     this.selected = false;
-                    $(this).css("display", "block");
+                    //$(this).css("display", "block");
                     $(this).on("click",(e) => {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, false);
@@ -683,6 +683,14 @@ namespace OS {
                             if(element.data.sort)
                             {
                                 this.sort(element.data, element.data.sort);
+                                if(element.data.desc)
+                                {
+                                    $(element).attr("sort", "desc");
+                                }
+                                else
+                                {
+                                    $(element).attr("sort", "asc");
+                                }
                             }
                         };
                         i++;
@@ -752,6 +760,10 @@ namespace OS {
                 set rows(rows: GenericObject<any>[][]) {
                     this._rows = rows;
                     if(!rows) return;
+                    for(const el of this._header)
+                    {
+                        $(el.domel).attr("sort", "none");
+                    }
                     // update existing row with new data
                     const ndrows = rows.length;
                     const ncrows = this.refs.grid.children.length;
@@ -839,7 +851,7 @@ namespace OS {
                         return fn.call(context,a, b, index);
                     }
                     this._rows.sort(__fn);
-                    context.__f = ! context.__f;
+                    context.desc = ! context.desc;
                     this.rows = this._rows;
                 }
                 /**

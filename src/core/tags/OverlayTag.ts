@@ -127,7 +127,9 @@ namespace OS {
                  * @memberof OverlayTag
                  */
                 calibrate(): void {
-                    $(this).css("width", this.width).css("height", this.height);
+                    $(this)
+                        .css("width", this.width)
+                        .css("height", this.height);
                     return this.observable.trigger("resize", {
                         id: this.aid,
                         data: {

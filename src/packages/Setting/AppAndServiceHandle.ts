@@ -89,7 +89,7 @@ namespace OS {
 
             this.applist.buttons = [
                 {
-                    text: "+",
+                    iconclass: "bi bi-plus",
                     onbtclick: () => {
                         const apps = (() => {
                             const result = [];
@@ -128,7 +128,7 @@ namespace OS {
                     },
                 },
                 {
-                    text: "-",
+                    iconclass: "bi bi-dash",
                     onbtclick: () => {
                         const item = this.applist.selectedItem;
                         if (!item) {

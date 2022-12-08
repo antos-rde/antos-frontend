@@ -1,28 +1,24 @@
-<afx-app-window data-id = "setting-window" apptitle="Setting" width="650" height="400">
+<afx-app-window data-id = "setting-window" apptitle="Setting" width="600" height="500">
    <afx-vbox>
-        <afx-tab-container data-id = "container" dir = "row" tabbarwidth= "150">
+        <afx-tab-container data-id = "container" dir = "column" tabbarheight= "40">
 
             <afx-hbox tabname="__(Appearance)" data-id="appearance" iconclass = "fa fa-paint-brush">
                 <div data-width="10"></div>
                 <afx-vbox>
-                    <div data-height="5"></div>
-                    <afx-label text = "__(Wallpaper)" iconclass = "fa fa-image" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Wallpaper)" iconclass = "fa fa-image" class = "header" data-height="30"></afx-label>
                     <afx-hbox>
                         <afx-list-view data-width="150" data-id="wplist"></afx-list-view>
                         <afx-resizer data-width="2"></afx-resizer>
-                        <afx-vbox>
-                            <div data-id = "wp-preview"></div>
-                            <div data-height="5"></div>
-                            <afx-hbox data-height="25">
-                                <afx-list-view data-id = "wpsize"  dropdown="true"></afx-list-view>
-                                <div data-width="5"></div>
-                                <afx-list-view data-id = "wprepeat"  dropdown="true"></afx-list-view>
-                            </afx-hbox>
-                        </afx-vbox>
+                        <div data-id = "wp-preview"></div>
                     </afx-hbox>
                     <div data-height="5"></div>
-                    <afx-label text = "__(Theme)" iconclass = "fa fa-window-restore" class = "header" data-height="23"></afx-label>
-                    <afx-list-view data-height="30" data-id="theme-list" dropdown="true"></afx-list-view>
+                    <afx-hbox data-height="35">
+                        <afx-list-view data-id = "wpsize"  dropdown="true"></afx-list-view>
+                        <div data-width="5"></div>
+                        <afx-list-view data-id = "wprepeat"  dropdown="true"></afx-list-view>
+                    </afx-hbox>
+                    <afx-label text = "__(Theme)" iconclass = "fa fa-window-restore" class = "header" data-height="30"></afx-label>
+                    <afx-list-view data-height="35" data-id="theme-list" dropdown="true"></afx-list-view>
                     <div data-height="5"></div>
                 </afx-vbox>
                 <div data-width="10"></div>
@@ -31,22 +27,19 @@
             <afx-hbox data-id="vfs" tabname = "__(VFS)" iconclass = "fa fa-inbox">
                 <div data-width="10"></div>
                 <afx-vbox>
-                    <div data-height="5"></div>
-                    <afx-label text = "__(Mount points)" iconclass = "fa fa-folder" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Mount points)" iconclass = "fa fa-folder" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="mplist"></afx-list-view>
-                    <div data-height="5"></div>
-                    <afx-label text = "__(Desktop path)" iconclass = "fa fa-desktop" class = "header" data-height="23"></afx-label>
-                    <afx-hbox data-height = "25" >
+                    <afx-label text = "__(Desktop path)" iconclass = "fa fa-desktop" class = "header" data-height="30"></afx-label>
+                    <afx-hbox data-height = "40" >
                         <div data-width="16"></div>
                         <afx-label data-id="dpath"></afx-label>
-                        <afx-button text="" iconclass = "fa fa-arrow-up" data-id="btndpath" data-width="20" class="btnsel"></afx-button>
+                        <afx-button text="" iconclass = "fa fa-arrow-up" data-id="btndpath" data-width="40" class="btnsel"></afx-button>
                     </afx-hbox>
-                    <div data-height="5"></div>
-                    <afx-label text = "__(Local packages path)" iconclass = "fa fa-cube" class = "header" data-height="23"></afx-label>
-                    <afx-hbox data-height = "25" >
+                    <afx-label text = "__(Local packages path)" iconclass = "fa fa-cube" class = "header" data-height="30"></afx-label>
+                    <afx-hbox data-height = "40" >
                         <div data-width="16"></div>
                         <afx-label data-id="ppath"></afx-label>
-                        <afx-button text="" data-id="btnppath" iconclass = "fa fa-arrow-up" data-width="20" class="btnsel"></afx-button>
+                        <afx-button text="" data-id="btnppath" iconclass = "fa fa-arrow-up" data-width="40" class="btnsel"></afx-button>
                         </afx-hbox>
                     <div data-height="10"></div>
                 </afx-vbox>
@@ -56,8 +49,7 @@
             <afx-hbox data-id="locale" tabname = "__(Languages)"iconclass = "fa fa-globe">
                 <div data-width="10"></div>
                 <afx-vbox>
-                    <div data-height="5"></div>
-                    <afx-label text = "__(System locale)" iconclass = "fa fa-globe" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(System locale)" iconclass = "fa fa-globe" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="lglist"></afx-list-view>
                     <div data-height="10"></div>
                 </afx-vbox>
@@ -67,10 +59,10 @@
             <afx-hbox data-id="startup" tabname = "__(Startup)" iconclass = "fa fa-cog">
                 <div data-width="10"></div>
                 <afx-vbox>
-                    <afx-label text = "__(Startup services)" iconclass = "fa fa-tasks" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Startup services)" iconclass = "fa fa-tasks" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="srvlist"></afx-list-view>
                     <div data-height="5"></div>
-                    <afx-label text = "__(Startup applications)" iconclass = "fa fa-adn" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Startup applications)" iconclass = "fa fa-adn" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="applist"></afx-list-view>
                     <div data-height="10"></div>
                 </afx-vbox>
@@ -80,10 +72,10 @@
             <afx-hbox data-id="app-services" tabname = "__(Apps. and Services)" iconclass = "fa fa-adn">
                 <div data-width="10"></div>
                 <afx-vbox>
-                    <afx-label text = "__(Services)" iconclass = "fa fa-tasks" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Services)" iconclass = "fa fa-tasks" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="sys-srvlist"></afx-list-view>
                     <div data-height="5"></div>
-                    <afx-label text = "__(Pinned applications)" iconclass = "fa fa-adn" class = "header" data-height="23"></afx-label>
+                    <afx-label text = "__(Pinned applications)" iconclass = "fa fa-adn" class = "header" data-height="30"></afx-label>
                     <afx-list-view  data-id="sys-applist"></afx-list-view>
                     <div data-height="10"></div>
                 </afx-vbox>
@@ -91,10 +83,10 @@
             </afx-hbox>
 
         </afx-tab-container>
-        <afx-hbox  data-height="35">
-            <div data-width = "150" class = "footer"></div>
+        <afx-hbox  data-height="45">
+            <div></div>
             <div style="text-align:right" >
-                    <afx-button text="__(Save)" data-id="btnsave" iconclass="fa fa-save" style="margin-right:10px;" ></afx-button>
+                    <afx-button text="__(Save)" data-id="btnsave" iconclass="fa fa-save" style="margin-right:5px;" ></afx-button>
             </div>
         </afx-hbox>
         

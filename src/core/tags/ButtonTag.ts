@@ -24,7 +24,22 @@ namespace OS {
                  * @type {GenericObject<any>}
                  * @memberof ButtonTag
                  */
-                data: GenericObject<any>;
+                private _data: GenericObject<any>;
+
+                /**
+                 * Custom user data setter/gettter
+                 * 
+                 * @memberof ButtonTag
+                 */
+                set data(v: GenericObject<any>)
+                {
+                    this._data = v;
+                    this.set(v);
+                }
+                get data(): GenericObject<any>
+                {
+                    return this._data;
+                }
 
                 /**
                  *Creates an instance of ButtonTag.

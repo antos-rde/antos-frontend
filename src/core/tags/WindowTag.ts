@@ -64,6 +64,14 @@ namespace OS {
                 private _history: GenericObject<any>;
 
                 /**
+                 * This placeholder store the callback for the menu open event
+                 * 
+                 * @private
+                 * @type {(el: StackMenuTag) => void}
+                 * @memberof WindowTag
+                 */
+                private _onmenuopen: (el: StackMenuTag) => void;
+                /**
                  * This placeholder stores the offset of the virtual desktop element
                  *
                  * @private
@@ -79,7 +87,7 @@ namespace OS {
                 constructor() {
                     super();
                 }
-
+                
                 /**
                  * blur overlay: If active the window overlay will be shown
                  * on inactive (blur event)
@@ -96,7 +104,15 @@ namespace OS {
                 get blur_overlay(): boolean {
                     return this.hasattr("blur-overlay");
                 }
-
+                /**
+                 * Setter: set menu open event handler
+                 * 
+                 * @memberof WindowTag
+                 */
+                set onmenuopen(f: (el: StackMenuTag) => void)
+                {
+                    this._onmenuopen = f;
+                }
                 /**
                  * Init window tag
                  * - `shown`: false
@@ -117,6 +133,7 @@ namespace OS {
                     this.minimizable = true;
                     this.resizable = true;
                     this.apptitle = "Untitled";
+                    this._onmenuopen = undefined;
                 }
 
                 /**
@@ -173,6 +190,24 @@ namespace OS {
                 }
                 get height(): number {
                     return this._height;
+                }
+                
+                /**
+                 * Set the application menu content
+                 * 
+                 * @memberof WindowTag
+                 */
+                set menu(v: GenericObject<any>[])
+                {
+                    if(!v || v.length == 0)
+                    {
+                        $(this.refs.btnMenu).hide();
+                    }
+                    else
+                    {
+                        (this.refs.stackmenu as StackMenuTag).nodes = v;
+                        $(this.refs.btnMenu).show();
+                    }
                 }
 
                 /**
@@ -262,22 +297,56 @@ namespace OS {
                  * @memberof WindowTag
                  */
                 protected mount(): void {
+                    const btn_menu = (this.refs.btnMenu as ButtonTag);
+                    const min_btn = (this.refs["minbt"] as ButtonTag);
+                    const max_btn = (this.refs["maxbt"] as ButtonTag);
+                    const close_btn = (this.refs["closebt"] as ButtonTag);
+                    const stackmenu = (this.refs.stackmenu as StackMenuTag);
+                    stackmenu.context = true;
+                    btn_menu.iconclass = "bi bi-list";
+                    min_btn.iconclass = "bi bi-dash";
+                    max_btn.iconclass = "bi bi-stop";
+                    close_btn.iconclass = "bi bi-x";
                     this.contextmenuHandle = function (e) { };
-                    $(this.refs["minbt"]).on("click", (e) => {
+                    min_btn.onbtclick =(_) => {
                         return this.observable.trigger("hide", {
                             id: this.aid,
                         });
-                    });
-
-                    $(this.refs["maxbt"]).on("click", (e) => {
+                    };
+                    btn_menu.onbtclick = (e) => {
+                        e.data.stopPropagation();
+                        if($(stackmenu).is(":hidden"))
+                        {
+                            if(this._onmenuopen)
+                            {
+                                this._onmenuopen(stackmenu);
+                            }
+                            else
+                            {
+                                stackmenu.reset();
+                            }
+                            stackmenu.show();
+                        }
+                        else
+                        {
+                            $(stackmenu).hide();
+                        }
+                    };
+                    max_btn.onbtclick = (_) => {
                         return this.toggle_window();
-                    });
+                    };
 
-                    $(this.refs["closebt"]).on("click", (e) => {
+                    close_btn.onbtclick = (_) => {
                         return this.observable.trigger("exit", {
                             id: this.aid,
                         });
-                    });
+                    };
+                    stackmenu.onmenuselect = (e) => {
+                        if(!e.data.item.data.nodes)
+                        {
+                            stackmenu.selected = -1;
+                        }
+                    }
                     const left = ($(this.desktop).width() - this.width) / 2;
                     const top = ($(this.desktop).height() - this.height) / 2;
                     $(this)
@@ -285,7 +354,7 @@ namespace OS {
                         .css("left", `${left}px`)
                         .css("top", `${top}px`)
                         .css("z-index", 10);
-                    $(this).on("mousedown", (e) => {
+                    $(this).on("pointerdown", (e) => {
                         if (this._shown) {
                             return;
                         }
@@ -293,7 +362,6 @@ namespace OS {
                             id: this.aid,
                         });
                     });
-                    //$(this.refs.win_overlay).css("background-color", "red");
                     $(this.refs["dragger"]).on("dblclick", (e) => {
                         return this.toggle_window();
                     });
@@ -347,7 +415,26 @@ namespace OS {
                         h: this.height,
                     });
                     $(this).attr("tabindex", 0).css("outline", "none");
-                    return this.observable.trigger("rendered", {
+                    if(OS.mobile)
+                    {
+                        this.toggle_window();
+                        //this.minimizable = false;
+                        this.resizable = false;
+                    }
+                    this.observable.on("desktopresize", (e) => {
+                        if(this._isMaxi)
+                        {
+                            this._isMaxi = false;
+                            this.toggle_window(true);
+                        }
+                        /*else
+                        {
+                            const w = this.width > e.data.width ? e.data.width: this.width;
+                            const h = this.height > e.data.height ? e.data.height: this.height;
+                            this.setsize({ w: w, h: h });
+                        }*/
+                    });
+                    this.observable.trigger("rendered", {
                         id: this.aid,
                     });
                 }
@@ -384,12 +471,12 @@ namespace OS {
                     $(this.refs["dragger"])
                         .css("user-select", "none")
                         .css("cursor", "default");
-                    $(this.refs["dragger"]).on("mousedown", (e) => {
-                        e.preventDefault();
+                    $(this.refs.dragger).on("pointerdown", (e) => {
+                        //e.preventDefault();
                         const offset = $(this).offset();
                         offset.top = e.clientY - offset.top;
                         offset.left = e.clientX - offset.left;
-                        $(window).on("mousemove", (e) => {
+                        $(window).on("pointermove", (e) => {
                             $(this.refs.win_overlay).show();
                             let left: number, top: number;
                             if (this._isMaxi) {
@@ -415,10 +502,10 @@ namespace OS {
                                 .css("top", `${top}px`)
                                 .css("left", `${left}px`);
                         });
-                        return $(window).on("mouseup", (e) => {
+                        return $(window).on("pointerup", (e) => {
                             $(this.refs.win_overlay).hide();
-                            $(window).off("mousemove", null);
-                            return $(window).off("mouseup", null);
+                            $(window).off("pointermove", null);
+                            return $(window).off("pointerup", null);
                         });
                     });
                 }
@@ -452,32 +539,32 @@ namespace OS {
                     }
                     const mouse_up_hdl = (e) => {
                         $(this.refs.win_overlay).hide();
-                        $(window).off("mousemove", mouse_move_hdl);
-                        return $(window).off("mouseup", mouse_up_hdl);
+                        $(window).off("pointermove", mouse_move_hdl);
+                        return $(window).off("pointerup", mouse_up_hdl);
                     }
-                    $(this.refs["grip"]).on("mousedown", (e) => {
+                    $(this.refs["grip"]).on("pointerdown", (e) => {
                         e.preventDefault();
                         offset.top = e.clientY;
                         offset.left = e.clientX;
                         target = this.refs.grip;
-                        $(window).on("mousemove", mouse_move_hdl);
-                        $(window).on("mouseup", mouse_up_hdl);
+                        $(window).on("pointermove", mouse_move_hdl);
+                        $(window).on("pointerup", mouse_up_hdl);
                     });
-                    $(this.refs.grip_bottom).on("mousedown", (e) => {
+                    $(this.refs.grip_bottom).on("pointerdown", (e) => {
                         e.preventDefault();
                         offset.top = e.clientY;
                         offset.left = e.clientX;
                         target = this.refs.grip_bottom;
-                        $(window).on("mousemove", mouse_move_hdl);
-                        $(window).on("mouseup", mouse_up_hdl);
+                        $(window).on("pointermove", mouse_move_hdl);
+                        $(window).on("pointerup", mouse_up_hdl);
                     });
-                    $(this.refs.grip_right).on("mousedown", (e) => {
+                    $(this.refs.grip_right).on("pointerdown", (e) => {
                         e.preventDefault();
                         offset.top = e.clientY;
                         offset.left = e.clientX;
                         target = this.refs.grip_right;
-                        $(window).on("mousemove", mouse_move_hdl);
-                        $(window).on("mouseup", mouse_up_hdl);
+                        $(window).on("pointermove", mouse_move_hdl);
+                        $(window).on("pointerup", mouse_up_hdl);
                     });
                 }
                 /**
@@ -488,9 +575,9 @@ namespace OS {
                  * @returns {void}
                  * @memberof WindowTag
                  */
-                private toggle_window(): void {
+                private toggle_window(force?: boolean): void {
                     let h: number, w: number;
-                    if (!this.resizable) {
+                    if (!this.resizable && !force) {
                         return;
                     }
                     if (this._isMaxi === false) {
@@ -500,8 +587,8 @@ namespace OS {
                             width: $(this).css("width"),
                             height: $(this).css("height"),
                         };
-                        w = $(this.desktop).width();
-                        h = $(this.desktop).height();
+                        w = $(this.desktop).width() - 2;
+                        h = $(this.desktop).height() - 2;
                         $(this).css("top", "0").css("left", "0");
                         this.setsize({ w, h });
                         this._isMaxi = true;
@@ -538,18 +625,12 @@ namespace OS {
                                     children: [
                                         {
                                             el: "li",
-                                            class: "afx-window-close",
-                                            ref: "closebt",
-                                        },
-                                        {
-                                            el: "li",
-                                            class: "afx-window-minimize",
-                                            ref: "minbt",
-                                        },
-                                        {
-                                            el: "li",
-                                            class: "afx-window-maximize",
-                                            ref: "maxbt",
+                                            children: [
+                                                {
+                                                    el: "afx-button",
+                                                    ref: "btnMenu",
+                                                },
+                                            ],
                                         },
                                         {
                                             el: "li",
@@ -562,9 +643,38 @@ namespace OS {
                                                 },
                                             ],
                                         },
+                                        {
+                                            el: "li",
+                                            class: "afx-window-minimize",
+                                            children: [
+                                                {
+                                                    el: "afx-button",
+                                                    ref: "minbt",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            el: "li",
+                                            class: "afx-window-maximize",
+                                            children: [
+                                                {
+                                                    el: "afx-button",
+                                                    ref: "maxbt",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            el: "li",
+                                            class: "afx-window-close",
+                                            children: [
+                                                {
+                                                    el: "afx-button",
+                                                    ref: "closebt",
+                                                }
+                                            ]
+                                        },
                                     ],
                                 },
-                                { el: "div", class: "afx-clear" },
                                 {
                                     el: "div",
                                     ref: "yield",
@@ -590,6 +700,10 @@ namespace OS {
                                     ref: "win_overlay",
                                     class: "afx-window-overlay",
                                 },
+                                {
+                                    el: "afx-stack-menu",
+                                    ref: "stackmenu"
+                                }
                             ],
                         },
                     ];

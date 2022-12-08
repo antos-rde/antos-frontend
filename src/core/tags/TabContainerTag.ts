@@ -129,6 +129,14 @@ namespace OS {
                         return;
                     }
                     (this.refs.wrapper as TileLayoutTag).dir = v;
+                    if(v === "row")
+                    {
+                        (this.refs.bar as TabBarTag).dir = "vertical";
+                    }
+                    else
+                    {
+                        (this.refs.bar as TabBarTag).dir = "horizontal";
+                    }
                 }
                 get dir(): "row" | "column" {
                     return $(this).attr("dir") as any;
@@ -175,7 +183,7 @@ namespace OS {
                         return;
                     }
                     $(this.refs.bar).attr("data-width", `${v}`);
-                    (this.refs.wrapper as TileLayoutTag).calibrate();
+                    this.observable.trigger("resize", undefined);
                 }
 
                 /**
@@ -185,8 +193,11 @@ namespace OS {
                  * @memberof TabContainerTag
                  */
                 set tabbarheight(v: number) {
+                    if (!v) {
+                        return;
+                    }
                     $(this.refs.bar).attr("data-height", `${v}`);
-                    (this.refs.wrapper as TileLayoutTag).calibrate();
+                    this.observable.trigger("resize", undefined);
                 }
 
                 /**

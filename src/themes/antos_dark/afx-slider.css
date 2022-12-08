@@ -1,7 +1,7 @@
 
 afx-slider div.container{
     border-radius: 3px;
-    height: 5px;
+    height: 10px;
     background-color: #868686;
 }
 
@@ -11,9 +11,18 @@ afx-slider div.progress {
 }
 
 afx-slider div.dragpoint {
-    width: 15px;
-    height: 15px;
     border:1px solid #262626;
-    border-radius: 15px;
     background-color:#868686;
+}
+
+afx-slider div.dragpoint::before
+{
+    content: "\f0d7";
+    font-family: "FontAwesome";
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color:#868686;
 }

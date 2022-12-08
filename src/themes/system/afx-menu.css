@@ -85,4 +85,36 @@ afx-menu li.afx-corner-fix:hover{
  }
  afx-menu  ul.context li{
     clear:float;
+    min-width: 150px;
+    width: calc(100% - 10px);
+ }
+
+ afx-menu afx-switch span{
+    padding-top: 3px;
+    font-size: 16px;
+    height: 19px;
+}
+afx-menu span.shortcut{
+    text-align: right;
+    margin-left: 3px;
+ }
+ afx-menu ul  li /*, afx-menu ul >afx-menu-entry > li*/{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+afx-menu  afx-menu li{
+    min-width: 150px;
+    width: calc(100% - 10px);
+}
+afx-menu afx-menu .afx_submenu:before, afx-menu  ul.context  .afx_submenu:before{
+    content: "\f054"; 
+    font-family: "FontAwesome";
+    font-size: 10px;
+    right:5px;
+    position:absolute;
+    top:25%;
+ }
+
+afx-menu afx-label span {
+     height: 22px !important;
  }

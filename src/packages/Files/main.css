@@ -38,11 +38,5 @@ afx-app-window[data-id ='files-app-window'] afx-grid-view afx-grid-row afx-label
 }
 
 afx-app-window[data-id ='files-app-window'] button{
-    height: 23px;
     border-radius: 0;
-    padding-top:2px;
-}
-
-afx-app-window[data-id ='files-app-window'] input{
-    border-radius: 3px;
 }

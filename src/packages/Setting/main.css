@@ -1,20 +1,6 @@
-afx-app-window[data-id = "setting-window"] afx-tab-container afx-tab-bar afx-list-view > div > ul  li{
-    float:none;
-    border-radius: 0;
-    font-weight: bold;
-    padding-top:3px;
-    padding-bottom: 3px;
-    border:0;
-}
-afx-app-window[data-id = "setting-window"] afx-tab-bar{
-    border-right: 1px solid #cbcbcb;
-}
 
-afx-app-window[data-id = "setting-window"] afx-label.header{
+afx-app-window[data-id = "setting-window"] afx-label.header i.label-text{
     font-weight: bold;
-}
-afx-app-window[data-id = "setting-window"] div.footer{
-    border-right: 1px solid #cbcbcb;
 }
 /*APPEARANCE*/
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] div[data-id = "wp-preview"]{
@@ -26,7 +12,6 @@ afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] div[da
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-list-view[data-id="wplist"]
 {
     border:1px solid #cbcbcb;
-    padding:2px;
 }
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-resizer{
     border:0;

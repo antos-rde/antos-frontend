@@ -87,7 +87,14 @@ namespace OS {
                     this.onready = (_) => {
                         this.observable = OS.announcer.observable;
                         window.onresize = () => {
-                            announcer.trigger("desktopresize", undefined);
+                            const evt = {
+                                id: this.aid,
+                                data: {
+                                    width: $(this).width(),
+                                    height: $(this).height()
+                                }
+                            }
+                            announcer.trigger("desktopresize", evt);
                             this.calibrate();
                         };
 
@@ -134,8 +141,8 @@ namespace OS {
                                 { text: __("Refresh"), dataid: "desktop-refresh" } as GUI.BasicItemType,
                             ];
                             menu = menu.concat(setting.desktop.menu.map(e => e));
-                            m.items = menu;
-                            m.onmenuselect = (evt: TagEventType<tag.MenuEventData>) => {
+                            m.nodes = menu;
+                            m.onmenuselect = (evt) => {
                                 if (!evt.data || !evt.data.item) return;
                                 const item = evt.data.item.data;
                                 switch (item.dataid) {
@@ -162,7 +169,7 @@ namespace OS {
                         };
 
                         this.refresh();
-                        announcer.observable.on("VFS", (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) => {
+                        announcer.on("VFS", (d: API.AnnouncementDataType<API.VFS.BaseFileHandle>) => {
                             if (["read", "publish", "download"].includes(d.message as string)) {
                                 return;
                             }

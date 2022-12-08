@@ -296,6 +296,8 @@ namespace OS {
             this.on("exit", () => this.quit(false));
             this.host = this._gui.desktop();
             this.dialog = undefined;
+            // relay global events to local events
+            this.subscribe("desktopresize", (e) => this.observable.trigger("desktopresize", e));
         }
 
         /**
@@ -334,7 +336,7 @@ namespace OS {
          * @returns {void}
          * @memberof BaseModel
          */
-        quit(force: boolean): void {
+        quit(force: boolean = false): void {
             const evt = new BaseEvent("exit", force);
             this.onexit(evt);
             if (!evt.prevent) {
@@ -346,8 +348,20 @@ namespace OS {
                 if (this.dialog) {
                     this.dialog.quit();
                 }
-                return PM.kill(this);
+                announcer.unregister(this);
+                this.destroy();
             }
+        }
+
+        /**
+         * Purge the model from the system
+         *
+         * @protected
+         * @memberof BaseModel
+         */
+        protected destroy(): void
+        {
+            return PM.kill(this);
         }
 
         /**

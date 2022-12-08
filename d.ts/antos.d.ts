@@ -367,12 +367,12 @@ declare namespace OS {
              */
             constructor(name: string);
             /**
-             * Exit the sub-window
+             * Purge the model from the system
              *
-             * @returns {void}
-             * @memberof SubWindow
+             * @protected
+             * @memberof BaseModel
              */
-            quit(): void;
+            protected destroy(): void;
             /**
              * Init the sub-window, this function is called
              * on creation of the sub-window object. It is used
@@ -458,6 +458,12 @@ declare namespace OS {
              * @memberof BaseDialog
              */
             protected onexit(_e: BaseEvent): void;
+            /**
+            * Show the dialog
+            *
+            * @memberof BaseDialog
+            */
+            show(): void;
         }
         /**
          * A basic dialog renders a dialog widget using the UI
@@ -1693,6 +1699,10 @@ declare namespace OS {
      */
     const REPOSITORY: string;
     /**
+    * Indicate whether the current de
+    */
+    var mobile: boolean;
+    /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
      * is of type [[SubWindow]], its prototype will be registered
@@ -2285,14 +2295,6 @@ declare namespace OS {
              */
             sysdock: GUI.tag.AppDockTag;
             /**
-             * Reference to the system application menu located
-             * on the system panel
-             *
-             * @type {GUI.tag.MenuTag}
-             * @memberof BaseApplication
-             */
-            appmenu: GUI.tag.MenuTag;
-            /**
              * Loading animation check timeout
              *
              * @private
@@ -2509,6 +2511,7 @@ declare namespace OS {
         }
     }
 }
+/// <reference types="jquery" />
 /// <reference types="jquery" />
 declare namespace OS {
     /**
@@ -2780,7 +2783,14 @@ declare namespace OS {
          * @returns {void}
          * @memberof BaseModel
          */
-        quit(force: boolean): void;
+        quit(force?: boolean): void;
+        /**
+         * Purge the model from the system
+         *
+         * @protected
+         * @memberof BaseModel
+         */
+        protected destroy(): void;
         /**
          * Model meta data, need to be implemented by
          * subclasses
@@ -3149,6 +3159,14 @@ declare namespace OS {
                  */
                 private _onfileopen;
                 /**
+                 * placeholder for directory changed event callback
+                 *
+                 * @private
+                 * @type {TagEventCallback<API.VFS.BaseFileHandle>}
+                 * @memberof FileViewTag
+                 */
+                private _ondirchanged;
+                /**
                  * Reference to the all selected files meta-datas
                  *
                  * @private
@@ -3223,6 +3241,14 @@ declare namespace OS {
                  * @memberof FileViewTag
                  */
                 set onfileselect(e: TagEventCallback<API.FileInfoType>);
+                /**
+                 * set the callback handle for the directory changed event.
+                 * The parameter of the callback should  be an object
+                 * of type [[TagEventType]]<T> with the data type `T` is [[API.VFS.BaseFileHandle]]
+                 *
+                 * @memberof FileViewTag
+                 */
+                set onchdir(e: TagEventCallback<API.VFS.BaseFileHandle>);
                 /**
                  set the callback handle for the file open event.
                  * The parameter of the callback should  be an object
@@ -3484,10 +3510,10 @@ interface HTMLElement {
      * defined on any child of this element will be ignored.
      *
      * @param {JQuery.MouseEventBase} e a mouse event
-     * @param {OS.GUI.tag.MenuTag} m The context menu element [[MenuTag]]
+     * @param {OS.GUI.tag.StackMenuTag} m The context menu element [[StackMenuTag]]
      * @memberof HTMLElement
      */
-    contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.MenuTag): void;
+    contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.StackMenuTag): void;
     /**
      * Mount the element and all the children on its DOM subtree. This action
      * is performed in a top-down manner
@@ -4069,10 +4095,10 @@ declare namespace OS {
                  *
                  * @protected
                  * @abstract
-                 * @returns {TagLayoutType}
+                 * @returns {TagLayoutType | TagLayoutType[]}
                  * @memberof ListViewItemTag
                  */
-                protected abstract itemlayout(): TagLayoutType;
+                protected abstract itemlayout(): TagLayoutType | TagLayoutType[];
                 /**
                  * This function is called when the item data is changed.
                  * It should be implemented in all subclass of this class
@@ -4131,10 +4157,63 @@ declare namespace OS {
                  * List item custom layout definition
                  *
                  * @protected
-                 * @returns {TagLayoutType}
+                 * @returns {TagLayoutType | TagLayoutType[]}
                  * @memberof SimpleListItemTag
                  */
-                protected itemlayout(): TagLayoutType;
+                protected itemlayout(): TagLayoutType | TagLayoutType[];
+            }
+            /**
+             * The layout of a double line list item contains two
+             * AFX labels
+             *
+             * @export
+             * @class DoubleLineListItemTag
+             * @extends {ListViewItemTag}
+             */
+            class DoubleLineListItemTag extends ListViewItemTag {
+                /**
+                 *Creates an instance of DoubleLineListItemTag.
+                 * @memberof DoubleLineListItemTag
+                 */
+                constructor();
+                /**
+                 * Reset some property to default
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected init(): void;
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Refresh the inner label when the item data
+                 * is changed
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected ondatachange(): void;
+                /**
+                 * Re-render the list item
+                 *
+                 * @protected
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected reload(): void;
+                /**
+                 * List item custom layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType | TagLayoutType[]}
+                 * @memberof DoubleLineListItemTag
+                 */
+                protected itemlayout(): TagLayoutType | TagLayoutType[];
             }
             /**
              * This tag defines a traditional or a dropdown list widget.
@@ -4350,6 +4429,16 @@ declare namespace OS {
                  */
                 set buttons(v: GenericObject<any>[]);
                 /**
+                 * Getter: Get list direction: horizontal or vertical (default)
+                 *
+                 * Setter: Get list direction: horizontal or vertical
+                 *
+                 * @type {string}
+                 * @memberof ListViewTag
+                 */
+                set dir(v: string);
+                get dir(): string;
+                /**
                  * Getter: Get data of the list
                  *
                  * Setter: Set data to the list
@@ -4390,6 +4479,13 @@ declare namespace OS {
                  * @memberof ListViewTag
                  */
                 get selectedItems(): ListViewItemTag[];
+                /**
+                 * get the selected item index
+                 *
+                 * @readonly
+                 * @type {number}
+                 * @memberof ListViewTag
+                 */
                 get selected(): number | number[];
                 /**
                  * Add an item to the beginning of the list
@@ -4412,7 +4508,7 @@ declare namespace OS {
                  * Add an item to the beginning or end of the list
                  *
                  * @param {GenericObject<any>} item list item data
-                 * @param {boolean} [flag] indicates whether to add the item in the beginning of the list
+                 * @param {boolean} flag indicates whether to add the item in the beginning of the list
                  * @returns {ListViewItemTag} the added list item element
                  * @memberof ListViewTag
                  */
@@ -4460,21 +4556,21 @@ declare namespace OS {
                 /**
                  * This function triggers the double click event on an item
                  *
-                 * @private
+                 * @protected
                  * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
-                private idbclick;
+                protected idbclick(e: TagEventType<ListViewItemTag>): void;
                 /**
                  * This function triggers the list item select event
                  *
-                 * @private
+                 * @protected
                  * @param {TagEventType} e tag event object
                  * @returns
                  * @memberof ListViewTag
                  */
-                private iselect;
+                protected iselect(e: TagEventType<ListViewItemTag>): void;
                 /**
                  * Mount the tag and bind some basic event
                  *
@@ -4666,6 +4762,13 @@ declare namespace OS {
                  */
                 private _ontabselect;
                 /**
+                 * Cache of touch event
+                 *
+                 * @private
+                 * @meberof TabBarTag
+                 */
+                private _previous_touch;
+                /**
                  *Creates an instance of TabBarTag.
                  * @memberof TabBarTag
                  */
@@ -4694,6 +4797,21 @@ declare namespace OS {
                  */
                 set closable(v: boolean);
                 get closable(): boolean;
+                /**
+                 * Setter:
+                 *
+                 * Set the tab bar direction:
+                 * - `horizontal`: horizontal direction
+                 * - `vertical`: vertical direction
+                 *
+                 * Getter:
+                 *
+                 * Get the tab bar direction
+                 *
+                 * @memberof TabBarTag
+                 */
+                set dir(v: string);
+                get dir(): string;
                 /**
                  * Add a tab in the end of the tab bar
                  *
@@ -4733,6 +4851,14 @@ declare namespace OS {
                  */
                 set selected(v: number | number[]);
                 get selected(): number | number[];
+                /**
+                 * Get the latest selected item
+                 *
+                 * @readonly
+                 * @type {ListViewItemTag}
+                 * @memberof TabBarTag
+                 */
+                get selectedItem(): ListViewItemTag;
                 /**
                  * Set the tab close event handle
                  *
@@ -6166,7 +6292,14 @@ declare namespace OS {
                  * @type {GenericObject<any>}
                  * @memberof ButtonTag
                  */
-                data: GenericObject<any>;
+                private _data;
+                /**
+                 * Custom user data setter/gettter
+                 *
+                 * @memberof ButtonTag
+                 */
+                set data(v: GenericObject<any>);
+                get data(): GenericObject<any>;
                 /**
                  *Creates an instance of ButtonTag.
                  * @memberof ButtonTag
@@ -7472,6 +7605,272 @@ declare namespace OS {
         }
     }
 }
+/// <reference types="jquery" />
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * menu event data type definition
+             */
+            type StackMenuEventData = TagEventDataType<ListViewItemTag>;
+            /**
+             * The layout of a simple stack menu item
+             *
+             * @export
+             * @class SimpleStackMenuItemTag
+             * @extends {ListViewItemTag}
+             */
+            class SimpleStackMenuItemTag extends ListViewItemTag {
+                /**
+                 *Creates an instance of SimpleStackMenuItemTag.
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                constructor();
+                /**
+                 * Reset some property to default
+                 *
+                 * @protected
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected init(): void;
+                /**
+                 * Mount the current tag
+                 *
+                 * @protected
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected mount(): void;
+                /**
+                 * Setter: Turn on/off the checker feature of the menu entry
+                 *
+                 * Getter: Check whether the checker feature is enabled on this menu entry
+                 *
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                set switch(v: boolean);
+                get switch(): boolean;
+                /**
+                 * Setter: select/unselect the current item
+                 *
+                 * Getter: Check whether the current item is selected
+                 *
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                set selected(v: boolean);
+                get selected(): boolean;
+                /**
+                 * Setter: Turn on/off the radio feature of the menu entry
+                 *
+                 * Getter: Check whether the radio feature is enabled
+                 *
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                set radio(v: boolean);
+                get radio(): boolean;
+                /**
+                 * Setter:
+                 *
+                 * Toggle the switch on the menu entry, this setter
+                 * only works when the `checker` or `radio` feature is
+                 * enabled
+                 *
+                 * Getter:
+                 *
+                 * Check whether the switch is turned on
+                 *
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                set checked(v: boolean);
+                get checked(): boolean;
+                /**
+                 * Set the keyboard shortcut text
+                 *
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                set shortcut(v: string);
+                /**
+                 * Do nothing
+                 *
+                 * @protected
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Refresh the inner label when the item data
+                 * is changed
+                 *
+                 * @protected
+                 * @returns {void}
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected ondatachange(): void;
+                /**
+                 * Re-render the list item
+                 *
+                 * @protected
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected reload(): void;
+                /**
+                 * List item custom layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType}
+                 * @memberof SimpleStackMenuItemTag
+                 */
+                protected itemlayout(): TagLayoutType;
+            }
+            /**
+             * A stack menu is a multilevel menu that
+             * uses a single list view to navigate all menu levels
+             * instead of using a traditional cascade style menu
+             *
+             * @export
+             * @class StackMenuTag
+             * @extends {AFXTag}
+             */
+            class StackMenuTag extends AFXTag {
+                /**
+                 * Data stack, the list always displays the
+                 * element on the top of the stack
+                 *
+                 * @type {GenericObject<any>[][]}
+                 * @memberof StackMenuTag
+                 */
+                private stack;
+                /**
+                 * Update the current tag, do nothing
+                 *
+                 * @protected
+                 * @param {*} [d]
+                 * @memberof StackMenuTag
+                 */
+                protected reload(d?: any): void;
+                /**
+                * Placeholder of tab select event handle
+                *
+                * @private
+                * @type {TagEventCallback<TabEventData>}
+                * @memberof StackMenuTag
+                */
+                private _onmenuselect;
+                /**
+                 * Stack menu constructor
+                 *
+                 * @memberof StackMenuTag
+                 */
+                constructor();
+                /**
+                 * Reset to default some property value
+                 *
+                 * @protected
+                 * @memberof StackMenuTag
+                 */
+                protected init(): void;
+                /**
+                 * Recalcutate the menu coordinate in case of
+                 * context menu
+                 *
+                 * @protected
+                 * @memberof StackMenuTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Reset the menu to its initial state
+                 *
+                 * @memberof StackMenuTag
+                 */
+                reset(): void;
+                /**
+                 * Mount the tab bar and bind some basic events
+                 *
+                 * @protected
+                 * @memberof StackMenuTag
+                 */
+                protected mount(): void;
+                /**
+                 * Setter: set current selected item index
+                 *
+                 * Getter: Get current selected item index
+                 *
+                 * @memberof StackMenuTag
+                 */
+                set selected(i: number | number[]);
+                get selected(): number | number[];
+                /**
+                 * Setter: Set whether the current menu is a context menu
+                 *
+                 * Getter: Check whether the current menu is a context menu
+                 *
+                 * @memberof StackMenuTag
+                 */
+                set context(v: boolean);
+                get context(): boolean;
+                /**
+                 * Get the latest selected item
+                 *
+                 * @readonly
+                 * @type {ListViewItemTag}
+                 * @memberof StackMenuTag
+                 */
+                get selectedItem(): ListViewItemTag;
+                /**
+                 * Get all the selected items
+                 *
+                 * @readonly
+                 * @type {ListViewItemTag[]}
+                 * @memberof StackMenuTag
+                 */
+                get selectedItems(): ListViewItemTag[];
+                /**
+                 * The following setter/getter are keep for backward compatible
+                 * with the MenuTag interface
+                 *
+                 * Setter: Set the menu data
+                 *
+                 * Getter: Get the menu data
+                 *
+                 * @deprecated
+                 * @memberof StackMenuTag
+                 */
+                set items(v: GenericObject<any>[]);
+                get items(): GenericObject<any>[];
+                /**
+                 * Setter: Set the menu data
+                 *
+                 * Getter: Get the menu data
+                 *
+                 * @memberof StackMenuTag
+                 */
+                set nodes(v: GenericObject<any>[]);
+                get nodes(): GenericObject<any>[];
+                /**
+                 * Set the `menu entry select` event handle
+                 *
+                 * @memberof StackMenuTag
+                 */
+                set onmenuselect(v: TagEventCallback<StackMenuEventData>);
+                /**
+                 * Show the current menu. This function is called
+                 * only if the current menu is a context menu
+                 *
+                 * @param {JQuery.MouseEventBase} e JQuery mouse event
+                 * @returns {void}
+                 * @memberof StackMenuTag
+                 */
+                show(e?: JQuery.MouseEventBase): void;
+                /**
+                 * TabBar layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof StackMenuTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
 declare namespace OS {
     namespace GUI {
         namespace tag {
@@ -7553,6 +7952,13 @@ declare namespace OS {
                  * @memberof SliderTag
                  */
                 set onvaluechanging(f: TagEventCallback<number>);
+                /**
+                 * Setter/Getter: set and get precision reading
+                 *
+                 * @memberof SliderTag
+                 */
+                set precision(v: boolean);
+                get precision(): boolean;
                 /**
                  * Setter: Enable/disable the slider
                  *
@@ -7841,25 +8247,6 @@ declare namespace OS {
                  * @memberof FloatListTag
                  */
                 set onready(v: (e: FloatListTag) => void);
-                /**
-                 * Setter:
-                 *
-                 * Set the direction of the list item layout.
-                 * Two directions are available:
-                 * - `vertical`
-                 * - `horizontal`
-                 *
-                 * This setter acts as a DOM attribute
-                 *
-                 * Getter:
-                 *
-                 * Get the currently set direction of list
-                 * item layout
-                 *
-                 * @memberof FloatListTag
-                 */
-                set dir(v: string);
-                get dir(): string;
                 /**
                  * Disable the dropdown option in this list
                  *
@@ -8290,6 +8677,14 @@ declare namespace OS {
                  */
                 private _history;
                 /**
+                 * This placeholder store the callback for the menu open event
+                 *
+                 * @private
+                 * @type {(el: StackMenuTag) => void}
+                 * @memberof WindowTag
+                 */
+                private _onmenuopen;
+                /**
                  * This placeholder stores the offset of the virtual desktop element
                  *
                  * @private
@@ -8314,6 +8709,12 @@ declare namespace OS {
                  */
                 set blur_overlay(v: boolean);
                 get blur_overlay(): boolean;
+                /**
+                 * Setter: set menu open event handler
+                 *
+                 * @memberof WindowTag
+                 */
+                set onmenuopen(f: (el: StackMenuTag) => void);
                 /**
                  * Init window tag
                  * - `shown`: false
@@ -8359,6 +8760,12 @@ declare namespace OS {
                  */
                 set height(v: number);
                 get height(): number;
+                /**
+                 * Set the application menu content
+                 *
+                 * @memberof WindowTag
+                 */
+                set menu(v: GenericObject<any>[]);
                 /**
                  * Setter: enable/disable window minimizable
                  *
@@ -10136,19 +10543,17 @@ declare namespace OS {
          * @interface AnnouncerListenerType
          */
         interface AnnouncerListenerType {
-            [index: number]: {
-                /**
-                 * The event name
-                 *
-                 * @type {string}
-                 */
-                e: string;
-                /**
-                 * The event callback
-                 *
-                 */
-                f: (d: any) => void;
-            }[];
+            /**
+             * The event name
+             *
+             * @type {string}
+             */
+            e: string;
+            /**
+             * The event callback
+             *
+             */
+            f: (d: any) => void;
         }
         /**
          * This class is the based class used in AntOS event
@@ -10250,7 +10655,7 @@ declare namespace OS {
         /**
          * Placeholder of all global events listeners
          */
-        var listeners: API.AnnouncerListenerType;
+        var listeners: Map<BaseModel | 0, API.AnnouncerListenerType[]>;
         /**
          * Subscribe to a global event
          *
@@ -10259,7 +10664,15 @@ declare namespace OS {
          * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
          * @param {GUI.BaseModel} a the process  (Application/service) related to the callback
          */
-        function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a: BaseModel): void;
+        function on(e: string, f: (d: API.AnnouncementDataType<any>) => void, a?: BaseModel): void;
+        /**
+         * Subscribe to a global event once
+         *
+         * @export
+         * @param {string} e event name
+         * @param {(d: API.AnnouncementDataType<any>) => void} f event callback
+         */
+        function one(e: string, f: (d: API.AnnouncementDataType<any>) => void): void;
         /**
          * Trigger a global event
          *

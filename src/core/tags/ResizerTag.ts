@@ -104,7 +104,7 @@ namespace OS {
                 set dir(v: string) {
                     let att: string;
                     $(this).attr("dir", v);
-                    $(this).off("mousedown", null);
+                    $(this).off("pointerdown", null);
                     if (v === "hz") {
                         $(this).css("cursor", "col-resize");
                         $(this).addClass("horizontal");
@@ -208,24 +208,24 @@ namespace OS {
                     if (!this.dir || this.dir == "none") {
                         return;
                     }
-                    $(this).on("mousedown", (e) => {
+                    $(this).on("pointerdown", (e) => {
                         e.preventDefault();
-                        $(window).on("mousemove", (evt) => {
+                        $(window).on("pointermove", (evt) => {
                             if (!this._resizable_el) {
                                 return;
                             }
                             if (this.dir === "hz") {
-                                return this.horizontalResize(evt);
+                                return this.horizontalResize(evt as JQuery.MouseEventBase);
                             } else if (this.dir === "ve") {
-                                return this.verticalResize(evt);
+                                return this.verticalResize(evt as JQuery.MouseEventBase);
                             }
                         });
 
-                        return $(window).on("mouseup", function (evt) {
-                            $(window).off("mousemove", null);
-                            $(window).off("mouseup", null);
+                        return $(window).on("pointerup", function (evt) {
+                            $(window).off("pointermove", null);
+                            $(window).off("pointerup", null);
 
-                            return $(window).off("mouseup", null);
+                            return $(window).off("pointerup", null);
                         });
                     });
                 }

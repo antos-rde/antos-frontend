@@ -1,19 +1,12 @@
-<afx-app-window data-id = "files-app-window" apptitle="Files" width="600" height="400">
+<afx-app-window data-id = "files-app-window" apptitle="Files" width="600" height="500">
         <afx-vbox>
-            <afx-hbox data-height = "23" data-id = "nav-bar"> 
-                <afx-button data-width = "23" data-id = "btback" iconclass = "fa fa-arrow-left"></afx-button>
-                <input type = "text" data-id = "navinput"></input>
+            <afx-hbox data-height = "35" data-id = "nav-bar">
+                <afx-list-view data-id = "favouri" dropdown="true"></afx-list-view>
                 <div data-width = "2"></div>
-                <afx-button data-width = "23" data-id = "btgrid" iconclass = "fa fa-th"></afx-button>
-                <div data-width = "2"></div>
-                <afx-button data-width = "23" data-id = "btlist" iconclass = "fa fa-th-list"></afx-button>
+                <afx-button data-width = "40" data-id = "btback" iconclass = "fa fa-arrow-up"></afx-button>
+                <afx-button data-width = "40" data-id = "btgrid" iconclass = "fa fa-th"></afx-button>
+                <afx-button data-width = "40" data-id = "btlist" iconclass = "fa fa-th-list"></afx-button>
             </afx-hbox>
-            <div data-height="5"></div>
-            <afx-hbox>
-                <afx-list-view data-id = "favouri" data-width = "150" min-width="100">
-                </afx-list-view>
-                <afx-resizer data-width = "3" ></afx-resizer>
-                <afx-file-view data-id = "fileview"></afx-file-view>
-            </afx-hbox>
+            <afx-file-view data-id = "fileview"></afx-file-view>           
         </afx-vbox>
     </afx-app-window>

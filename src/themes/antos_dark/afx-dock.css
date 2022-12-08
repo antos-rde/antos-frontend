@@ -1,7 +1,4 @@
 afx-apps-dock{
-    bottom: 0px;
-    top: 0px;
-    width: 32px;
     background-color:#363636;
     padding:0;
     padding-top: 0;
@@ -9,23 +6,6 @@ afx-apps-dock{
     border-bottom-right-radius: 0;
     border:1px solid #262626;
     box-shadow: none;
-}
-afx-apps-dock afx-button button{
-    width: 32px;
-    height: 32px;
-    font-size: 19px;
-    margin-bottom: 0;
-    padding:0px;
-    background-color: transparent;
-    border:0;
-    border-radius: 0;
-}
-afx-apps-dock afx-button afx-label i.icon-style{
-    width: 24px;
-    height: 24px;
-    margin-left: 2px;
-    margin-bottom: 0px;
-    border:0;
 }
 
 afx-apps-dock afx-button.selected > button {

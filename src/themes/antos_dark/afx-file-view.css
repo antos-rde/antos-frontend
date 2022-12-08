@@ -1,7 +1,4 @@
 afx-file-view afx-label.status{
-    padding:3px;
-    right: 0px;
-    height: 15px;
     background-color: #464646;
     border-top: 1px solid #262626;
 
@@ -14,7 +11,7 @@ afx-file-view afx-list-view > div.list-container > ul  li{
     margin-right: 5px;
     margin-bottom: 5px;
 }
-afx-file-view afx-list-view > div.list-container > ul afx-list-item:nth-child(even) li {
+afx-file-view afx-list-view > div.list-container > ul .afx-list-item:nth-child(even) li {
     background-color: transparent;
 }
 afx-file-view afx-list-view i.dir:before{
@@ -40,7 +37,7 @@ afx-file-view afx-list-view i.file:before{
     font-weight: normal;
 }
 
-afx-file-view afx-list-view > div.list-container > ul > afx-list-item > li.selected
+afx-file-view afx-list-view > div.list-container > ul > .afx-list-item > li.selected
 {
     background-color: transparent;
 }
@@ -55,7 +52,6 @@ afx-file-view afx-grid-view{
 afx-file-view afx-grid-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
-    font-size: 16px;
     color: white;
     font-style: normal;
     font-weight: normal;
@@ -63,7 +59,6 @@ afx-file-view afx-grid-view i.file:before{
 afx-file-view afx-grid-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
-    font-size: 16px;
     color: #76D2F9;
     font-style: normal;
     font-weight: normal;
@@ -74,36 +69,28 @@ afx-file-view afx-grid-view i{
 afx-file-view afx-grid-view afx-grid-row.afx-grid-row-selected  i:before{
     color:white;
 }
-afx-file-view afx-grid-view afx-grid-row afx-grid-cell
-{
-    padding: 3px;
-}
 
 afx-file-view afx-grid-view .grid_row_header afx-grid-cell{
     background-color: #464646;
     border-top: 1px solid #262626;
     border-right: 1px solid #262626;
     border-bottom: 1px solid #262626;
-    padding: 3px;
 }
 
 afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
-    font-size: 16px;
     color:#76D2F9;
 }
 afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
     content: "\f07c"; 
     font-family: "FontAwesome";
     color:#76D2F9;
-    font-size: 16px;
 }
 
 afx-file-view afx-tree-view .afx-tree-view-item:before{
     content: "\f016"; 
     font-family: "FontAwesome";
-    font-size: 16px;
     font-style: normal;
     font-weight: normal;
 }
@@ -112,14 +99,10 @@ afx-file-view afx-tree-view div.afx_tree_item_selected, afx-file-view afx-tree-v
     background-color: transparent;
 }
 
-afx-file-view afx-tree-view li.itemname{
-    padding:3px;
-    padding-right: 5px;
-}
-afx-file-view afx-tree-view div.afx_tree_item_selected .itemname{
+afx-file-view afx-tree-view div.afx_tree_item_selected ul{
     background-color: #116cd6;
     color:white;
-    border-radius: 3px;
+    border-radius: 0;
     
 }
 afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{

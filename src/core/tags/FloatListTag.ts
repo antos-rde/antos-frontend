@@ -48,30 +48,6 @@ namespace OS {
                     this._onready = v;
                 }
 
-                /**
-                 * Setter:
-                 * 
-                 * Set the direction of the list item layout.
-                 * Two directions are available:
-                 * - `vertical`
-                 * - `horizontal`
-                 *
-                 * This setter acts as a DOM attribute
-                 * 
-                 * Getter:
-                 * 
-                 * Get the currently set direction of list
-                 * item layout
-                 *
-                 * @memberof FloatListTag
-                 */
-                set dir(v: string) {
-                    $(this).attr("dir", v);
-                    this.calibrate();
-                }
-                get dir(): string {
-                    return $(this).attr("dir");
-                }
 
                 /**
                  * Disable the dropdown option in this list
@@ -164,9 +140,9 @@ namespace OS {
                         .css("cursor", "default")
                         .css("display", "block")
                         .css("position", "absolute")
-                        .on("mousedown", (evt) => {
+                        .on("pointerdown", (evt) => {
                             const globalof = $(this.refs.mlist).offset();
-                            evt.preventDefault();
+                            //evt.preventDefault();
                             const offset = $(el).offset();
                             offset.top = evt.clientY - offset.top;
                             offset.left = evt.clientX - offset.left;
@@ -184,11 +160,11 @@ namespace OS {
                             };
 
                             var mouse_up = function (e: JQuery.MouseEventBase) {
-                                $(window).off("mousemove", mouse_move);
-                                return $(window).off("mouseup", mouse_up);
+                                $(window).off("pointermove", mouse_move);
+                                return $(window).off("pointerup", mouse_up);
                             };
-                            $(window).on("mousemove", mouse_move);
-                            return $(window).on("mouseup", mouse_up);
+                            $(window).on("pointermove", mouse_move);
+                            return $(window).on("pointerup", mouse_up);
                         });
                 }
 

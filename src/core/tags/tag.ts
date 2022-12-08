@@ -24,10 +24,10 @@ interface HTMLElement {
      * defined on any child of this element will be ignored.
      *
      * @param {JQuery.MouseEventBase} e a mouse event
-     * @param {OS.GUI.tag.MenuTag} m The context menu element [[MenuTag]]
+     * @param {OS.GUI.tag.StackMenuTag} m The context menu element [[StackMenuTag]]
      * @memberof HTMLElement
      */
-    contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.MenuTag): void;
+    contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.StackMenuTag): void;
 
     /**
      * Mount the element and all the children on its DOM subtree. This action

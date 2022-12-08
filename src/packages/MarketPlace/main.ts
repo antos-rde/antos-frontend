@@ -24,7 +24,7 @@ namespace OS {
             private installdir: string;
             private apps_meta: GenericObject<any>;
             private applist: GUI.tag.ListViewTag;
-            private catlist: GUI.tag.ListViewTag;
+            private catlist: GUI.tag.TabBarTag;
             private container: GUI.tag.VBoxTag;
             private appname: GUI.tag.LabelTag;
             private appdetail: HTMLUListElement;
@@ -44,13 +44,13 @@ namespace OS {
                 this.apps_meta = {};
 
                 this.applist = this.find("applist") as GUI.tag.ListViewTag;
-                this.catlist = this.find("catlist") as GUI.tag.ListViewTag;
+                this.catlist = this.find("catlist") as GUI.tag.TabBarTag;
                 this.applist.onlistselect = (e) => {
                     const data = e.data.item.data;
                     return this.appDetail(data);
                 };
 
-                this.catlist.onlistselect = (e) => {
+                this.catlist.ontabselect = (e) => {
                     const selected = this.catlist.selected;
                     if(selected < 0)
                         return;
@@ -326,7 +326,7 @@ namespace OS {
                         iconclass: "bi bi-gear-wide"
                     });
                 });
-                this.catlist.data = cat_list_data;
+                this.catlist.items = cat_list_data;
                 this.catlist.selected = 0;
             }
             private add_meta_from(k:string, v: API.PackageMetaType)

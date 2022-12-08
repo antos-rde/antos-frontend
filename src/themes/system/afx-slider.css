@@ -20,4 +20,5 @@ afx-slider div.progress {
 
 afx-slider div.dragpoint {
     display: block;
+    padding: 5px;
 }

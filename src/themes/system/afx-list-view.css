@@ -1,15 +1,20 @@
-afx-list-view{
+.afx-list-view{
     overflow:hidden;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-afx-list-view afx-list-item
+
+afx-list-view .afx-list-item
 {
     display: contents;
 }
 afx-list-view > div.list-container{
     overflow: auto;
+    flex: 1;
 }
+
 afx-list-view > div.list-container >  ul{
     margin:0;
     padding: 0;
@@ -17,11 +22,28 @@ afx-list-view > div.list-container >  ul{
 
 afx-list-view  > div.list-container > ul  li{
     margin:0;
-    padding:0;
+    min-height: 25px;
+    padding: 5px;
     list-style: none;
     position: relative;
     -webkit-user-select:none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     cursor:default;
+}
+afx-list-view  > div.list-container > ul afx-dbline-list-item li{
+    min-height: 40px;
+}
+.afx-list-view[dir='horizontal']  > div.list-container > ul
+{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+afx-list-view  > div.list-container > ul  li > i {
+    margin-right: 3px;
 }
 
 afx-list-view  i.closable{
@@ -36,6 +58,7 @@ afx-list-view  i.closable:before{
     content: "\f00d"; 
     font-family: "FontAwesome";
     font-style: normal;
+    font-size: 16px;
 }
 
 afx-list-view.dropdown {
@@ -44,17 +67,43 @@ afx-list-view.dropdown {
 }
 afx-list-view.dropdown > div.list-container{
     overflow: visible;
+    position: absolute;
 }
+afx-list-view.dropdown > div.list-container > div
+{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
 afx-list-view.dropdown > div.list-container > ul{
     overflow-y: auto;
     overflow-x: hidden;
+    max-height: 200px;
+    z-index: 10;
+    position: absolute;
+    left: 0;
+    top: 100%;
 }
 
 afx-list-view.dropdown > div.list-container > ul  li{
-    display: inline-block;
     width:100%;
 }
 
-afx-list-view afx-list-item afx-label {
-    display: inline-block;
+afx-list-view.dropdown div.list-container div:before {
+    content: "\f107"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    position: absolute;
+    right: 5px;
+}
+afx-list-view.dropdown div.list-container div > afx-label{
+    padding-left:3px;
+}
+afx-list-view  div.button_container afx-button button
+{
+    min-width: 30px;
+    min-height: 30px;
 }

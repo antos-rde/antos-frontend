@@ -99,7 +99,7 @@ namespace OS {
                         }
                     }
                     if (i !== -1) {
-                        $(this.items[i].domel).attr("tooltip", `cr:${app.title()}`);
+                        $(this.items[i].domel).attr("tooltip", `ct:${app.title()}`);
                     }
                 }
 
@@ -257,7 +257,7 @@ namespace OS {
                             "afx-button"
                         )[0] as any) as ButtonTag;
                         const app = bt.data as application.BaseApplication;
-                        m.items = [
+                        m.nodes = [
                             { text: "__(New window)", dataid: "new" },
                             { text: "__(Show)", dataid: "show" },
                             { text: "__(Hide)", dataid: "hide" },
