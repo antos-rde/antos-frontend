@@ -27,9 +27,12 @@ afx-list-view.dropdown > div.list-container > ul{
 
 afx-list-view.dropdown{
     color: #414339;
+    background-color: transparent;
+}
+afx-list-view.dropdown div.list-container > div > afx-label
+{
     border:1px solid #a6a6a6;
     border-radius: 3px;
-    background-color: transparent;
 }
 afx-list-view ul.complex-content{
     padding: 0;

@@ -23,11 +23,13 @@ afx-list-view.dropdown > div.list-container > ul{
     background-color: #363636;
     border-top-left-radius: 0px;
 }
-
-afx-list-view.dropdown {
-    color: white;
+afx-list-view.dropdown div.list-container > div > afx-label
+{
     border:1px solid #262626;
     border-radius: 3px;
+}
+afx-list-view.dropdown {
+    color: white;
     background-color: transparent;
 }
 
@@ -51,7 +53,7 @@ afx-list-view  div.button_container afx-button{
 afx-list-view  div.button_container afx-button button{
     border-radius: 0;
 }
-afx-list-view .afx-list-item li afx-label.description i.label-text
+afx-list-view .afx-list-item li afx-label.description
 {
     font-size: 13px;
     padding-left: 10px;

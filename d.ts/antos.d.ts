@@ -5329,11 +5329,11 @@ declare namespace OS {
                 /**
                  * Placeholder of the tab select event handle
                  *
-                 * @private
+                 * @protected
                  * @type {TagEventCallback<TabContainerTabType>}
                  * @memberof TabContainerTag
                  */
-                private _ontabselect;
+                protected _ontabselect: TagEventCallback<TabContainerTabType>;
                 /**
                  *Creates an instance of TabContainerTag.
                  * @memberof TabContainerTag
@@ -5369,11 +5369,13 @@ declare namespace OS {
                  */
                 get tabs(): TabContainerTabType[];
                 /**
-                 * Select a tab by its index
+                 * Setter: Select a tab by its index
+                 * Getter: Get the current selected index
                  *
                  * @memberof TabContainerTag
                  */
                 set selectedIndex(i: number);
+                get selectedIndex(): number;
                 /**
                  * Setter:
                  *
@@ -8118,6 +8120,56 @@ declare namespace OS {
                  * @memberof OverlayTag
                  */
                 protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * A stack pannel allows to navigate back and forth between pannels
+             * (container widget). Each container widget  in the stack should be
+             * composed inside a [[HBoxTag]]
+             *
+             *
+             * @export
+             * @class StackPanelTag
+             * @extends {AFXTag}
+             */
+            class StackPanelTag extends TabContainerTag {
+                private _current_pannel_index;
+                /**
+                 * Mount the tag and bind basic events
+                 *
+                 * @protected
+                 * @memberof StackPanelTag
+                 */
+                protected mount(): void;
+                /**
+                 * Set the tab select event handle
+                 *
+                 * @memberof StackPanelTag
+                 */
+                set ontabselect(f: TagEventCallback<TabContainerTabType>);
+                /**
+                 * Navigate to the next panel
+                 *
+                 * @memberof StackPanelTag
+                 */
+                navigateNext(): void;
+                /**
+                * Navigate back to the previous panel
+                *
+                * @memberof StackPanelTag
+                */
+                navigateBack(): void;
+                /**
+                 * Navigate to a custom tab
+                 *
+                 * @memberof StackPanelTag
+                 */
+                private navigate;
             }
         }
     }

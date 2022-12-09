@@ -44,6 +44,16 @@ afx-app-window ul li.afx-window-title{
     justify-content: center;
 }
 
+afx-app-window ul li.afx-window-title afx-label span
+{
+    justify-content: flex-start;
+}
+
+afx-app-window ul li.afx-window-title afx-label i.label-text
+{
+    white-space: nowrap;
+}
+
 afx-app-window div.afx-window-content
 {
     overflow: hidden;

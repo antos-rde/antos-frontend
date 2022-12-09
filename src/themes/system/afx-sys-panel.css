@@ -109,10 +109,10 @@ afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul
 }
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul  li{
     /*display: block;*/
-    width: 70px;
+    width: 90px;
     text-align: center;
     font-size: 40px;
-    justify-content: normal !important;
+    /*justify-content: normal !important;*/
 }
 
 afx-sys-panel afx-list-view[data-id="applist"] i{

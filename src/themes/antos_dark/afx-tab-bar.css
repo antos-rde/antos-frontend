@@ -3,12 +3,12 @@ afx-tab-bar[dir="horizontal"] afx-list-view > div.list-container > ul > afx-list
 {
     background-color: #464646;
     color:white;
-    border-bottom:1px solid #262626;
+    border-bottom:2px solid #116cd6; /* #262626;*/
 }
 
 afx-tab-bar[dir="vertical"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
 {
     background-color: #464646;
     color:white;
-    border-right:1px solid #262626;
+    border-right:2px solid #116cd6; /* #262626;*/
 }

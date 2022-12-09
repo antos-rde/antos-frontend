@@ -45,11 +45,11 @@ namespace OS {
                 /**
                  * Placeholder of the tab select event handle
                  *
-                 * @private
+                 * @protected
                  * @type {TagEventCallback<TabContainerTabType>}
                  * @memberof TabContainerTag
                  */
-                private _ontabselect: TagEventCallback<TabContainerTabType>;
+                protected _ontabselect: TagEventCallback<TabContainerTabType>;
 
                 /**
                  *Creates an instance of TabContainerTag.
@@ -102,12 +102,16 @@ namespace OS {
                 }
 
                 /**
-                 * Select a tab by its index
-                 *
+                 * Setter: Select a tab by its index
+                 * Getter: Get the current selected index
+                 * 
                  * @memberof TabContainerTag
                  */
                 set selectedIndex(i: number) {
                     (this.refs.bar as TabBarTag).selected = i;
+                }
+                get selectedIndex(): number {
+                    return (this.refs.bar as TabBarTag).selected as number;
                 }
 
                 /**
