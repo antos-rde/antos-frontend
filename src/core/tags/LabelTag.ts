@@ -94,6 +94,49 @@ namespace OS {
                         $(this.refs.i).hide();
                     }
                 }
+                /**
+                 * set horizontal aligment of the label content
+                 * 
+                 * @param {string} v shall be "left, right, or center"
+                 */
+                set halign(v: string)
+                {
+                    let align = "center";
+                    switch(v)
+                    {
+                        case "left":
+                            align = "flex-start";
+                            break;
+                        case "right":
+                            align = "flex-end";
+                            break;
+                        default:
+                            break;
+                    }
+                    $(this.refs.container).css("justify-content", align);
+                }
+                
+                /**
+                 * set horizontal aligment of the label content
+                 * 
+                 * @param {string} v shall be "top, bottom, or center"
+                 */
+                set valign(v: string)
+                {
+                    let align = "center";
+                    switch(v)
+                    {
+                        case "top":
+                            align = "flex-start";
+                            break;
+                        case "bottom":
+                            align = "flex-end";
+                            break;
+                        default:
+                            break;
+                    }
+                    $(this.refs.container).css("align-items", align);
+                }
 
                 /**
                  * Set the CSS class of the label icon

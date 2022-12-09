@@ -4723,6 +4723,153 @@ declare namespace OS {
         }
     }
 }
+/// <reference types="jquery" />
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * This tag define a basic text input and its behavior
+             *
+             * @export
+             * @class InputTag
+             * @extends {AFXTag}
+             */
+            class InputTag extends AFXTag {
+                /**
+                 *Creates an instance of InputTag.
+                 * @memberof InputTag
+                 */
+                constructor();
+                /**
+                 * Set the path to the header icon, the path should be
+                 * a VFS file path
+                 *
+                 * @memberof InputTag
+                 */
+                set icon(v: string);
+                /**
+                 * Set the icon class to the header
+                 *
+                 * @memberof InputTag
+                 */
+                set iconclass(v: string);
+                /**
+                 * Alias to header setter/getter
+                 *
+                 * @memberof InputTag
+                 */
+                set text(v: string | FormattedString);
+                get text(): string | FormattedString;
+                /**
+                 * Setter: Set the text of the button
+                 *
+                 * Getter: Get the current button test
+                 *
+                 * @memberof InputTag
+                 */
+                set label(v: string | FormattedString);
+                get label(): string | FormattedString;
+                /**
+                 * Setter: Enable or disable the input
+                 *
+                 * Getter: Get the `enable` property of the input
+                 *
+                 * @memberof InputTag
+                 */
+                set disable(v: boolean);
+                get disable(): boolean;
+                /**
+                 * Setter: set verbosity of the input
+                 *
+                 * Getter: Get the  current input verbosity
+                 *
+                 * @memberof InputTag
+                 */
+                set verbose(v: boolean);
+                get verbose(): boolean;
+                /**
+                 * JQuery style generic event handling on the input element
+                 *
+                 * @param {string} enname: JQuery event name
+                 * @param {JQuery.TypeEventHandler<HTMLInputElement | HTMLTextAreaElement, unknown, any, any, string>} handle: JQuery handle
+                 * @memberof InputTag
+                 */
+                on(ename: string, handle: JQuery.TypeEventHandler<HTMLInputElement | HTMLTextAreaElement, unknown, any, any, string>): void;
+                /**
+                 * Manually trigger an event
+                 *
+                 * @param {string} evt: JQuery event name
+                 * @memberof InputTag
+                 */
+                trigger(evt: string): void;
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof InputTag
+                 */
+                protected mount(): void;
+                /**
+                 * Get the current active input element
+                 *
+                 * @memberof InputTag
+                 */
+                get input(): HTMLInputElement | HTMLTextAreaElement;
+                /**
+                 * Get/set the current active input value
+                 *
+                 * @memberof InputTag
+                 */
+                get value(): string;
+                set value(v: string);
+                /**
+                 * Get/set input type
+                 * This only affects the inline input element
+                 *
+                 * @memberof InputTag
+                 */
+                get type(): string;
+                set type(v: string);
+                /**
+                 * Get/set input name
+                 *
+                 * @memberof InputTag
+                 */
+                get name(): string;
+                set name(v: string);
+                /**
+                 *  Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof InputTag
+                 */
+                protected init(): void;
+                /**
+                 * Re-calibrate the button, do nothing in this tag
+                 *
+                 * @protected
+                 * @memberof InputTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Update the current tag, do nothing in this tag
+                 *
+                 * @param {*} [d]
+                 * @memberof InputTag
+                 */
+                reload(d?: any): void;
+                /**
+                 * Button layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof InputTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+        }
+    }
+}
 declare namespace OS {
     namespace GUI {
         namespace tag {
@@ -5248,6 +5395,18 @@ declare namespace OS {
                  * @memberof LabelTag
                  */
                 set icon(v: string);
+                /**
+                 * set horizontal aligment of the label content
+                 *
+                 * @param {string} v shall be "left, right, or center"
+                 */
+                set halign(v: string);
+                /**
+                 * set horizontal aligment of the label content
+                 *
+                 * @param {string} v shall be "top, bottom, or center"
+                 */
+                set valign(v: string);
                 /**
                  * Set the CSS class of the label icon
                  *
@@ -6425,6 +6584,7 @@ declare namespace OS {
                  * @memberof TileLayoutTag
                  */
                 constructor();
+                private _padding;
                 /**
                  * Do nothing
                  *
@@ -6464,6 +6624,19 @@ declare namespace OS {
                  */
                 set dir(v: "row" | "column");
                 get dir(): "row" | "column";
+                /**
+                 * Setter:
+                 *
+                 * SET content padding
+                 *
+                 * Getter:
+                 *
+                 * Get content padding
+                 *
+                 * @memberof TileLayoutTag
+                 */
+                set padding(v: number);
+                get padding(): number;
                 /**
                  * Mount the element
                  *

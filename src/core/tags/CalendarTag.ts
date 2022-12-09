@@ -113,8 +113,10 @@ namespace OS {
                  * @memberof CalendarTag
                  */
                 protected mount(): void {
-                    $(this.refs.prev).on("click",(e) => this.prevmonth());
-                    $(this.refs.next).on("click",(e) => this.nextmonth());
+                    (this.refs.prev as ButtonTag).iconclass = "fa fa-angle-left";
+                    (this.refs.next as ButtonTag).iconclass = "fa fa-angle-right";
+                    (this.refs.prev as ButtonTag).onbtclick = (e) => this.prevmonth();
+                    (this.refs.next as ButtonTag).onbtclick = (e) => this.nextmonth();
                     const grid = this.refs.grid as GridViewTag;
                     grid.header = [
                         { text: "__(Sun)" },
@@ -319,9 +321,9 @@ namespace OS {
                             el: "div",
                             ref: "ctrl",
                             children: [
-                                { el: "i", class: "prevmonth", ref: "prev" },
+                                { el: "afx-button", class: "prevmonth", ref: "prev" },
                                 { el: "afx-label", ref: "mlbl" },
-                                { el: "i", class: "nextmonth", ref: "next" },
+                                { el: "afx-button", class: "nextmonth", ref: "next" },
                             ],
                         },
                         { el: "afx-grid-view", ref: "grid" },

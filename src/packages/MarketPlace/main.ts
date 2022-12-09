@@ -601,7 +601,7 @@ namespace OS {
                         const dep = this.checkDependencies(pkgname);
                         if (dep.notfound.size != 0) {
                             this.openDialog("TextDialog", {
-                                disable: true,
+                                disable: false,
                                 title: __("Unresolved dependencies"),
                                 value: __(
                                     "Unable to install: The package `{0}` depends on these packages, but they are not found:\n{1}",

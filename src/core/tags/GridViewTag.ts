@@ -1217,7 +1217,6 @@ namespace OS {
                             .css("top", top + "px")
                             .css("left", left + "px");
                     };
-
                     return this.calibrate();
                 }
 

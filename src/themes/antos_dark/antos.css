@@ -1,5 +1,4 @@
 html,body{
-    font-family: "Ubuntu";
     color: white;
 }
 #desktop > div > ul afx-list-item {
@@ -44,14 +43,11 @@ html,body{
 input {
     outline: none;
     padding: 2px;
-    height:23px;
     border: 1px solid #262626;
     background-color:#464646;
     color: white;
     border-radius: 3px;
     box-sizing: border-box;
-    font-family: "Ubuntu";
-    font-size: 13px;
 }
 
 textarea {

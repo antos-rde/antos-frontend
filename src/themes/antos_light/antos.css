@@ -1,5 +1,4 @@
 html,body{
-    font-family: "Ubuntu";
     color:#414339;
 }
 
@@ -45,14 +44,11 @@ html,body{
 input {
     outline: none;
     padding: 2px;
-    height:23px;
     border: 1px solid #a6a6a6;
     background-color: #f6F6F6;
     color: #414339;
     border-radius: 5px;
     box-sizing: border-box;
-    font-family: "Ubuntu";
-    font-size: 13px;
 }
 textarea {
     color: #414339;
