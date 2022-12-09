@@ -99,11 +99,22 @@ afx-list-view.dropdown div.list-container div:before {
     position: absolute;
     right: 5px;
 }
-afx-list-view.dropdown div.list-container div > afx-label{
+afx-list-view.dropdown div.list-container > div > afx-label{
     padding-left:3px;
+    padding-right: 25px;
+    height: 100%;
 }
+afx-list-view.dropdown div.list-container > div > afx-label span
+{
+    justify-content: flex-start;
+    white-space: nowrap;
+     overflow: hidden;
+}
+
 afx-list-view  div.button_container afx-button button
 {
     min-width: 30px;
     min-height: 30px;
+    padding-left: 5px;
+    padding-right: 5px;
 }

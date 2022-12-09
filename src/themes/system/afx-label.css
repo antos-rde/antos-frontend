@@ -8,7 +8,10 @@ afx-label span {
     height: 100%;
 }
 afx-label  i.label-text{
+    margin-left: 3px;
+}
+
+afx-label i{
     font-weight: normal;
     font-style: normal;
-    margin-left: 3px;
 }

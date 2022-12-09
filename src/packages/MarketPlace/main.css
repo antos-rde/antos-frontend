@@ -5,23 +5,7 @@ afx-app-window[data-id="marketplace-win"] afx-list-view[data-id='repo'] div.list
 
 afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] div[data-id="desc-container"]{
     overflow-y: auto;
-    overflow-x: none;
-}
-afx-app-window[data-id="marketplace-win"] afx-vbox[data-id='container'] afx-hbox {
-    padding-left: 10px;
-}
-afx-app-window[data-id="marketplace-win"] afx-label[data-id='appname'] i.label-text{
-    font-weight: bold;
-    font-size: 20px;
-    padding: 10px;
-}
-
-afx-app-window[data-id="marketplace-win"] div[data-id='appname']:before {
-    content: "\f085"; 
-    font-family: "FontAwesome";
-    font-size: 25px;
-    font-style: normal;
-    margin-right: 10px;
+    overflow-x: hidden;
 }
 afx-app-window[data-id="marketplace-win"] p[data-id='app-desc'] {
     text-align: justify;
@@ -38,9 +22,10 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
     padding-left:10px;
     display: table;
     margin: 0;
+    font-size: 13px;
 }
-afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] {
-    border-bottom: 1px solid #afafaf;
+afx-app-window[data-id="marketplace-win"] afx-tab-bar {
+    border-top: 1px solid #c3c3c3;
 }
 afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] input{
     border: 0;
@@ -48,13 +33,14 @@ afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] i
 }
 afx-app-window[data-id="marketplace-win"] div[data-id="searchicon"]:before{
     content: "\f002";
-    display: block;
     background-color:transparent;
     color:#afafaf;
     font-family: "FontAwesome";
-    padding-top: 3px;
-    padding-left:3px;
-    /* font-size: 25px; */
+    padding-left:5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] li{
     padding:0;
@@ -69,6 +55,10 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] span{
 }
 afx-app-window[data-id="marketplace-win"] span.info-header{
     font-weight: bold;
+}
+afx-app-window[data-id="marketplace-win"] span.info-detail
+{
+    word-break: break-word;
 }
 afx-app-window[data-id="marketplace-win"] afx-label[data-id="vstat"] {
     font-size: 11px;
@@ -85,6 +75,75 @@ afx-app-window[data-id = "repository-dialog-win"] afx-list-view[data-id="repo-li
 }
 
 afx-app-window[data-id="marketplace-win"] afx-tab-bar[data-id="catlist"] i.label-text
+{
+    font-weight: bold;
+}
+
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container {
+    margin: 0 auto;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul
+{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul  li{
+    /*display: block;*/
+    width: 90px;
+    text-align: center;
+    font-size: 40px;
+    /*justify-content: normal !important;*/
+}
+
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] i{
+    display: block;
+    width: 100%;
+}
+
+
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] i.label-text{
+    word-break: break-word;
+    font-size: 14px;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] i.icon-style {
+    width: 40px;
+    height: 40px;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] afx-label span
+{
+    flex-direction: column;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul li:hover {
+    background-color: transparent;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item:nth-child(even) li
+{
+    background-color: transparent;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li:hover
+{
+    background-color: #cecece;
+    color: #262626;
+    border-radius: 10px;
+}
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li.selected
+{
+    background-color: #116cd6;
+    color:white;
+    border-radius: 10px;
+}
+
+afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"] afx-button button
+{
+    border-radius: 0;
+}
+afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"]
+{
+    border-radius: 0;
+    border-bottom: 1px solid #c3c3c3;
+}
+afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"] afx-button[data-id="appname"] i.label-text
 {
     font-weight: bold;
 }

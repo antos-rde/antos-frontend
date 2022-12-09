@@ -164,6 +164,7 @@ namespace OS {
          */
         export function clearTheme(): void {
             $("head link#ostheme").attr("href", "");
+            $("body").attr("theme", "");
         }
 
         /**
@@ -180,6 +181,7 @@ namespace OS {
             }
             const path = `resources/themes/${name}/${name}.css`;
             $("head link#ostheme").attr("href", path);
+            $("body").attr("theme", name);
         }
 
 

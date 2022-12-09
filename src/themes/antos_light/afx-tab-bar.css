@@ -1,14 +1,18 @@
 
 afx-tab-bar[dir="horizontal"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
 {
-    background-color: #116cd6;
-    color:white;
-    border-bottom:1px solid #c3c3c3;
+    /*background-color: #116cd6;
+    color:white;*/
+    background-color: #f5F5F5;
+    color: unset;
+    border-bottom:2px solid #116cd6; /* #c3c3c3;*/
 }
 
 afx-tab-bar[dir="vertical"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
 {
-    background-color: #116cd6;
-    color:white;
-    border-right:1px solid #c3c3c3;
+    /*background-color: #116cd6;
+    color:white;*/
+    background-color: #f5F5F5;
+    color: unset;
+    border-right:2px solid #116cd6; /* #c3c3c3;*/
 }

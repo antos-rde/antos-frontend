@@ -26,7 +26,7 @@ namespace OS {
             private applist: GUI.tag.ListViewTag;
             private catlist: GUI.tag.TabBarTag;
             private container: GUI.tag.VBoxTag;
-            private appname: GUI.tag.LabelTag;
+            private appname: GUI.tag.ButtonTag;
             private appdetail: HTMLUListElement;
             private appdesc: HTMLParagraphElement;
             private btinstall: GUI.tag.ButtonTag;
@@ -39,6 +39,20 @@ namespace OS {
             }
 
             main(): void {
+                const stack_panel = this.find("stack-panel") as GUI.tag.StackPanelTag;
+                this.container = this.find("container") as GUI.tag.VBoxTag;
+                this.appname = this.find("appname") as GUI.tag.ButtonTag;
+                this.appdesc = this.find("app-desc") as HTMLParagraphElement;
+                this.appdetail = this.find("app-detail") as HTMLUListElement;
+                this.btinstall = this.find("bt-install") as GUI.tag.ButtonTag;
+                this.btremove = this.find("bt-remove") as GUI.tag.ButtonTag;
+                this.btexec = this.find("bt-exec") as GUI.tag.ButtonTag;
+                this.searchbox = this.find("searchbox") as HTMLInputElement;
+
+                this.appname.onbtclick = (_) => {
+                    this.applist.selected = -1;
+                    stack_panel.navigateBack();
+                }
                 this.installdir = this.systemsetting.system.pkgpaths.user;
                 // test repository
                 this.apps_meta = {};
@@ -47,13 +61,15 @@ namespace OS {
                 this.catlist = this.find("catlist") as GUI.tag.TabBarTag;
                 this.applist.onlistselect = (e) => {
                     const data = e.data.item.data;
-                    return this.appDetail(data);
+                    this.appDetail(data);
+                    stack_panel.navigateNext();
                 };
 
                 this.catlist.ontabselect = (e) => {
                     const selected = this.catlist.selected;
                     if(selected < 0)
                         return;
+                    
                     if(selected === 0)
                     {
                         return this.resetAppList();
@@ -93,14 +109,7 @@ namespace OS {
                     this.applist.data = result;
                 };
 
-                this.container = this.find("container") as GUI.tag.VBoxTag;
-                this.appname = this.find("appname") as GUI.tag.LabelTag;
-                this.appdesc = this.find("app-desc") as HTMLParagraphElement;
-                this.appdetail = this.find("app-detail") as HTMLUListElement;
-                this.btinstall = this.find("bt-install") as GUI.tag.ButtonTag;
-                this.btremove = this.find("bt-remove") as GUI.tag.ButtonTag;
-                this.btexec = this.find("bt-exec") as GUI.tag.ButtonTag;
-                this.searchbox = this.find("searchbox") as HTMLInputElement;
+                
                 $(this.container).css("visibility", "hidden");
                 this.btexec.onbtclick = (_e) => {
                     const el = this.applist.selectedItem;
@@ -173,14 +182,18 @@ namespace OS {
                 switch (e.which) {
                     case 37:
                         return e.preventDefault();
+                    /*
                     case 38:
                         this.applist.selectPrev();
                         return e.preventDefault();
+                    */
                     case 39:
                         return e.preventDefault();
+                    /*
                     case 40:
                         this.applist.selectNext();
                         return e.preventDefault();
+                    */
                     case 13:
                         return e.preventDefault();
                     default:
@@ -375,6 +388,8 @@ namespace OS {
                 this.appname.text = d.name;
                 const status = this.find("vstat") as GUI.tag.LabelTag;
                 status.text = "";
+                $(this.appdesc).empty();
+                $(this.appdetail).empty();
                 if (d.description) {
                     d.description
                         .asFileHandle()
@@ -391,8 +406,6 @@ namespace OS {
                             );
                             return $(this.appdesc).empty();
                         });
-                } else {
-                    $(this.appdesc).empty();
                 }
                 const pkgcache = this.systemsetting.system.packages;
                 this.btinstall.text = "__(Install)";
@@ -423,7 +436,6 @@ namespace OS {
                     $(this.btexec).hide();
                 }
 
-                $(this.appdetail).empty();
                 for (let k in d) {
                     const v = d[k];
                     if (k !== "name" && k !== "description" && k !== "domel") {
@@ -432,7 +444,7 @@ namespace OS {
                                 .append(
                                     $("<span class= 'info-header'>").html(k)
                                 )
-                                .append($("<span>").html(v))
+                                .append($("<span class = 'info-detail'>").html(v))
                         );
                     }
                 }

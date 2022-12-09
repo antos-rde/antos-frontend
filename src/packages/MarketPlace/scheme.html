@@ -1,20 +1,25 @@
-<afx-app-window data-id = "marketplace-win" apptitle="MarketPlace" width="650" height="400">
+<afx-app-window data-id = "marketplace-win" apptitle="MarketPlace" width="650" height="500">
     <afx-vbox >
-        <afx-hbox data-height= "23" data-id="search-container">
-            <div data-width="17" data-id="searchicon"></div>
-            <input data-id = "searchbox" ></input>
-        </afx-hbox>
-        <afx-tab-bar data-id = "catlist" data-height="45"></afx-tab-bar>
-        <afx-hbox>
-            <afx-list-view data-id = "applist" dropdown = "false" data-width="30%"></afx-list-view>
-            <afx-resizer data-width = "3" ></afx-resizer>
+        <afx-stack-panel data-id = "stack-panel" dir = "column" tabbarheight= "40">
+
+            <afx-vbox>
+                <afx-hbox data-height= "30" data-id="search-container">
+                    <div data-width="17" data-id="searchicon"></div>
+                    <input data-id = "searchbox" ></input>
+                </afx-hbox>
+                <afx-tab-bar data-id = "catlist" data-height="45"></afx-tab-bar>
+                <afx-list-view data-id = "applist" dropdown = "false"></afx-list-view>
+            </afx-vbox>
+
+            <afx-hbox>
+            
             <afx-vbox data-id = "container">
-                    <afx-label data-id = "appname" data-height = "45"></afx-label>
-                    <afx-hbox data-height = "50">
-                        <div style = "text-align:left;">
-                            <afx-button data-id = "bt-remove" text = "__(Uninstall)"></afx-button>
-                            <afx-button data-id = "bt-exec" text = "__(Launch)"></afx-button>
-                            <afx-button data-id = "bt-install" text = "__(Install)" ></afx-button>
+                    <afx-hbox data-height = "35" data-id="app-header">
+                        <afx-button data-id = "appname" iconclass = "bi bi-backspace-fill"></afx-button>
+                        <div style = "display: flex;justify-content: end;">
+                            <afx-button data-id = "bt-remove" text = "__(Uninstall)" iconclass = "bi bi-trash-fill"></afx-button>
+                            <afx-button data-id = "bt-exec" text = "__(Launch)" iconclass = "fa fa-cog"></afx-button>
+                            <afx-button data-id = "bt-install" text = "__(Install)" iconclass = "bi bi-cloud-download-fill" ></afx-button>
                             <p class="stat"><afx-label data-id="vstat"></afx-label></p>
                         </div>
                     </afx-hbox>
@@ -24,5 +29,11 @@
                     </div>
             </afx-vbox>
         </afx-hbox>
-    </afx-vbox>
+
+        </afx-stack-panel>
+
+        
+        
+        
+    </afx-hbox>
 </afx-app-window>
