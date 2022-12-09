@@ -372,23 +372,15 @@ namespace OS {
                  */
                 main(): void {
                     super.main();
-                    const $input = $(this.find("txtInput"));
-                    if (this.data && this.data.label) {
-                        (this.find(
-                            "lbl"
-                        ) as tag.LabelTag).text = this.data.label;
-                    }
-                    if (this.data && this.data.value) {
-                        $input.val(this.data.value);
-                    }
-
-                    if (this.data && this.data.type) {
-                        ($input[0] as HTMLInputElement).type = this.data.type
+                    const input = this.find("txtInput") as GUI.tag.InputTag;
+                    if(this.data)
+                    {
+                        input.set(this.data);
                     }
 
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
                         if (this.handle) {
-                            this.handle($input.val());
+                            this.handle(input.value);
                         }
                         return this.quit();
                     };
@@ -399,40 +391,30 @@ namespace OS {
                         return this.quit();
                     };
 
-                    $input.on("keyup", (e) => {
+                    input.on("keyup", (e) => {
                         if (e.which !== 13) {
                             return;
                         }
                         if (this.handle) {
-                            this.handle($input.val());
+                            this.handle(input.value);
                         }
                         return this.quit();
                     });
 
-                    $input.trigger("focus");
+                    input.trigger("focus");
                 }
             }
             /**
              * Scheme definition of the Prompt dialog
              */
             PromptDialog.scheme = `\
-<afx-app-window  width='200' height='150' apptitle = "Prompt">
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-label data-id = "lbl" ></afx-label>
-                <input type = "text" data-id= "txtInput" ></input>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='250' height='200' apptitle = "Prompt">
+    <afx-vbox padding = "10">
+        <afx-input data-id= "txtInput"></afx-input>
+        <div data-height="35" style="text-align: right;">
+            <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -464,15 +446,11 @@ namespace OS {
                  */
                 main(): void {
                     super.main();
-                    const $input = $(this.find("txtInput"));
-                    if (this.data && this.data.value) {
-                        $input.val(this.data.value);
-                    }
-                    if (this.data && this.data.disable) {
-                        $input.prop('disabled', true);
-                    }
+                    const input = this.find("txtInput") as tag.InputTag;
+                    if(this.data)
+                        input.set(this.data);
                     (this.find("btn-Ok") as tag.ButtonTag).onbtclick = (_e) => {
-                        const value = $input.val();
+                        const value = input.value;
                         if (!value || value === "") {
                             return;
                         }
@@ -488,7 +466,7 @@ namespace OS {
                         return this.quit();
                     };
 
-                    $input.focus();
+                    input.trigger("focus");
                 }
             }
             /**
@@ -496,21 +474,12 @@ namespace OS {
              */
             TextDialog.scheme = `\
 <afx-app-window data-id = "TextDialog" width='400' height='300'>
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <textarea data-id= "txtInput" ></textarea>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btn-Ok" text = "__(Ok)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+    <afx-vbox padding="10">
+        <afx-input data-id= "txtInput" verbose="true"></afx-input>
+        <div data-height="40" style="text-align:right;padding-top:5px;">
+            <afx-button data-id = "btn-Ok" text = "__(Ok)" ></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" ></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -575,23 +544,13 @@ namespace OS {
              * Scheme definition
              */
             CalendarDialog.scheme = `\
-<afx-app-window  width='300' height='250' apptitle = "Calendar" >
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-calendar-view data-id = "cal" ></afx-calendar-view>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-                <div data-height="10" ></div>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='350' height='380' apptitle = "Calendar" >
+    <afx-vbox padding="10">
+        <afx-calendar-view data-id = "cal" ></afx-calendar-view>
+        <div data-height="35" style = 'text-align: right;'>
+            <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -654,23 +613,13 @@ namespace OS {
              * Scheme definition
              */
             ColorPickerDialog.scheme = `\
-<afx-app-window  width='320' height='250' apptitle = "Color picker" >
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-color-picker data-id = "cpicker" ></afx-color-picker>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-                <div data-height="10" ></div>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='320' height='300' apptitle = "Color picker" >
+    <afx-vbox padding = "10">
+        <afx-color-picker data-id = "cpicker" ></afx-color-picker>
+        <div data-height="35" style = "text-align: right;">
+            <afx-button data-id = "btnOk" text = "__(Ok)"  ></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" ></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -734,22 +683,12 @@ namespace OS {
              * Scheme definition
              */
             InfoDialog.scheme = `\
-<afx-app-window  width='250' height='300' apptitle = "Info" >
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-grid-view data-id = "grid" ></afx-grid-view>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-                <div data-height="10" ></div>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='300' height='350' apptitle = "Info" >
+    <afx-vbox padding = "10">
+        <afx-grid-view data-id = "grid" ></afx-grid-view>
+        <div data-height="35" style="text-align: right;">
+            <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -815,22 +754,13 @@ namespace OS {
              * Scheme definition
              */
             YesNoDialog.scheme = `\
-<afx-app-window  width='200' height='150' apptitle = "Prompt">
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-label data-id = "lbl" ></afx-label>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnYes" text = "__(Yes)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnNo" text = "__(No)" data-width = "40" ></afx-button>
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='250' height='200' apptitle = "Warning">
+    <afx-vbox padding = "10">
+        <afx-label data-id = "lbl" valign="top" ></afx-label>
+        <div data-height="35" style = "text-align: right;">
+            <afx-button data-id = "btnYes" text = "__(Yes)" ></afx-button>
+            <afx-button data-id = "btnNo" text = "__(No)"></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -901,22 +831,13 @@ namespace OS {
              * Scheme definition
              */
             SelectionDialog.scheme = `\
-<afx-app-window  width='250' height='300' apptitle = "Selection">
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" ></div>
-            <afx-vbox>
-                <div data-height="10" ></div>
-                <afx-list-view data-id = "list" ></afx-list-view>
-                <div data-height="10" ></div>
-                <afx-hbox data-height="30">
-                    <div ></div>
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" ></div>
-        </afx-hbox>
+<afx-app-window  width='350' height='300' apptitle = "Selection">
+    <afx-vbox padding = "10">
+        <afx-list-view data-id = "list" ></afx-list-view>
+        <div data-height="35" style = "text-align: right;">
+            <afx-button data-id = "btnOk" text = "__(Ok)" ></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -960,18 +881,11 @@ namespace OS {
                         iconclass: mt.iconclass,
                         text: `${mt.name}(v${mt.version})`,
                     });
-                    $(this.find("mydesc")).html(mt.description);
+                    $(this.find("mydesc")).html(`${mt.description} <br/> ${mt.info.author} (${mt.info.email})`);
                     // grid data for author info
                     if (!mt.info) {
                         return;
                     }
-                    const rows = [
-                        [{ text: __("Author") }, { text: mt.info.author }],
-                        [{ text: __("Email") }, { text: mt.info.email }]
-                    ];
-                    const grid = this.find("mygrid") as tag.GridViewTag;
-                    grid.header = [{ text: "", width: 100 }, { text: "" }];
-                    grid.rows = rows;
                     `pkg://${mt.pkgname?mt.pkgname:mt.app}/README.md`
                         .asFileHandle()
                         .read()
@@ -995,25 +909,19 @@ namespace OS {
              * Scheme definition
              */
             AboutDialog.scheme = `\
-<afx-app-window data-id = 'about-window'  width='450' height='400'>
-    <afx-vbox>
+<afx-app-window data-id = 'about-window'  width='550' height='450'>
+    <afx-vbox padding = "5">
         <div style="text-align:center; margin-top:10px;" data-height="50">
             <h3 style = "margin:0;padding:0;">
                 <afx-label data-id = 'mylabel' style="display: inline-block;"></afx-label>
             </h3>
             <i><p style = "margin:0; padding:0" data-id = 'mydesc'></p></i>
         </div>
-        <afx-hbox data-height="60">
-            <div data-width="10"></div>
-            <afx-grid-view data-id = 'mygrid'></afx-grid-view>
-        </afx-hbox>
         <div data-id="read-me" style="overflow-x: hidden; overflow-y: auto;"></div>
         <div data-height="10"></div>
-        <afx-hbox data-height="30">
-            <div ></div>
-            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "60" ></afx-button>
-        </afx-hbox>
-        <div data-height = "10"></div>
+        <div data-height="35" style = "text-align: right;">
+            <afx-button data-id = "btnCancel" text = "__(Cancel)" ></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -1076,7 +984,7 @@ namespace OS {
                     super.main();
                     const fileview = this.find("fileview") as tag.FileViewTag;
                     const location = this.find("location") as tag.ListViewTag;
-                    const filename = this.find("filename") as HTMLInputElement;
+                    const filename = this.find("filename") as tag.InputTag;
                     fileview.fetch = (path: string) =>
                         new Promise(function (resolve, reject) {
                             if (!path) {
@@ -1133,7 +1041,7 @@ namespace OS {
                     }
                     fileview.onfileselect = function (e) {
                         if (e.data.type === "file") {
-                            return $(filename).val(e.data.filename);
+                            return filename.value = e.data.filename;
                         }
                     };
                     (this.find("btnOk") as tag.ButtonTag).onbtclick = (_e) => {
@@ -1180,7 +1088,7 @@ namespace OS {
                             }
                         }
 
-                        const name = $(filename).val();
+                        const name = filename.value;
                         if (this.handle) {
                             this.handle({ file: f, name });
                         }
@@ -1194,9 +1102,13 @@ namespace OS {
                     };
 
                     if (this.data && this.data.file) {
-                        $(filename)
-                            .css("display", "block")
-                            .val(this.data.file.basename || "Untitled");
+                        $(filename).show();
+                        filename.value = (this.data.file.basename || "Untitled");
+                        this.trigger("resize");
+                    }
+                    else
+                    {
+                        $(filename).hide();
                         this.trigger("resize");
                     }
                     if (this.data && this.data.hidden) {
@@ -1222,18 +1134,15 @@ namespace OS {
              * Scheme definition
              */
             FileDialog.scheme = `\
-<afx-app-window width='400' height='300'>
+<afx-app-window width='400' height='450'>
     <afx-vbox>
-        <afx-list-view data-id = "location" dropdown = "true" data-height = "40"></afx-list-view>
+        <afx-list-view data-id = "location" dropdown = "true" data-height = "35"></afx-list-view>
         <afx-file-view data-id = "fileview" view="tree" status = "false"></afx-file-view>
-        <input data-height = '26' type = "text" data-id = "filename" style="margin-left:5px; margin-right:5px;display:none;" ></input> 
-        <afx-hbox data-height = '30'>
-            <div style=' text-align:right;'>
-                <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
-                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-            </div>
-            <div data-width="5"></div>
-        </afx-hbox>
+        <afx-input data-height = '52' label = "__(Target file/folder)" type = "text" data-id = "filename" ></afx-input> 
+        <div style=' text-align:right;' data-height="35">
+            <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+            <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+        </div>
     </afx-vbox>
 </afx-app-window>\
             `;
@@ -1316,17 +1225,15 @@ namespace OS {
                  * @memberof MultiInputDialog
                  */
                 init(): void {
-                    let height = 60;
+                    let height = 85;
                     let html = "";
                     if (this.data && this.data.model) {
                         const model = this.data.model;
                         for (const key in model) {
                             html += `\
-                            <afx-label data-height="25" text="{0}" ></afx-label>
-                            <input data-height="25" type="text" name="{1}" ></input>
-                            <div data-height="10" ></div>
+                            <afx-input data-height="52" text="{0}" type="text" name = {1} ></afx-input>
                             `.format(model[key], key);
-                            height += 60;
+                            height += 52;
                         }
                     }
                     this.markup = MultiInputDialog.scheme.format(height, html);
@@ -1369,20 +1276,13 @@ namespace OS {
              */
             MultiInputDialog.scheme = `\
 <afx-app-window width='350' height='{0}'>
-    <afx-hbox>
-        <div data-width="10" ></div>
-        <afx-vbox>
-            <div data-height="5" ></div>
-            {1}
-            <afx-hbox data-height="30">
-                <div ></div>
-                <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
-            </afx-hbox>
-            <div data-height="5" ></div>
-        </afx-vbox>
-        <div data-width="10" ></div>
-    </afx-hbox>
+    <afx-vbox padding = "5">
+        {1}
+        <div data-height="35" style = "text-align: right;">
+            <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+            <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+        </div>
+    </afx-vbox>
 </afx-app-window>`;
 
 
@@ -1468,28 +1368,22 @@ namespace OS {
                  */
                 private addField(key: string, value: string, removable: boolean): void {
                     const div = $("<div>")
-                        .css("width", "100%")
                         .css("display", "flex")
                         .css("flex-direction", "row")
                         .appendTo(this.container);
                     $("<input>")
                         .attr("type", "text")
-                        .css("width", "120px")
-                        .css("height", "23px")
+                        .css("flex", "1")
                         .val(key)
                         .appendTo(div);
                     $("<input>")
                         .attr("type", "text")
-                        .css("width", "200px")
-                        .css("height", "23px")
+                        .css("flex", "1")
                         .val(value)
                         .appendTo(div);
                     if (removable) {
                         const btn = $("<afx-button>");
                         btn[0].uify(undefined);
-                        $("button", btn)
-                            .css("width", "23px")
-                            .css("height", "23px");
                         (btn[0] as tag.ButtonTag).iconclass = "fa fa-minus";
                         btn
                             .on("click", () => {
@@ -1497,12 +1391,13 @@ namespace OS {
                             })
                             .appendTo(div);
                     }
-                    else {
+                    else
+                    {
                         $("<div>")
-                            .css("width", "23px")
-                            .appendTo(div);
+                        .css("width", "40px")
+                        .css("height", "35px")
+                        .appendTo(div);
                     }
-
                 }
 
             }
@@ -1511,23 +1406,18 @@ namespace OS {
              * Scheme definition
              */
             KeyValueDialog.scheme = `\
-             <afx-app-window width='350' height='300'>
-                 <afx-hbox>
-                    <div data-width="10" ></div>
-                    <afx-vbox>
-                        <div data-height="5" ></div>
+             <afx-app-window width='400' height='350'>
+                    <afx-vbox padding = "10">
                         <afx-label text="__(Enter key-value data)" data-height="30"></afx-label>
                         <div data-id="container"></div>
-                        <afx-hbox data-height="30">
-                            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "30" ></afx-button>
-                            <div ></div>
-                            <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
-                            <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" ></afx-button>
+                        <afx-hbox data-height="35">
+                            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "35" ></afx-button>
+                            <div style = "text-align: right;">
+                                <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+                                <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+                            </div>
                         </afx-hbox>
-                        <div data-height="5" ></div>
                     </afx-vbox>
-                    <div data-width="10" ></div>
-                 </afx-hbox>
              </afx-app-window>`;
         }
     }

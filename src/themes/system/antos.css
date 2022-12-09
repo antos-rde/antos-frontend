@@ -6,6 +6,7 @@ html,body{
     overflow: hidden;
     touch-action: none;
     font-size: 14px;
+    font-family: "Ubuntu";
 }
 #desktop > div > ul afx-list-item {
     width: 70px;
@@ -72,6 +73,16 @@ body
 
 #systooltip {
     z-index: 1000000;
+}
+input {
+    font-size: 14px;
+    height: 35px;
+    font-family: "Ubuntu";
+}
+
+textarea {
+    font-family: "Ubuntu";
+    font-size: 14px;
 }
 
 #login_form{

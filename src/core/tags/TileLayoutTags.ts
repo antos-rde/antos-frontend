@@ -22,6 +22,8 @@ namespace OS {
                 constructor() {
                     super();
                 }
+                
+                private _padding: number;
 
                 /**
                  * Do nothing
@@ -29,7 +31,9 @@ namespace OS {
                  * @protected
                  * @memberof TileLayoutTag
                  */
-                protected init(): void {}
+                protected init(): void {
+                    this.padding = 0;
+                }
                 /**
                  * Do nothing
                  *
@@ -84,6 +88,26 @@ namespace OS {
                 get dir(): "row" | "column" {
                     return $(this).attr("dir") as any;
                 }
+                /**
+                 * Setter:
+                 * 
+                 * SET content padding
+                 * 
+                 * Getter:
+                 * 
+                 * Get content padding
+                 *
+                 * @memberof TileLayoutTag
+                 */
+                set padding(v: number)
+                {
+                    $(this).attr("padding", v);
+                    this._padding = v;
+                }
+                get padding(): number
+                {
+                    return this._padding;
+                }
 
                 /**
                  * Mount the element
@@ -95,9 +119,7 @@ namespace OS {
                 protected mount(): void {
                     $(this).css("display", "block");
                     $(this.refs.yield)
-                        .css("display", "flex")
-                        .css("width", "100%")
-                        .css("height", "100%");
+                        .css("display", "flex");
                     this.observable.on("resize", (e) => this.calibrate());
                     return this.calibrate();
                 }
@@ -109,6 +131,10 @@ namespace OS {
                  * @memberof TileLayoutTag
                  */
                 calibrate(): void {
+                    $(this.refs.yield)
+                        .css("padding", this.padding)
+                        .css("width", `${$(this).width() - this.padding*2}px`)
+                        .css("height", `${$(this).height() - this.padding*2}px`);
                     if (this.dir === "row") {
                         return this.hcalibrate();
                     }
@@ -128,7 +154,7 @@ namespace OS {
                 private hcalibrate(): void {
                     const auto_width = [];
                     let ocwidth = 0;
-                    const avaiWidth = $(this).width();
+                    const avaiWidth = $(this).width() - this.padding * 2;
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -171,7 +197,7 @@ namespace OS {
                 private vcalibrate(): void {
                     const auto_height = [];
                     let ocheight = 0;
-                    const avaiheight = $(this).height();
+                    const avaiheight = $(this).innerHeight() - this.padding * 2;
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
