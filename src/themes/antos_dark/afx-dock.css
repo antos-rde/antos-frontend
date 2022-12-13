@@ -4,12 +4,17 @@ afx-apps-dock{
     padding-top: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    border:1px solid #262626;
+    border-left:1px solid #262626;
+    border-right:1px solid #262626;
     box-shadow: none;
 }
 
 afx-apps-dock afx-button.selected > button {
     background-color: #464646;
     color: white;
-    border: 1px solid #464646;
+    border: 0;
+    border-bottom: 3px solid #bb86fc;
+}
+afx-apps-dock afx-button.plural.selected > button {
+    border-top: 3px double #646363;
 }

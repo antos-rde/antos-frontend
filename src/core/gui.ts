@@ -662,7 +662,7 @@ namespace OS {
             app.sysdock = dock;
             app.init();
             app.observable.one("rendered", function () {
-                dock.newapp(data);
+                dock.addapp(data);
             });
         }
 

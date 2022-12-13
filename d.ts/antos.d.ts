@@ -6450,7 +6450,7 @@ declare namespace OS {
                 /**
                  * Custom user data
                  *
-                 * @type {GenericObject<any>}
+                 * @type {any}
                  * @memberof ButtonTag
                  */
                 private _data;
@@ -6459,8 +6459,8 @@ declare namespace OS {
                  *
                  * @memberof ButtonTag
                  */
-                set data(v: GenericObject<any>);
-                get data(): GenericObject<any>;
+                set data(v: any);
+                get data(): any;
                 /**
                  *Creates an instance of ButtonTag.
                  * @memberof ButtonTag
@@ -8581,14 +8581,12 @@ declare namespace OS {
              */
             class AppDockTag extends AFXTag {
                 /**
-                 * variable holds the application select event
-                 * callback handle
+                 * Cache of touch event
                  *
                  * @private
-                 * @type {TagEventCallback<any>}
-                 * @memberof AppDockTag
+                 * @meberof AppDockTag
                  */
-                private _onappselect;
+                private _previous_touch;
                 /**
                  * Items data of the dock
                  *
@@ -8678,7 +8676,8 @@ declare namespace OS {
                  * @param {AppDockItemType} item an application dock item entry
                  * @memberof AppDockTag
                  */
-                newapp(item: AppDockItemType): void;
+                addapp(item: AppDockItemType): void;
+                private handleAppSelect;
                 /**
                  * Delete and application entry from the dock.
                  * This function will be called when an application

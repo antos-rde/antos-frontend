@@ -38,15 +38,12 @@ namespace OS {
              */
             export class AppDockTag extends AFXTag {
                 /**
-                 * variable holds the application select event
-                 * callback handle
-                 *
+                 * Cache of touch event
+                 * 
                  * @private
-                 * @type {TagEventCallback<any>}
-                 * @memberof AppDockTag
+                 * @meberof AppDockTag
                  */
-                private _onappselect: TagEventCallback<any>;
-
+                private _previous_touch: {x: number, y: number};
                 /**
                  * Items data of the dock
                  *
@@ -72,7 +69,6 @@ namespace OS {
                  */
                 constructor() {
                     super();
-                    this._onappselect = (e) => {};
                 }
 
                 /**
@@ -111,6 +107,8 @@ namespace OS {
                  */
                 protected init(): void {
                     this._items = [];
+
+                    this._previous_touch = {x: 0, y:0};
                 }
 
                 /**
@@ -155,7 +153,7 @@ namespace OS {
                     let el = undefined;
                     for (let it of this.items) {
                         it.app.blur();
-                        $(it.domel).removeClass();
+                        $(it.domel).removeClass("selected");
                         if (v && v === it.app) {
                             el = it;
                         }
@@ -197,24 +195,67 @@ namespace OS {
                  * @param {AppDockItemType} item an application dock item entry
                  * @memberof AppDockTag
                  */
-                newapp(item: AppDockItemType): void {
+                addapp(item: AppDockItemType): void {
+                    const collection = this.items.filter(it => it.app.name == item.app.name);
+                    let bt = undefined;
+                    if(collection.length == 0)
+                    {
+                        const el = $("<afx-button>");
+                        bt = el[0] as ButtonTag;
+                        el.appendTo(this);
+                        el[0].uify(this.observable);
+                        bt.set(item);
+                        bt.data  = item.app.name;
+                        item.domel = bt;
+                        bt.onbtclick = (e) => {
+                            e.data.stopPropagation();
+                            this.handleAppSelect(bt);
+                        };
+                    }
+                    else
+                    {
+                        bt = collection[0].domel;
+                        item.domel = bt;
+                        $(bt).addClass("plural");
+                    }
                     this.items.push(item);
-                    const el = $("<afx-button>");
-                    const bt = el[0] as ButtonTag;
-                    el.appendTo(this);
-                    el[0].uify(this.observable);
-                    bt.set(item);
-                    bt.data = item.app;
-                    item.domel = bt;
-                    $(bt).attr("tooltip", `cr:${item.app.title()}`);
-                    bt.onbtclick = (e) => {
-                        e.id = this.aid;
-                        //e.data.item = item;
-                        this._onappselect(e);
-                        item.app.show();
-                    };
                     this.selectedApp = item.app;
                 }
+
+            private handleAppSelect(bt: ButtonTag)
+            {
+                const name = bt.data as any as string;
+                const collection = this.items.filter(it => it.app.name == name);
+                if(collection.length == 0)
+                {
+                    return;
+                }
+                if(collection.length == 1)
+                {
+                    collection[0].app.trigger("focus");
+                    return;
+                }
+                // show the context menu containning a list of application to select
+                const menu_data = collection.map(e => {
+                    return {
+                        text: (e.app.scheme as WindowTag).apptitle,
+                        icon: e.icon,
+                        iconclass: e.iconclass,
+                        app: e.app
+                    };
+                });
+                const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
+                const offset = $(bt).offset();
+                ctxmenu.nodes = menu_data;
+                $(ctxmenu)
+                    .css("left", offset.left)
+                    .css("bottom", $(this).height());
+                ctxmenu.onmenuselect = (e) =>
+                {
+                    e.data.item.data.app.show();
+                }
+                ctxmenu.show();
+            }
 
                 /**
                  * Delete and application entry from the dock.
@@ -236,9 +277,19 @@ namespace OS {
                     }
 
                     if (i !== -1) {
+                        const appName = this.items[i].app.name;
+                        const el = this.items[i].domel;
                         delete this.items[i].app;
                         this.items.splice(i, 1);
-                        $($(this).children()[i]).remove();
+                        const collection = this.items.filter(it => it.app.name == appName);
+                        if(collection.length == 1)
+                        {
+                            $(el).removeClass("plural");
+                        }
+                        if(collection.length == 0)
+                        {
+                            $(el).remove();
+                        }
                     }
                 }
 
@@ -256,28 +307,26 @@ namespace OS {
                         const bt = ($(e.target).closest(
                             "afx-button"
                         )[0] as any) as ButtonTag;
-                        const app = bt.data as application.BaseApplication;
+                        const name = bt.data as any;
+                        const collection = this.items.filter(it => it.app.name == name);
                         m.nodes = [
                             { text: "__(New window)", dataid: "new" },
-                            { text: "__(Show)", dataid: "show" },
-                            { text: "__(Hide)", dataid: "hide" },
-                            { text: "__(Close)", dataid: "quit" },
+                            { text: "__(Hide all)", dataid: "hide" },
+                            { text: "__(Close all)", dataid: "quit" },
                         ];
                         m.onmenuselect = function (evt) {
-                            const item = evt.data.item.data;
-                            if (app[item.dataid]) {
-                                return app[item.dataid]();
-                            }
-                            else
-                            {
-                                switch (item.dataid) {
-                                    case "new":
-                                        GUI.launch(app.name, []);
-                                        break;
-                                
-                                    default:
-                                        break;
-                                }
+                            switch (evt.data.item.data.dataid) {
+                                case "new":
+                                    GUI.launch(bt.data as string, []);
+                                    break;
+                                case "hide":
+                                    collection.forEach((el,_) => el.app.hide());
+                                    break;
+                                case "quit":
+                                    collection.forEach((el,_) => el.app.quit());
+                                    break;
+                                default:
+                                    break;
                             }
                         };
                         return m.show(e);
@@ -317,6 +366,22 @@ namespace OS {
                             return;
                         }
                         this.items[index].app.trigger("focus");
+                    });
+
+                    $(this).on("touchstart", e => {
+                        this._previous_touch.x = e.touches[0].pageX;
+                        this._previous_touch.y = e.touches[0].pageY;
+                    });
+                    $(this).on("touchmove", e => {
+                        const offset = {x:0, y:0};
+                        offset.x = this._previous_touch.x - e.touches[0].pageX ;
+                        offset.y = this._previous_touch.y - e.touches[0].pageY; 
+                        (this as any).scrollLeft += offset.x;
+                        this._previous_touch.x = e.touches[0].pageX;
+                        this._previous_touch.y = e.touches[0].pageY;
+                    });
+                    $(this).on("wheel", (evt)=>{
+                        (this as any).scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
                     });
                 }
             }

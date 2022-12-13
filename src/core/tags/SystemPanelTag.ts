@@ -520,16 +520,7 @@ namespace OS {
                     this.refs.osmenu.contextmenuHandle = (e, m) => { }
                     this.refs.systray.contextmenuHandle = (e, m) => { }
                     this.refs.pinned.contextmenuHandle = (e, m) => { }
-                    this.refs.panel.contextmenuHandle = (e, m) => {
-                        let menu = [
-                            { text: __("Applications and services setting"), dataid: "app&srv" }
-                        ];
-                        m.nodes = menu;
-                        m.onmenuselect =  (evt) => {
-                            GUI.launch("Setting",[]);
-                        }
-                        m.show(e);
-                    };
+                    this.refs.panel.contextmenuHandle = (e, m) => { };
                     announcer.on("app-pinned", (_) => {
                         this.RefreshPinnedApp();
                     });

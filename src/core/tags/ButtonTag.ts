@@ -21,22 +21,22 @@ namespace OS {
                 /**
                  * Custom user data
                  *
-                 * @type {GenericObject<any>}
+                 * @type {any}
                  * @memberof ButtonTag
                  */
-                private _data: GenericObject<any>;
+                private _data: any;
 
                 /**
                  * Custom user data setter/gettter
                  * 
                  * @memberof ButtonTag
                  */
-                set data(v: GenericObject<any>)
+                set data(v: any)
                 {
                     this._data = v;
                     this.set(v);
                 }
-                get data(): GenericObject<any>
+                get data(): any
                 {
                     return this._data;
                 }
