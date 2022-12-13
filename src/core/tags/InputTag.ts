@@ -53,9 +53,9 @@ namespace OS {
                 }
 
                 /**
-                 * Setter: Set the text of the button
+                 * Setter: Set the text of the label
                  *
-                 * Getter: Get the current button test
+                 * Getter: Get the current label test
                  *
                  * @memberof InputTag
                  */
@@ -198,7 +198,7 @@ namespace OS {
                 }
 
                 /**
-                 * Re-calibrate the button, do nothing in this tag
+                 * Re-calibrate, do nothing in this tag
                  *
                  * @protected
                  * @memberof InputTag
@@ -232,7 +232,7 @@ namespace OS {
                 reload(d?: any): void {}
 
                 /**
-                 * Button layout definition
+                 * Input layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

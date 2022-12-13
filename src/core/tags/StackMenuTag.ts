@@ -508,7 +508,7 @@ namespace OS {
                             .css("left", left + "px");
                         
                     }
-                    const doropoff = (e) => {
+                    const dropoff = (e) => {
                        if($(e.target).closest(`[list-id="${list.aid}"]`).length > 0)
                        {
                            return;
@@ -517,10 +517,16 @@ namespace OS {
                        {
                            return;
                        }
-                        $(this).hide();
-                        $(document).off("click", doropoff);
+                        $(this)
+                            .css("bottom", "unset")
+                            .css("top", "unset")
+                            .css("left", "unset")
+                            .css("right", "unset")
+                            .hide();
+
+                        $(document).off("click", dropoff);
                     };
-                    $(document).on("click", doropoff);
+                    $(document).on("click", dropoff);
                     $(this).show();
                     this.calibrate();
                 }
