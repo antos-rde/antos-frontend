@@ -15,7 +15,7 @@ namespace OS {
              * @type {application.BaseApplication}
              * @memberof AppDockItemType
              */
-            app: application.BaseApplication;
+            app?: application.BaseApplication;
 
             /**
              * Reference to the DOM element of
@@ -93,9 +93,6 @@ namespace OS {
                             i = k;
                             break;
                         }
-                    }
-                    if (i !== -1) {
-                        $(this.items[i].domel).attr("tooltip", `ct:${app.title()}`);
                     }
                 }
 
@@ -187,6 +184,62 @@ namespace OS {
                 }
 
                 /**
+                 * Add a button to the dock
+                 * 
+                 * @private
+                 * @param {string} [name] associated application name
+                 * @param {AppDockItemType} [item] dock item
+                 * @param {boolean} [pinned] the button is pinned to the dock ?
+                 * @memberof AppDockTag
+                 */
+                private add_button(name:string, item: AppDockItemType, pinned: boolean = false): void
+                {
+                    const collection = $(this).children().filter((i, e) => {
+                        return (e as ButtonTag).data.name == name;
+                    });
+                    if(collection.length > 0)
+                    {
+                        (collection[0] as ButtonTag).data.pinned = true;
+                        item.domel = collection[0] as ButtonTag;
+                        return;
+                    }
+                    const el = $("<afx-button>");
+                    const bt = el[0] as ButtonTag;
+                    el.appendTo(this);
+                    el[0].uify(this.observable);
+                    bt.set(item);
+                    bt.data  = {
+                        name: name,
+                        pinned: pinned
+                    };
+                    item.domel = bt;
+                    bt.onbtclick = (e) => {
+                        e.data.stopPropagation();
+                        this.handleAppSelect(bt);
+                    };
+                }
+
+                private update_button(el: ButtonTag): void
+                {
+                    const collection = this.items.filter(it => it.app.name == el.data.name);
+                    if(collection.length == 1)
+                    {
+                        $(el).removeClass("plural");
+                    }
+                    if(collection.length == 0)
+                    {
+                        if(el.data.pinned)
+                        {
+                            $(el).removeClass();
+                        }
+                        else
+                        {
+                            $(el).remove();
+                        }
+                    }
+                }
+
+                /**
                  * When a new application process is created, this function
                  * will be called to add new application entry to the dock.
                  * The added application will becomes the current selected
@@ -200,17 +253,7 @@ namespace OS {
                     let bt = undefined;
                     if(collection.length == 0)
                     {
-                        const el = $("<afx-button>");
-                        bt = el[0] as ButtonTag;
-                        el.appendTo(this);
-                        el[0].uify(this.observable);
-                        bt.set(item);
-                        bt.data  = item.app.name;
-                        item.domel = bt;
-                        bt.onbtclick = (e) => {
-                            e.data.stopPropagation();
-                            this.handleAppSelect(bt);
-                        };
+                        this.add_button(item.app.name, item);
                     }
                     else
                     {
@@ -222,40 +265,48 @@ namespace OS {
                     this.selectedApp = item.app;
                 }
 
-            private handleAppSelect(bt: ButtonTag)
-            {
-                const name = bt.data as any as string;
-                const collection = this.items.filter(it => it.app.name == name);
-                if(collection.length == 0)
+                /**
+                 * Handle the application selection action
+                 * 
+                 * @private
+                 * @memberof AppDockTag
+                 */
+                private handleAppSelect(bt: ButtonTag)
                 {
-                    return;
+                    const name = bt.data.name as string;
+                    const collection = this.items.filter(it => it.app.name == name);
+                    const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
+                    ctxmenu.hide();
+                    if(collection.length == 0)
+                    {
+                        GUI.launch(name, []);
+                        return;
+                    }
+                    if(collection.length == 1)
+                    {
+                        collection[0].app.trigger("focus");
+                        return;
+                    }
+                    // show the context menu containning a list of application to select
+                    const menu_data = collection.map(e => {
+                        return {
+                            text: (e.app.scheme as WindowTag).apptitle,
+                            icon: e.icon,
+                            iconclass: e.iconclass,
+                            app: e.app
+                        };
+                    });
+                    const offset = $(bt).offset();
+                    ctxmenu.nodes = menu_data;
+                    $(ctxmenu)
+                        .css("left", offset.left)
+                        .css("bottom", $(this).height());
+                    ctxmenu.onmenuselect = (e) =>
+                    {
+                        e.data.item.data.app.show();
+                    }
+                    ctxmenu.show();
                 }
-                if(collection.length == 1)
-                {
-                    collection[0].app.trigger("focus");
-                    return;
-                }
-                // show the context menu containning a list of application to select
-                const menu_data = collection.map(e => {
-                    return {
-                        text: (e.app.scheme as WindowTag).apptitle,
-                        icon: e.icon,
-                        iconclass: e.iconclass,
-                        app: e.app
-                    };
-                });
-                const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
-                const offset = $(bt).offset();
-                ctxmenu.nodes = menu_data;
-                $(ctxmenu)
-                    .css("left", offset.left)
-                    .css("bottom", $(this).height());
-                ctxmenu.onmenuselect = (e) =>
-                {
-                    e.data.item.data.app.show();
-                }
-                ctxmenu.show();
-            }
 
                 /**
                  * Delete and application entry from the dock.
@@ -278,18 +329,10 @@ namespace OS {
 
                     if (i !== -1) {
                         const appName = this.items[i].app.name;
-                        const el = this.items[i].domel;
+                        const el = this.items[i].domel as ButtonTag;
                         delete this.items[i].app;
                         this.items.splice(i, 1);
-                        const collection = this.items.filter(it => it.app.name == appName);
-                        if(collection.length == 1)
-                        {
-                            $(el).removeClass("plural");
-                        }
-                        if(collection.length == 0)
-                        {
-                            $(el).remove();
-                        }
+                        this.update_button(el);
                     }
                 }
 
@@ -307,7 +350,7 @@ namespace OS {
                         const bt = ($(e.target).closest(
                             "afx-button"
                         )[0] as any) as ButtonTag;
-                        const name = bt.data as any;
+                        const name = bt.data.name as string;
                         const collection = this.items.filter(it => it.app.name == name);
                         m.nodes = [
                             { text: "__(New window)", dataid: "new" },
@@ -317,7 +360,7 @@ namespace OS {
                         m.onmenuselect = function (evt) {
                             switch (evt.data.item.data.dataid) {
                                 case "new":
-                                    GUI.launch(bt.data as string, []);
+                                    GUI.launch(bt.data.name as string, []);
                                     break;
                                 case "hide":
                                     collection.forEach((el,_) => el.app.hide());
@@ -329,7 +372,11 @@ namespace OS {
                                     break;
                             }
                         };
-                        return m.show(e);
+                        const offset = $(bt).offset();
+                        $(m)
+                            .css("left", offset.left)
+                            .css("bottom", $(this).height());
+                        return m.show();
                     };
                     announcer.trigger("sysdockloaded", undefined);
                     GUI.bindKey("CTRL-ALT-2", (e) =>{
@@ -382,6 +429,44 @@ namespace OS {
                     });
                     $(this).on("wheel", (evt)=>{
                         (this as any).scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
+                    });
+                    announcer.on("app-pinned", (_) => {
+                        this.refresh_pinned_app();
+                    });
+                    this.refresh_pinned_app();
+                }
+                /**
+                 * refresh the pinned application list
+                 * 
+                 * @private
+                 * @memberof AppDockTag
+                 */
+                private refresh_pinned_app(): void
+                {
+                    if(!setting.system.startup.pinned)
+                            return;
+                    // unpin all application on the dock
+                    $(this).children().each((i,e) => {
+                        (e as ButtonTag).data.pinned = false;
+                    });
+                    // pin all setting application on the dock
+                    setting.system.startup.pinned
+                        .filter((el) =>{
+                            const app = setting.system.packages[el];
+                            return app && app.app
+                        })
+                        .forEach((name) => {
+                            const app = setting.system.packages[name];
+                            const item = {
+                                icon: app.icon,
+                                iconclass: app.iconclass,
+                                app: undefined
+                            };
+                            this.add_button(name, item, true);
+                        });
+                    // update to remove the button
+                    $(this).children().each((i,e) => {
+                        this.update_button(e as ButtonTag);
                     });
                 }
             }

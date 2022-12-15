@@ -206,14 +206,9 @@ namespace OS {
                             ref: "panel",
                             children: [
                                 {
-                                    el: "afx-menu",
+                                    el: "afx-button",
                                     ref: "osmenu",
                                     class: "afx-panel-os-menu",
-                                },
-                                {
-                                    el: "afx-menu",
-                                    ref: "pinned",
-                                    class: "afx-panel-os-pinned-app",
                                 },
                                 {
                                     el: "afx-apps-dock",
@@ -382,34 +377,6 @@ namespace OS {
                         }px`;
                 }
 
-
-                /**
-                 * Refresh the pinned applications menu
-                 *
-                 * @private
-                 * @memberof SystemPanelTag
-                 */
-                private RefreshPinnedApp(): void
-                {
-                    if(!setting.system.startup.pinned)
-                            return;
-                    (this.refs.pinned as GUI.tag.MenuTag).items = 
-                    setting.system.startup.pinned
-                        .filter((el) =>{
-                            const app = setting.system.packages[el];
-                            return app && app.app
-                        })
-                        .map((name) => {
-                            const app = setting.system.packages[name];
-                            return { 
-                                icon: app.icon,
-                                iconclass: app.iconclass,
-                                app: app.app,
-                                tooltip: `cb:${app.name}`
-                            };
-                        });
-                }
-
                 /**
                  * Check if the loading tasks ended,
                  * if it the case, stop the animation
@@ -434,7 +401,7 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 protected mount(): void {
-                    (this.refs.osmenu as MenuTag).items = [this._osmenu];
+                    (this.refs.osmenu as ButtonTag).set(this._osmenu);
                     this._cb = (e) => {
                         if (
                             !$(e.target).closest($(this.refs.overlay)).length &&
@@ -468,7 +435,7 @@ namespace OS {
                             return Ant.OS.exit();
                         },
                     });
-                    (this.refs.osmenu as MenuTag).onmenuselect = (e) => {
+                    (this.refs.osmenu as ButtonTag).onbtclick = (e) => {
                         if($(this.refs.overlay).is(":hidden"))
                         {
                             this.toggle(true);
@@ -511,19 +478,9 @@ namespace OS {
                     };
                     $(this.refs.overlay)
                         .hide();
-                    (this.refs.pinned as GUI.tag.MenuTag).onmenuselect = (e) => {
-                        const app = e.data.item.data.app;
-                        if(!app)
-                            return;
-                        GUI.launch(app, []);
-                    };
-                    this.refs.osmenu.contextmenuHandle = (e, m) => { }
-                    this.refs.systray.contextmenuHandle = (e, m) => { }
-                    this.refs.pinned.contextmenuHandle = (e, m) => { }
+                    this.refs.osmenu.contextmenuHandle = (e, m) => { };
+                    this.refs.systray.contextmenuHandle = (e, m) => { };
                     this.refs.panel.contextmenuHandle = (e, m) => { };
-                    announcer.on("app-pinned", (_) => {
-                        this.RefreshPinnedApp();
-                    });
                     announcer.on("loading", (o: API.AnnouncementDataType<number>) => {
                         if(o.u_data != 0)
                         {
@@ -549,7 +506,6 @@ namespace OS {
                     announcer.on("desktopresize", (e) => {
                         this.calibrate();
                     });
-                    this.RefreshPinnedApp();
                     Ant.OS.announcer.trigger("syspanelloaded", undefined);
                 }
             }

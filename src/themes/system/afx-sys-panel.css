@@ -15,6 +15,11 @@ afx-sys-panel > div{
      height: 35px;
 }
 
+afx-sys-panel afx-apps-dock
+{
+    flex:1;
+}
+
 afx-sys-panel afx-overlay
 {
     bottom: 35px;
@@ -68,17 +73,11 @@ afx-sys-panel > div.loading::before {
 afx-sys-panel .afx-panel-os-menu {
     padding:0;
     margin: 0;
-    margin-right: 5px;
 }
 
 afx-sys-panel .afx-panel-os-stray{
     position: relative;
 }
-
-afx-sys-panel .afx-panel-os-pinned-app afx-menu-entry{
-    display: inline-block;
-}
-
 afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  {
     right: 0;
     position: absolute;

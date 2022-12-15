@@ -3,15 +3,19 @@ afx-sys-panel > div{
      border-top: 1px solid #9c9C9C;
      box-shadow:none;
  }
+afx-sys-panel .afx-panel-os-menu button
+{
+    background-color: #e7414d;
+    border-radius: 0;
+    border: 0;
+}
 
-afx-sys-panel .afx-panel-os-menu li
+afx-sys-panel .afx-panel-os-menu button .label-text
 {
     font-weight: bold;
-    background-color: #e7414d;
-    border-top-right-radius: 9px;
-    border-bottom-right-radius: 9px;
 }
-afx-sys-panel .afx-panel-os-menu a {
+
+afx-sys-panel .afx-panel-os-menu {
     color: white;
 }
 
@@ -96,7 +100,7 @@ afx-sys-panel div[data-id="searchicon"]:before{
 }
 afx-sys-panel input{
     border:0;
-    height: 25px;
+    height: 30px;
     color:#afafaf;
     font-size: 16px;
     background-color: transparent;
