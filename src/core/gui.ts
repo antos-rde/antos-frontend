@@ -644,10 +644,7 @@ namespace OS {
             const data = {
                 icon: null,
                 iconclass: meta.iconclass || "",
-                app,
-                onbtclick() {
-                    return app.toggle();
-                },
+                app
             };
             // TODO: this path is not good, need to create a blob of it
             if (meta.icon) {

@@ -8,11 +8,18 @@ afx-apps-dock{
     border-right:1px solid #a6a6a6;
     box-shadow: none;
 }
+afx-apps-dock afx-button > button:hover {
+    background-color: #cecece;
+}
+afx-apps-dock afx-button.plural > button:hover
+{
+    border-top: 3px double #a6a6a6;
+}
 afx-apps-dock afx-button.selected > button {
     background-color: #2786F3;
     color: white;
     border: 0;
-    border-bottom: 3px solid salmon;
+    border-bottom: 2px solid salmon;
    
 }
 afx-apps-dock afx-button.plural.selected > button {

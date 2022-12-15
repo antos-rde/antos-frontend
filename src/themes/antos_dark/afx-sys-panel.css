@@ -4,14 +4,19 @@ afx-sys-panel > div{
      box-shadow: none;
  }
 
-afx-sys-panel .afx-panel-os-menu li
+afx-sys-panel .afx-panel-os-menu button
+{
+    background-color: #e7414d;
+    border-radius: 0;
+    border: 0;
+}
+
+afx-sys-panel .afx-panel-os-menu button .label-text
 {
     font-weight: bold;
-    background-color: #e7414d;
-    border-top-right-radius: 9px;
-    border-bottom-right-radius: 9px;
 }
-afx-sys-panel .afx-panel-os-menu a {
+
+afx-sys-panel .afx-panel-os-menu {
     color: white;
 }
 

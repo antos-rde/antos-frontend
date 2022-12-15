@@ -4761,9 +4761,9 @@ declare namespace OS {
                 set text(v: string | FormattedString);
                 get text(): string | FormattedString;
                 /**
-                 * Setter: Set the text of the button
+                 * Setter: Set the text of the label
                  *
-                 * Getter: Get the current button test
+                 * Getter: Get the current label test
                  *
                  * @memberof InputTag
                  */
@@ -4845,7 +4845,7 @@ declare namespace OS {
                  */
                 protected init(): void;
                 /**
-                 * Re-calibrate the button, do nothing in this tag
+                 * Re-calibrate, do nothing in this tag
                  *
                  * @protected
                  * @memberof InputTag
@@ -4859,7 +4859,7 @@ declare namespace OS {
                  */
                 reload(d?: any): void;
                 /**
-                 * Button layout definition
+                 * Input layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -6401,13 +6401,6 @@ declare namespace OS {
                  * @memberof SystemPanelTag
                  */
                 calibrate(): void;
-                /**
-                 * Refresh the pinned applications menu
-                 *
-                 * @private
-                 * @memberof SystemPanelTag
-                 */
-                private RefreshPinnedApp;
                 /**
                  * Check if the loading tasks ended,
                  * if it the case, stop the animation
@@ -8026,6 +8019,13 @@ declare namespace OS {
                  */
                 set onmenuselect(v: TagEventCallback<StackMenuEventData>);
                 /**
+                 * Hide the current menu. This function is called
+                 * only if the current menu is context menu
+                 *
+                 * @memberof StackMenuTag
+                 */
+                hide(): void;
+                /**
                  * Show the current menu. This function is called
                  * only if the current menu is a context menu
                  *
@@ -8560,7 +8560,7 @@ declare namespace OS {
              * @type {application.BaseApplication}
              * @memberof AppDockItemType
              */
-            app: application.BaseApplication;
+            app?: application.BaseApplication;
             /**
              * Reference to the DOM element of
              * the owner dock item
@@ -8668,6 +8668,17 @@ declare namespace OS {
                  */
                 get selectedItem(): AppDockItemType;
                 /**
+                 * Add a button to the dock
+                 *
+                 * @private
+                 * @param {string} [name] associated application name
+                 * @param {AppDockItemType} [item] dock item
+                 * @param {boolean} [pinned] the button is pinned to the dock ?
+                 * @memberof AppDockTag
+                 */
+                private add_button;
+                private update_button;
+                /**
                  * When a new application process is created, this function
                  * will be called to add new application entry to the dock.
                  * The added application will becomes the current selected
@@ -8677,6 +8688,12 @@ declare namespace OS {
                  * @memberof AppDockTag
                  */
                 addapp(item: AppDockItemType): void;
+                /**
+                 * Handle the application selection action
+                 *
+                 * @private
+                 * @memberof AppDockTag
+                 */
                 private handleAppSelect;
                 /**
                  * Delete and application entry from the dock.
@@ -8694,6 +8711,13 @@ declare namespace OS {
                  * @memberof AppDockTag
                  */
                 protected mount(): void;
+                /**
+                 * refresh the pinned application list
+                 *
+                 * @private
+                 * @memberof AppDockTag
+                 */
+                private refresh_pinned_app;
             }
         }
     }

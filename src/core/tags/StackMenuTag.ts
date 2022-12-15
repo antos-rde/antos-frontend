@@ -482,7 +482,24 @@ namespace OS {
                 set onmenuselect(v: TagEventCallback<StackMenuEventData>) {
                     this._onmenuselect = v;
                 }
-
+                /**
+                 * Hide the current menu. This function is called
+                 * only if the current menu is context menu
+                 * 
+                 * @memberof StackMenuTag
+                 */
+                hide(): void
+                {
+                    if (!this.context) {
+                        return;
+                    }
+                    $(this)
+                        .css("bottom", "unset")
+                        .css("top", "unset")
+                        .css("left", "unset")
+                        .css("right", "unset")
+                        .hide();
+                }
                 /**
                  * Show the current menu. This function is called
                  * only if the current menu is a context menu
@@ -505,7 +522,9 @@ namespace OS {
 
                         $(this)
                             .css("top", top + "px")
-                            .css("left", left + "px");
+                            .css("left", left + "px")
+                            .css("bottom", "unset")
+                            .css("right", "unset");
                         
                     }
                     const dropoff = (e) => {
@@ -517,12 +536,7 @@ namespace OS {
                        {
                            return;
                        }
-                        $(this)
-                            .css("bottom", "unset")
-                            .css("top", "unset")
-                            .css("left", "unset")
-                            .css("right", "unset")
-                            .hide();
+                        this.hide();
 
                         $(document).off("click", dropoff);
                     };
