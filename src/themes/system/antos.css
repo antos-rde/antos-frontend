@@ -145,7 +145,12 @@ textarea {
     background-color: #464646;
     color: white;
     border-radius: 3px;
+    margin: 0;
     font-family: "Ubuntu";
+}
+button {
+    font-size: 14px;
+    margin: 0;
 }
 #login_error {
     color:chocolate;

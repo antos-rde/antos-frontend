@@ -172,7 +172,6 @@ namespace OS {
                  * @memberof ListViewItemTag
                  */
                 protected mount(): void {
-                    $(this.refs.item).attr("dataref", "afx-list-item");
                     $(this).addClass("afx-list-item");
                     $(this.refs.item).on("contextmenu", (e) => {
                         this._onctxmenu({ id: this.aid, data: this });
@@ -1173,12 +1172,12 @@ namespace OS {
                             return;
                         }
                         let el: any = $(e.target).closest(
-                            "li[dataref='afx-list-item']"
+                            `[list-id='${this.aid}']`
                         );
                         if (el.length === 0) {
                             return;
                         }
-                        el = el.parent()[0];
+                        el = el[0];
                         if(!this.selectedItems.includes(el))
                         {
                             return;
@@ -1194,12 +1193,12 @@ namespace OS {
                         $(window).off("mousemove", this._onmousemove);
                         $("#systooltip").hide();
                         let el: any = $(e.target).closest(
-                            "li[dataref='afx-list-item']"
+                            `[list-id='${this.aid}']`
                         );
                         if (el.length === 0) {
                             return;
                         }
-                        el = el.parent()[0];
+                        el = el[0];
                         if (this._dnd.from.includes(el)) {
                             return;
                         }
