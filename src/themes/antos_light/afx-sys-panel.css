@@ -8,6 +8,7 @@ afx-sys-panel .afx-panel-os-menu button
     background-color: #e7414d;
     border-radius: 0;
     border: 0;
+    color: white;
 }
 
 afx-sys-panel .afx-panel-os-menu button .label-text
