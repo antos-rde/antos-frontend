@@ -225,11 +225,11 @@ namespace OS {
                     
                     const list_container = $(".list-container", this.refs.list);
                     list_container.each((i,el) => {
-                        $(el).on("touchstart", e => {
+                        el.addEventListener("touchstart", e => {
                             this._previous_touch.x = e.touches[0].pageX;
                             this._previous_touch.y = e.touches[0].pageY;
-                        });
-                        $(el).on("touchmove", e => {
+                        }, {passive: true});
+                        el.addEventListener("touchmove", e => {
                             const offset = {x:0, y:0};
                             offset.x = this._previous_touch.x - e.touches[0].pageX ;
                             offset.y = this._previous_touch.y - e.touches[0].pageY; 
@@ -243,17 +243,17 @@ namespace OS {
                             }
                             this._previous_touch.x = e.touches[0].pageX;
                             this._previous_touch.y = e.touches[0].pageY;
-                        });
-                        $(el).on("wheel", (evt)=>{
+                        }, {passive: true});
+                        el.addEventListener("wheel", (evt)=>{
                             if(this.dir == "horizontal")
                             {
-                                el.scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
+                                el.scrollLeft += (evt as WheelEvent).deltaY;
                             }
                             else
                             {
-                                el.scrollTop += (evt.originalEvent as WheelEvent).deltaY;
+                                el.scrollTop += (evt as WheelEvent).deltaY;
                             }
-                        });
+                        }, {passive: true});
                     });
                 }
 

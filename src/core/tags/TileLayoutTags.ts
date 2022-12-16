@@ -161,21 +161,26 @@ namespace OS {
                             $(this).css("height", "100%");
                             let attv = $(this).attr("data-width");
                             let dw = 0;
-                            if (attv && attv !== "grow") {
-                                if (attv[attv.length - 1] === "%") {
-                                    dw =
-                                        (parseInt(attv.slice(0, -1)) *
-                                            avaiWidth) /
-                                        100;
-                                } else {
-                                    dw = parseInt(attv);
-                                }
-                                $(this).css("width", `${dw}px`);
-                                ocwidth += dw;
-                            } else {
+                            if (!attv || attv == "grow") {
                                 $(this).css("flex-grow", "1");
                                 auto_width.push(this);
+                                return;
                             }
+                            if(attv == "content")
+                            {
+                                ocwidth += $(this).width();
+                                return;
+                            }
+                            if (attv[attv.length - 1] === "%") {
+                                dw =
+                                    (parseInt(attv.slice(0, -1)) *
+                                        avaiWidth) /
+                                    100;
+                            } else {
+                                dw = parseInt(attv);
+                            }
+                            $(this).css("width", `${dw}px`);
+                            ocwidth += dw;
                         });
 
                     const csize = (avaiWidth - ocwidth) / auto_width.length;
@@ -183,7 +188,7 @@ namespace OS {
                         $.each(auto_width, (i, v) =>
                             $(v).css("width", `${csize}px`)
                         );
-                    }
+                    } 
                 }
 
                 /**
@@ -204,21 +209,26 @@ namespace OS {
                             let dh = 0;
                             $(this).css("width", "100%");
                             let attv = $(this).attr("data-height");
-                            if (attv && attv !== "grow") {
-                                if (attv[attv.length - 1] === "%") {
-                                    dh =
-                                        (parseInt(attv.slice(0, -1)) *
-                                            avaiheight) /
-                                        100;
-                                } else {
-                                    dh = parseInt(attv);
-                                }
-                                $(this).css("height", `${dh}px`);
-                                ocheight += dh;
-                            } else {
+                            if (!attv || attv == "grow") {
                                 $(this).css("flex-grow", "1");
                                 auto_height.push(this);
+                                return;
                             }
+                            if(attv == "content")
+                            {
+                                 ocheight += $(this).height();
+                                return;
+                            }
+                            if (attv[attv.length - 1] === "%") {
+                                dh =
+                                    (parseInt(attv.slice(0, -1)) *
+                                        avaiheight) /
+                                    100;
+                            } else {
+                                dh = parseInt(attv);
+                            }
+                            $(this).css("height", `${dh}px`);
+                            ocheight += dh;
                         });
 
                     const csize = (avaiheight - ocheight) / auto_height.length;
