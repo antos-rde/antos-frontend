@@ -11,11 +11,21 @@ afx-file-view afx-list-view > div.list-container > ul
 {
     display: flex;
     flex-flow: row wrap;
+    /*justify-content: center;*/
+}
+afx-file-view afx-list-view > div.list-container > ul  li afx-label{
+    height: 100%;
 }
 afx-file-view afx-list-view > div.list-container > ul  li{
-    float:left;
-    /*display: block;*/
+    width:80px;
+    max-height: 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 5px;
 }
+
 
 afx-file-view afx-list-view i{
     display: block;
@@ -28,6 +38,9 @@ afx-file-view afx-list-view i.label-text{
 afx-file-view afx-list-view afx-label span
 {
     flex-direction: column;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    justify-content: flex-start;
 }
 
 afx-file-view afx-grid-view i{

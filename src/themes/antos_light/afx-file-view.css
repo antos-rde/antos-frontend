@@ -3,12 +3,7 @@ afx-file-view afx-label.status{
     border-top: 1px solid #cbcbcb;
 }
 afx-file-view afx-list-view > div.list-container > ul  li{
-    width:70px;
-    /*height: 60px;*/
     background-color: transparent;
-    text-align: center;
-    margin-right: 5px;
-    margin-bottom: 5px;
 }
 afx-file-view afx-list-view > div.list-container > ul .afx-list-item:nth-child(even) li {
     background-color: transparent;
@@ -16,7 +11,7 @@ afx-file-view afx-list-view > div.list-container > ul .afx-list-item:nth-child(e
 afx-file-view afx-list-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
-    font-size: 32px;
+    font-size: 35px;
     color: #76D2F9;
     font-weight: normal;
     font-style: normal;
@@ -30,16 +25,12 @@ afx-file-view afx-list-view i{
 afx-file-view afx-list-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
-    font-size: 28px;
-    color: #414339;
+    font-size: 30px;
     font-style: normal;
     font-weight: normal;
 }
 afx-file-view afx-list-view > div.list-container > ul > .afx-list-item > li.selected
 {
-    background-color: transparent;
-}
-afx-file-view afx-list-view div.list-container > ul  li.selected  i.label-text {
     background-color: #116cd6;
     color:white;
     border-radius: 6px;
