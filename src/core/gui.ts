@@ -977,29 +977,33 @@ namespace OS {
                     .replace("[ANTOS_VERSION]", OS.VERSION.version_string)
             );
             $("#wrapper").append(scheme);
-            $("#btlogin").on("click", async function () {
+            $("#login_form")[0].uify(undefined);
+            ($("#btlogin")[0] as tag.ButtonTag).onbtclick = async function () {
                 const data: API.UserLoginType = {
                     username: $("#txtuser").val() as string,
                     password: $("#txtpass").val() as string,
                 };
+                const err_label = $("#login_error")[0] as tag.LabelTag;
                 try {
                     const d = await API.handle.login(data);
                     if (d.error) {
-                        return $("#login_error").html(d.error as string);
+                        err_label.iconclass = "bi bi-exclamation-diamond-fill";
+                        return err_label.text = d.error as string;
                     }
                     return startAntOS(d.result);
                 } catch (e) {
-                    return $("#login_error").html("Login: server error");
+                    err_label.iconclass = "bi bi-bug-fill";
+                    return err_label.text = __("Login: server error");
+                }
+            };
+            ($("#txtpass")[0] as tag.InputTag).on("keyup", function (e) {
+                if (e.which === 13) {
+                    return $("#btlogin button").trigger("click");
                 }
             });
-            $("#txtpass").on("keyup", function (e) {
+            ($("#txtuser")[0] as tag.InputTag).on("keyup",function (e) {
                 if (e.which === 13) {
-                    return $("#btlogin").trigger("click");
-                }
-            });
-            $("#txtuser").keyup(function (e) {
-                if (e.which === 13) {
-                    return $("#btlogin").trigger("click");
+                    return $("#btlogin button").trigger("click");
                 }
             });
         }
@@ -1107,13 +1111,19 @@ namespace OS {
 `;
 
         schemes.login = `\
-<div id = "login_form">
-    <p>Welcome to AntOS, please login</p>
-    <input id = "txtuser" type = "text" value = "demo" ></input>
-    <input id = "txtpass" type = "password" value = "demo" ></input>
-    <button id = "btlogin">Login</button>
-    <div id = "login_error"></div>
-</div>
+<afx-vbox id = "login_form">
+    <afx-label data-height="35" text="Welcome to AntOS, please login"></afx-label>
+    <afx-vbox padding = "10">
+        <afx-input data-height="52" id = "txtuser" type = "text" value = "demo" label="User name"></afx-input>
+        <div data-height="10"></div>
+        <afx-input data-height="52" id = "txtpass" type = "password" value = "demo" label="Password"></afx-input>
+        <div data-height="10"></div>
+        <afx-hbox>
+            <afx-label id = "login_error"></afx-label>
+            <afx-button id = "btlogin" text="Login" iconclass = "bi bi-box-arrow-in-right" data-width="content"></afx-button>
+        </afx-hbox>
+    </afx-vbox>
+</afx-vbox>
 <div id = "antos_build_id"><a href="${OS.REPOSITORY}/tree/[ANTOS_BUILD_ID]">AntOS v[ANTOS_VERSION]</div>\
 `;
     }

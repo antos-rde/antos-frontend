@@ -78,6 +78,7 @@ input {
     font-size: 14px;
     height: 35px;
     font-family: "Ubuntu";
+    outline: none;
 }
 
 textarea {
@@ -87,8 +88,7 @@ textarea {
 
 #login_form{
     width:300px;
-    height: 180px;
-    display: block;
+    height: 215px;
     border:1px solid #262626;
     border-radius: 6px;
     box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
@@ -98,52 +98,56 @@ textarea {
     right: 0;
     bottom: 0;
     left: 0;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 13px;
-    text-align: center;
     background-color: #363636;
     color: white;
 } 
 
-#login_form p{
-    display: inline-block;
-    /* background-color:#dfdfdf; */
+#login_form > div > afx-label
+{
     border-bottom: 1px solid #262626;
-    padding:10px;
-    width: calc(100% - 20px);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    font-weight: bold;
     margin:0;
-    
 }
-#login_form input {
-    width: 250px;
-    outline: none;
-    margin-top:10px;
-    border-radius: 6px;
-    box-sizing: border-box;
+#login_form > div > afx-label .label-text
+{
+    text-align: center;
+    font-weight: bold;
+}
+#login_form afx-input afx-label
+{
     font-size: 13px;
-    padding: 5px;
-    color: white;
-    border: 1px solid #262626;
+    color: #bb86fc;
     background-color: #464646;
 }
+
+#login_form afx-input input
+{
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid #262626;
+    background-color: #464646;
+    color: white;
+}
+#login_form afx-input input:focus
+{
+    border-bottom: 1px solid #bb86fc;
+}
+
+
 #login_form button{
-    margin-top:10px;
-    width: 250px;
-    height: 30px;
-    background-color: #464646;
-    border: 1px solid #262626;
-    color: white;
-    border-radius: 6px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 13px;
-    padding:5px;
     outline: none;
+    min-height: 35px;
+    min-width: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #262626;
+    background-color: #464646;
+    color: white;
+    border-radius: 3px;
+    font-family: "Ubuntu";
 }
-#login_error{
-    padding:3px;
+#login_error {
     color:chocolate;
     font-weight: normal;
 }

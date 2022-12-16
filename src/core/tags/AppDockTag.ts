@@ -415,21 +415,21 @@ namespace OS {
                         this.items[index].app.trigger("focus");
                     });
 
-                    $(this).on("touchstart", e => {
+                    this.addEventListener("touchstart", e => {
                         this._previous_touch.x = e.touches[0].pageX;
                         this._previous_touch.y = e.touches[0].pageY;
-                    });
-                    $(this).on("touchmove", e => {
+                    }, { passive: true});
+                    this.addEventListener("touchmove", e => {
                         const offset = {x:0, y:0};
                         offset.x = this._previous_touch.x - e.touches[0].pageX ;
                         offset.y = this._previous_touch.y - e.touches[0].pageY; 
                         (this as any).scrollLeft += offset.x;
                         this._previous_touch.x = e.touches[0].pageX;
                         this._previous_touch.y = e.touches[0].pageY;
-                    });
-                    $(this).on("wheel", (evt)=>{
-                        (this as any).scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
-                    });
+                    }, { passive: true});
+                    this.addEventListener("wheel", (evt)=>{
+                        (this as any).scrollLeft += (evt as WheelEvent).deltaY;
+                    },{ passive: true});
                     announcer.on("app-pinned", (_) => {
                         this.refresh_pinned_app();
                     });

@@ -205,10 +205,10 @@ namespace OS {
                  */
                 protected calibrate(): void
                 {
-                    $(this.refs.area)
+                    /*$(this.refs.area)
                         .css("width", "100%");
                     $(this.refs.input)
-                        .css("width", "100%");
+                        .css("width", "100%");*/
                     if(this.verbose)
                     {
                         $(this.refs.area).show();
