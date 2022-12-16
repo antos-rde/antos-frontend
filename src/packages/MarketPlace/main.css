@@ -26,6 +26,7 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
 }
 afx-app-window[data-id="marketplace-win"] afx-tab-bar {
     border-top: 1px solid #c3c3c3;
+    border-bottom: 1px solid #c3c3c3;
 }
 afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] input{
     border: 0;
@@ -117,7 +118,7 @@ afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] afx-l
 afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul li:hover {
     background-color: transparent;
 }
-afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item:nth-child(even) li
+afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item li
 {
     background-color: transparent;
 }
