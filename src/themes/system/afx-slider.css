@@ -9,6 +9,7 @@ afx-slider div.container{
     position: relative;
     padding:0;
     cursor: pointer;
+    height: 10px;
 }
 
 afx-slider div.progress {
@@ -19,6 +20,10 @@ afx-slider div.progress {
 }
 
 afx-slider div.dragpoint {
-    display: block;
-    padding: 5px;
+    height: 23px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 5px;
+    padding-right: 5px;
 }
