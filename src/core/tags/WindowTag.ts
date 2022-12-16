@@ -472,7 +472,7 @@ namespace OS {
                         .css("user-select", "none")
                         .css("cursor", "default");
                     $(this.refs.dragger).on("pointerdown", (e) => {
-                        //e.preventDefault();
+                        e.originalEvent.preventDefault();
                         const offset = $(this).offset();
                         offset.top = e.clientY - offset.top;
                         offset.left = e.clientX - offset.left;
