@@ -2,7 +2,7 @@ afx-app-window div.afx-window-wrapper{
     border:1px solid #262626;
     box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
     border-radius: 0px;
-    background-color:#363636;
+    background-color:#333333;
 }
 afx-app-window.unactive > div.afx-window-wrapper{
     /*background-color: #464646;*/
