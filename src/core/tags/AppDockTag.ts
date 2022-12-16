@@ -347,6 +347,7 @@ namespace OS {
                         if (e.target === this) {
                             return;
                         }
+                        m.hide();
                         const bt = ($(e.target).closest(
                             "afx-button"
                         )[0] as any) as ButtonTag;
