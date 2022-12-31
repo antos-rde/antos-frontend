@@ -3,8 +3,13 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
 AntOS is a web-based desktop platform featuring a window manager, application APIs, GUI toolkit, file system abstractions, application store, API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). 
-AntOS can be used in serveral application contexts such as: (1) provide visual tools to access and control resource on remote server
-and embedded linux environment; (2) provide and develop SaaS web-based applications.With the provided application API and the provided SDK, AntOS facilitates the development and deployment of user specific applications inside de VDE environment.
+
+AntOS can be used in serveral application contexts such as:
+- providing visual tools to access and control resource on remote server and embedded linux environment;
+- provide and develop SaaS web-based applications.
+- self-host cloud-based working environment
+
+With the provided application API and the provided SDK, AntOS facilitates the development and deployment of user specific applications inside de VDE environment.
 
 ![https://github.com/lxsang/antos/raw/master/antos-shot.png](https://github.com/lxsang/antos/raw/master/antos-shot.png)
 
