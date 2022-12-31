@@ -2,14 +2,21 @@
 [![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2Fmaster)](https://ci.iohub.dev/job/gitea-sync/job/antos/job/master/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
-AntOS is a web-based desktop platform featuring a window manager, application APIs, GUI toolkit, file system abstractions, application store, API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). 
+AntOS is a web-based desktop platform that features a window manager, application APIs, GUI toolkit, file system abstractions, application store, and an API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and act as a virtual desktop environment (VDE).
 
-AntOS can be used in serveral application contexts such as:
-- providing visual tools to access and control resource on remote server and embedded linux environment;
-- provide and develop SaaS web-based applications.
-- self-host cloud-based working environment
+AntOS can be used in several application contexts, such as:
+- Providing visual tools to access and control resources on remote servers and embedded Linux environments
+- Providing and developing SaaS web-based applications
+- Self-hosting a cloud-based working environment
+- Creating a customized, user-friendly interface for managing and interacting with cloud-based resources and services
+- Setting up a collaborative, online workspace for remote teams and distributed organizations
+- Building a web-based operating system that can run on various devices, including laptops, tablets, and smartphones
+- Creating a virtualized environment for testing and deploying web-based applications in a sandboxed environment
+- Building a platform for creating and hosting web-based educational or training content
+- Setting up a web-based development environment for prototyping and building web-based applications quickly and easily
+- Etc, You name it!
 
-With the provided application API and the provided SDK, AntOS facilitates the development and deployment of user specific applications inside de VDE environment.
+With the provided application API and SDK, AntOS facilitates the development and deployment of user-specific applications inside the VDE environment
 
 ![https://github.com/lxsang/antos/raw/master/antos-shot.png](https://github.com/lxsang/antos/raw/master/antos-shot.png)
 
