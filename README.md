@@ -3,12 +3,27 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
 AntOS is a front-end system and API that implement the traditional desktop UI environment on the web browser. The front-end can connect to a remote server and acts as a virtual desktop environment (VDE). The original purpose of AntOS is to offer: (1) visual tools to access and control resource on remote server
-and embedded linux environment; (2) front-end API for SaaS web-based applications. With its application API and the provided SDK, AntOS facilitates the
+and embedded linux environment; (2) front-end API for SaaS web-based applications.
+With the provided application API and the provided SDK, AntOS facilitates the
 development and deployment of user specific applications inside de VDE environment.
 
 ![https://os.iohub.dev/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.iohub.dev/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
 
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
+
+## Demo
+A demo of the VDE is available at  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo.
+
+If one want to run AntOS VDE locally in their system, a docker image is available at:
+[https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
+
+## AntOS applications (Available on the MarketPlace)
+[https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
+
+## Documentation
+
+- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
+- API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
 
 ## Change logs
 * V1.2.1
@@ -82,23 +97,9 @@ Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
    - Introduce new JSON based syntax for SDK task/target definition
 * From this version, docker image of All-in-one AntOS system is available at: [https://hub.docker.com/r/xsangle/antosaio](https://hub.docker.com/r/xsangle/antosaio)
 
-## Demo
-A demo of the VDE is available at  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo.
-
-If one want to run AntOS VDE locally in their system, a docker image is available at:
-[https://github.com/lxsang/antosaio](https://github.com/lxsang/antosaio)
-
-## AntOS applications (Available on the MarketPlace)
-[https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
-
-## Documentation
-
-- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
-- API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
-
 ## Licence
 
-Copyright 2017-2021 Xuan Sang LE <mrsang AT iohub DOT dev>
+Copyright 2017-2022 Xuan Sang LE <mrsang AT iohub DOT dev>
 
 AnTOS is is licensed under the GNU General Public License v3.0, see the LICENCE file for more information
 
