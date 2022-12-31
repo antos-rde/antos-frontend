@@ -7,7 +7,7 @@ and embedded linux environment; (2) front-end API for SaaS web-based application
 With the provided application API and the provided SDK, AntOS facilitates the
 development and deployment of user specific applications inside de VDE environment.
 
-![https://os.iohub.dev/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5](https://os.iohub.dev/VFS/shared/d4645d65b3e4bb348f1bde0d42598ad9b99367f5)
+![https://github.com/lxsang/antos/raw/master/antos-shot.png](https://github.com/lxsang/antos/raw/master/antos-shot.png)
 
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
