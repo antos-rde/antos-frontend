@@ -7,6 +7,8 @@
 
 AntOS is a web-based desktop platform that features a window manager, application APIs, GUI toolkit, file system abstractions, application store, and an API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and act as a virtual desktop environment (VDE).
 
+![https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png](https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png)
+
 AntOS can be used in several application contexts, such as:
 - Providing visual tools to access and control resources on remote servers and embedded Linux environments
 - Providing and developing SaaS web-based applications
@@ -20,8 +22,6 @@ AntOS can be used in several application contexts, such as:
 - Etc, You name it!
 
 With the provided application API and SDK, AntOS facilitates the development and deployment of user-specific applications inside the VDE environment
-
-![https://github.com/lxsang/antos/raw/master/antos-shot.png](https://github.com/lxsang/antos/raw/master/antos-shot.png)
 
 Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
 
@@ -40,9 +40,9 @@ If one want to run AntOS VDE locally in their system, a docker image is availabl
 - API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
 
 ## Change logs
-* v.2.0.0
+### v.2.0.0
    - Work In Progress: The UI is redesigned to support mobile device
-* V1.2.1
+### V1.2.1
    - 9b5da17 - App name now can differ from pkgname
    - b381294 - fix: fix icon display problem when application is installed, remove all related settings when an application is uinstalled
    - b6c90e5 - update image path in readme
@@ -84,7 +84,7 @@ If one want to run AntOS VDE locally in their system, a docker image is availabl
    - 52709d5 - improve Window GUI API
    - 9c06d88 - AntOS load automatically custom VFS handles if available
    - c23cb1b - Improve core API: - improve OS exit API - improve VFS API
-* V.1.2.0 Improvement GUI API
+### V.1.2.0 Improvement GUI API
    - [x] File dialog should remember last opened folder
    - [x] Add dynamic key-value dialog that work on any object
    - [x] Window list panel should show window title in tooltip when mouse hovering on application icon
