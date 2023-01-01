@@ -26,9 +26,8 @@ namespace OS {
         export class Calendar extends BaseService {
             constructor(args: AppArgumentsType[]) {
                 super("Calendar", args);
-                //@iconclass = "fa fa-commenting"
                 this.text = "";
-                this.iconclass = "fa fa-calendar";
+                this.iconclass = "bi bi-calendar3";
             }
 
             init(): void {
@@ -36,7 +35,7 @@ namespace OS {
                 this.watch(1000, () => {
                     const now = new Date();
                     this.text = now.toString();
-                    (this.domel as GUI.tag.SimpleMenuEntryTag).text = this.text;
+                    this.update();
                 });
             }
 

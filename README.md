@@ -1,6 +1,9 @@
-# antOS v1.2.1
-[![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2Fmaster)](https://ci.iohub.dev/job/gitea-sync/job/antos/job/master/)
+# antOS v2.0.0
+[![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
+
+> Warning: v2.0.0 is the experimental version of AntOS which is strongly redesigned to support mobile device.
+> For a plus stable AntOS system, please use v.1.x for production.
 
 AntOS is a web-based desktop platform that features a window manager, application APIs, GUI toolkit, file system abstractions, application store, and an API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and act as a virtual desktop environment (VDE).
 
@@ -37,6 +40,8 @@ If one want to run AntOS VDE locally in their system, a docker image is availabl
 - API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
 
 ## Change logs
+* v.2.0.0
+   - Work In Progress: The UI is redesigned to support mobile device
 * V1.2.1
    - 9b5da17 - App name now can differ from pkgname
    - b381294 - fix: fix icon display problem when application is installed, remove all related settings when an application is uinstalled

@@ -535,7 +535,7 @@ namespace OS {
            setting.system.repositories = [
                 {
                     text: "Github",
-                    url: "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/packages.json"
+                    url: "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/packages.json"
                 }
            ]
        } 

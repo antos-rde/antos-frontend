@@ -55,10 +55,10 @@ namespace OS {
             /**
              * Text of the service shown in the system tray
              *
-             * @type {string}
+             * @type {string | FormattedString}
              * @memberof BaseService
              */
-            text: string;
+            text: string | FormattedString;
 
             /**
              * Reference to the menu entry DOM element attached
@@ -79,13 +79,6 @@ namespace OS {
              */
             private timer: number;
 
-            /**
-             * Reference to the system tray menu
-             *
-             * @type {HTMLElement}
-             * @memberof BaseService
-             */
-            holder: HTMLElement;
 
             /**
              * Placeholder for service select callback
@@ -108,7 +101,6 @@ namespace OS {
                 this.iconclass = "fa fa-paper-plane-o";
                 this.text = "";
                 this.timer = undefined;
-                this.holder = undefined;
                 this.onmenuselect = (d) => {
                     return this.awake(d);
                 };
@@ -140,7 +132,9 @@ namespace OS {
              * @memberof BaseService
              */
             update(): void {
-                (this.domel as GUI.tag.MenuEntryTag).data = this;
+                if(!this.domel)
+                    return;
+                (this.domel as GUI.tag.ListViewItemTag).data = this;
             }
 
             /**
@@ -151,17 +145,6 @@ namespace OS {
              */
             meta(): API.PackageMetaType {
                 return application[this.name].meta;
-            }
-
-            /**
-             * Attach the service to a menu element
-             * such as the system tray menu
-             *
-             * @param {HTMLElement} h
-             * @memberof BaseService
-             */
-            attach(h: HTMLElement): void {
-                this.holder = h;
             }
 
             /**

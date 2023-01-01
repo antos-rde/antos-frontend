@@ -38,6 +38,23 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private _pending_task: number[];
+                
+                /**
+                 * Flag indicate where the selected application shall be openned
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof SystemPanelTag
+                 */
+                private _prevent_open: boolean;
+                /**
+                 * Store the current attached service
+                 *
+                 * @private
+                 * @type {number[]}
+                 * @memberof SystemPanelTag
+                 */
+                private _services: application.BaseService[];
 
                 /**
                  * Loading animation check timeout
@@ -77,6 +94,8 @@ namespace OS {
                     this._pending_task = [];
                     this._loading_toh = undefined;
                     this.app_list= [];
+                    this._services = [];
+                    this._prevent_open = false;
                 }
 
                 /**
@@ -105,8 +124,7 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 attachservice(s: application.BaseService) {
-                    (this.refs.systray as MenuTag).unshift(s);
-                    return s.attach(this.refs.systray);
+                    this._services.unshift(s);
                 }
 
                 /**
@@ -118,12 +136,14 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private open(): void {
+                    if(this._prevent_open)
+                    {
+                        this._prevent_open = false;
+                        return;
+                    }
                     const applist = this.refs.applist as ListViewTag;
                     const el = applist.selectedItem;
                     if (!el) {
-                        return;
-                    }
-                    if (!el.data || el.data.dataid === "header") {
                         return;
                     }
                     this.toggle(false);
@@ -149,11 +169,13 @@ namespace OS {
                             return this.toggle(false);
 
                         case 37:
+                            this._prevent_open = true;
                             applist.selectPrev();
                             return e.preventDefault();
                         case 38:
                             return e.preventDefault();
                         case 39:
+                            this._prevent_open = true;
                             applist.selectNext();
                             return e.preventDefault();
                         case 40:
@@ -187,9 +209,8 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 detachservice(s: application.BaseService): void {
-                    (this.refs.systray as MenuTag).delete(
-                        s.domel as MenuEntryTag
-                    );
+                    const index = this._services.indexOf(s);
+                    this._services.splice(index, 1);
                 }
 
                 /**
@@ -216,7 +237,7 @@ namespace OS {
                                     id: "sysdock"
                                 },
                                 {
-                                    el: "afx-menu",
+                                    el: "afx-button",
                                     id: "systray",
                                     ref: "systray",
                                     class: "afx-panel-os-stray",
@@ -394,6 +415,18 @@ namespace OS {
                         clearTimeout(this._loading_toh);
                     this._loading_toh = undefined;
                 }
+
+                private show_systray(): void
+                {
+                    const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
+                    ctxmenu.hide();
+                    ctxmenu.nodes = this._services;
+                    $(ctxmenu)
+                        .css("right", 0)
+                        .css("bottom", $(this).height());
+                    ctxmenu.show();
+                }
+
                 /**
                  * Mount the tag bind some basic event
                  *
@@ -401,6 +434,7 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 protected mount(): void {
+                    const systray = this.refs.systray as GUI.tag.ButtonTag;
                     (this.refs.osmenu as ButtonTag).set(this._osmenu);
                     this._cb = (e) => {
                         if (
@@ -410,7 +444,6 @@ namespace OS {
                             return this.toggle(false);
                         }
                     };
-                    $(this.refs.systray).css("z-index", 1000000);
                     (this.refs.btscreen as ButtonTag).set({
                         iconclass: "fa fa-tv",
                         onbtclick: (e) => {
@@ -450,9 +483,9 @@ namespace OS {
                         return this.search(e);
                     });
 
-                    $(this.refs.applist).on("click", (e) => {
+                    (this.refs.applist as ListViewTag).onlistselect = (_) => {
                         return this.open();
-                    });
+                    };
                     Ant.OS.GUI.bindKey("CTRL- ", (e) => {
                         if (this._view === false) {
                             return this.toggle(true);
@@ -479,19 +512,27 @@ namespace OS {
                     $(this.refs.overlay)
                         .hide();
                     this.refs.osmenu.contextmenuHandle = (e, m) => { };
-                    this.refs.systray.contextmenuHandle = (e, m) => { };
+                    systray.contextmenuHandle = (e, m) => { };
                     this.refs.panel.contextmenuHandle = (e, m) => { };
                     announcer.on("loading", (o: API.AnnouncementDataType<number>) => {
                         if(o.u_data != 0)
                         {
                             return;
                         }
-                        this._pending_task.push(o.id);
-                        if(!$(this.refs.panel).hasClass("loading"))
+                        if(this._pending_task.length == 0)
+                        {
                             $(this.refs.panel).addClass("loading");
+                            systray.iconclass = "fa-spin fa fa-cog";
+                        }
+                        this._pending_task.push(o.id);
+                            
                         $(GUI.workspace).css("cursor", "wait");
                     });
-    
+                    systray.iconclass = "bi bi-sliders";
+                    systray.onbtclick = (e) => {
+                        e.data.stopPropagation();
+                        this.show_systray();
+                    };
                     announcer.on("loaded", (o: API.AnnouncementDataType<number>) => {
                         const i = this._pending_task.indexOf(o.id);
                         if (i >= 0) {
@@ -499,6 +540,7 @@ namespace OS {
                         }
                         if (this._pending_task.length === 0) {
                             // set time out
+                            systray.iconclass = "bi bi-sliders";
                             if(!this._loading_toh)
                                 this._loading_toh = setTimeout(() => this.animation_check(),1000);
                         }

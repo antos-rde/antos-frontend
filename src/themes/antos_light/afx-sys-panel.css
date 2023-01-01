@@ -20,30 +20,9 @@ afx-sys-panel .afx-panel-os-menu {
     color: white;
 }
 
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  {
-    left: calc(100% - 170px);
-}
-
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu li.afx_submenu a{
-    margin-left: 10px;
-}
-
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu li.afx_submenu:before {
-    content: "\f054"; 
-    font-family: "FontAwesome";
-    font-size: 10px;
-    position:absolute;
-    text-align: left;
-    left:5px;
-    top:25%;
- }
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu ul{
-    border:1px solid #a6a6a6;
-    border-radius: 5px;
-    border-top-right-radius: 0px;
-}
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu li{
-    min-width: 150px;
+afx-sys-panel .afx-panel-os-stray button{
+    border-radius: 0;
+    border: 0;
 }
 
 afx-sys-panel afx-overlay

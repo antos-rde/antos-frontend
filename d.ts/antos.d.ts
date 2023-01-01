@@ -3685,6 +3685,13 @@ declare namespace OS {
              * @memberof TagEventType
              */
             data: T;
+            /**
+             * Original event if any
+             *
+             * @type {any}
+             * @memberof TagEventType
+             */
+            originalEvent?: any;
         }
         /**
          * Drag and Drop data type sent between mouse events
@@ -6295,6 +6302,22 @@ declare namespace OS {
                  */
                 private _pending_task;
                 /**
+                 * Flag indicate where the selected application shall be openned
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberof SystemPanelTag
+                 */
+                private _prevent_open;
+                /**
+                 * Store the current attached service
+                 *
+                 * @private
+                 * @type {number[]}
+                 * @memberof SystemPanelTag
+                 */
+                private _services;
+                /**
                  * Loading animation check timeout
                  *
                  * @memberof SystemPanelTag
@@ -6409,6 +6432,7 @@ declare namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private animation_check;
+                private show_systray;
                 /**
                  * Mount the tag bind some basic event
                  *
@@ -10570,10 +10594,10 @@ declare namespace OS {
             /**
              * Text of the service shown in the system tray
              *
-             * @type {string}
+             * @type {string | FormattedString}
              * @memberof BaseService
              */
-            text: string;
+            text: string | FormattedString;
             /**
              * Reference to the menu entry DOM element attached
              * to the service
@@ -10591,13 +10615,6 @@ declare namespace OS {
              * @memberof BaseService
              */
             private timer;
-            /**
-             * Reference to the system tray menu
-             *
-             * @type {HTMLElement}
-             * @memberof BaseService
-             */
-            holder: HTMLElement;
             /**
              * Placeholder for service select callback
              *
@@ -10642,14 +10659,6 @@ declare namespace OS {
              * @memberof BaseService
              */
             meta(): API.PackageMetaType;
-            /**
-             * Attach the service to a menu element
-             * such as the system tray menu
-             *
-             * @param {HTMLElement} h
-             * @memberof BaseService
-             */
-            attach(h: HTMLElement): void;
             /**
              * Set the callback that will be called periodically
              * after a period of time.

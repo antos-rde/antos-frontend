@@ -48,6 +48,7 @@ namespace OS {
                 this.iconclass = "fa fa-bars";
                 this.cb = undefined;
                 this.logs = [];
+                this.text = __("Notification");
                 this.logmon = undefined;
             }
 
@@ -223,9 +224,9 @@ namespace OS {
     const scheme = `\
 <div>
     <afx-overlay data-id = "notifyzone" width = "250px">
-        <afx-hbox data-height="30">
+        <afx-hbox data-height="35">
             <afx-button text = "__(Clear all)" data-id = "btclear" ></afx-button>
-            <afx-button iconclass = "fa fa-bug" data-id = "bterrlog" data-width = "25"></afx-button>
+            <afx-button iconclass = "fa fa-bug" data-id = "bterrlog" data-width = "40"></afx-button>
         </afx-hbox>
         <afx-list-view data-id="notifylist"></afx-list-view>
     </afx-overlay>
