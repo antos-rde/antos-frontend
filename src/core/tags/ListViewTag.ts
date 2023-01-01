@@ -178,14 +178,16 @@ namespace OS {
                     });
 
                     $(this.refs.item).on("click",(e) => {
-                        this._onclick({ id: this.aid, data: this });
+                        this._onclick({ id: this.aid, data: this, originalEvent: e });
+                        e.stopPropagation();
                     });
 
                     $(this.refs.item).on("dblclick",(e) => {
-                        this._ondbclick({ id: this.aid, data: this });
+                        this._ondbclick({ id: this.aid, data: this, originalEvent: e });
+                        e.stopPropagation();
                     });
                     $(this.refs.btcl).on("click",(e) => {
-                        this._onclose({ id: this.aid, data: this });
+                        this._onclose({ id: this.aid, data: this, originalEvent: e });
                         e.preventDefault();
                         e.stopPropagation();
                     });

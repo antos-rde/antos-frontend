@@ -217,6 +217,13 @@ namespace OS {
              * @memberof TagEventType
              */
             data: T;
+            /**
+             * Original event if any
+             *
+             * @type {any}
+             * @memberof TagEventType
+             */
+            originalEvent?: any;
         }
 
         /**

@@ -41,7 +41,9 @@ afx-sys-panel > div.loading::before {
     top:0;
     animation: sys-loading 1s linear infinite;
 }
-
+afx-sys-panel .afx-panel-os-stray button{
+    font-size: 22px;
+}
 @keyframes sys-loading {
     0% {
         right: auto;
@@ -75,19 +77,6 @@ afx-sys-panel .afx-panel-os-menu {
     margin: 0;
 }
 
-afx-sys-panel .afx-panel-os-stray{
-    position: relative;
-}
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  {
-    right: 0;
-    position: absolute;
-}
-
-afx-sys-panel afx-menu.afx-panel-os-stray afx-menu  afx-menu{
-    left: -100%;
-    right: 100%;
-    top:-4px;
-}
 
 afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
 {
