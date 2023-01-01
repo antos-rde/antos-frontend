@@ -87,8 +87,9 @@ namespace OS {
                 constructor() {
                     super();
                     this._osmenu = {
-                        text: __("Start"),
-                        iconclass: "fa fa-circle",
+                        text: "",
+                        //iconclass: "fa fa-circle",
+                        icon: "os://resources/themes/system/icons/antos-32x32.png"
                     };
                     this._view = false;
                     this._pending_task = [];

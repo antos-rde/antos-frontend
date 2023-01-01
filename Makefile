@@ -148,6 +148,7 @@ build_themes: antos_light antos_dark
 	-rm -rf $(BUILDDIR)/resources/themes/system/*
 	-mkdir -p $(BUILDDIR)/resources/themes/system
 	cp -r src/themes/system/fonts $(BUILDDIR)/resources/themes/system
+	cp -r src/themes/system/icons $(BUILDDIR)/resources/themes/system
 	cp -r src/themes/system/wp $(BUILDDIR)/resources/themes/system
 	for f in src/themes/system/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/system/system.css;done
 
