@@ -1,5 +1,4 @@
-![https://github.com/lxsang/antos/raw/2.0.x/antos-64.png](https://github.com/lxsang/antos/raw/2.0.x/antos-64.png)
-# antOS v2.0.0
+# ![https://github.com/lxsang/antos/raw/2.0.x/antos-64.png](https://github.com/lxsang/antos/raw/2.0.x/antos-64.png) antOS v2.0.0
 [![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
 
