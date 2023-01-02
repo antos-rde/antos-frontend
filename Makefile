@@ -225,7 +225,7 @@ ar:
 	echo -n $(VERSION) > release/latest
 
 release: main uglify
-
+.PHONY: doc release clean
 doc:
 	# npm i typedoc@0.19.0
 	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS API" --out $(DOCDIR)
