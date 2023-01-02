@@ -30,6 +30,7 @@ pipeline{
           buildir="build"
           [ -d "$buildir" ] && rm -rf "$buildir"
           export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
+          [ -d "doc" ] && rm -rf doc
           mkdir doc
           export DOCDIR="$WORKSPACE/doc"
           make release
