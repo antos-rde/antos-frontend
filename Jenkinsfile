@@ -40,6 +40,9 @@ pipeline{
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
             archiveArtifacts artifacts: 'd.ts/, build/, doc/', fingerprint: true
+            sh'''
+            cp -rf doc /home/dany/public/antos-release/doc-2.0.x
+            '''
             //}
         }
       }
