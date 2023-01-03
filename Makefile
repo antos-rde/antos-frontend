@@ -228,7 +228,7 @@ release: main uglify
 .PHONY: doc release clean
 doc:
 	# npm i typedoc@0.19.0
-	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS API" --out $(DOCDIR)
+	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
 
 test: build_javascripts
 	jest
