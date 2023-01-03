@@ -26,16 +26,18 @@ pipeline{
           npm install uglifycss
           npm install typescript
           npm install @types/jquery
+          npm i typedoc@0.19.0
           
           buildir="build"
           [ -d "$buildir" ] && rm -rf "$buildir"
           export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
           make release
+          make doc
         '''
         script {
             // only useful for any master branch
             //if (env.BRANCH_NAME =~ /^master/) {
-            archiveArtifacts artifacts: 'd.ts/, build/', fingerprint: true
+            archiveArtifacts artifacts: 'd.ts/, build/, doc/', fingerprint: true
             //}
         }
       }
