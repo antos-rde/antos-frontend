@@ -5,7 +5,7 @@
 > *Warning: v2.0.0 is the experimental version of AntOS which is strongly redesigned to support mobile device.*
 > *For a plus stable AntOS system, please use v.1.x for production.*
 
-AntOS is a web-based desktop platform that features a window manager, application APIs, GUI toolkit, file system abstractions, application store, and an API and SDK for in-browser application development. The purpose of this project is to enable users to easily set up a self-hosted, cloud-based working environment using only a web browser. The front-end can connect to a remote server and act as a virtual desktop environment (VDE).
+AntOS is a web-based desktop platform that provides an all-in-one solution for setting up a cloud-based, self-hosted working environment. It features a backend API and services, a front-end web-based window manager, application APIs, a GUI toolkit, and file system abstractions. It also includes an application store and an SDK for in-browser application development, deployment, and packaging. AntOS is designed to work across devices, including desktop computers and mobile devices.
 
 ![https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png](https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png)
 
