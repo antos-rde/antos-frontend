@@ -221,7 +221,7 @@ ar:
 	echo -n $(VERSION) > release/latest
 
 release: main uglify
-
+.PHONY: doc release
 doc:
 	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS API" --out $(DOCDIR)
 
