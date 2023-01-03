@@ -155,6 +155,7 @@ namespace OS {
                     const auto_width = [];
                     let ocwidth = 0;
                     const avaiWidth = $(this).width() - this.padding * 2;
+                    const avaiheight = $(this).innerHeight() - this.padding * 2;
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -188,7 +189,11 @@ namespace OS {
                         $.each(auto_width, (i, v) =>
                             $(v).css("width", `${csize}px`)
                         );
-                    } 
+                    }
+                    this.observable.trigger("hboxchange", {
+                        id: this.aid,
+                        data: { w: avaiWidth, h: avaiheight },
+                    });
                 }
 
                 /**
@@ -203,6 +208,7 @@ namespace OS {
                     const auto_height = [];
                     let ocheight = 0;
                     const avaiheight = $(this).innerHeight() - this.padding * 2;
+                    const avaiwidth = $(this).width() - this.padding * 2;
                     $(this.refs.yield)
                         .children()
                         .each(function (e) {
@@ -237,6 +243,11 @@ namespace OS {
                             $(v).css("height", `${csize}px`)
                         );
                     }
+
+                    this.observable.trigger("vboxchange", {
+                        id: this.aid,
+                        data: { w: avaiwidth, h: avaiheight },
+                    });
                 }
 
                 /**
