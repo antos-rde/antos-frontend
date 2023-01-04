@@ -110,6 +110,7 @@ namespace OS {
                 this.on("exit", () => this.quit(false));
                 // first register some base event to the app
                 this.on("focus", () => {
+                    //if(this.sysdock.selectedApp != this)
                     this.sysdock.selectedApp = this;
                     (this.scheme as GUI.tag.WindowTag).onmenuopen = (el) => el.nodes = this.baseMenu() || [];
                     OS.PM.pidactive = this.pid;
