@@ -162,6 +162,11 @@ namespace OS {
                     }
                     $(el.domel).addClass("selected");
                     ($(Ant.OS.GUI.workspace)[0] as FloatListTag).unselect();
+                    const evt = {
+                        id: this.aid,
+                        data: v
+                    };
+                    announcer.trigger("appselect", evt);
                 }
 
                 get selectedApp(): application.BaseApplication {
@@ -215,7 +220,8 @@ namespace OS {
                     item.domel = bt;
                     bt.onbtclick = (e) => {
                         e.data.stopPropagation();
-                        this.handleAppSelect(bt);
+                        this
+                            .handleAppSelect(bt);
                     };
                 }
 
@@ -269,43 +275,54 @@ namespace OS {
                  * Handle the application selection action
                  * 
                  * @private
+                 * @returns {Promise<application.BaseApplication>}
                  * @memberof AppDockTag
                  */
-                private handleAppSelect(bt: ButtonTag)
+                private handleAppSelect(bt: ButtonTag): Promise<application.BaseApplication>
                 {
-                    const name = bt.data.name as string;
-                    const collection = this.items.filter(it => it.app.name == name);
-                    const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
-                    ctxmenu.hide();
-                    if(collection.length == 0)
-                    {
-                        GUI.launch(name, []);
-                        return;
-                    }
-                    if(collection.length == 1)
-                    {
-                        collection[0].app.trigger("focus");
-                        return;
-                    }
-                    // show the context menu containning a list of application to select
-                    const menu_data = collection.map(e => {
-                        return {
-                            text: (e.app.scheme as WindowTag).apptitle,
-                            icon: e.icon,
-                            iconclass: e.iconclass,
-                            app: e.app
-                        };
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            const name = bt.data.name as string;
+                            const collection = this.items.filter(it => it.app.name == name);
+                            const ctxmenu = $("#contextmenu")[0] as tag.StackMenuTag;
+                            ctxmenu.hide();
+                            if(collection.length == 0)
+                            {
+                                resolve(await GUI.launch(name, []) as application.BaseApplication);
+                                return;
+                            }
+                            if(collection.length == 1)
+                            {
+                                collection[0].app.trigger("focus");
+                                resolve(collection[0].app);
+                                return;
+                            }
+                            // show the context menu containning a list of application to select
+                            const menu_data = collection.map(e => {
+                                return {
+                                    text: (e.app.scheme as WindowTag).apptitle,
+                                    icon: e.icon,
+                                    iconclass: e.iconclass,
+                                    app: e.app
+                                };
+                            });
+                            const offset = $(bt).offset();
+                            ctxmenu.nodes = menu_data;
+                            $(ctxmenu)
+                                .css("left", offset.left)
+                                .css("bottom", $(this).height());
+                            ctxmenu.onmenuselect = (e) =>
+                            {
+                                e.data.item.data.app.show();
+                                resolve(e.data.item.data.app);
+                            }
+                            ctxmenu.show();
+                        }
+                        catch(e)
+                        {
+                            reject(__e(e));
+                        }
                     });
-                    const offset = $(bt).offset();
-                    ctxmenu.nodes = menu_data;
-                    $(ctxmenu)
-                        .css("left", offset.left)
-                        .css("bottom", $(this).height());
-                    ctxmenu.onmenuselect = (e) =>
-                    {
-                        e.data.item.data.app.show();
-                    }
-                    ctxmenu.show();
                 }
 
                 /**

@@ -8716,6 +8716,7 @@ declare namespace OS {
                  * Handle the application selection action
                  *
                  * @private
+                 * @returns {Promise<application.BaseApplication>}
                  * @memberof AppDockTag
                  */
                 private handleAppSelect;

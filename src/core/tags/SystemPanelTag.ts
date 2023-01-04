@@ -438,6 +438,7 @@ namespace OS {
                     const systray = this.refs.systray as GUI.tag.ButtonTag;
                     (this.refs.osmenu as ButtonTag).set(this._osmenu);
                     this._cb = (e) => {
+                        console.log("Clicked");
                         if (
                             !$(e.target).closest($(this.refs.overlay)).length &&
                             !$(e.target).closest(this.refs.osmenu).length
@@ -548,6 +549,10 @@ namespace OS {
                     });
                     announcer.on("desktopresize", (e) => {
                         this.calibrate();
+                    });
+                    announcer.on("appselect", (e) => {
+                        if(this._view)
+                            this.toggle(false);
                     });
                     Ant.OS.announcer.trigger("syspanelloaded", undefined);
                 }
