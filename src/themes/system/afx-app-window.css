@@ -103,8 +103,8 @@ afx-app-window div.afx-window-overlay {
 }
 
 afx-app-window div.afx-window-wrapper > afx-stack-menu.context {
-    top: 42px;
-    left: 5px;
+    top: 42px !important;
+    left: 5px !important;
 }
 
 afx-app-window ul.afx-window-top afx-button button{
