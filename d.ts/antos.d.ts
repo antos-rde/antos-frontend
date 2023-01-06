@@ -1133,16 +1133,16 @@ declare namespace OS {
          */
         interface ToastOptions {
             /**
-             * Where the Toast is displayed?
+             * Where the Toast is displayed? see [[ANCHOR]]
              *
              * @type {ANCHOR}
              * @memberof ToastOptions
              */
             location?: ANCHOR;
             /**
-             * Timeout (in seconds) before the Toast disappear
+             * Timeout (in seconds) before the Toast disappears
              * Set this value to 0 to prevent the Toast to disappear,
-             * in this case, use need to explicitly close the notification
+             * in this case, user need to explicitly close the notification
              *
              * @type {number}
              * @memberof ToastOptions
@@ -1158,6 +1158,7 @@ declare namespace OS {
         }
         /**
          * Toast notification API
+         * Show a toast message on different posisition on screen, see [[ToastOptions]]
          *
          * @export
          * @param
