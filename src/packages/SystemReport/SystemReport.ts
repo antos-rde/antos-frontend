@@ -110,33 +110,33 @@ detail:
          *
          *
          * @export
-         * @class Syslog
+         * @class SystemReport
          * @extends {BaseApplication}
          */
-        export class Syslog extends BaseApplication {
+        export class SystemReport extends BaseApplication {
             private loglist: TAG.ListViewTag;
             private logdetail: HTMLElement;
             private srv: PushNotification;
             constructor(args: AppArgumentsType[]) {
-                super("Syslog", args);
+                super("SystemReport", args);
             }
 
             /**
              *
              *
-             * @memberof Syslog
+             * @memberof SystemReport
              */
             /**
              *
              *
-             * @memberof Syslog
+             * @memberof SystemReport
              */
             main(): void {
                 this.loglist = this.find("loglist") as TAG.ListViewTag;
                 this.logdetail = this.find("logdetail");
 
                 this._gui
-                    .pushService("Syslog/PushNotification")
+                    .pushService("SystemServices/PushNotification")
                     .then((srv) => {
 
                         this.srv = srv as PushNotification;
@@ -231,7 +231,7 @@ detail:
              *
              *
              * @param {GenericObject<any>} log
-             * @memberof Syslog
+             * @memberof SystemReport
              */
             addLog(log: GenericObject<any>): void {
                 this.loglist.push(log);
@@ -241,7 +241,7 @@ detail:
              *
              *
              * @returns {void}
-             * @memberof Syslog
+             * @memberof SystemReport
              */
             cleanup(): void {
                 if (this.srv) {
@@ -250,6 +250,6 @@ detail:
             }
         }
 
-        Syslog.singleton = true;
+        SystemReport.singleton = true;
     }
 }

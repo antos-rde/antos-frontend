@@ -27,6 +27,48 @@ namespace OS {
      */
     export namespace GUI {
         /**
+         * Enum definition of different UI locattion
+         *
+         * @export
+         * @enum {string }
+         */
+        export enum ANCHOR {
+            /**
+             * Center top
+             */
+            NORTH = "NORTH",
+            /**
+             * Center bottom
+             */
+            SOUTH = "SOUTH",
+            /**
+             * Center left
+             */
+            WEST = "WEST",
+            /**
+             * Center right
+             */
+            EST = "EST",
+
+            /**
+             * Top left
+             */
+            NORTH_WEST = "NORTH_WEST",
+            /**
+             * Bottom left
+             */
+            SOUTH_WEST = "SOUTH_WEST",
+
+            /**
+             * Top right
+             */
+            NORTH_EST = "NORTH_EST",
+            /**
+             * Bottom right
+             */
+            SOUTH_EST = "SOUTH_EST",
+        }
+        /**
          * AntOS keyboard shortcut type definition
          *
          * @export
@@ -241,6 +283,87 @@ namespace OS {
                 dialog.data = data;
                 return dialog.init();
             });
+        }
+        
+        /**
+         * Toast notification configuration options
+         *
+         *
+         * @export
+         * @interface ToastOptions
+         */
+        export interface ToastOptions {
+            /**
+             * Where the Toast is displayed? see [[ANCHOR]]
+             *
+             * @type {ANCHOR}
+             * @memberof ToastOptions
+             */
+            location?: ANCHOR;
+
+            /**
+             * Timeout (in seconds) before the Toast disappear
+             * Set this value to 0 to prevent the Toast to disappear,
+             * in this case, use need to explicitly close the notification
+             *
+             * @type {number}
+             * @memberof ToastOptions
+             */
+            timeout?: number;
+
+            /**
+             * AFXTag that is used to render the data
+             *
+             * @type {number}
+             * @memberof ToastOptions
+             */
+            tag?: string;
+        }
+
+        /**
+         * Toast notification API
+         * Show a toad message on different posisition on screen, see [[ToastOptions]]
+         * 
+         * @export
+         * @param
+         * @returns
+         */
+        export function toast(data: any, opts?: ToastOptions,  app: application.BaseApplication = undefined): void
+        {
+            let notification_el = undefined;
+            if(app)
+            {
+                notification_el = app.window.notification;
+            }
+            else
+            {
+                notification_el = $("#sys_notification")[0] as tag.NotificationTag;
+            }
+            let options: ToastOptions = {
+                location: ANCHOR.NORTH,
+                timeout: 3,
+                tag: "afx-label"
+            };
+            if(opts)
+            {
+                for(const k in opts)
+                {
+                    options[k] = opts[k];
+                }
+            }
+            const toast_el = $(`<afx-toast-notification>`)[0] as tag.ToastNotificationTag;
+            const content_el = $(`<${options.tag}>`)[0] as AFXTag;
+            $(toast_el).append(content_el);
+            toast_el.uify(undefined);
+            notification_el.push(toast_el, options.location);
+            content_el.set(data);
+            if(options.timeout && options.timeout != 0)
+            {
+                setTimeout(function(){
+                    $(toast_el).remove();
+                    clearTimeout(this);
+                }, options.timeout*1000);
+            }
         }
 
         /**
@@ -951,6 +1074,8 @@ namespace OS {
                 );
             });
             // mount it
+            const nottification = $("#sys_notification")[0] as tag.NotificationTag;
+            nottification.uify(undefined);
             desktop().uify(undefined);
         }
 
@@ -1104,6 +1229,7 @@ namespace OS {
 <afx-sys-panel id = "syspanel"></afx-sys-panel>
 <div id = "workspace">
     <afx-desktop id = "desktop" dir="vertical" ></afx-desktop>
+    <afx-notification id="sys_notification" ></afx-notification>
 </div>
 <afx-stack-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-stack-menu>
 <afx-label id="systooltip" data-id="systooltip" style="display:none;position:absolute;"></afx-label>

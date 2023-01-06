@@ -154,7 +154,7 @@ namespace OS {
                                             }
                                             const path = `${d.file.path}/${d.name}`;
                                             await API.VFS.mkar(file.path, path);
-                                            this.notify(__("Archive file created: {0}",path ));
+                                            this.toast(__("Archive file created: {0}",path ));
                                         } catch (error) {
                                             this.error(__("Unable to compress file, folder"), error);
                                         }
@@ -638,7 +638,7 @@ namespace OS {
                             cut: true,
                             files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
-                        return this.notify(__("{0} files cut", this.clipboard.files.length));
+                        return this.toast(__("{0} files cut", this.clipboard.files.length));
 
                     case `${this.name}-copy`:
                         if (!file) {
@@ -648,7 +648,7 @@ namespace OS {
                             cut: false,
                             files: this.view.selectedFiles.map(x => x.path.asFileHandle()),
                         };
-                        return this.notify(
+                        return this.toast(
                             __("{0} files copied", this.clipboard.files.length)
                         );
 
@@ -747,8 +747,7 @@ namespace OS {
                             .publish()
                             .then((r) => {
                                 return this.notify(
-                                    __("Shared url: {0}", r.result)
-                                );
+                                    __("Shared url: {0}", r.result));
                             })
                             .catch((e) => {
                                 return this.error(

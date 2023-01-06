@@ -380,7 +380,17 @@ namespace OS {
             title(): string | FormattedString {
                 return (this.scheme as GUI.tag.WindowTag).apptitle;
             }
-
+            
+            /**
+             * Getter to access the application window instance
+             * 
+             * @memberof BaseApplication
+             */
+            get window(): GUI.tag.WindowTag
+            {
+                return this.scheme as GUI.tag.WindowTag;
+            }
+            
             /**
              * Function called when the application exit.
              * If the input exit event is prevented, the application
@@ -455,6 +465,35 @@ namespace OS {
                 return [];
             }
 
+            /**
+             * Show local toast notification
+             *
+             * @param {any} data to send
+             * @param {GUI.ToastOptions} notification options see [[GUI.ToastOptions]]
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            toast(data: any, opts?: GUI.ToastOptions): void {
+                let options: GUI.ToastOptions = {
+                    location: GUI.ANCHOR.SOUTH_EST,
+                    timeout: 3,
+                    tag: "afx-label"
+                };
+                if(opts)
+                {
+                    for(const k in opts)
+                    {
+                        options[k] = opts[k];
+                    }
+                }
+                let d = data;
+                if(typeof data == "string" || data instanceof FormattedString)
+                {
+                    d = {text: data};
+                }
+                this._gui.toast(d,options, this);
+            }
+            
             /**
              * The cleanup function that is called by [[onexit]] function.
              * Application need to override this function to perform some

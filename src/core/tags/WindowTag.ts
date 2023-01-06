@@ -273,6 +273,15 @@ namespace OS {
                 }
 
                 /**
+                 * Get the notification tag
+                 * 
+                 * @memberof WindowTag
+                 */
+                get notification(): NotificationTag
+                {
+                    return this.refs.notification as NotificationTag;
+                }
+                /**
                  * Resize all the children of the window based on its width and height
                  *
                  * @private
@@ -703,6 +712,10 @@ namespace OS {
                                 {
                                     el: "afx-stack-menu",
                                     ref: "stackmenu"
+                                },
+                                {
+                                    el: "afx-notification",
+                                    ref: "notification"
                                 }
                             ],
                         },

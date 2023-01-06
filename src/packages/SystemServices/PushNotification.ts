@@ -31,12 +31,10 @@ namespace OS {
             private cb: (e: JQuery.ClickEvent) => void;
             private view: boolean;
             private mlist: TAG.ListViewTag;
-            private mfeed: TAG.ListViewTag;
             private nzone: TAG.OverlayTag;
-            private fzone: TAG.OverlayTag;
 
             logs: GenericObject<any>[];
-            logmon: Syslog;
+            logmon: SystemReport;
 
             /**
              *Creates an instance of PushNotification.
@@ -70,9 +68,7 @@ namespace OS {
              */
             main(): void {
                 this.mlist = this.find("notifylist") as TAG.ListViewTag;
-                this.mfeed = this.find("notifeed") as TAG.ListViewTag;
                 this.nzone = this.find("notifyzone") as TAG.OverlayTag;
-                this.fzone = this.find("feedzone") as TAG.OverlayTag;
                 (this.find("btclear") as TAG.ButtonTag).onbtclick = (e) =>
                     (this.mlist.data = []);
                 (this.find("bterrlog") as TAG.ButtonTag).onbtclick = (e) =>
@@ -83,16 +79,10 @@ namespace OS {
                 this.subscribe("info", (o) => this.pushout("INFO", o));
 
                 this.nzone.height = "100%";
-                this.fzone.height = "100%";
 
                 $(this.nzone)
                     .css("right", 0)
                     .css("top", "0")
-                    .css("bottom", "0")
-                    .hide();
-                $(this.fzone)
-                    //.css("z-index", 99999)
-                    .css("bottom", "0")
                     .css("bottom", "0")
                     .hide();
             }
@@ -105,7 +95,7 @@ namespace OS {
              * @memberof PushNotification
              */
             private showLogReport(): void {
-                this._gui.launch("Syslog", []);
+                this._gui.launch("SystemReport", []);
             }
 
             /**
@@ -167,16 +157,7 @@ namespace OS {
              * @memberof PushNotification
              */
             private notifeed(d: GenericObject<any>): void {
-                let timer: number;
-                this.mfeed.unshift(d);
-                $(this.fzone).show();
-                timer = window.setTimeout(() => {
-                    this.mfeed.delete(d.domel);
-                    if (this.mfeed.data.length === 0) {
-                        $(this.fzone).hide();
-                    }
-                    return clearTimeout(timer);
-                }, 3000);
+                GUI.toast(d,{timeout: 3, location: GUI.ANCHOR.NORTH});
             }
 
             /**
@@ -229,10 +210,6 @@ namespace OS {
             <afx-button iconclass = "fa fa-bug" data-id = "bterrlog" data-width = "40"></afx-button>
         </afx-hbox>
         <afx-list-view data-id="notifylist"></afx-list-view>
-    </afx-overlay>
-    <afx-overlay data-id = "feedzone" width = "250">
-        <afx-list-view data-id = "notifeed">
-        </afx-list-view>
     </afx-overlay>
 </div>\
 `;

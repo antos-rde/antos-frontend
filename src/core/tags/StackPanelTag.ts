@@ -61,7 +61,7 @@ namespace OS {
                     this.navigate()
                 }
                 /**
-                 * Navigate to a custom tab
+                 * Navigate to a custom panel
                  *
                  * @memberof StackPanelTag
                  */

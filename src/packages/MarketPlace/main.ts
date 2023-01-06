@@ -126,10 +126,10 @@ namespace OS {
                     try {
                         if (this.btinstall.data.dirty) {
                             await this.updatePackage();
-                            return this.notify(__("Package updated"));
+                            return this.toast(__("Package updated"));
                         }
                         const n = await this.remoteInstall();
-                        return this.notify(__("Package installed: {0}", n));
+                        return this.toast(__("Package installed: {0}", n));
                     } catch (error) {
                         return this.error(error.toString(), error);
                     }
@@ -138,7 +138,7 @@ namespace OS {
                 this.btremove.onbtclick = async () => {
                     try {
                         await this.uninstall();
-                        return this.notify(__("Packaged uninstalled"));
+                        return this.toast(__("Packaged uninstalled"));
                     } catch (e) {
                         return this.error(e.toString(), e);
                     }
@@ -401,8 +401,8 @@ namespace OS {
                             );
                         })
                         .catch((_e) => {
-                            this.notify(
-                                __("Unable to read package description")
+                            this.error(
+                                __("Unable to read package description"), _e
                             );
                             return $(this.appdesc).empty();
                         });
@@ -487,7 +487,7 @@ namespace OS {
                     case "install":
                         this.localInstall()
                             .then((n) => {
-                                return this.notify(
+                                return this.toast(
                                     __("Package installed: {0}", n)
                                 );
                             })
@@ -734,7 +734,7 @@ namespace OS {
                         if (r.error) {
                             throw __("Cannot uninstall package: {0}", r.error).__();
                         }
-                        this.notify(__("Package uninstalled"));
+                        this.toast(__("Package uninstalled"));
                         // stop all the services if any
                         if (app.services) {
                             for (let srv of Array.from(app.services)) {
@@ -787,7 +787,7 @@ namespace OS {
                         }
                         this.bulkUninstall([...dep.uninstall])
                             .then((_b) => {
-                                this.notify(__("Uninstall successfully"));
+                                this.toast(__("Uninstall successfully"));
                             })
                             .catch((err) => {
                                 this.error(__("Unable to uninstall package(s): {0}", err.toString()), err);
