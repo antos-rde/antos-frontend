@@ -302,9 +302,9 @@ namespace OS {
             location?: ANCHOR;
 
             /**
-             * Timeout (in seconds) before the Toast disappear
+             * Timeout (in seconds) before the Toast disappears
              * Set this value to 0 to prevent the Toast to disappear,
-             * in this case, use need to explicitly close the notification
+             * in this case, user need to explicitly close the notification
              *
              * @type {number}
              * @memberof ToastOptions
@@ -322,7 +322,7 @@ namespace OS {
 
         /**
          * Toast notification API
-         * Show a toad message on different posisition on screen, see [[ToastOptions]]
+         * Show a toast message on different posisition on screen, see [[ToastOptions]]
          * 
          * @export
          * @param
