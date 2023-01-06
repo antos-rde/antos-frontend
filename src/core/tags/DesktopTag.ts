@@ -61,6 +61,19 @@ namespace OS {
                  * @memberof DesktopTag
                  */
                 protected mount(): void {
+                    /**
+                     * TRICKY HACK
+                     * When focusing on a window which overflows the desktop,
+                     * the desktop scrolls automatically to bottom,
+                     * even when `overflow: hiddle` is set on CSS.
+                     * 
+                     * The following event listener  prevents
+                     * the desktop to scroll down in this case
+                     */
+                    $(this).on("scroll", (e) =>{
+                        if(this.scrollTop != 0)
+                            this.scrollTop = 0;
+                    });
                     if(this.observer)
                     {
                         this.observer.disconnect();
