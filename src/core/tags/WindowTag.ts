@@ -104,6 +104,7 @@ namespace OS {
                 get blur_overlay(): boolean {
                     return this.hasattr("blur-overlay");
                 }
+
                 /**
                  * Setter: set menu open event handler
                  * 
