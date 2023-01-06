@@ -954,6 +954,46 @@ declare namespace OS {
      */
     namespace GUI {
         /**
+         * Enum definition of different UI locattion
+         *
+         * @export
+         * @enum {string }
+         */
+        enum ANCHOR {
+            /**
+             * Center top
+             */
+            NORTH = "NORTH",
+            /**
+             * Center bottom
+             */
+            SOUTH = "SOUTH",
+            /**
+             * Center left
+             */
+            WEST = "WEST",
+            /**
+             * Center right
+             */
+            EST = "EST",
+            /**
+             * Top left
+             */
+            NORTH_WEST = "NORTH_WEST",
+            /**
+             * Bottom left
+             */
+            SOUTH_WEST = "SOUTH_WEST",
+            /**
+             * Top right
+             */
+            NORTH_EST = "NORTH_EST",
+            /**
+             * Bottom right
+             */
+            SOUTH_EST = "SOUTH_EST"
+        }
+        /**
          * AntOS keyboard shortcut type definition
          *
          * @export
@@ -1084,6 +1124,46 @@ declare namespace OS {
          * to each dialog definition for the format of the callback data
          */
         function openDialog(d: string | BaseDialog, data: GenericObject<any>): Promise<any>;
+        /**
+         * Toast notification configuration options
+         *
+         *
+         * @export
+         * @interface ToastOptions
+         */
+        interface ToastOptions {
+            /**
+             * Where the Toast is displayed?
+             *
+             * @type {ANCHOR}
+             * @memberof ToastOptions
+             */
+            location?: ANCHOR;
+            /**
+             * Timeout (in seconds) before the Toast disappear
+             * Set this value to 0 to prevent the Toast to disappear,
+             * in this case, use need to explicitly close the notification
+             *
+             * @type {number}
+             * @memberof ToastOptions
+             */
+            timeout?: number;
+            /**
+             * AFXTag that is used to render the data
+             *
+             * @type {number}
+             * @memberof ToastOptions
+             */
+            tag?: string;
+        }
+        /**
+         * Toast notification API
+         *
+         * @export
+         * @param
+         * @returns
+         */
+        function toast(data: any, opts?: ToastOptions, app?: application.BaseApplication): void;
         /**
          * Find a list of applications that support a specific mime
          * type in the system packages meta-data
@@ -2444,6 +2524,12 @@ declare namespace OS {
              */
             title(): string | FormattedString;
             /**
+             * Getter to access the application window instance
+             *
+             * @memberof BaseApplication
+             */
+            get window(): GUI.tag.WindowTag;
+            /**
              * Function called when the application exit.
              * If the input exit event is prevented, the application
              * process will not be killed
@@ -2489,6 +2575,15 @@ declare namespace OS {
              * @memberof BaseApplication
              */
             protected menu(): GUI.BasicItemType[];
+            /**
+             * Show local toast notification
+             *
+             * @param {any} data to send
+             * @param {GUI.ToastOptions} notification options see [[GUI.ToastOptions]]
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            toast(data: any, opts?: GUI.ToastOptions): void;
             /**
              * The cleanup function that is called by [[onexit]] function.
              * Application need to override this function to perform some
@@ -3926,6 +4021,12 @@ declare namespace OS {
          * stored in the `customElements` registry of the browser
          */
         namespace tag {
+            /**
+             * Alias to  all classes that extends [[AFXTag]]
+             */
+            type AFXTagTypeClass = {
+                new <T extends AFXTag>(): T;
+            };
             /**
              * Define an AFX tag as a custom element and add it to the
              * global `customElements` registry. If the tag is redefined, i.e.
@@ -7974,7 +8075,7 @@ declare namespace OS {
                  */
                 reset(): void;
                 /**
-                 * Mount the tab bar and bind some basic events
+                 * Mount the menu and bind some basic events
                  *
                  * @protected
                  * @memberof StackMenuTag
@@ -8059,7 +8160,7 @@ declare namespace OS {
                  */
                 show(e?: JQuery.MouseEventBase): void;
                 /**
-                 * TabBar layout definition
+                 * Tag layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -8362,7 +8463,7 @@ declare namespace OS {
                 */
                 navigateBack(): void;
                 /**
-                 * Navigate to a custom tab
+                 * Navigate to a custom panel
                  *
                  * @memberof StackPanelTag
                  */
@@ -8450,6 +8551,118 @@ declare namespace OS {
                  * @memberof DesktopTag
                  */
                 private render;
+            }
+        }
+    }
+}
+declare namespace OS {
+    namespace GUI {
+        namespace tag {
+            /**
+             * Toast notification tag
+             *
+             * @export
+             * @class ToastNotificationTag
+             * @extends {AFXTag}
+             */
+            class ToastNotificationTag extends AFXTag {
+                /**
+                 *Creates an instance of ToastNotificationTag.
+                 * @memberof ToastNotificationTag
+                 */
+                constructor();
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof ToastNotificationTag
+                 */
+                protected mount(): void;
+                /**
+                 *  Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof ToastNotificationTag
+                 */
+                protected init(): void;
+                /**
+                 * Re-calibrate tag
+                 *
+                 * @protected
+                 * @memberof ToastNotificationTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Update the current tag, do nothing in this tag
+                 *
+                 * @param {*} [d]
+                 * @memberof ToastNotificationTag
+                 */
+                reload(d?: any): void;
+                /**
+                 * Tag layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof ToastNotificationTag
+                 */
+                protected layout(): TagLayoutType[];
+            }
+            /**
+             * This tag manage all notification UI on the desktop
+             *
+             * @export
+             * @class NotificationTag
+             * @extends {AFXTag}
+             */
+            class NotificationTag extends AFXTag {
+                /**
+                 *Creates an instance of NotificationTag.
+                 * @memberof NotificationTag
+                 */
+                constructor();
+                /**
+                 * Mount the tag
+                 *
+                 * @protected
+                 * @memberof NotificationTag
+                 */
+                protected mount(): void;
+                /**
+                 *  Init the tag before mounting
+                 *
+                 * @protected
+                 * @memberof NotificationTag
+                 */
+                protected init(): void;
+                /**
+                 * Push anotification to a specific location
+                 *
+                 * @memberof NotificationTag
+                 */
+                push(tag: AFXTag, loc?: ANCHOR): void;
+                /**
+                 * Re-calibrate tag
+                 *
+                 * @protected
+                 * @memberof NotificationTag
+                 */
+                protected calibrate(): void;
+                /**
+                 * Update the current tag, do nothing in this tag
+                 *
+                 * @param {*} [d]
+                 * @memberof NotificationTag
+                 */
+                reload(d?: any): void;
+                /**
+                 * Tag layout definition
+                 *
+                 * @protected
+                 * @returns {TagLayoutType[]}
+                 * @memberof NotificationTag
+                 */
+                protected layout(): TagLayoutType[];
             }
         }
     }
@@ -9066,6 +9279,12 @@ declare namespace OS {
                  */
                 set apptitle(v: string | FormattedString);
                 get apptitle(): string | FormattedString;
+                /**
+                 * Get the notification tag
+                 *
+                 * @memberof WindowTag
+                 */
+                get notification(): NotificationTag;
                 /**
                  * Resize all the children of the window based on its width and height
                  *

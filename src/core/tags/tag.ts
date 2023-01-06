@@ -595,6 +595,7 @@ namespace OS {
                 return element.hasAttribute(v);
             }
         }
+        
 
         HTMLElement.prototype.update = function (d): void {
             $(this)
@@ -632,6 +633,12 @@ namespace OS {
          * stored in the `customElements` registry of the browser
          */
         export namespace tag {
+            /**
+             * Alias to  all classes that extends [[AFXTag]]
+             */
+            export type AFXTagTypeClass = {
+                new <T extends AFXTag>(): T;
+            };
             /**
              * Define an AFX tag as a custom element and add it to the
              * global `customElements` registry. If the tag is redefined, i.e.

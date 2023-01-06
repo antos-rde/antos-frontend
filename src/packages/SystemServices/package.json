@@ -1,0 +1,15 @@
+{
+    "pkgname": "SystemServices",
+    "services": ["PushNotification", "Calendar"],
+    "name": "System services",
+    "description": "System services",
+    "info": {
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com",
+        "licences": "GPLv3"
+    },
+    "version": "0.1.0-a",
+    "category": "System",
+    "iconclass": "fa fa-cog",
+    "mimes": []
+}

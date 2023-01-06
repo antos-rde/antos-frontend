@@ -325,7 +325,7 @@ namespace OS {
                 }
 
                 /**
-                 * Mount the tab bar and bind some basic events
+                 * Mount the menu and bind some basic events
                  *
                  * @protected
                  * @memberof StackMenuTag
@@ -546,7 +546,7 @@ namespace OS {
                 }
 
                 /**
-                 * TabBar layout definition
+                 * Tag layout definition
                  *
                  * @protected
                  * @returns {TagLayoutType[]}

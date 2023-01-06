@@ -1,4 +1,4 @@
-module_files = Calendar.js PushNotification.js Syslog.js
+module_files = SystemReport.js
 
 libfiles =
 
@@ -7,5 +7,5 @@ cssfiles = main.css
 copyfiles = package.json scheme.html README.md
 
 
-PKG_NAME=Syslog
+PKG_NAME=SystemReport
 include ../pkg.mk
