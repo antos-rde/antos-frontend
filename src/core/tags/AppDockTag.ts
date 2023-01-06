@@ -293,7 +293,14 @@ namespace OS {
                             }
                             if(collection.length == 1)
                             {
-                                collection[0].app.trigger("focus");
+                                if(PM.getActiveApp() == collection[0].app)
+                                {
+                                    collection[0].app.hide();
+                                }
+                                else
+                                {
+                                    collection[0].app.show();
+                                }
                                 resolve(collection[0].app);
                                 return;
                             }
