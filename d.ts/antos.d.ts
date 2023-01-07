@@ -3633,13 +3633,13 @@ interface HTMLElement {
      * Enable the drag event dispatching on this
      * element
      *
-     * This will trigger the `drag` event on the enabled
+     * This will trigger the `dragging` and `drop` event on the enabled
      * on the element when the mouse is down, then move
      *
      * The event can be listened using the traditional way,
      * Example:
      * ```
-     * elem.addEventListener('drag', (e) => {  }, false);
+     * elem.addEventListener('dragging', (e) => {  }, false);
      * ```
      *
      * @meberof HTMLElement

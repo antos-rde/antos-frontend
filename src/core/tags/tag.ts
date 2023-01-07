@@ -54,13 +54,14 @@ interface HTMLElement {
      * Enable the drag event dispatching on this
      * element
      * 
-     * This will trigger the `dragging` event on the enabled
-     * on the element when the mouse is down, then move
+     * This will trigger the `dragging` and `drop` event on the enabled
+     * element when the mouse is down, move, then up, then move
      * 
      * The event can be listened using the traditional way,
      * Example:
      * ```
      * elem.addEventListener('dragging', (e) => {  }, false);
+     * elem.addEventListener('drop', (e) => {  }, false);
      * ```
      * 
      * @meberof HTMLElement
@@ -631,9 +632,16 @@ namespace OS {
                         this.dispatchEvent(custom_event);
                     };
 
-                    var mouse_up = function (e: JQuery.MouseEventBase) {
+                    var mouse_up = (e: JQuery.MouseEventBase) => {
                         $(window).off("pointermove", mouse_move);
-                        return $(window).off("pointerup", mouse_up);
+                        $(window).off("pointerup", mouse_up);
+                        // trigger the drop event
+                        const custom_event = new CustomEvent('drop', { detail:{
+                            origin: evt,
+                            current: e,
+                            offset: offset
+                        }});
+                        this.dispatchEvent(custom_event);
                     };
                     $(window).on("pointermove", mouse_move);
                     $(window).on("pointerup", mouse_up);
