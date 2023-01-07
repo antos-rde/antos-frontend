@@ -123,49 +123,26 @@ namespace OS {
                  */
                 push(v: GenericObject<any>) {
                     const el = super.push(v);
-                    this.enable_drag(el);
-                    return el;
-                }
-
-                /**
-                 * Enable drag and drop on the list
-                 *
-                 * @private
-                 * @param {ListViewItemTag} el the list item DOM element
-                 * @memberof FloatListTag
-                 */
-                private enable_drag(el: ListViewItemTag): void {
                     $(el)
                         .css("user-select", "none")
                         .css("cursor", "default")
                         .css("display", "block")
-                        .css("position", "absolute")
-                        .on("pointerdown", (evt) => {
-                            const globalof = $(this.refs.mlist).offset();
-                            //evt.preventDefault();
-                            const offset = $(el).offset();
-                            offset.top = evt.clientY - offset.top;
-                            offset.left = evt.clientX - offset.left;
-                            const mouse_move = function (
-                                e: JQuery.MouseEventBase
-                            ) {
-                                let top = e.clientY - offset.top - globalof.top;
-                                let left =
-                                    e.clientX - globalof.left - offset.left;
-                                left = left < 0 ? 0 : left;
-                                top = top < 0 ? 0 : top;
-                                return $(el)
-                                    .css("top", `${top}px`)
-                                    .css("left", `${left}px`);
-                            };
-
-                            var mouse_up = function (e: JQuery.MouseEventBase) {
-                                $(window).off("pointermove", mouse_move);
-                                return $(window).off("pointerup", mouse_up);
-                            };
-                            $(window).on("pointermove", mouse_move);
-                            return $(window).on("pointerup", mouse_up);
-                        });
+                        .css("position", "absolute");
+                    el.enable_drag();
+                    $(el).on("dragging", (evt) => {
+                        const e = evt.originalEvent as CustomEvent;
+                        const globalof = $(this.refs.mlist).offset();
+                        const offset = e.detail.offset;
+                        let top = e.detail.current.clientY - offset.top - globalof.top;
+                        let left =
+                            e.detail.current.clientX - globalof.left - offset.left;
+                        left = left < 0 ? 0 : left;
+                        top = top < 0 ? 0 : top;
+                        $(el)
+                            .css("top", `${top}px`)
+                            .css("left", `${left}px`);
+                    })
+                    return el;
                 }
 
                 /**

@@ -51,6 +51,23 @@ interface HTMLElement {
     afxml(o: OS.API.Announcer): void;
 
     /**
+     * Enable the drag event dispatching on this
+     * element
+     * 
+     * This will trigger the `dragging` event on the enabled
+     * on the element when the mouse is down, then move
+     * 
+     * The event can be listened using the traditional way,
+     * Example:
+     * ```
+     * elem.addEventListener('dragging', (e) => {  }, false);
+     * ```
+     * 
+     * @meberof HTMLElement
+     */
+    enable_drag():void;
+
+    /**
      * Perform DOM generation ([[afxml]]) then mount ([[sync]]) all the
      * elements.
      *
@@ -595,7 +612,33 @@ namespace OS {
                 return element.hasAttribute(v);
             }
         }
-        
+
+        HTMLElement.prototype.enable_drag = function()
+        {
+            $(this)
+                .on("pointerdown", (evt: JQuery.MouseEventBase) => {
+                    const offset = $(this).offset();
+                    offset.top = evt.clientY - offset.top;
+                    offset.left = evt.clientX - offset.left;
+                    const mouse_move = (
+                        e: JQuery.MouseEventBase
+                    )  => {
+                        const custom_event = new CustomEvent('dragging', { detail:{
+                            origin: evt,
+                            current: e,
+                            offset: offset
+                        }});
+                        this.dispatchEvent(custom_event);
+                    };
+
+                    var mouse_up = function (e: JQuery.MouseEventBase) {
+                        $(window).off("pointermove", mouse_move);
+                        return $(window).off("pointerup", mouse_up);
+                    };
+                    $(window).on("pointermove", mouse_move);
+                    $(window).on("pointerup", mouse_up);
+                });
+        }        
 
         HTMLElement.prototype.update = function (d): void {
             $(this)
