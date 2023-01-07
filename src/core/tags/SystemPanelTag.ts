@@ -382,7 +382,11 @@ namespace OS {
                         this.calibrate();
                         $(document).on("click", this._cb);
                         (this.refs.search as HTMLInputElement).value = "";
-                        $(this.refs.search).focus();
+                        if(!OS.mobile)
+                        {
+                            $(this.refs.search).focus();
+                        }
+                        
                     } else {
                         $(this.refs.overlay).hide();
                         $(document).off("click", this._cb);
