@@ -3630,6 +3630,22 @@ interface HTMLElement {
      */
     afxml(o: OS.API.Announcer): void;
     /**
+     * Enable the drag event dispatching on this
+     * element
+     *
+     * This will trigger the `drag` event on the enabled
+     * on the element when the mouse is down, then move
+     *
+     * The event can be listened using the traditional way,
+     * Example:
+     * ```
+     * elem.addEventListener('drag', (e) => {  }, false);
+     * ```
+     *
+     * @meberof HTMLElement
+     */
+    enable_drag(): void;
+    /**
      * Perform DOM generation ([[afxml]]) then mount ([[sync]]) all the
      * elements.
      *
@@ -8763,14 +8779,6 @@ declare namespace OS {
                  * @memberof FloatListTag
                  */
                 push(v: GenericObject<any>): ListViewItemTag;
-                /**
-                 * Enable drag and drop on the list
-                 *
-                 * @private
-                 * @param {ListViewItemTag} el the list item DOM element
-                 * @memberof FloatListTag
-                 */
-                private enable_drag;
                 /**
                  * Calibrate the view of the list
                  *
