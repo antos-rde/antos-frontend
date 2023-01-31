@@ -3634,12 +3634,13 @@ interface HTMLElement {
      * element
      *
      * This will trigger the `dragging` and `drop` event on the enabled
-     * on the element when the mouse is down, then move
+     * element when the mouse is down, move, then up, then move
      *
      * The event can be listened using the traditional way,
      * Example:
      * ```
      * elem.addEventListener('dragging', (e) => {  }, false);
+     * elem.addEventListener('drop', (e) => {  }, false);
      * ```
      *
      * @meberof HTMLElement
@@ -9718,17 +9719,18 @@ declare namespace OS {
                  * will return the meta-data of all files inside of the directory.
                  * Otherwise, file content will be returned
                  *
-                 * @param {string} t data type
+                 * @param {any} formal t data type
                  * - jsonp: the response is an json object
                  * - script: the response is a javascript code
                  * - xml, html: the response is a XML/HTML object
                  * - text: plain text
                  * - binary
+                 * - other user case may be user specific data
                  *
                  * @returns {Promise<any>} a promise on the file content
                  * @memberof BaseFileHandle
                  */
-                read(t?: string): Promise<any>;
+                read(t?: any): Promise<any>;
                 /**
                  * Write the file cache to the actual file
                  *
@@ -9757,11 +9759,11 @@ declare namespace OS {
                  * Delete the file
                  *
                  * This function calls the [[_rm]] function to perform the operation
-                 *
+                 * @param {any} d user data
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
-                remove(): Promise<RequestResult>;
+                remove(data?: any): Promise<RequestResult>;
                 /**
                  * Upload a file to the current directory
                  *
@@ -9848,11 +9850,11 @@ declare namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {string} t data type, see [[read]]
+                 * @param {any} t data type, see [[read]]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _rd(t: string): Promise<RequestResult>;
+                protected _rd(t: any): Promise<RequestResult>;
                 /**
                  * Low level protocol-specific write operation
                  *
@@ -9861,11 +9863,10 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {*} [d]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _wr(t: string, d?: any): Promise<RequestResult>;
+                protected _wr(t: string): Promise<RequestResult>;
                 /**
                  * Low level protocol-specific sub-directory creation
                  *
@@ -9884,10 +9885,11 @@ declare namespace OS {
                  * This function should be overridden by the file handle class
                  * that supports the operation
                  *
+                 * @param {*} [d] any user data
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _rm(): Promise<RequestResult>;
+                protected _rm(d: any): Promise<RequestResult>;
                 /**
                  * Low level protocol-specific move operation
                  *
@@ -10301,11 +10303,10 @@ declare namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {string} d file data
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                protected _wr(t: string, d: string): Promise<RequestResult>;
+                protected _wr(t: string): Promise<RequestResult>;
                 /**
                  * Un-publish the file
                  *
