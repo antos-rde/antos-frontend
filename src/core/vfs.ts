@@ -575,17 +575,18 @@ namespace OS {
                  * will return the meta-data of all files inside of the directory.
                  * Otherwise, file content will be returned
                  *
-                 * @param {string} t data type
+                 * @param {any} formal t data type
                  * - jsonp: the response is an json object
                  * - script: the response is a javascript code
                  * - xml, html: the response is a XML/HTML object
                  * - text: plain text
                  * - binary
+                 * - other user case may be user specific data
                  * 
                  * @returns {Promise<any>} a promise on the file content
                  * @memberof BaseFileHandle
                  */
-                read(t?: string): Promise<any> {
+                read(t?: any): Promise<any> {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
@@ -648,15 +649,15 @@ namespace OS {
                  * Delete the file
                  *
                  * This function calls the [[_rm]] function to perform the operation
-                 *
+                 * @param {any} d user data
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
                  */
-                remove(): Promise<RequestResult> {
+                remove(data?: any): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
                             const r = await this.onready();
-                            const d = await this._rm();
+                            const d = await this._rm(data);
                             announcer.ostrigger("VFS", "remove",this);
                             return resolve(d);
                         } catch (e_1) {
@@ -830,11 +831,11 @@ namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {string} t data type, see [[read]]
+                 * @param {any} t data type, see [[read]]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _rd(t: string): Promise<RequestResult> {
+                protected _rd(t: any): Promise<RequestResult> {
                     return this.unsupported("read");
                 }
 
@@ -846,11 +847,10 @@ namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {*} [d]
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _wr(t: string, d?: any): Promise<RequestResult> {
+                protected _wr(t: string): Promise<RequestResult> {
                     return this.unsupported("write");
                 }
 
@@ -874,10 +874,11 @@ namespace OS {
                  * This function should be overridden by the file handle class
                  * that supports the operation
                  *
+                 * @param {*} [d] any user data
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
-                protected _rm(): Promise<RequestResult> {
+                protected _rm(d: any): Promise<RequestResult> {
                     return this.unsupported("remove");
                 }
 
@@ -1875,22 +1876,45 @@ namespace OS {
                  *
                  * @protected
                  * @param {string} t data type, see [[write]]
-                 * @param {string} d file data
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
-                protected _wr(t: string, d: string): Promise<RequestResult> {
+                protected _wr(t: string): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            const r = await API.handle.write(this.path, d);
-                            if (r.error) {
-                                return reject(
-                                    API.throwe(
-                                        __("{0}: {1}", r.error, this.path)
-                                    )
+
+                            if (t === "base64") {
+                                const d = await API.handle.write(
+                                    this.path,
+                                    this.cache
                                 );
+                                if (d.error) {
+                                    return reject(
+                                        API.throwe(
+                                            __("{0}: {1}", d.error, this.path)
+                                        )
+                                    );
+                                }
+                                return resolve(d);
+                            } else {
+                                const r = await this.b64(t);
+                                const result = await API.handle.write(
+                                    this.path,
+                                    r as string
+                                );
+                                if (result.error) {
+                                    return reject(
+                                        API.throwe(
+                                            __(
+                                                "{0}: {1}",
+                                                result.error,
+                                                this.path
+                                            )
+                                        )
+                                    );
+                                }
+                                return resolve(result);
                             }
-                            return resolve(r);
                         } catch (e) {
                             return reject(__e(e));
                         }
