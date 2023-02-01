@@ -79,6 +79,18 @@ namespace OS {
                     $(this).attr("iconclass", v);
                     (this.refs.label as LabelTag).iconclass = v;
                 }
+                
+
+                /**
+                 * Set the icon class on the right side of the button, this property
+                 * allows to style the button icon using CSS
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass$(v: string) {
+                    $(this).attr("iconclass_end", v);
+                    (this.refs.label as LabelTag).iconclass$ = v;
+                }
 
                 /**
                  * Setter: Set the text of the button

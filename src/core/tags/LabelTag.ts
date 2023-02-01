@@ -38,6 +38,8 @@ namespace OS {
                         .css("display", "flex");
                     $(this.refs.iclass)
                         .css("flex-shrink",0);
+                    $(this.refs.iclass_end)
+                        .css("flex-shrink",0);
                     $(this.refs.i)
                         .css("flex-shrink",0);
                     $(this.refs.text)
@@ -66,6 +68,7 @@ namespace OS {
                     this.iconclass = undefined;
                     this.text = undefined;
                     this.selectable = false;
+                    this.iconclass$ = undefined;
                 }
 
                 /**
@@ -155,6 +158,22 @@ namespace OS {
                 }
 
                 /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
+                set iconclass$(v: string) {
+                    $(this).attr("iconclass_end", v);
+                    $(this.refs.iclass_end).removeClass();
+                    if (v) {
+                        $(this.refs.iclass_end).addClass(v);
+                        $(this.refs.iclass_end).show();
+                    } else {
+                        $(this.refs.iclass_end).hide();
+                    }
+                }
+
+                /**
                  * Setter: Set the text of the label
                  * 
                  * Getter: Get the text displayed on the label
@@ -163,7 +182,7 @@ namespace OS {
                  */
                 set text(v: string | FormattedString) {
                     this._text = v;
-                    if (v && v !== "") {
+                    if (v) {
                         $(this.refs.text).show();
                         $(this.refs.text).html(v.__());
                     } else {
@@ -217,6 +236,7 @@ namespace OS {
                                 { el: "i", ref: "iclass" },
                                 { el: "i", ref: "i", class: "icon-style" },
                                 { el: "i", ref: "text", class: "label-text" },
+                                { el: "i", ref: "iclass_end" },
                             ],
                         },
                     ];
