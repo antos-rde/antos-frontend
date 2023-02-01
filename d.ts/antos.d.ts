@@ -5553,6 +5553,12 @@ declare namespace OS {
                  *
                  * @memberof LabelTag
                  */
+                set iconclass_end(v: string);
+                /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
                 set iconclass$(v: string);
                 /**
                  * Setter: Set the text of the label
@@ -6644,6 +6650,12 @@ declare namespace OS {
                  * @memberof ButtonTag
                  */
                 set iconclass$(v: string);
+                /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass_end(v: string);
                 /**
                  * Setter: Set the text of the button
                  *
