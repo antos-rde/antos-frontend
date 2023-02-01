@@ -475,6 +475,7 @@ declare namespace OS {
          * @extends {BaseDialog}
          */
         class BasicDialog extends BaseDialog {
+            ['constructor']: typeof BasicDialog;
             /**
              * Placeholder for the UI scheme to be rendered. This can
              * be either the string definition of the scheme or
