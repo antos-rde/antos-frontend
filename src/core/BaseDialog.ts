@@ -236,6 +236,7 @@ namespace OS {
          * @extends {BaseDialog}
          */
         export class BasicDialog extends BaseDialog {
+            ['constructor']: typeof BasicDialog
             /**
              * Placeholder for the UI scheme to be rendered. This can
              * be either the string definition of the scheme or
@@ -290,10 +291,9 @@ namespace OS {
                         return this.render(this.markup.path);
                     }
                 } else if (
-                    GUI.dialogs[this.name] &&
-                    GUI.dialogs[this.name].scheme
+                    this.constructor.scheme
                 ) {
-                    const html: string = GUI.dialogs[this.name].scheme;
+                    const html: string = this.constructor.scheme;
                     return GUI.htmlToScheme(html.trim(), this, this.host);
                 } else {
                     this.error(__("Unable to find dialog scheme"));
