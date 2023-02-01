@@ -6,10 +6,6 @@ afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri']{
     /* border-top:1px solid #A6A6A6; */
     padding:0;
 }
-afx-app-window[data-id ='files-app-window'] afx-resizer{
-    background-color: transparent;
-    /* border-left: 1px solid #cbcbcb; */
-}
 afx-app-window[data-id ='files-app-window'] afx-file-view afx-list-view i:before{
     font-size: 32px;
     font-weight: normal;
@@ -28,13 +24,6 @@ afx-app-window[data-id ='files-app-window'] .afx-window-top{
 }
 afx-app-window[data-id ='files-app-window'] afx-vbox[data-id = "nav-bar"]{
     background-color: #dfdfdf;
-}
-afx-app-window[data-id ='files-app-window'] afx-grid-view afx-grid-row.grid_row_header div{
-    border-top:1px solid #A6A6A6;
-}
-
-afx-app-window[data-id ='files-app-window'] afx-grid-view afx-grid-row afx-label span {
-    white-space: nowrap;
 }
 
 afx-app-window[data-id ='files-app-window'] button{

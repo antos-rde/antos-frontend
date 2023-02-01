@@ -63,13 +63,6 @@ afx-file-view afx-grid-view afx-grid-row.afx-grid-row-selected  i:before{
     color:white;
 }
 
-afx-file-view afx-grid-view .grid_row_header afx-grid-cell{
-    background-color: #464646;
-    border-top: 1px solid #262626;
-    border-right: 1px solid #262626;
-    border-bottom: 1px solid #262626;
-}
-
 afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
