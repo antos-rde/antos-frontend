@@ -162,6 +162,15 @@ namespace OS {
                  *
                  * @memberof LabelTag
                  */
+                set iconclass_end(v: string) {
+                    this.iconclass$ = v;
+                }
+
+                /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
                 set iconclass$(v: string) {
                     $(this).attr("iconclass_end", v);
                     $(this.refs.iclass_end).removeClass();

@@ -93,6 +93,15 @@ namespace OS {
                 }
 
                 /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass_end(v: string) {
+                    this.iconclass$ = v;
+                }
+
+                /**
                  * Setter: Set the text of the button
                  *
                  * Getter: Get the current button test
