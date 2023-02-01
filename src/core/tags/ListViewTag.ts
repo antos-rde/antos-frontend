@@ -526,7 +526,15 @@ namespace OS {
                  * @memberof ListViewTag
                  */
                 private _selectedItems: ListViewItemTag[];
-
+                
+                /**
+                 * The anchor element that the list view positioned on
+                 * This is helpful when rendering dropdown list
+                 * @private
+                 * @type{HTMLElement}
+                 * @memberof ListViewTag
+                 */
+                private _anchor: HTMLElement;
                 /**
                  * Data placeholder of the list
                  *
@@ -579,6 +587,7 @@ namespace OS {
                     this.dropdown = false;
                     this.selected = -1;
                     this.dragndrop = false;
+                    this._anchor = undefined;
                     this.itemtag = "afx-list-item";
                     $(this).addClass("afx-list-view");
                 }
@@ -1241,9 +1250,20 @@ namespace OS {
                             .css("top", top + "px")
                             .css("left", left + "px");
                     };
+                    const label = (this.refs.drlabel as LabelTag);
+                    label.iconclass$ = "bi bi-chevron-down";
+                    label.text = "";
                     $(this.refs.drlabel).css("display", "inline-block");
                     $(this.refs.btlist).hide();
                     this.observable.on("resize", (e) => this.calibrate());
+                    let anchor = $(this).parent();
+                    while (anchor && anchor.css('position') === 'static') {
+                        anchor = anchor.parent();
+                    }
+                    if(anchor && anchor[0])
+                    {
+                        this._anchor = anchor[0];
+                    }
                     return this.calibrate();
                 }
 
@@ -1287,17 +1307,26 @@ namespace OS {
                         $(this.refs.mlist).hide();
                         return;
                     }
-
+                    
                     const desktoph = $(Ant.OS.GUI.workspace).outerHeight();
-                    const offset =
-                        $(this).offset().top + $(this.refs.mlist).outerHeight()*1.5;
-                    if (offset > desktoph) {
-                        $(this.refs.mlist).css(
-                            "top",
-                            `-${$(this.refs.mlist).outerHeight()}px`
-                        );
+                    const wheight = $(this).offset().top + $(this.refs.mlist).outerHeight()*1.5;
+                    const position = $(this).position();
+                    let offset = 0;
+                    if(this._anchor)
+                    {
+                        offset = $(this._anchor).scrollTop();
+                    }
+                    if (wheight > desktoph) {
+                        
+                        const ypos = offset + position.top - $(this.refs.mlist).outerHeight();
+                        $(this.refs.mlist)
+                            .css("top",`${ypos}px`)
+                            .css("left", `${position.left}px`);
                     } else {
-                        $(this.refs.mlist).css("top", "98%");
+                        const ypos = offset + $(this).position().top + $(this.refs.container).outerHeight();
+                        $(this.refs.mlist)
+                            .css("top", `${ypos}px`)
+                            .css("left", `${position.left}px`);
                     }
                     $(this.refs.mlist).show();
                 }
@@ -1328,11 +1357,12 @@ namespace OS {
                     if (!this.dropdown) {
                         return;
                     }
-                    const w = `${$(this).width()}px`;
+                    const w = `${$(this).innerWidth()}px`;
                     const h = `${$(this).outerHeight()}px`;
-                    $(this.refs.container).css("width", w);
+                    $(this.refs.container).css("width", "100%");
                     $(this.refs.container).css("height", h);
-                    $(this.refs.current).css("width", w);
+                    
+                    $(this.refs.current).css("width", "100%");
                     $(this.refs.mlist).css("width", w);
                 }
 

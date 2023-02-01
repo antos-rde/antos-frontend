@@ -67,7 +67,7 @@ afx-list-view.dropdown {
 }
 afx-list-view.dropdown > div.list-container{
     overflow: visible;
-    position: absolute;
+    /*position: absolute;*/
 }
 afx-list-view.dropdown > div.list-container > div
 {
@@ -91,17 +91,9 @@ afx-list-view.dropdown > div.list-container > ul  li{
     width:100%;
 }
 
-afx-list-view.dropdown div.list-container div:before {
-    content: "\f107"; 
-    font-family: "FontAwesome";
-    font-size: 16px;
-    font-style: normal;
-    position: absolute;
-    right: 5px;
-}
 afx-list-view.dropdown div.list-container > div > afx-label{
     padding-left:3px;
-    padding-right: 25px;
+    padding-right: 5px;
     height: 100%;
 }
 afx-list-view.dropdown div.list-container > div > afx-label span

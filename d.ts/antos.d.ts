@@ -4423,6 +4423,14 @@ declare namespace OS {
                  */
                 private _selectedItems;
                 /**
+                 * The anchor element that the list view positioned on
+                 * This is helpful when rendering dropdown list
+                 * @private
+                 * @type{HTMLElement}
+                 * @memberof ListViewTag
+                 */
+                private _anchor;
+                /**
                  * Data placeholder of the list
                  *
                  * @private
@@ -5541,6 +5549,12 @@ declare namespace OS {
                  */
                 set iconclass(v: string);
                 /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
+                set iconclass$(v: string);
+                /**
                  * Setter: Set the text of the label
                  *
                  * Getter: Get the text displayed on the label
@@ -6623,6 +6637,13 @@ declare namespace OS {
                  * @memberof ButtonTag
                  */
                 set iconclass(v: string);
+                /**
+                 * Set the icon class on the right side of the button, this property
+                 * allows to style the button icon using CSS
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass$(v: string);
                 /**
                  * Setter: Set the text of the button
                  *
