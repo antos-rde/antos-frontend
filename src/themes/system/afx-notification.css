@@ -115,6 +115,6 @@ afx-toast-notification div[data-id="toast_container"] div[data-id="toast_content
 {
     padding: 20px 15px;
      -ms-word-break: break-all;
-    word-break: break-all;
-    /*word-break: break-word;*/
+    /*word-break: break-all;*/
+    word-break: break-word;
 }
