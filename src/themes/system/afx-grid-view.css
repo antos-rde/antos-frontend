@@ -44,3 +44,9 @@ afx-grid-view .grid_row_header afx-grid-cell[sort = "desc"] span::before
     font-weight: normal;
     font-style: normal;
 }
+
+afx-grid-view afx-grid-row afx-label span {
+    white-space: nowrap;
+    overflow: hidden;
+    justify-content: flex-start;
+}

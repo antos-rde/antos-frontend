@@ -5,7 +5,7 @@ afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
 
 afx-grid-view afx-grid-row:nth-child(odd) afx-grid-cell
 {
-    background-color: #363636;
+    background-color: #474747;
 }
 
 afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
@@ -21,4 +21,23 @@ afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-sel
 
 afx-grid-view .grid_row_header afx-grid-cell{
     border:0;
+}
+
+afx-grid-view afx-grid-row.grid_row_header div{
+    border-top:1px solid #A6A6A6;
+}
+
+
+afx-grid-view afx-resizer.horizontal{
+    background-color: transparent;
+    border-left: 1px solid #262626;
+    border-right: 1px solid #262626;
+    /* border-left: 1px solid #cbcbcb; */
+}
+
+afx-grid-view .grid_row_header afx-grid-cell{
+    background-color: #373737;
+    border-top: 1px solid #262626;
+    /*border-right: 1px solid #262626;*/
+    border-bottom: 1px solid #262626;
 }

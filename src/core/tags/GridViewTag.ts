@@ -57,9 +57,9 @@ namespace OS {
                     super();
 
                     this.refs.yield = this;
-                    this._onselect = (e) => {};
+                    this._onselect = (e) => { };
                 }
-                
+
                 /**
                  * Set item select event handle
                  *
@@ -95,7 +95,7 @@ namespace OS {
                  * @protected
                  * @memberof GridRowTag
                  */
-                protected mount(): void {}
+                protected mount(): void { }
 
                 /**
                  * Init the tag before mounting: reset the data placeholder
@@ -124,7 +124,7 @@ namespace OS {
                  * @protected
                  * @memberof GridRowTag
                  */
-                protected calibrate(): void {}
+                protected calibrate(): void { }
 
                 /**
                  * This function does nothing in this tag
@@ -133,7 +133,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof GridRowTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
             }
 
             /**
@@ -277,10 +277,10 @@ namespace OS {
                     $(this).attr("class", "afx-grid-cell");
                     this.oncelldbclick = this.oncellselect = (
                         e: TagEventType<GridCellPrototype>
-                    ): void => {};
+                    ): void => { };
                     this.selected = false;
                     //$(this).css("display", "block");
-                    $(this).on("click",(e) => {
+                    $(this).on("click", (e) => {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, false);
                     });
@@ -358,7 +358,7 @@ namespace OS {
                  * @protected
                  * @memberof SimpleGridCellTag
                  */
-                protected init(): void {}
+                protected init(): void { }
 
                 /**
                  * This function do nothing in this tag
@@ -366,7 +366,7 @@ namespace OS {
                  * @protected
                  * @memberof SimpleGridCellTag
                  */
-                protected calibrate(): void {}
+                protected calibrate(): void { }
 
                 /**
                  * The layout of the cell with a simple [[LabelTag]]
@@ -486,7 +486,7 @@ namespace OS {
                 private _ondragndrop: TagEventCallback<
                     DnDEventDataType<GridRowTag>
                 >;
-                
+
                 /**
                  * Creates an instance of GridViewTag.
                  * @memberof GridViewTag
@@ -506,7 +506,7 @@ namespace OS {
                     this._ondragndrop = v;
                     this.dragndrop = this.dragndrop;
                 }
-                
+
                 /**
                  * Setter: Enable/disable drag and drop event in the list
                  *
@@ -516,13 +516,11 @@ namespace OS {
                  */
                 set dragndrop(v: boolean) {
                     this.attsw(v, "dragndrop");
-                    if(!v)
-                    {
+                    if (!v) {
                         $(this.refs.container).off("mousedown", this._onmousedown);
                     }
-                    else
-                    {
-                         $(this.refs.container).on(
+                    else {
+                        $(this.refs.container).on(
                             "mousedown",
                             this._onmousedown
                         );
@@ -576,10 +574,10 @@ namespace OS {
                     this.dragndrop = false;
                     this._oncellselect = this._onrowselect = this._oncelldbclick = (
                         e: TagEventType<CellEventData>
-                    ): void => {};
+                    ): void => { };
                     this._ondragndrop = (
                         e: TagEventType<DnDEventDataType<GridRowTag>>
-                    ) => {};
+                    ) => { };
                 }
 
                 /**
@@ -589,7 +587,7 @@ namespace OS {
                  * @param {*} [d]
                  * @memberof GridViewTag
                  */
-                protected reload(d?: any): void {}
+                protected reload(d?: any): void { }
 
                 /**
                  * set the cell select event callback
@@ -642,8 +640,7 @@ namespace OS {
                 set cellitem(v: string) {
                     const currci = this.cellitem;
                     $(this).attr("cellitem", v);
-                    if(v != currci)
-                    {
+                    if (v != currci) {
                         // force render data
                         $(this.refs.grid).empty();
                         this.rows = this.rows;
@@ -680,15 +677,12 @@ namespace OS {
                         element.data = item;
                         item.domel = element;
                         element.oncellselect = (e) => {
-                            if(element.data.sort)
-                            {
+                            if (element.data.sort) {
                                 this.sort(element.data, element.data.sort);
-                                if(element.data.desc)
-                                {
+                                if (element.data.desc) {
                                     $(element).attr("sort", "desc");
                                 }
-                                else
-                                {
+                                else {
                                     $(element).attr("sort", "asc");
                                 }
                             }
@@ -699,7 +693,7 @@ namespace OS {
                                 const rz = $(`<afx-resizer>`).appendTo(
                                     this.refs.header
                                 )[0] as ResizerTag;
-                                $(rz).css("width", "3px");
+                                $(rz).css("width", "1px");
                                 let next_item = undefined;
                                 if (i < v.length) {
                                     next_item = v[i];
@@ -759,48 +753,40 @@ namespace OS {
                  */
                 set rows(rows: GenericObject<any>[][]) {
                     this._rows = rows;
-                    if(!rows) return;
-                    for(const el of this._header)
-                    {
+                    if (!rows) return;
+                    for (const el of this._header) {
                         $(el.domel).attr("sort", "none");
                     }
                     // update existing row with new data
                     const ndrows = rows.length;
                     const ncrows = this.refs.grid.children.length;
-                    const nmin = ndrows < ncrows? ndrows: ncrows;
-                    if(this.selectedRow)
-                    {
+                    const nmin = ndrows < ncrows ? ndrows : ncrows;
+                    if (this.selectedRow) {
                         this.selectedRow.selected = false;
                         this._selectedRow = undefined;
                         this._selectedRows = [];
                     }
-                    for(let i = 0; i < nmin; i++)
-                    {
+                    for (let i = 0; i < nmin; i++) {
                         const rowel = (this.refs.grid.children[i] as GridRowTag);
                         rowel.data = rows[i];
                         rowel.data.domel = rowel;
-                        for(let celi = 0; celi < rowel.children.length; celi++)
-                        {
+                        for (let celi = 0; celi < rowel.children.length; celi++) {
                             const cel = (rowel.children[celi] as GridCellPrototype);
                             cel.data = rows[i][celi];
                             cel.data.domel = cel;
                         }
                     }
                     // remove existing remaining rows
-                    if(ndrows < ncrows)
-                    {
+                    if (ndrows < ncrows) {
                         const arr = Array.prototype.slice.call(this.refs.grid.children);
                         const blacklist = arr.slice(nmin, ncrows);
-                        for(const r of blacklist)
-                        {
+                        for (const r of blacklist) {
                             this.delete(r);
                         }
                     }
                     // or add more rows
-                    else if(ndrows > ncrows)
-                    {
-                        for(let i = nmin; i < ndrows; i++)
-                        {
+                    else if (ndrows > ncrows) {
+                        for (let i = nmin; i < ndrows; i++) {
                             this.push(rows[i], false);
                         }
                     }
@@ -836,22 +822,22 @@ namespace OS {
                 get resizable(): boolean {
                     return this.hasattr("resizable");
                 }
-                 /**
-                 * Sort the grid using a sort function
-                 *
-                 * @param {context: any} context of the executed function
-                 * @param {(a:GenericObject<any>[], b:GenericObject<any>[]) => boolean} a sort function that compares two rows data
-                 * * @param {index: number} current header index
-                 * @returns {void}
-                 * @memberof GridViewTag
-                 */
-                sort(context: any, fn: (a:GenericObject<any>[], b:GenericObject<any>[], index?: number) => number): void {
+                /**
+                * Sort the grid using a sort function
+                *
+                * @param {context: any} context of the executed function
+                * @param {(a:GenericObject<any>[], b:GenericObject<any>[]) => boolean} a sort function that compares two rows data
+                * * @param {index: number} current header index
+                * @returns {void}
+                * @memberof GridViewTag
+                */
+                sort(context: any, fn: (a: GenericObject<any>[], b: GenericObject<any>[], index?: number) => number): void {
                     const index = this._header.indexOf(context);
                     const __fn = (a, b) => {
-                        return fn.call(context,a, b, index);
+                        return fn.call(context, a, b, index);
                     }
                     this._rows.sort(__fn);
-                    context.desc = ! context.desc;
+                    context.desc = !context.desc;
                     this.rows = this._rows;
                 }
                 /**
@@ -929,7 +915,7 @@ namespace OS {
                     }
                     el.onrowselect = (e) => this.rowselect({
                         id: el.aid,
-                        data: {item: el}
+                        data: { item: el }
                     });
                 }
 
@@ -1009,12 +995,9 @@ namespace OS {
                         }
                         evt.data.items = this.selectedRows;
                     } else {
-                        if(this.selectedRows.length > 0)
-                        {
-                            for(const item of this.selectedRows)
-                            {
-                                if(item != row)
-                                {
+                        if (this.selectedRows.length > 0) {
+                            for (const item of this.selectedRows) {
+                                if (item != row) {
                                     item.selected = false;
                                 }
                             }
@@ -1022,7 +1005,7 @@ namespace OS {
                         if (this.selectedRow === row) {
                             return;
                         }
-                        if(this.selectedRow)
+                        if (this.selectedRow)
                             this.selectedRow.selected = false;
                         evt.data.items = [row];
                         this._selectedRows = [row];
@@ -1071,8 +1054,8 @@ namespace OS {
                         $(this.refs.container).css(
                             "height",
                             $(this).height() -
-                                $(this.refs.header).height() +
-                                "px"
+                            $(this.refs.header).height() +
+                            "px"
                         );
                     } else {
                         $(this.refs.container).css(
@@ -1122,8 +1105,8 @@ namespace OS {
                     let i = 0;
                     for (let v of colssize) {
                         template += `${v}px `;
-                        i++;
                         template_header += `${v}px `;
+                        i++;
                         if (i < colssize.length && this.resizable) {
                             template_header += "3px ";
                         }
@@ -1133,6 +1116,10 @@ namespace OS {
                         "grid-template-columns",
                         template_header
                     );
+                    if(this.resizable)
+                    {
+                        $(this.refs.grid).css("column-gap","3px");
+                    }
                 }
 
                 /**
@@ -1157,8 +1144,7 @@ namespace OS {
                         to: undefined,
                     };
                     this._onmousedown = (e) => {
-                        if(this.multiselect || this.selectedRows == undefined || this.selectedRows.length == 0)
-                        {
+                        if (this.multiselect || this.selectedRows == undefined || this.selectedRows.length == 0) {
                             return;
                         }
                         let el: any = $(e.target).closest("afx-grid-row");
@@ -1166,8 +1152,7 @@ namespace OS {
                             return;
                         }
                         el = el[0];
-                        if(!this.selectedRows.includes(el))
-                        {
+                        if (!this.selectedRows.includes(el)) {
                             return;
                         }
                         this._dnd.from = this.selectedRows;
