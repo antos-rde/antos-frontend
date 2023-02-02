@@ -869,6 +869,25 @@ namespace OS {
                     }
                     $(row).remove();
                 }
+                /**
+                 * Scroll the grid view to bottom
+                 * 
+                 * @memberof GridViewTag
+                 */
+                scroll_to_bottom()
+                {
+                    this.refs.container.scrollTo({ top: this.refs.container.scrollHeight, behavior: 'smooth' })
+                }
+
+                /**
+                 * Scroll the grid view to top
+                 * 
+                 * @memberof GridViewTag
+                 */
+                scroll_to_top()
+                {
+                    this.refs.container.scrollTo({ top: 0, behavior: 'smooth' });
+                }
 
                 /**
                  * Push a row to the grid
@@ -876,7 +895,7 @@ namespace OS {
                  * @param {GenericObject<any>[]} row list of cell data
                  * @param {boolean} flag indicates where the row is add to beginning or end
                  * of the row
-                 * @memberof GridViewTags
+                 * @memberof GridViewTag
                  */
                 push(row: GenericObject<any>[], flag: boolean): void {
                     const rowel = $("<afx-grid-row>").css(

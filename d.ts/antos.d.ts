@@ -4745,6 +4745,18 @@ declare namespace OS {
                  */
                 protected dropoff(e: any): void;
                 /**
+                 * Scroll the list view to bottom
+                 *
+                 * @memberof ListViewTag
+                 */
+                scroll_to_bottom(): void;
+                /**
+                 * Scroll the list view to top
+                 *
+                 * @memberof ListViewTag
+                 */
+                scroll_to_top(): void;
+                /**
                  * calibrate the list layout
                  *
                  * @protected
@@ -6317,12 +6329,24 @@ declare namespace OS {
                  */
                 delete(row: GridRowTag): void;
                 /**
+                 * Scroll the grid view to bottom
+                 *
+                 * @memberof GridViewTag
+                 */
+                scroll_to_bottom(): void;
+                /**
+                 * Scroll the grid view to top
+                 *
+                 * @memberof GridViewTag
+                 */
+                scroll_to_top(): void;
+                /**
                  * Push a row to the grid
                  *
                  * @param {GenericObject<any>[]} row list of cell data
                  * @param {boolean} flag indicates where the row is add to beginning or end
                  * of the row
-                 * @memberof GridViewTags
+                 * @memberof GridViewTag
                  */
                 push(row: GenericObject<any>[], flag: boolean): void;
                 /**

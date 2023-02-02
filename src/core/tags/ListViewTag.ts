@@ -1347,6 +1347,26 @@ namespace OS {
                 }
 
                 /**
+                 * Scroll the list view to bottom
+                 * 
+                 * @memberof ListViewTag
+                 */
+                scroll_to_bottom()
+                {
+                    this.refs.mlist.scrollTo({ top: this.refs.mlist.scrollHeight, behavior: 'smooth' })
+                }
+
+                /**
+                 * Scroll the list view to top
+                 * 
+                 * @memberof ListViewTag
+                 */
+                scroll_to_top()
+                {
+                    this.refs.mlist.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+                /**
                  * calibrate the list layout
                  *
                  * @protected
