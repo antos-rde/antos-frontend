@@ -193,7 +193,7 @@ namespace OS {
                     this._text = v;
                     if (v) {
                         $(this.refs.text).show();
-                        $(this.refs.text).html(v.__());
+                        $(this.refs.text).text(v.__());
                     } else {
                         $(this.refs.text).hide();
                     }
