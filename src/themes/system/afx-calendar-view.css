@@ -1,3 +1,4 @@
+afx-calendar-view afx-grid-view afx-grid-row:nth-child(odd) afx-grid-cell,
 afx-calendar-view afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
 {
     background-color: transparent;

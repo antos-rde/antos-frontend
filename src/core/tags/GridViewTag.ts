@@ -35,10 +35,11 @@ namespace OS {
                 /**
                  * Data placeholder for a collection of cell data
                  *
+                 * @private
                  * @type {GenericObject<any>[]}
                  * @memberof GridRowTag
                  */
-                data: GenericObject<any>[];
+                private _data: GenericObject<any>[];
 
                 /**
                  * placeholder for the row select event callback
@@ -89,6 +90,21 @@ namespace OS {
                     return this.hasattr("selected");
                 }
 
+                /**
+                 * setter: set row data
+                 * 
+                 * getter: get row data
+                 */
+                set data(v: GenericObject<any>[]) {
+                    this._data = v;
+                    if(v)
+                    {
+                        this.attach(v);
+                    }
+                }
+                get data(): GenericObject<any>[] {
+                    return this._data;
+                }
                 /**
                  * Mount the tag, do nothing
                  *
@@ -220,6 +236,7 @@ namespace OS {
                 set data(v: GenericObject<any>) {
                     if (!v) return;
                     this._data = v;
+                    this.attach(v);
                     this.ondatachange();
                     if (!v.selected) {
                         return;
@@ -675,7 +692,6 @@ namespace OS {
                         )[0] as GridCellPrototype;
                         element.uify(this.observable);
                         element.data = item;
-                        item.domel = element;
                         element.oncellselect = (e) => {
                             if (element.data.sort) {
                                 this.sort(element.data, element.data.sort);
@@ -769,11 +785,9 @@ namespace OS {
                     for (let i = 0; i < nmin; i++) {
                         const rowel = (this.refs.grid.children[i] as GridRowTag);
                         rowel.data = rows[i];
-                        rowel.data.domel = rowel;
                         for (let celi = 0; celi < rowel.children.length; celi++) {
                             const cel = (rowel.children[celi] as GridCellPrototype);
                             cel.data = rows[i][celi];
-                            cel.data.domel = cel;
                         }
                     }
                     // remove existing remaining rows
@@ -917,7 +931,6 @@ namespace OS {
                     const el = rowel[0] as GridRowTag;
                     rowel[0].uify(this.observable);
                     el.data = row;
-                    row.domel = rowel[0];
 
                     for (let cell of row) {
                         let tag = this.cellitem;
@@ -925,7 +938,6 @@ namespace OS {
                             ({ tag } = cell);
                         }
                         const el = $(`<${tag}>`).appendTo(rowel);
-                        cell.domel = el[0];
                         const element = el[0] as GridCellPrototype;
                         element.uify(this.observable);
                         element.oncellselect = (e) => this.cellselect(e, false);
