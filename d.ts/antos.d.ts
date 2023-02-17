@@ -1483,6 +1483,23 @@ interface String {
     trimBy(arg: string): string;
 }
 /**
+ * Extend the Array prototype with some API
+ * functions used by AntOS API
+ *
+ * @interface Array
+ * @template T
+ */
+interface Array<T> {
+    /**
+     * Check if the array includes an element
+     *
+     * @param {T} element to check
+     * @returns {boolean}
+     * @memberof Array
+     */
+    includes(element: T): boolean;
+}
+/**
  * Extend the Data prototype with the
  * [[timestamp]] function
  *

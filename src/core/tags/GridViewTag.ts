@@ -101,6 +101,10 @@ namespace OS {
                     {
                         this.attach(v);
                     }
+                    for (let celi = 0; celi < this.children.length; celi++) {
+                        const cel = (this.children[celi] as GridCellPrototype);
+                        cel.data = v[celi];
+                    }
                 }
                 get data(): GenericObject<any>[] {
                     return this._data;
@@ -785,10 +789,6 @@ namespace OS {
                     for (let i = 0; i < nmin; i++) {
                         const rowel = (this.refs.grid.children[i] as GridRowTag);
                         rowel.data = rows[i];
-                        for (let celi = 0; celi < rowel.children.length; celi++) {
-                            const cel = (rowel.children[celi] as GridCellPrototype);
-                            cel.data = rows[i][celi];
-                        }
                     }
                     // remove existing remaining rows
                     if (ndrows < ncrows) {
@@ -930,20 +930,19 @@ namespace OS {
 
                     const el = rowel[0] as GridRowTag;
                     rowel[0].uify(this.observable);
-                    el.data = row;
-
+                    
                     for (let cell of row) {
                         let tag = this.cellitem;
                         if (cell.tag) {
-                            ({ tag } = cell);
+                            tag = cell.tag;
                         }
                         const el = $(`<${tag}>`).appendTo(rowel);
                         const element = el[0] as GridCellPrototype;
                         element.uify(this.observable);
                         element.oncellselect = (e) => this.cellselect(e, false);
                         element.oncelldbclick = (e) => this.cellselect(e, true);
-                        element.data = cell;
                     }
+                    el.data = row;
                     el.onrowselect = (e) => this.rowselect({
                         id: el.aid,
                         data: { item: el }
