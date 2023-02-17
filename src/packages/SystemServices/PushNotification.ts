@@ -166,7 +166,7 @@ namespace OS {
              * @param {GUI.TagEventType} evt
              * @memberof PushNotification
              */
-            awake(evt: GUI.TagEventType<GUI.tag.MenuEventData>): void {
+            awake(evt: GUI.TagEventType<GUI.tag.StackMenuEventData>): void {
                 if (this.view) {
                     $(this.nzone).hide();
                 } else {

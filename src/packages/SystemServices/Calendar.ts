@@ -39,7 +39,7 @@ namespace OS {
                 });
             }
 
-            awake(e: GUI.TagEventType<GUI.tag.MenuEventData>): void {
+            awake(e: GUI.TagEventType<GUI.tag.StackMenuEventData>): void {
                 this.openDialog("CalendarDialog").then((d) => console.log(d));
             }
             // do nothing

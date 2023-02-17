@@ -467,7 +467,7 @@ namespace OS {
                             },
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType<GUI.tag.MenuEventData>
+                            e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                         ) => {
                             return this.menuOptionsHandle(e.data.item.data.id);
                         },
