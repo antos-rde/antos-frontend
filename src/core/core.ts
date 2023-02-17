@@ -157,6 +157,25 @@ interface String {
     trimBy(arg: string): string;
 }
 
+
+/**
+ * Extend the Array prototype with some API
+ * functions used by AntOS API
+ *
+ * @interface Array
+ * @template T
+ */
+interface Array<T> {
+    /**
+     * Check if the array includes an element
+     *
+     * @param {T} element to check
+     * @returns {boolean}
+     * @memberof Array
+     */
+    includes(element: T): boolean;
+}
+
 /**
  * Extend the Data prototype with the
  * [[timestamp]] function
@@ -505,10 +524,8 @@ namespace OS {
          * 
          * @memberof Version
          */
-        set version_string(v: string)
-        {
-            if(!v)
-            {
+        set version_string(v: string) {
+            if (!v) {
                 this.string = undefined;
                 this.major = undefined;
                 this.minor = undefined;
@@ -526,12 +543,11 @@ namespace OS {
             this.branch = 3;
             if (arr.length >= 2 && br[arr[1]]) {
                 this.branch = br[arr[1]];
-                if(arr[2])
-                {
+                if (arr[2]) {
                     this.build_id = arr[2];
                 }
             }
-            
+
             const mt = arr[0].match(/\d+/g);
             if (!mt) {
                 API.throwe(
@@ -551,8 +567,7 @@ namespace OS {
                 this.patch = Number(mt[2]);
             }
         }
-        get version_string(): string
-        {
+        get version_string(): string {
             return this.string;
         }
 
@@ -807,9 +822,9 @@ namespace OS {
      */
     export const REPOSITORY: string = "https://github.com/lxsang/antos";
 
-     /**
-     * Indicate whether the current de
-     */
+    /**
+    * Indicate whether the current de
+    */
     export var mobile: boolean = false;
     /**
      * Register a model prototype to the system namespace.
@@ -1266,10 +1281,10 @@ namespace OS {
             return new Promise(function (resolve, reject) {
                 const q = announcer.getMID();
                 //insert a temporal file selector
-                const o = 
+                const o =
                     $("<input>")
-                        .attr("type","file")
-                        .attr("multiple","true");
+                        .attr("type", "file")
+                        .attr("multiple", "true");
                 o.on("change", function () {
                     const files = (o[0] as HTMLInputElement).files;
                     const n_files = files.length;
@@ -1287,15 +1302,15 @@ namespace OS {
                         contentType: false,
                         processData: false,
                     })
-                    .done(function (data) {
-                        API.loaded(q, p, "OK");
-                        resolve(data);
-                    })
-                    .fail(function (j, s, e) {
-                        API.loaded(q, p, "FAIL");
-                        o.remove();
-                        reject(API.throwe(s));
-                    });
+                        .done(function (data) {
+                            API.loaded(q, p, "OK");
+                            resolve(data);
+                        })
+                        .fail(function (j, s, e) {
+                            API.loaded(q, p, "FAIL");
+                            o.remove();
+                            reject(API.throwe(s));
+                        });
                 });
                 return o.trigger("click");
             });
@@ -1332,7 +1347,7 @@ namespace OS {
          * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
-            const data:API.AnnouncementDataType<number> = {} as API.AnnouncementDataType<number>;
+            const data: API.AnnouncementDataType<number> = {} as API.AnnouncementDataType<number>;
             data.id = q;
             data.message = p;
             data.name = p;
@@ -1352,7 +1367,7 @@ namespace OS {
          * @param {string} m message status  (`OK` of `FAIL`)
          */
         export function loaded(q: number, p: string, m: string): void {
-            const data:API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
+            const data: API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
             data.id = q;
             data.message = p;
             data.name = "OS";
@@ -1445,7 +1460,7 @@ namespace OS {
          * @returns {Promise<void>} a promise on the result data
          */
         export function requires(l: string, force: boolean = false): Promise<void> {
-            return new Promise(async (resolve, reject) =>{
+            return new Promise(async (resolve, reject) => {
                 try {
                     if (!API.shared[l] || force) {
                         const libfp = l.asFileHandle();
