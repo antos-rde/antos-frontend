@@ -182,7 +182,7 @@ namespace OS {
                         this.treepath = v.path;
                     }
                     this.selected = v.selected;
-                    v.domel = this;
+                    this.attach(v);
                     this.ondatachange();
                 }
                 get data(): TreeViewDataType {

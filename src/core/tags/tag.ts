@@ -66,7 +66,7 @@ interface HTMLElement {
      * 
      * @meberof HTMLElement
      */
-    enable_drag():void;
+    enable_drag(): void;
 
     /**
      * Perform DOM generation ([[afxml]]) then mount ([[sync]]) all the
@@ -180,7 +180,7 @@ namespace OS {
              * @type {number|string}
              * @memberof TagLayoutType
              */
-            width?: number|string;
+            width?: number | string;
 
             /**
              ** `data-height` of the element, not to be confused with
@@ -189,7 +189,7 @@ namespace OS {
              * @type {number|string}
              * @memberof TagLayoutType
              */
-            height?: number|string;
+            height?: number | string;
         }
 
         /**
@@ -395,6 +395,25 @@ namespace OS {
             }
 
             /**
+             * Attach a data to this tag
+             * 
+             * This function will define a getter `domel`
+             * in the attached data, this getter refers to the
+             * current tag
+             *
+             * @returns {void}
+             * @memberof AFXTag
+             */
+            attach(data: GenericObject<any>): void {
+                const self = this;
+                Object.defineProperty(data, 'domel', {
+                    get: function () { return self },
+                    enumerable: false,
+                    configurable: true
+                })
+            }
+
+            /**
              * Implementation from HTMLElement interface,
              * this function mount the current tag hierarchy
              *
@@ -514,7 +533,7 @@ namespace OS {
              * @protected
              * @memberof AFXTag
              */
-            protected calibrate(): void {}
+            protected calibrate(): void { }
 
             /**
              * This function parses the input layout object
@@ -614,8 +633,7 @@ namespace OS {
             }
         }
 
-        HTMLElement.prototype.enable_drag = function()
-        {
+        HTMLElement.prototype.enable_drag = function () {
             $(this)
                 .on("pointerdown", (evt: JQuery.MouseEventBase) => {
                     const offset = $(this).offset();
@@ -623,12 +641,14 @@ namespace OS {
                     offset.left = evt.clientX - offset.left;
                     const mouse_move = (
                         e: JQuery.MouseEventBase
-                    )  => {
-                        const custom_event = new CustomEvent('dragging', { detail:{
-                            origin: evt,
-                            current: e,
-                            offset: offset
-                        }});
+                    ) => {
+                        const custom_event = new CustomEvent('dragging', {
+                            detail: {
+                                origin: evt,
+                                current: e,
+                                offset: offset
+                            }
+                        });
                         this.dispatchEvent(custom_event);
                     };
 
@@ -636,23 +656,25 @@ namespace OS {
                         $(window).off("pointermove", mouse_move);
                         $(window).off("pointerup", mouse_up);
                         // trigger the drop event
-                        const custom_event = new CustomEvent('drop', { detail:{
-                            origin: evt,
-                            current: e,
-                            offset: offset
-                        }});
+                        const custom_event = new CustomEvent('drop', {
+                            detail: {
+                                origin: evt,
+                                current: e,
+                                offset: offset
+                            }
+                        });
                         this.dispatchEvent(custom_event);
                     };
                     $(window).on("pointermove", mouse_move);
                     $(window).on("pointerup", mouse_up);
                 });
-        }        
+        }
 
         HTMLElement.prototype.update = function (d): void {
             $(this)
                 .children()
                 .each(function () {
-                    if(this.update)
+                    if (this.update)
                         return this.update(d);
                 });
         };
@@ -704,7 +726,7 @@ namespace OS {
              */
             export function define<T extends AFXTag>(
                 name: string,
-                cls: { new (): T }
+                cls: { new(): T }
             ): void {
                 try {
                     customElements.define(name, cls);

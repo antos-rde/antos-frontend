@@ -238,6 +238,10 @@ namespace OS {
                  */
                 set data(v: GenericObject<any>) {
                     this._data = v;
+                    if(v)
+                    {
+                        this.attach(v);
+                    }
                     this.ondatachange();
                 }
                 get data(): GenericObject<any> {
@@ -973,7 +977,6 @@ namespace OS {
                         return this.iclose(e);
                     };
                     element.data = item;
-                    item.domel = el[0];
                     return element;
                 }
 

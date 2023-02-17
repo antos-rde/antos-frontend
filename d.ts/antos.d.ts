@@ -3917,6 +3917,17 @@ declare namespace OS {
             set aid(v: string | number);
             get aid(): string | number;
             /**
+             * Attach a data to this tag
+             *
+             * This function will define a getter `domel`
+             * in the attached data, this getter refers to the
+             * current tag
+             *
+             * @returns {void}
+             * @memberof AFXTag
+             */
+            attach(data: GenericObject<any>): void;
+            /**
              * Implementation from HTMLElement interface,
              * this function mount the current tag hierarchy
              *
@@ -5827,10 +5838,11 @@ declare namespace OS {
                 /**
                  * Data placeholder for a collection of cell data
                  *
+                 * @private
                  * @type {GenericObject<any>[]}
                  * @memberof GridRowTag
                  */
-                data: GenericObject<any>[];
+                private _data;
                 /**
                  * placeholder for the row select event callback
                  *
@@ -5859,6 +5871,13 @@ declare namespace OS {
                  */
                 set selected(v: boolean);
                 get selected(): boolean;
+                /**
+                 * setter: set row data
+                 *
+                 * getter: get row data
+                 */
+                set data(v: GenericObject<any>[]);
+                get data(): GenericObject<any>[];
                 /**
                  * Mount the tag, do nothing
                  *
