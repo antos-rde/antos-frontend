@@ -86,7 +86,7 @@ namespace OS {
              * @memberof BaseService
              */
             onmenuselect: (
-                d: OS.GUI.TagEventType<GUI.tag.MenuEventData>
+                d: OS.GUI.TagEventType<GUI.tag.StackMenuEventData>
             ) => void;
 
             /**
@@ -217,7 +217,7 @@ namespace OS {
              * @param {GUI.TagEventType} e
              * @memberof BaseService
              */
-            abstract awake(e: GUI.TagEventType<GUI.tag.MenuEventData>): void;
+            abstract awake(e: GUI.TagEventType<GUI.tag.StackMenuEventData>): void;
 
             /**
              * Do nothing

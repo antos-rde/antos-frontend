@@ -27,7 +27,6 @@ tags = 	dist/core/tags/tag.js \
 		dist/core/tags/ListViewTag.js \
 		dist/core/tags/SwitchTag.js \
 		dist/core/tags/NSpinnerTag.js \
-		dist/core/tags/MenuTag.js \
 		dist/core/tags/GridViewTag.js \
 		dist/core/tags/TabBarTag.js \
 		dist/core/tags/TabContainerTag.js \
