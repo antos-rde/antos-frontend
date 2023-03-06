@@ -251,6 +251,8 @@ namespace OS {
                     ];
                     const this_month = new Date(this._year, this._month, 1);
                     const next_month = new Date(this._year, this._month + 1, 1);
+                    const grid = this.refs.grid as GridViewTag;
+                    grid.rows = [];
                     // Find out when this month starts and ends.
                     const first_week_day = this_month.getDay();
                     const days_in_this_month = Math.round(
@@ -294,14 +296,11 @@ namespace OS {
                         week_day++;
                     }
                     for (
-                        let i = 0, end2 = 7 - row.length, asc2 = 0 <= end2;
-                        asc2 ? i <= end2 : i >= end2;
-                        asc2 ? i++ : i--
+                        let i = 0; i < 7 - row.length; i++
                     ) {
                         row.push({ text: "" });
                     }
                     rows.push(row);
-                    const grid = this.refs.grid as GridViewTag;
                     grid.rows = rows;
                     (this.refs.mlbl as LabelTag).text = `${
                         months[this._month]
