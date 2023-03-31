@@ -1723,7 +1723,6 @@ namespace OS {
                             dest.parent().cache[dest.basename] = this;
                             return resolve({result: true, error: false});
                         } catch (e) {
-                            console.log(this);
                             return reject(__e(e));
                         }
                     });
@@ -2099,7 +2098,6 @@ namespace OS {
                             if (meta.type === "dir") {
                                 const desdir = to.asFileHandle();
                                 await desdir.mk(file.basename);
-                                console.log(desdir, to);
                                 const ret = await file.read();
                                 const files = ret.result.map((v: API.FileInfoType) => v.path);
                                 if (files.length > 0) {
@@ -2271,17 +2269,26 @@ namespace OS {
                         const data = await zfile.asFileHandle().read("binary");
                         const zip = await JSZip.loadAsync(data);
                         const to = await dest_callback(zip);
-                        const dirs = [];
+                        const dirs = new Set<string>();
                         const files = [];
-                        for (const name in zip.files) {
+                        for (const _name in zip.files) {
+                            const name = _name.trimFromRight("/");
                             const file = zip.files[name];
                             if (file.dir) {
-                                dirs.push(to + "/" + name);
+                                dirs.add(to + "/" + name);
                             } else {
+                                const segs = name.split("/");
+                                segs.pop();
+                                let path = to;
+                                for(let seg of segs)
+                                {
+                                    path += "/" + seg;
+                                    dirs.add(path);
+                                }
                                 files.push(name);
                             }
                         }
-                        await mkdirAll(dirs, true);
+                        await mkdirAll(Array.from(dirs), true);
                         const promises = [];
                         for (const file of files) {
                             promises.push(new Promise(async (res, rej) => {
