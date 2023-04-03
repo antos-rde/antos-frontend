@@ -2273,7 +2273,7 @@ namespace OS {
                         const files = [];
                         for (const _name in zip.files) {
                             const name = _name.trimFromRight("/");
-                            const file = zip.files[name];
+                            const file = zip.files[_name];
                             if (file.dir) {
                                 dirs.add(to + "/" + name);
                             } else {
