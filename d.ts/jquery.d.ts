@@ -1,7 +1,4 @@
-export as namespace Sizzle;
-
 declare const Sizzle: SizzleStatic;
-export = Sizzle;
 
 interface SizzleStatic {
     selectors: Sizzle.Selectors;
