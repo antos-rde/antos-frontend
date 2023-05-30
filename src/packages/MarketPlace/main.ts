@@ -66,7 +66,7 @@ namespace OS {
                 };
 
                 this.catlist.ontabselect = (e) => {
-                    const selected = this.catlist.selected;
+                    const selected = this.catlist.selected as number;
                     if(selected < 0)
                         return;
                     
