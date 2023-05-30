@@ -19,9 +19,9 @@ namespace OS {
         }
         export namespace tag {
             /**
-             * A tab container allows to attach each tab on a [[TabBarTag]]
+             * A tab container allows to attach each tab on a {@link TabBarTag}
              * with a container widget. The attached container widget should be
-             * composed inside a [[HBoxTag]]
+             * composed inside a {@link HBoxTag}
              *
              * The tab bar in a tab container can be configured to display tabs
              * in horizontal (row) or vertical (column) order. Default to vertical order

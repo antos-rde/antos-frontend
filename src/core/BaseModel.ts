@@ -155,7 +155,7 @@ namespace OS {
          * to handle all local events inside that model.
          *
          * This observable object is propagate to all the
-         * UI elements ([[AFXTag]]) inside the model
+         * UI elements ({@link OS.GUI.AFXTag}) inside the model
          *
          * @protected
          * @type {API.Announcer}
@@ -579,10 +579,10 @@ namespace OS {
         }
 
         /**
-         * Open a [[YesNoDialog]] to confirm a task
+         * Open a {@link OS.GUI.dialogs.YesNoDialog} to confirm a task
          *
          * @protected
-         * @param {GenericObject<any>} data [[YesNoDialog]] input data
+         * @param {GenericObject<any>} data {@link OS.GUI.dialogs.YesNoDialog} input data
          * @returns {Promise<boolean>}
          * @memberof BaseModel
          */

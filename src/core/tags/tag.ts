@@ -24,7 +24,7 @@ interface HTMLElement {
      * defined on any child of this element will be ignored.
      *
      * @param {JQuery.MouseEventBase} e a mouse event
-     * @param {OS.GUI.tag.StackMenuTag} m The context menu element [[StackMenuTag]]
+     * @param {OS.GUI.tag.StackMenuTag} m The context menu element {@link OS.GUI.tag.StackMenuTag}
      * @memberof HTMLElement
      */
     contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.StackMenuTag): void;
@@ -69,7 +69,7 @@ interface HTMLElement {
     enable_drag(): void;
 
     /**
-     * Perform DOM generation ([[afxml]]) then mount ([[sync]]) all the
+     * Perform DOM generation ({@link afxml}) then mount ({@link sync}) all the
      * elements.
      *
      * @param {OS.API.Announcer} o an AntOS observable object
@@ -116,7 +116,7 @@ interface Document {
 namespace OS {
     export namespace GUI {
         /**
-         * [[TagLayoutType]] interface using by AFX tags to defined
+         * TagLayoutType interface using by AFX tags to defined
          * its internal DOM hierarchy
          *
          * @export
@@ -157,7 +157,7 @@ namespace OS {
 
             /**
              * this is the `data-id` attribute of the element,
-             * can be query by the [[aid]] Tag API function.
+             * can be query by the {@link OS.GUI.AFXTag.aid} Tag API function.
              * Not to be confused with the DOM `id` attribute
              *
              * @type {(string | number)}
@@ -294,7 +294,7 @@ namespace OS {
              * Reference to some of the tag's children
              * element. This reference object is built
              * based on the `ref` property found in the
-             * tag layout [[TagLayoutType]]
+             * tag layout {@link TagLayoutType}
              *
              * @protected
              * @type {GenericObject<HTMLElement>}
@@ -487,7 +487,7 @@ namespace OS {
 
             /**
              * Init the current tag, this function
-             * is called before the [[mount]] function
+             * is called before the {@link mount} function
              *
              * @protected
              * @abstract
@@ -516,7 +516,7 @@ namespace OS {
 
             /**
              * Update only the current tag, this function is
-             * called by [[update]] before chaining the
+             * called by {@link update} before chaining the
              * update process to its children
              *
              * @protected
@@ -707,7 +707,7 @@ namespace OS {
          */
         export namespace tag {
             /**
-             * Alias to  all classes that extends [[AFXTag]]
+             * Alias to  all classes that extends {@link AFXTag}
              */
             export type AFXTagTypeClass = {
                 new <T extends AFXTag>(): T;
@@ -719,7 +719,7 @@ namespace OS {
              * new definition
              *
              * @export
-             * @template T all classes that extends [[AFXTag]]
+             * @template T all classes that extends {@link AFXTag}
              * @param {string} name name of the tag
              * @param {{ new (): T }} cls the class that defines the tag
              * @returns {void}

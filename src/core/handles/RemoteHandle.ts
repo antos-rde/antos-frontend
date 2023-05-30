@@ -158,7 +158,7 @@ namespace OS {
              *
              * @export
              * @param {string} p a VFS file path e.g. home://test/
-             * @returns {Promise<RequestResult>} A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} A promise on a {@link RequestResult}
              * which contains an error or a list of FileInfoType
              */
             export function scandir(p: string): Promise<RequestResult> {
@@ -203,7 +203,7 @@ namespace OS {
              *
              * @export
              * @param {string} p VFS file path
-             * @returns {Promise<RequestResult>} A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} A promise on a {@link RequestResult}
              * which contains an error or an object of FileInfoType
              */
             export function fileinfo(p: string): Promise<RequestResult> {
@@ -226,8 +226,8 @@ namespace OS {
              * - xml, html: the response is a XML/HTML object
              * - text: plain text
              *
-             * @returns {Promise<any>}  A promise on a [[RequestResult]]
-             * which contains an error or an object of [[FileInfoType]]
+             * @returns {Promise<any>}  A promise on a {@link RequestResult}
+             * which contains an error or an object of {@link FileInfoType}
              */
             export function readfile(p: string, t: string): Promise<any> {
                 const path = `${API.REST}/VFS/get/`;
@@ -240,7 +240,7 @@ namespace OS {
              * @export
              * @param {string} s VFS source file path
              * @param {string} d VFS destination file path
-             * @returns {Promise<RequestResult>}  A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>}  A promise on a {@link RequestResult}
              * which contains an error or a success response
              */
             export function move(s: string, d: string): Promise<RequestResult> {
@@ -253,7 +253,7 @@ namespace OS {
              *
              * @export
              * @param {string} p VFS file path
-             * @returns {Promise<RequestResult>}  A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>}  A promise on a {@link RequestResult}
              * which contains an error or a success response
              */
             export function remove(p: string): Promise<RequestResult> {
@@ -278,7 +278,7 @@ namespace OS {
              *
              * @export
              * @param {PackageCommandType} d a package command of type PackageCommandType
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             export function packages(
                 d: PackageCommandType
@@ -292,7 +292,7 @@ namespace OS {
              *
              * @export
              * @param {string} d VFS destination directory path
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             export function upload(d: string): Promise<RequestResult> {
                 const path = `${API.REST}/VFS/upload`;
@@ -305,7 +305,7 @@ namespace OS {
              * @export
              * @param {string} p path to the VFS file
              * @param {string} d file data encoded in Base 64
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             export function write(
                 p: string,
@@ -371,8 +371,8 @@ namespace OS {
              *  Check if a user is logged in
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]] that
-             * contains an error or a [[UserSettingType]] object
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult} that
+             * contains an error or a {@link OS.setting.UserSettingType} object
              */
             export function auth(): Promise<RequestResult> {
                 const p = `${API.REST}/user/auth`;
@@ -383,9 +383,9 @@ namespace OS {
              * Perform a login operation
              *
              * @export
-             * @param {UserLoginType} d user data [[UserLoginType]]
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]] that
-             * contains an error or a [[UserSettingType]] object
+             * @param {UserLoginType} d user data {@link UserLoginType}
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult} that
+             * contains an error or a {@link OS.setting.UserSettingType} object
              */
             export function login(d: UserLoginType): Promise<RequestResult> {
                 const p = `${API.REST}/user/login`;
@@ -396,7 +396,7 @@ namespace OS {
              * Perform a logout operation
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             export function logout(): Promise<RequestResult> {
                 const p = `${API.REST}/user/logout`;
@@ -407,7 +407,7 @@ namespace OS {
              * Save the current user settings
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             export function setting(): Promise<RequestResult> {
                 const p = `${API.REST}/system/settings`;
@@ -440,7 +440,7 @@ namespace OS {
              * ```
              * { table: "table name", cond: [conditional object]}
              * ```
-             * @returns {Promise<RequestResult>} a promise of [[RequestResult]] on the
+             * @returns {Promise<RequestResult>} a promise of {@link RequestResult} on the
              * query data
              *
              * A conditional object represents a SQL condition statement as an object,

@@ -140,7 +140,7 @@ namespace OS {
                  * This function triggers the date select event
                  *
                  * @private
-                 * @param {TagEventType} e AFX tag event data [[TagEventType]]
+                 * @param {TagEventType} e AFX tag event data {@link TagEventType}
                  * @returns {void}
                  * @memberof CalendarTag
                  */

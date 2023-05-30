@@ -8,5 +8,8 @@
         ],
         "outDir": "dist"
     },
+    "typedocOptions": {
+        "entryPoints": ["src"]
+    },
     "include": ["src/**/*.ts"]
 }

@@ -3,7 +3,7 @@ namespace OS {
         export namespace tag {
             /**
              * A `resizer` tag is basically used to dynamically resize an element using mouse.
-             * It is usually put inside a [[TileLayoutTag]] an can be attached to any element. Example:
+             * It is usually put inside a {@link TileLayoutTag} an can be attached to any element. Example:
              *
              * The resizer tag in the following example  will be attached to the first `afx-vbox`,
              * and allows to resize this element using mouse
@@ -41,8 +41,8 @@ namespace OS {
 
                 /**
                  * Reference to the parent tag of the current tag.
-                 * The parent tag should be an instance of a [[TileLayoutTag]]
-                 * such as [[VBoxTag]] or [[HBoxTag]]
+                 * The parent tag should be an instance of a {@link TileLayoutTag}
+                 * such as {@link VBoxTag} or {@link HBoxTag}
                  *
                  * @private
                  * @type {*}

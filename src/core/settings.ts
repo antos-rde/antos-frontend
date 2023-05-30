@@ -308,7 +308,7 @@ namespace OS {
 
             /**
              * Package repositories setting.
-             * This configuration is used by [[MarketPlace]]
+             * This configuration is used by {@link OS.application.MarketPlace}
              * for package management
              *
              * @type {{

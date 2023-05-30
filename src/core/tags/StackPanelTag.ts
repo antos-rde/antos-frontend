@@ -4,7 +4,7 @@ namespace OS {
             /**
              * A stack pannel allows to navigate back and forth between pannels
              * (container widget). Each container widget  in the stack should be
-             * composed inside a [[HBoxTag]]
+             * composed inside a {@link HBoxTag}
              *
              *
              * @export

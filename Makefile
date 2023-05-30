@@ -227,8 +227,10 @@ ar:
 release: main uglify
 .PHONY: doc release clean
 doc:
-	# npm i typedoc@0.19.0
-	./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
+	#  npm install typedoc --save-dev
+	# npm install typedoc-plugin-merge-modules --save-dev
+	# ./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
+	./node_modules/.bin/typedoc --hideGenerator --plugin typedoc-plugin-merge-modules  --entryPointStrategy expand --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
 
 test: build_javascripts
 	jest

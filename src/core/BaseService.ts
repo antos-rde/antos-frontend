@@ -71,7 +71,7 @@ namespace OS {
 
             /**
              * Reference to the timer that periodically executes the callback
-             * defined in [[watch]].
+             * defined in {@link watch}.
              *
              * @private
              * @type {number}

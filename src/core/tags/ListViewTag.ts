@@ -6,7 +6,7 @@ namespace OS {
              */
             export type ListItemEventData = TagEventDataType<ListViewItemTag>;
             /**
-             * A list item represent the individual view of an item in the [[ListView]].
+             * A list item represent the individual view of an item in the {@link OS.GUI.tag.ListViewTag}.
              * This class is an abstract prototype class, implementation of any
              * list view item should extend it
              *
@@ -197,7 +197,7 @@ namespace OS {
                  * Layout definition of the item tag.
                  * This function define the outer layout of the item.
                  * Custom inner layout of each item implementation should
-                 * be defined in [[itemlayout]]
+                 * be defined in {@link itemlayout}
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -228,7 +228,7 @@ namespace OS {
                  * Setter:
                  *
                  * Set the data of the list item. This will
-                 * trigger the [[ondatachange]] function
+                 * trigger the {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -523,7 +523,7 @@ namespace OS {
                 /**
                  * A collection of selected items in the list.
                  * The maximum size of this collection is 1 if
-                 * the [[multiselect]] feature is disabled
+                 * the {@link multiselect} feature is disabled
                  *
                  * @private
                  * @type {ListViewItemTag[]}
@@ -742,7 +742,7 @@ namespace OS {
                  * Button layout allows to add some custom
                  * behaviors to the list.
                  *
-                 * Each button data should define the [[onbtclick]]
+                 * Each button data should define the {@link OS.GUI.tag.ButtonTag.onbtclick}
                  * event handle to specify the custom behavior
                  *
                  * When the list is configured as dropdown. The buttons

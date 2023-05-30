@@ -3,7 +3,7 @@ namespace OS {
         export namespace tag {
             /**
              * An overlay tag is a layout tag that alway stay on top of
-             * the virtual desktop environment. Tile layout elements ([[VBoxTag]], [[HboxTag]])
+             * the virtual desktop environment. Tile layout elements ({@link OS.GUI.tag.VBoxTag}, {@link OS.GUI.tag.HBoxTag})
              * can be used inside this tag to compose elements
              *
              * @export

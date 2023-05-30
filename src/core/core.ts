@@ -39,8 +39,8 @@ interface String {
 
     /**
      * Parse the current string and convert it
-     * to an object of type [[Version]] if the string
-     * is in the format recognized by [[Version]],
+     * to an object of type {@link OS.Version} if the string
+     * is in the format recognized by {@link OS.Version},
      * e.g.: `1.0.1-a`
      *
      * @returns {OS.Version}
@@ -98,7 +98,7 @@ interface String {
     format(...args: any[]): string;
 
     /**
-     * Create a [[FormattedString]] object using the current
+     * Create a {@link OS.FormattedString} object using the current
      * string and the input parameters
      *
      * @param {...any[]} args
@@ -178,7 +178,7 @@ interface Array<T> {
 
 /**
  * Extend the Data prototype with the
- * [[timestamp]] function
+ * {@link timestamp} function
  *
  * @interface Date
  */
@@ -210,7 +210,7 @@ interface GenericObject<T> {
 }
 
 /**
- * Global function to create a [[FormattedString]] from
+ * Global function to create a {@link OS.FormattedString} from
  * a formatted string and a list of parameters. Example
  *
  * ```typescript
@@ -305,7 +305,7 @@ namespace OS {
 
         /**
          * The value of the format pattern represented
-         * in [[fs]]
+         * in {@link fs}
          *
          * @type {any[]}
          * @memberof FormattedString
@@ -812,13 +812,13 @@ namespace OS {
 
     /**
      * Variable represents the current AntOS version, it
-     * is an instance of [[Version]]
+     * is an instance of {@link OS.Version}
      */
     export const VERSION: Version = new Version(undefined);
 
     /**
      * Variable represents the current AntOS source code repository
-     * is an instance of [[string]]
+     * is an instance of string
      */
     export const REPOSITORY: string = "https://github.com/lxsang/antos";
 
@@ -829,10 +829,10 @@ namespace OS {
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
-     * is of type [[SubWindow]], its prototype will be registered
-     * in the [[dialogs]] namespace, otherwise, if the model type
-     * is [[Application]] or [[Service]], its prototype will be
-     * registered in the [[application]] namespace.
+     * is of type {@link OS.GUI.SubWindow}, its prototype will be registered
+     * in the {@link OS.GUI.dialogs} namespace, otherwise, if the model type
+     * is {@link OS.application.BaseApplication} or {@link  OS.application.BaseService}, its prototype will be
+     * registered in the {@link application} namespace.
      *
      * When a model is loaded in the system, its prototype is registered
      * for later uses
@@ -886,7 +886,7 @@ namespace OS {
 
     /**
      * Booting up AntOS. This function checks whether the user
-     * is successfully logged in, then call [[startAntOS]], otherwise
+     * is successfully logged in, then call {@link OS.GUI.startAntOS}, otherwise
      * it shows the login screen
      *
      * @export
@@ -919,7 +919,7 @@ namespace OS {
 
     /**
      * Perform the system shutdown operation. This function calls all
-     * clean up handles in [[cleanupHandles]], then save the system setting
+     * clean up handles in {@link cleanupHandles}, then save the system setting
      * before exiting
      *
      * @export
@@ -941,7 +941,7 @@ namespace OS {
     }
 
     /**
-     * Register a callback to the system [[cleanupHandles]]
+     * Register a callback to the system {@link cleanupHandles}
      *
      * @export
      * @param {string} n callback string name
@@ -979,7 +979,7 @@ namespace OS {
         export interface PackageMetaType {
             /**
              * The application class name, if the package has only services
-             * this property is ignored and [[pkgname]] should be specified
+             * this property is ignored and {@link pkgname} should be specified
              *
              * @type {string}
              * @memberof PackageMetaType
@@ -987,7 +987,7 @@ namespace OS {
             app?: string;
 
             /**
-             * Package name, in case of [[app]] being undefined, this property
+             * Package name, in case of {@link app} being undefined, this property
              * need to be specified
              *
              * @type {string}
@@ -1126,7 +1126,7 @@ namespace OS {
 
             /**
              * Package version, should be in a format conforming
-             * to the version definition in [[Version]] class
+             * to the version definition in {@link Version} class
              *
              * @type {string}
              * @memberof PackageMetaType
@@ -1183,7 +1183,7 @@ namespace OS {
         export var lang: GenericObject<string> = {};
 
         /**
-         * Re-export the system announcement [[getMID]] function to the
+         * Re-export the system announcement {@link OS.announcer.getMID} function to the
          * core API
          *
          * @export
@@ -1343,7 +1343,7 @@ namespace OS {
          * beginning of a heavy task
          *
          * @export
-         * @param {number} q message id, see [[mid]]
+         * @param {number} q message id, see {@link mid}
          * @param {string} p message string
          */
         export function loading(q: number, p: string): void {
@@ -1526,8 +1526,8 @@ namespace OS {
              * Fetch the package meta-data from the server
              *
              * @export
-             * @returns {Promise<RequestResult>} Promise on a [[RequestResult]].
-             * A success request result should contain a list of [[PackageMetaType]]
+             * @returns {Promise<RequestResult>} Promise on a {@link RequestResult}.
+             * A success request result should contain a list of {@link PackageMetaType}
              */
             export function fetch(): Promise<RequestResult> {
                 return API.handle.packages({
@@ -1573,7 +1573,7 @@ namespace OS {
          * Save the current user setting
          *
          * @export
-         * @returns {Promise<RequestResult>} promise on a [[RequestResult]]
+         * @returns {Promise<RequestResult>} promise on a {@link RequestResult}
          */
         export function setting(): Promise<RequestResult> {
             return API.handle.setting();
@@ -1619,7 +1619,7 @@ namespace OS {
          * text in spotlight.
          *
          * This function will call all the search handles stored
-         * in [[searchHandle]] and build the search result based
+         * in {@link searchHandle} and build the search result based
          * on output of these handle
          *
          * @export
@@ -1644,7 +1644,7 @@ namespace OS {
         }
 
         /**
-         * Register a search handle to the global [[searchHandle]]
+         * Register a search handle to the global {@link searchHandle}
          *
          * @export
          * @param {string} name handle name string
