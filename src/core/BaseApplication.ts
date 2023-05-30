@@ -422,7 +422,7 @@ namespace OS {
              * Base menu definition. This function
              * returns the based menu definition of all applications.
              * Other application specific menu entries
-             * should be defined in [[menu]] function
+             * should be defined in {@link menu} function
              *
              * @protected
              * @returns {GUI.BasicItemType[]}
@@ -469,7 +469,7 @@ namespace OS {
              * Show local toast notification
              *
              * @param {any} data to send
-             * @param {GUI.ToastOptions} notification options see [[GUI.ToastOptions]]
+             * @param {GUI.ToastOptions} notification options see {@link GUI.ToastOptions}
              * @returns {void}
              * @memberof BaseApplication
              */
@@ -495,7 +495,7 @@ namespace OS {
             }
             
             /**
-             * The cleanup function that is called by [[onexit]] function.
+             * The cleanup function that is called by {@link onexit} function.
              * Application need to override this function to perform some
              * specific task before exiting or to prevent the application
              * to be exited

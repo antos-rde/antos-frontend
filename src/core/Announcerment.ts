@@ -132,7 +132,7 @@ namespace OS {
         export class Announcer {
             /**
              * The observable object that stores event name
-             * and its corresponding callback in [[ObservableEntryType]]
+             * and its corresponding callback in {@link ObservableEntryType}
              *
              * @type {GenericObject<ObservableEntryType>}
              * @memberof Announcer

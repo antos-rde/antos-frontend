@@ -11,7 +11,7 @@ namespace OS {
             | application.BaseApplication
             | application.BaseService;
         /**
-         * Alias to  all classes that extends [[BaseModel]]
+         * Alias to  all classes that extends {@link BaseModel}
          */
         export type ModelTypeClass = {
             new <T extends BaseModel>(args: AppArgumentsType[]): T;

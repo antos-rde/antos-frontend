@@ -108,7 +108,7 @@ namespace OS {
             /**
              * Item children, usually used by tree view or menu item
              * This property is keep for compatibility purposes only.
-             * Otherwise, the [[nodes]] property should be used
+             * Otherwise, the {@link nodes} property should be used
              *
              * @type {BasicItemType[]}
              * @memberof BasicItemType
@@ -146,7 +146,7 @@ namespace OS {
          * UI elements, then insert this UI scheme to the DOM tree.
          *
          * This function renders the UI of the application before calling the
-         * application's [[main]] function
+         * application's `main` function
          *
          * @export
          * @param {string} html html scheme string
@@ -174,7 +174,7 @@ namespace OS {
 
         /**
          * Load an application scheme file then render
-         * it with [[htmlToScheme]]
+         * it with {@link htmlToScheme}
          *
          * @export
          * @param {string} path VFS path to the scheme file
@@ -294,7 +294,7 @@ namespace OS {
          */
         export interface ToastOptions {
             /**
-             * Where the Toast is displayed? see [[ANCHOR]]
+             * Where the Toast is displayed? see  {@link ANCHOR}
              *
              * @type {ANCHOR}
              * @memberof ToastOptions
@@ -322,7 +322,7 @@ namespace OS {
 
         /**
          * Toast notification API
-         * Show a toast message on different posisition on screen, see [[ToastOptions]]
+         * Show a toast message on different posisition on screen, see {@link ToastOptions}
          * 
          * @export
          * @param
@@ -516,7 +516,7 @@ namespace OS {
         /**
          * Kill an running processes of an application, then
          * unregister the application prototype definition
-         * from the [[application]] namespace.
+         * from the {@link application} namespace.
          *
          * This process is similar to uninstall the application
          * from the current system state
@@ -569,7 +569,7 @@ namespace OS {
          * in the system.
          *
          * This function fist loads and registers the application prototype
-         * definition in the [[application]] namespace, then update
+         * definition in the {@link application} namespace, then update
          * the system packages meta-data
          * 
          * First it tries to load the package with the app name is also the
@@ -861,7 +861,7 @@ namespace OS {
          * Bind a context menu event to an AntOS element.
          *
          * This will find the fist element which defines a handle
-         * named [[contextMenuHandle]] and bind the context menu
+         * named {@link contextMenuHandle} and bind the context menu
          * event to it.
          *
          * @param {JQuery.MouseEventBase} event mouse event
@@ -1091,7 +1091,7 @@ namespace OS {
         /**
          * Show the login screen and perform the login operation.
          *
-         * Once login successfully, the [[startAntOS]] will be called
+         * Once login successfully, the {@link startAntOS} will be called
          *
          * @export
          */

@@ -111,7 +111,7 @@ namespace OS {
                  * Placeholder for the `fetch` function of the node.
                  * This function is used to fetch the child nodes of the
                  * current nodes. This function should return a promise on
-                 * a list of [[TreeViewDataType]]
+                 * a list of {@link TreeViewDataType}
                  *
                  * @memberof TreeViewItemPrototype
                  */
@@ -164,7 +164,7 @@ namespace OS {
                  * Setter:
                  *
                  * Set the data of the current node. This will trigger the
-                 * [[ondatachange]] function
+                 * {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -405,7 +405,7 @@ namespace OS {
                  * Layout definition of a node. This function
                  * returns the definition of the base outer layout
                  * of a node. Custom inner layout of the node should
-                 * be defined in the [[itemlayout]] function
+                 * be defined in the {@link itemlayout} function
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -464,8 +464,8 @@ namespace OS {
             }
 
             /**
-             * SimpleTreeViewItem extends [[TreeViewItemPrototype]] and
-             * define it inner layout using a [[LabelTag]]
+             * SimpleTreeViewItem extends {@link TreeViewItemPrototype} and
+             * define it inner layout using a {@link LabelTag}
              *
              * @export
              * @class SimpleTreeViewItem
@@ -641,7 +641,7 @@ namespace OS {
                  * Placeholder for the `fetch` function of the tree.
                  * This function is used to fetch the child nodes of the
                  * current tree. This function should return a promise on
-                 * a list of [[TreeViewDataType]]
+                 * a list of {@link TreeViewDataType}
                  *
                  * @memberof TreeViewTag
                  */

@@ -229,7 +229,7 @@ namespace OS {
                  * Setter:
                  *
                  * Set the data of the cell, this will trigger
-                 * the [[ondatachange]] function
+                 * the {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -255,7 +255,7 @@ namespace OS {
                  * Setter:
                  *
                  * Set/unset the current cell as selected.
-                 * This will trigger the [[cellselect]]
+                 * This will trigger the {@link cellselect}
                  * event
                  *
                  * Getter:
@@ -345,7 +345,7 @@ namespace OS {
 
             /**
              * Simple grid cell defines a grid cell with
-             * an [[LabelTag]] as it cell layout
+             * an {@link LabelTag} as it cell layout
              *
              * @export
              * @class SimpleGridCellTag
@@ -390,7 +390,7 @@ namespace OS {
                 protected calibrate(): void { }
 
                 /**
-                 * The layout of the cell with a simple [[LabelTag]]
+                 * The layout of the cell with a simple {@link LabelTag}
                  *
                  * @returns
                  * @memberof SimpleGridCellTag

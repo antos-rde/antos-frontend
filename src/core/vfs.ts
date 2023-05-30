@@ -21,7 +21,7 @@ interface String {
      * Convert a string to VFS file handle.
      *
      * This function will create a file handle object from the string
-     * with the help of [[VFS.findHandles]]
+     * with the help of {@link OS.API.VFS.findHandles}
      *
      * @returns {OS.API.VFS.BaseFileHandle}
      * @memberof String
@@ -226,7 +226,7 @@ namespace OS {
              *
              * When converting a string to file handle, the system will look
              * for a protocol pattern in the string, if the protocol found,
-             * its attached handle class (found in [[VFS.handles]]) will be
+             * its attached handle class (found in {@link VFS.handles}) will be
              * used to initialize a file handle object from the string
              *
              * ```typescript
@@ -322,7 +322,7 @@ namespace OS {
                 basename: string;
 
                 /**
-                 * Once loaded, [[ready]] will be set to true and
+                 * Once loaded, {@link ready} will be set to true and
                  * file meta-data will be stored in this place holder
                  *
                  * @type {FileInfoType}
@@ -569,7 +569,7 @@ namespace OS {
                 /**
                  * Public read operation
                  *
-                 * This function calls the [[_rd]] function to perform the operation.
+                 * This function calls the {@link _rd} function to perform the operation.
                  *
                  * If the current file is a directory, then the operation
                  * will return the meta-data of all files inside of the directory.
@@ -601,7 +601,7 @@ namespace OS {
                 /**
                  * Write the file cache to the actual file
                  *
-                 * This function calls the [[_wr]] function to perform the operation
+                 * This function calls the {@link _wr} function to perform the operation
                  * 
                  * @param {string} t data type
                  * - `base64`
@@ -626,7 +626,7 @@ namespace OS {
                 /**
                  * Sub-directory creation
                  *
-                 * This function calls the [[_mk]] function to perform the operation
+                 * This function calls the {@link _mk} function to perform the operation
                  *
                  * @param {string} d sub directory name
                  * @returns {Promise<RequestResult>} promise on the operation result
@@ -648,7 +648,7 @@ namespace OS {
                 /**
                  * Delete the file
                  *
-                 * This function calls the [[_rm]] function to perform the operation
+                 * This function calls the {@link _rm} function to perform the operation
                  * @param {any} d user data
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
@@ -671,7 +671,7 @@ namespace OS {
                  *
                  * Only work when the current file is a directory
                  *
-                 * This function calls the [[_up]] function to perform the operation
+                 * This function calls the {@link _up} function to perform the operation
                  *
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
@@ -694,7 +694,7 @@ namespace OS {
                  *
                  * Only work with file
                  *
-                 * This function calls the [[_pub]] function to perform the operation
+                 * This function calls the {@link _pub} function to perform the operation
                  *
                  * @returns {Promise<RequestResult>} promise on operation result
                  * @memberof BaseFileHandle
@@ -717,7 +717,7 @@ namespace OS {
                  *
                  * Only work with file
                  *
-                 * This function calls the [[_down]] function to perform the operation
+                 * This function calls the {@link _down} function to perform the operation
                  *
                  * @returns {Promise<any>} Promise on the operation result
                  * @memberof BaseFileHandle
@@ -738,7 +738,7 @@ namespace OS {
                 /**
                  * Move the current file to another location
                  *
-                 * This function calls the [[_mv]] function to perform the operation
+                 * This function calls the {@link _mv} function to perform the operation
                  *
                  * @param {string} d destination location
                  * @returns {Promise<RequestResult>} promise on the operation result
@@ -763,7 +763,7 @@ namespace OS {
                  *
                  * This action depends on each file protocol
                  *
-                 * This function calls the [[_exec]] function to perform the operation
+                 * This function calls the {@link _exec} function to perform the operation
                  *
                  * @returns {Promise<any>}
                  * @memberof BaseFileHandle
@@ -831,7 +831,7 @@ namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {any} t data type, see [[read]]
+                 * @param {any} t data type, see {@link read}
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
@@ -846,7 +846,7 @@ namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
@@ -1025,7 +1025,7 @@ namespace OS {
                  * Otherwise, file content will be returned
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof RemoteFileHandle
                  */
@@ -1057,7 +1057,7 @@ namespace OS {
                  * Write file cache to the remote file
                  *
                  * @protected
-                 * @param {string} t data type see [[write]]
+                 * @param {string} t data type see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
@@ -1293,7 +1293,7 @@ namespace OS {
 
 
             /**
-             * Package file is remote file ([[RemoteFileHandle]]) located either in
+             * Package file is remote file ({@link RemoteFileHandle}) located either in
              * the local user packages location or system packages
              * location, it should be in the following format:
              * 
@@ -1596,7 +1596,7 @@ namespace OS {
                  * Read file content stored in the file cached
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof BufferFileHandle
                  */
@@ -1617,7 +1617,7 @@ namespace OS {
                  * Write data to the file cache
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
@@ -1801,7 +1801,7 @@ namespace OS {
                  * Read URL content
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof URLFileHandle
                  */
@@ -1855,7 +1855,7 @@ namespace OS {
                  * Read file content
                  *
                  * @protected
-                 * @param {string} t data type, see [[read]]
+                 * @param {string} t data type, see {@link read}
                  * @returns {Promise<any>}
                  * @memberof SharedFileHandle
                  */
@@ -1874,7 +1874,7 @@ namespace OS {
                  * write data to shared file
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */

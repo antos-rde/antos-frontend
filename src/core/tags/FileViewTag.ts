@@ -167,7 +167,7 @@ namespace OS {
                 /**
                  * set the function that allows to fetch file entries.
                  * This handle function should return a promise on
-                 * an arry of [[API.FileInfoType]]
+                 * an arry of {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -178,7 +178,7 @@ namespace OS {
                 /**
                  * set the callback handle for the file select event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -189,7 +189,7 @@ namespace OS {
                 /**
                  * set the callback handle for the directory changed event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.VFS.BaseFileHandle]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.VFS.BaseFileHandle}
                  *
                  * @memberof FileViewTag
                  */
@@ -200,7 +200,7 @@ namespace OS {
                 /**
                  set the callback handle for the file open event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -235,7 +235,7 @@ namespace OS {
                  *
                  * Turn on/off the changing current working directory feature
                  * of the widget when a directory is double clicked. If enabled,
-                 * the widget will use the configured [[fetch]] function to query
+                 * the widget will use the configured {@link fetch} function to query
                  * the content of the selected directory
                  *
                  * Getter:
@@ -346,7 +346,7 @@ namespace OS {
                  *
                  * Set the path of the current working directory.
                  * When called the widget will refresh the current
-                 * working directory using the configured [[fetch]]
+                 * working directory using the configured {@link fetch}
                  * function
                  *
                  * Getter:

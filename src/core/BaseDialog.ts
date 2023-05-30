@@ -250,7 +250,7 @@ namespace OS {
 
             /**
              * If the `markup` variable is not provided, then
-             * the [[init]] function will find the scheme definition
+             * the {@link init} function will find the scheme definition
              * in this class variable
              *
              * @static
@@ -420,10 +420,10 @@ namespace OS {
             `;
 
             /**
-             * A text dialog is similar to a [[PromptDialog]] nut allows
+             * A text dialog is similar to a {@link PromptDialog} nut allows
              * user to input multi-line text.
              *
-             * Refer to [[PromptDialog]] for the definition of input and callback data
+             * Refer to {@link PromptDialog} for the definition of input and callback data
              * of the dialog
              *
              * @export
@@ -565,7 +565,7 @@ namespace OS {
              *      title: string // window title
              * }
              * ```
-             * Callback data: [[ColorType]] object
+             * Callback data: {@link ColorType} object
              *
              * @export
              * @class ColorPickerDialog

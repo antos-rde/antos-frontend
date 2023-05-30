@@ -22,11 +22,13 @@ pipeline{
       steps {
         sh'''
           cd $WORKSPACE
+          [ -d "$WORKSPACE/node_modules" ] && rm -rf "$WORKSPACE/node_modules" || true
           npm install terser
           npm install uglifycss
           npm install typescript
           npm install @types/jquery
-          npm i typedoc@0.19.0
+          npm i typedoc@0.24
+          npm i typedoc-plugin-merge-modules
           buildir="build"
           [ -d "$buildir" ] && rm -rf "$buildir"
           export BUILDDIR="$WORKSPACE/$buildir/opt/www/htdocs/os"
