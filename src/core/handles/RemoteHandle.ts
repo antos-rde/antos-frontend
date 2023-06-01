@@ -413,59 +413,6 @@ namespace OS {
                 const p = `${API.REST}/system/settings`;
                 return API.post(p, OS.setting);
             }
-
-            /**
-             * This is the low level function of AntOS VDB API.
-             * It requests the server API to perform some simple
-             * SQL query.
-             *
-             * @export
-             * @param {string} cmd action to perform: save, delete, get, select
-             * @param {GenericObject<any>} d data object of the request based on each action:
-             * - save:
-             * ```
-             *  { table: "table name", data: [record data object]}
-             * ```
-             * - get:
-             * ```
-             *  { table: "table name", id: [record id]}
-             * ```
-             * - delete:
-             * ```
-             *  { table: "table name", id: [record id]}
-             * or
-             *  { table: "table name", cond: [conditional object]}
-             * ```
-             * - select:
-             * ```
-             * { table: "table name", cond: [conditional object]}
-             * ```
-             * @returns {Promise<RequestResult>} a promise of {@link RequestResult} on the
-             * query data
-             *
-             * A conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2 ORDER BY date DESC`
-             * ```
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *      },
-             *      order: {
-             *          date: "DESC"
-             *      }
-             *  }
-             * ```
-             */
-            export function dbquery(
-                cmd: string,
-                d: GenericObject<any>
-            ): Promise<RequestResult> {
-                const path = `${API.REST}/VDB/${cmd}`;
-                return API.post(path, d);
-            }
         }
     }
 }

@@ -50,7 +50,6 @@ javascripts= 	dist/core/core.js \
 				dist/core/handles/RemoteHandle.js \
 				dist/core/Announcerment.js \
 				dist/core/vfs.js \
-				dist/core/db.js \
 				dist/core/BaseModel.js \
 				dist/core/BaseApplication.js \
 				dist/core/BaseService.js \

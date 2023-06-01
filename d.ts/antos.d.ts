@@ -119,7 +119,7 @@ declare namespace OS {
              *
              * @export
              * @param {string} p a VFS file path e.g. home://test/
-             * @returns {Promise<RequestResult>} A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} A promise on a {@link RequestResult}
              * which contains an error or a list of FileInfoType
              */
             function scandir(p: string): Promise<RequestResult>;
@@ -149,7 +149,7 @@ declare namespace OS {
              *
              * @export
              * @param {string} p VFS file path
-             * @returns {Promise<RequestResult>} A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} A promise on a {@link RequestResult}
              * which contains an error or an object of FileInfoType
              */
             function fileinfo(p: string): Promise<RequestResult>;
@@ -168,8 +168,8 @@ declare namespace OS {
              * - xml, html: the response is a XML/HTML object
              * - text: plain text
              *
-             * @returns {Promise<any>}  A promise on a [[RequestResult]]
-             * which contains an error or an object of [[FileInfoType]]
+             * @returns {Promise<any>}  A promise on a {@link RequestResult}
+             * which contains an error or an object of {@link FileInfoType}
              */
             function readfile(p: string, t: string): Promise<any>;
             /**
@@ -178,7 +178,7 @@ declare namespace OS {
              * @export
              * @param {string} s VFS source file path
              * @param {string} d VFS destination file path
-             * @returns {Promise<RequestResult>}  A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>}  A promise on a {@link RequestResult}
              * which contains an error or a success response
              */
             function move(s: string, d: string): Promise<RequestResult>;
@@ -187,7 +187,7 @@ declare namespace OS {
              *
              * @export
              * @param {string} p VFS file path
-             * @returns {Promise<RequestResult>}  A promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>}  A promise on a {@link RequestResult}
              * which contains an error or a success response
              */
             function remove(p: string): Promise<RequestResult>;
@@ -204,7 +204,7 @@ declare namespace OS {
              *
              * @export
              * @param {PackageCommandType} d a package command of type PackageCommandType
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function packages(d: PackageCommandType): Promise<RequestResult>;
             /**
@@ -212,7 +212,7 @@ declare namespace OS {
              *
              * @export
              * @param {string} d VFS destination directory path
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function upload(d: string): Promise<RequestResult>;
             /**
@@ -221,7 +221,7 @@ declare namespace OS {
              * @export
              * @param {string} p path to the VFS file
              * @param {string} d file data encoded in Base 64
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function write(p: string, d: string): Promise<RequestResult>;
             /**
@@ -257,79 +257,33 @@ declare namespace OS {
              *  Check if a user is logged in
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]] that
-             * contains an error or a [[UserSettingType]] object
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult} that
+             * contains an error or a {@link OS.setting.UserSettingType} object
              */
             function auth(): Promise<RequestResult>;
             /**
              * Perform a login operation
              *
              * @export
-             * @param {UserLoginType} d user data [[UserLoginType]]
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]] that
-             * contains an error or a [[UserSettingType]] object
+             * @param {UserLoginType} d user data {@link UserLoginType}
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult} that
+             * contains an error or a {@link OS.setting.UserSettingType} object
              */
             function login(d: UserLoginType): Promise<RequestResult>;
             /**
              * Perform a logout operation
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function logout(): Promise<RequestResult>;
             /**
              * Save the current user settings
              *
              * @export
-             * @returns {Promise<RequestResult>} a promise on a [[RequestResult]]
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function setting(): Promise<RequestResult>;
-            /**
-             * This is the low level function of AntOS VDB API.
-             * It requests the server API to perform some simple
-             * SQL query.
-             *
-             * @export
-             * @param {string} cmd action to perform: save, delete, get, select
-             * @param {GenericObject<any>} d data object of the request based on each action:
-             * - save:
-             * ```
-             *  { table: "table name", data: [record data object]}
-             * ```
-             * - get:
-             * ```
-             *  { table: "table name", id: [record id]}
-             * ```
-             * - delete:
-             * ```
-             *  { table: "table name", id: [record id]}
-             * or
-             *  { table: "table name", cond: [conditional object]}
-             * ```
-             * - select:
-             * ```
-             * { table: "table name", cond: [conditional object]}
-             * ```
-             * @returns {Promise<RequestResult>} a promise of [[RequestResult]] on the
-             * query data
-             *
-             * A conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2 ORDER BY date DESC`
-             * ```
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *      },
-             *      order: {
-             *          date: "DESC"
-             *      }
-             *  }
-             * ```
-             */
-            function dbquery(cmd: string, d: GenericObject<any>): Promise<RequestResult>;
         }
     }
 }
@@ -488,7 +442,7 @@ declare namespace OS {
             protected markup: string | OS.API.VFS.BaseFileHandle;
             /**
              * If the `markup` variable is not provided, then
-             * the [[init]] function will find the scheme definition
+             * the {@link init} function will find the scheme definition
              * in this class variable
              *
              * @static
@@ -557,10 +511,10 @@ declare namespace OS {
                 main(): void;
             }
             /**
-             * A text dialog is similar to a [[PromptDialog]] nut allows
+             * A text dialog is similar to a {@link PromptDialog} nut allows
              * user to input multi-line text.
              *
-             * Refer to [[PromptDialog]] for the definition of input and callback data
+             * Refer to {@link PromptDialog} for the definition of input and callback data
              * of the dialog
              *
              * @export
@@ -622,7 +576,7 @@ declare namespace OS {
              *      title: string // window title
              * }
              * ```
-             * Callback data: [[ColorType]] object
+             * Callback data: {@link ColorType} object
              *
              * @export
              * @class ColorPickerDialog
@@ -1032,7 +986,7 @@ declare namespace OS {
             /**
              * Item children, usually used by tree view or menu item
              * This property is keep for compatibility purposes only.
-             * Otherwise, the [[nodes]] property should be used
+             * Otherwise, the {@link nodes} property should be used
              *
              * @type {BasicItemType[]}
              * @memberof BasicItemType
@@ -1065,7 +1019,7 @@ declare namespace OS {
          * UI elements, then insert this UI scheme to the DOM tree.
          *
          * This function renders the UI of the application before calling the
-         * application's [[main]] function
+         * application's `main` function
          *
          * @export
          * @param {string} html html scheme string
@@ -1077,7 +1031,7 @@ declare namespace OS {
         function htmlToScheme(html: string, app: BaseModel, parent: Element | string): void;
         /**
          * Load an application scheme file then render
-         * it with [[htmlToScheme]]
+         * it with {@link htmlToScheme}
          *
          * @export
          * @param {string} path VFS path to the scheme file
@@ -1134,7 +1088,7 @@ declare namespace OS {
          */
         interface ToastOptions {
             /**
-             * Where the Toast is displayed? see [[ANCHOR]]
+             * Where the Toast is displayed? see  {@link ANCHOR}
              *
              * @type {ANCHOR}
              * @memberof ToastOptions
@@ -1159,7 +1113,7 @@ declare namespace OS {
         }
         /**
          * Toast notification API
-         * Show a toast message on different posisition on screen, see [[ToastOptions]]
+         * Show a toast message on different posisition on screen, see {@link ToastOptions}
          *
          * @export
          * @param
@@ -1220,7 +1174,7 @@ declare namespace OS {
         /**
          * Kill an running processes of an application, then
          * unregister the application prototype definition
-         * from the [[application]] namespace.
+         * from the {@link application} namespace.
          *
          * This process is similar to uninstall the application
          * from the current system state
@@ -1323,7 +1277,7 @@ declare namespace OS {
         /**
          * Show the login screen and perform the login operation.
          *
-         * Once login successfully, the [[startAntOS]] will be called
+         * Once login successfully, the {@link startAntOS} will be called
          *
          * @export
          */
@@ -1376,8 +1330,8 @@ interface String {
     hash(): number;
     /**
      * Parse the current string and convert it
-     * to an object of type [[Version]] if the string
-     * is in the format recognized by [[Version]],
+     * to an object of type {@link OS.Version} if the string
+     * is in the format recognized by {@link OS.Version},
      * e.g.: `1.0.1-a`
      *
      * @returns {OS.Version}
@@ -1429,7 +1383,7 @@ interface String {
      */
     format(...args: any[]): string;
     /**
-     * Create a [[FormattedString]] object using the current
+     * Create a {@link OS.FormattedString} object using the current
      * string and the input parameters
      *
      * @param {...any[]} args
@@ -1501,7 +1455,7 @@ interface Array<T> {
 }
 /**
  * Extend the Data prototype with the
- * [[timestamp]] function
+ * {@link timestamp} function
  *
  * @interface Date
  */
@@ -1531,7 +1485,7 @@ interface GenericObject<T> {
     [index: string]: T;
 }
 /**
- * Global function to create a [[FormattedString]] from
+ * Global function to create a {@link OS.FormattedString} from
  * a formatted string and a list of parameters. Example
  *
  * ```typescript
@@ -1578,7 +1532,7 @@ declare namespace OS {
         fs: string;
         /**
          * The value of the format pattern represented
-         * in [[fs]]
+         * in {@link fs}
          *
          * @type {any[]}
          * @memberof FormattedString
@@ -1789,12 +1743,12 @@ declare namespace OS {
     }
     /**
      * Variable represents the current AntOS version, it
-     * is an instance of [[Version]]
+     * is an instance of {@link OS.Version}
      */
     const VERSION: Version;
     /**
      * Variable represents the current AntOS source code repository
-     * is an instance of [[string]]
+     * is an instance of string
      */
     const REPOSITORY: string;
     /**
@@ -1804,10 +1758,10 @@ declare namespace OS {
     /**
      * Register a model prototype to the system namespace.
      * There are two types of model to be registered, if the model
-     * is of type [[SubWindow]], its prototype will be registered
-     * in the [[dialogs]] namespace, otherwise, if the model type
-     * is [[Application]] or [[Service]], its prototype will be
-     * registered in the [[application]] namespace.
+     * is of type {@link OS.GUI.SubWindow}, its prototype will be registered
+     * in the {@link OS.GUI.dialogs} namespace, otherwise, if the model type
+     * is {@link OS.application.BaseApplication} or {@link  OS.application.BaseService}, its prototype will be
+     * registered in the {@link application} namespace.
      *
      * When a model is loaded in the system, its prototype is registered
      * for later uses
@@ -1834,7 +1788,7 @@ declare namespace OS {
     function cleanup(): void;
     /**
      * Booting up AntOS. This function checks whether the user
-     * is successfully logged in, then call [[startAntOS]], otherwise
+     * is successfully logged in, then call {@link OS.GUI.startAntOS}, otherwise
      * it shows the login screen
      *
      * @export
@@ -1850,14 +1804,14 @@ declare namespace OS {
     };
     /**
      * Perform the system shutdown operation. This function calls all
-     * clean up handles in [[cleanupHandles]], then save the system setting
+     * clean up handles in {@link cleanupHandles}, then save the system setting
      * before exiting
      *
      * @export
      */
     function exit(): void;
     /**
-     * Register a callback to the system [[cleanupHandles]]
+     * Register a callback to the system {@link cleanupHandles}
      *
      * @export
      * @param {string} n callback string name
@@ -1891,14 +1845,14 @@ declare namespace OS {
         interface PackageMetaType {
             /**
              * The application class name, if the package has only services
-             * this property is ignored and [[pkgname]] should be specified
+             * this property is ignored and {@link pkgname} should be specified
              *
              * @type {string}
              * @memberof PackageMetaType
              */
             app?: string;
             /**
-             * Package name, in case of [[app]] being undefined, this property
+             * Package name, in case of {@link app} being undefined, this property
              * need to be specified
              *
              * @type {string}
@@ -2027,7 +1981,7 @@ declare namespace OS {
             path: string;
             /**
              * Package version, should be in a format conforming
-             * to the version definition in [[Version]] class
+             * to the version definition in {@link Version} class
              *
              * @type {string}
              * @memberof PackageMetaType
@@ -2079,7 +2033,7 @@ declare namespace OS {
          */
         var lang: GenericObject<string>;
         /**
-         * Re-export the system announcement [[getMID]] function to the
+         * Re-export the system announcement {@link OS.announcer.getMID} function to the
          * core API
          *
          * @export
@@ -2137,7 +2091,7 @@ declare namespace OS {
          * beginning of a heavy task
          *
          * @export
-         * @param {number} q message id, see [[mid]]
+         * @param {number} q message id, see {@link mid}
          * @param {string} p message string
          */
         function loading(q: number, p: string): void;
@@ -2223,8 +2177,8 @@ declare namespace OS {
              * Fetch the package meta-data from the server
              *
              * @export
-             * @returns {Promise<RequestResult>} Promise on a [[RequestResult]].
-             * A success request result should contain a list of [[PackageMetaType]]
+             * @returns {Promise<RequestResult>} Promise on a {@link RequestResult}.
+             * A success request result should contain a list of {@link PackageMetaType}
              */
             function fetch(): Promise<RequestResult>;
             /**
@@ -2240,7 +2194,7 @@ declare namespace OS {
          * Save the current user setting
          *
          * @export
-         * @returns {Promise<RequestResult>} promise on a [[RequestResult]]
+         * @returns {Promise<RequestResult>} promise on a {@link RequestResult}
          */
         function setting(): Promise<RequestResult>;
         /**
@@ -2277,7 +2231,7 @@ declare namespace OS {
          * text in spotlight.
          *
          * This function will call all the search handles stored
-         * in [[searchHandle]] and build the search result based
+         * in {@link searchHandle} and build the search result based
          * on output of these handle
          *
          * @export
@@ -2286,7 +2240,7 @@ declare namespace OS {
          */
         function search(text: string): any[];
         /**
-         * Register a search handle to the global [[searchHandle]]
+         * Register a search handle to the global {@link searchHandle}
          *
          * @export
          * @param {string} name handle name string
@@ -2570,7 +2524,7 @@ declare namespace OS {
              * Base menu definition. This function
              * returns the based menu definition of all applications.
              * Other application specific menu entries
-             * should be defined in [[menu]] function
+             * should be defined in {@link menu} function
              *
              * @protected
              * @returns {GUI.BasicItemType[]}
@@ -2598,13 +2552,13 @@ declare namespace OS {
              * Show local toast notification
              *
              * @param {any} data to send
-             * @param {GUI.ToastOptions} notification options see [[GUI.ToastOptions]]
+             * @param {GUI.ToastOptions} notification options see {@link GUI.ToastOptions}
              * @returns {void}
              * @memberof BaseApplication
              */
             toast(data: any, opts?: GUI.ToastOptions): void;
             /**
-             * The cleanup function that is called by [[onexit]] function.
+             * The cleanup function that is called by {@link onexit} function.
              * Application need to override this function to perform some
              * specific task before exiting or to prevent the application
              * to be exited
@@ -2748,7 +2702,7 @@ declare namespace OS {
          * to handle all local events inside that model.
          *
          * This observable object is propagate to all the
-         * UI elements ([[AFXTag]]) inside the model
+         * UI elements ({@link OS.GUI.AFXTag}) inside the model
          *
          * @protected
          * @type {API.Announcer}
@@ -3056,10 +3010,10 @@ declare namespace OS {
          */
         openDialog(d: GUI.BaseDialog | string, data?: GenericObject<any>): Promise<any>;
         /**
-         * Open a [[YesNoDialog]] to confirm a task
+         * Open a {@link OS.GUI.dialogs.YesNoDialog} to confirm a task
          *
          * @protected
-         * @param {GenericObject<any>} data [[YesNoDialog]] input data
+         * @param {GenericObject<any>} data {@link OS.GUI.dialogs.YesNoDialog} input data
          * @returns {Promise<boolean>}
          * @memberof BaseModel
          */
@@ -3342,7 +3296,7 @@ declare namespace OS {
                 /**
                  * set the function that allows to fetch file entries.
                  * This handle function should return a promise on
-                 * an arry of [[API.FileInfoType]]
+                 * an arry of {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -3350,7 +3304,7 @@ declare namespace OS {
                 /**
                  * set the callback handle for the file select event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -3358,7 +3312,7 @@ declare namespace OS {
                 /**
                  * set the callback handle for the directory changed event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.VFS.BaseFileHandle]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.VFS.BaseFileHandle}
                  *
                  * @memberof FileViewTag
                  */
@@ -3366,7 +3320,7 @@ declare namespace OS {
                 /**
                  set the callback handle for the file open event.
                  * The parameter of the callback should  be an object
-                 * of type [[TagEventType]]<T> with the data type `T` is [[API.FileInfoType]]
+                 * of type {@link TagEventType}<T> with the data type `T` is {@link API.FileInfoType}
                  *
                  * @memberof FileViewTag
                  */
@@ -3392,7 +3346,7 @@ declare namespace OS {
                  *
                  * Turn on/off the changing current working directory feature
                  * of the widget when a directory is double clicked. If enabled,
-                 * the widget will use the configured [[fetch]] function to query
+                 * the widget will use the configured {@link fetch} function to query
                  * the content of the selected directory
                  *
                  * Getter:
@@ -3461,7 +3415,7 @@ declare namespace OS {
                  *
                  * Set the path of the current working directory.
                  * When called the widget will refresh the current
-                 * working directory using the configured [[fetch]]
+                 * working directory using the configured {@link fetch}
                  * function
                  *
                  * Getter:
@@ -3624,7 +3578,7 @@ interface HTMLElement {
      * defined on any child of this element will be ignored.
      *
      * @param {JQuery.MouseEventBase} e a mouse event
-     * @param {OS.GUI.tag.StackMenuTag} m The context menu element [[StackMenuTag]]
+     * @param {OS.GUI.tag.StackMenuTag} m The context menu element {@link OS.GUI.tag.StackMenuTag}
      * @memberof HTMLElement
      */
     contextmenuHandle(e: JQuery.MouseEventBase, m: OS.GUI.tag.StackMenuTag): void;
@@ -3665,7 +3619,7 @@ interface HTMLElement {
      */
     enable_drag(): void;
     /**
-     * Perform DOM generation ([[afxml]]) then mount ([[sync]]) all the
+     * Perform DOM generation ({@link afxml}) then mount ({@link sync}) all the
      * elements.
      *
      * @param {OS.API.Announcer} o an AntOS observable object
@@ -3708,7 +3662,7 @@ interface Document {
 declare namespace OS {
     namespace GUI {
         /**
-         * [[TagLayoutType]] interface using by AFX tags to defined
+         * TagLayoutType interface using by AFX tags to defined
          * its internal DOM hierarchy
          *
          * @export
@@ -3745,7 +3699,7 @@ declare namespace OS {
             class?: string;
             /**
              * this is the `data-id` attribute of the element,
-             * can be query by the [[aid]] Tag API function.
+             * can be query by the {@link OS.GUI.AFXTag.aid} Tag API function.
              * Not to be confused with the DOM `id` attribute
              *
              * @type {(string | number)}
@@ -3872,7 +3826,7 @@ declare namespace OS {
              * Reference to some of the tag's children
              * element. This reference object is built
              * based on the `ref` property found in the
-             * tag layout [[TagLayoutType]]
+             * tag layout {@link TagLayoutType}
              *
              * @protected
              * @type {GenericObject<HTMLElement>}
@@ -3968,7 +3922,7 @@ declare namespace OS {
             update(d: any): void;
             /**
              * Init the current tag, this function
-             * is called before the [[mount]] function
+             * is called before the {@link mount} function
              *
              * @protected
              * @abstract
@@ -3994,7 +3948,7 @@ declare namespace OS {
             protected abstract layout(): TagLayoutType[];
             /**
              * Update only the current tag, this function is
-             * called by [[update]] before chaining the
+             * called by {@link update} before chaining the
              * update process to its children
              *
              * @protected
@@ -4069,7 +4023,7 @@ declare namespace OS {
          */
         namespace tag {
             /**
-             * Alias to  all classes that extends [[AFXTag]]
+             * Alias to  all classes that extends {@link AFXTag}
              */
             type AFXTagTypeClass = {
                 new <T extends AFXTag>(): T;
@@ -4081,7 +4035,7 @@ declare namespace OS {
              * new definition
              *
              * @export
-             * @template T all classes that extends [[AFXTag]]
+             * @template T all classes that extends {@link AFXTag}
              * @param {string} name name of the tag
              * @param {{ new (): T }} cls the class that defines the tag
              * @returns {void}
@@ -4100,7 +4054,7 @@ declare namespace OS {
              */
             type ListItemEventData = TagEventDataType<ListViewItemTag>;
             /**
-             * A list item represent the individual view of an item in the [[ListView]].
+             * A list item represent the individual view of an item in the {@link OS.GUI.tag.ListViewTag}.
              * This class is an abstract prototype class, implementation of any
              * list view item should extend it
              *
@@ -4223,7 +4177,7 @@ declare namespace OS {
                  * Layout definition of the item tag.
                  * This function define the outer layout of the item.
                  * Custom inner layout of each item implementation should
-                 * be defined in [[itemlayout]]
+                 * be defined in {@link itemlayout}
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -4234,7 +4188,7 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set the data of the list item. This will
-                 * trigger the [[ondatachange]] function
+                 * trigger the {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -4443,7 +4397,7 @@ declare namespace OS {
                 /**
                  * A collection of selected items in the list.
                  * The maximum size of this collection is 1 if
-                 * the [[multiselect]] feature is disabled
+                 * the {@link multiselect} feature is disabled
                  *
                  * @private
                  * @type {ListViewItemTag[]}
@@ -4571,7 +4525,7 @@ declare namespace OS {
                  * Button layout allows to add some custom
                  * behaviors to the list.
                  *
-                 * Each button data should define the [[onbtclick]]
+                 * Each button data should define the {@link OS.GUI.tag.ButtonTag.onbtclick}
                  * event handle to specify the custom behavior
                  *
                  * When the list is configured as dropdown. The buttons
@@ -5356,7 +5310,7 @@ declare namespace OS {
         namespace tag {
             /**
              * A `resizer` tag is basically used to dynamically resize an element using mouse.
-             * It is usually put inside a [[TileLayoutTag]] an can be attached to any element. Example:
+             * It is usually put inside a {@link TileLayoutTag} an can be attached to any element. Example:
              *
              * The resizer tag in the following example  will be attached to the first `afx-vbox`,
              * and allows to resize this element using mouse
@@ -5392,8 +5346,8 @@ declare namespace OS {
                 private _onresize;
                 /**
                  * Reference to the parent tag of the current tag.
-                 * The parent tag should be an instance of a [[TileLayoutTag]]
-                 * such as [[VBoxTag]] or [[HBoxTag]]
+                 * The parent tag should be an instance of a {@link TileLayoutTag}
+                 * such as {@link VBoxTag} or {@link HBoxTag}
                  *
                  * @private
                  * @type {*}
@@ -5650,9 +5604,9 @@ declare namespace OS {
         }
         namespace tag {
             /**
-             * A tab container allows to attach each tab on a [[TabBarTag]]
+             * A tab container allows to attach each tab on a {@link TabBarTag}
              * with a container widget. The attached container widget should be
-             * composed inside a [[HBoxTag]]
+             * composed inside a {@link HBoxTag}
              *
              * The tab bar in a tab container can be configured to display tabs
              * in horizontal (row) or vertical (column) order. Default to vertical order
@@ -5993,7 +5947,7 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set the data of the cell, this will trigger
-                 * the [[ondatachange]] function
+                 * the {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -6007,7 +5961,7 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set/unset the current cell as selected.
-                 * This will trigger the [[cellselect]]
+                 * This will trigger the {@link cellselect}
                  * event
                  *
                  * Getter:
@@ -6057,7 +6011,7 @@ declare namespace OS {
             }
             /**
              * Simple grid cell defines a grid cell with
-             * an [[LabelTag]] as it cell layout
+             * an {@link LabelTag} as it cell layout
              *
              * @export
              * @class SimpleGridCellTag
@@ -6091,7 +6045,7 @@ declare namespace OS {
                  */
                 protected calibrate(): void;
                 /**
-                 * The layout of the cell with a simple [[LabelTag]]
+                 * The layout of the cell with a simple {@link LabelTag}
                  *
                  * @returns
                  * @memberof SimpleGridCellTag
@@ -7058,7 +7012,7 @@ declare namespace OS {
                  * Placeholder for the `fetch` function of the node.
                  * This function is used to fetch the child nodes of the
                  * current nodes. This function should return a promise on
-                 * a list of [[TreeViewDataType]]
+                 * a list of {@link TreeViewDataType}
                  *
                  * @memberof TreeViewItemPrototype
                  */
@@ -7088,7 +7042,7 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set the data of the current node. This will trigger the
-                 * [[ondatachange]] function
+                 * {@link ondatachange} function
                  *
                  * Getter:
                  *
@@ -7174,7 +7128,7 @@ declare namespace OS {
                  * Layout definition of a node. This function
                  * returns the definition of the base outer layout
                  * of a node. Custom inner layout of the node should
-                 * be defined in the [[itemlayout]] function
+                 * be defined in the {@link itemlayout} function
                  *
                  * @protected
                  * @returns {TagLayoutType[]}
@@ -7203,8 +7157,8 @@ declare namespace OS {
                 protected abstract ondatachange(): void;
             }
             /**
-             * SimpleTreeViewItem extends [[TreeViewItemPrototype]] and
-             * define it inner layout using a [[LabelTag]]
+             * SimpleTreeViewItem extends {@link TreeViewItemPrototype} and
+             * define it inner layout using a {@link LabelTag}
              *
              * @export
              * @class SimpleTreeViewItem
@@ -7354,7 +7308,7 @@ declare namespace OS {
                  * Placeholder for the `fetch` function of the tree.
                  * This function is used to fetch the child nodes of the
                  * current tree. This function should return a promise on
-                 * a list of [[TreeViewDataType]]
+                 * a list of {@link TreeViewDataType}
                  *
                  * @memberof TreeViewTag
                  */
@@ -7934,7 +7888,7 @@ declare namespace OS {
         namespace tag {
             /**
              * An overlay tag is a layout tag that alway stay on top of
-             * the virtual desktop environment. Tile layout elements ([[VBoxTag]], [[HboxTag]])
+             * the virtual desktop environment. Tile layout elements ({@link OS.GUI.tag.VBoxTag}, {@link OS.GUI.tag.HBoxTag})
              * can be used inside this tag to compose elements
              *
              * @export
@@ -8039,7 +7993,7 @@ declare namespace OS {
             /**
              * A stack pannel allows to navigate back and forth between pannels
              * (container widget). Each container widget  in the stack should be
-             * composed inside a [[HBoxTag]]
+             * composed inside a {@link HBoxTag}
              *
              *
              * @export
@@ -8659,7 +8613,7 @@ declare namespace OS {
                  * This function triggers the date select event
                  *
                  * @private
-                 * @param {TagEventType} e AFX tag event data [[TagEventType]]
+                 * @param {TagEventType} e AFX tag event data {@link TagEventType}
                  * @returns {void}
                  * @memberof CalendarTag
                  */
@@ -8956,7 +8910,7 @@ interface String {
      * Convert a string to VFS file handle.
      *
      * This function will create a file handle object from the string
-     * with the help of [[VFS.findHandles]]
+     * with the help of {@link OS.API.VFS.findHandles}
      *
      * @returns {OS.API.VFS.BaseFileHandle}
      * @memberof String
@@ -9112,7 +9066,7 @@ declare namespace OS {
              *
              * When converting a string to file handle, the system will look
              * for a protocol pattern in the string, if the protocol found,
-             * its attached handle class (found in [[VFS.handles]]) will be
+             * its attached handle class (found in {@link VFS.handles}) will be
              * used to initialize a file handle object from the string
              *
              * ```typescript
@@ -9188,7 +9142,7 @@ declare namespace OS {
                  */
                 basename: string;
                 /**
-                 * Once loaded, [[ready]] will be set to true and
+                 * Once loaded, {@link ready} will be set to true and
                  * file meta-data will be stored in this place holder
                  *
                  * @type {FileInfoType}
@@ -9306,7 +9260,7 @@ declare namespace OS {
                 /**
                  * Public read operation
                  *
-                 * This function calls the [[_rd]] function to perform the operation.
+                 * This function calls the {@link _rd} function to perform the operation.
                  *
                  * If the current file is a directory, then the operation
                  * will return the meta-data of all files inside of the directory.
@@ -9327,7 +9281,7 @@ declare namespace OS {
                 /**
                  * Write the file cache to the actual file
                  *
-                 * This function calls the [[_wr]] function to perform the operation
+                 * This function calls the {@link _wr} function to perform the operation
                  *
                  * @param {string} t data type
                  * - `base64`
@@ -9341,7 +9295,7 @@ declare namespace OS {
                 /**
                  * Sub-directory creation
                  *
-                 * This function calls the [[_mk]] function to perform the operation
+                 * This function calls the {@link _mk} function to perform the operation
                  *
                  * @param {string} d sub directory name
                  * @returns {Promise<RequestResult>} promise on the operation result
@@ -9351,7 +9305,7 @@ declare namespace OS {
                 /**
                  * Delete the file
                  *
-                 * This function calls the [[_rm]] function to perform the operation
+                 * This function calls the {@link _rm} function to perform the operation
                  * @param {any} d user data
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
@@ -9362,7 +9316,7 @@ declare namespace OS {
                  *
                  * Only work when the current file is a directory
                  *
-                 * This function calls the [[_up]] function to perform the operation
+                 * This function calls the {@link _up} function to perform the operation
                  *
                  * @returns {Promise<RequestResult>} promise on the operation result
                  * @memberof BaseFileHandle
@@ -9373,7 +9327,7 @@ declare namespace OS {
                  *
                  * Only work with file
                  *
-                 * This function calls the [[_pub]] function to perform the operation
+                 * This function calls the {@link _pub} function to perform the operation
                  *
                  * @returns {Promise<RequestResult>} promise on operation result
                  * @memberof BaseFileHandle
@@ -9384,7 +9338,7 @@ declare namespace OS {
                  *
                  * Only work with file
                  *
-                 * This function calls the [[_down]] function to perform the operation
+                 * This function calls the {@link _down} function to perform the operation
                  *
                  * @returns {Promise<any>} Promise on the operation result
                  * @memberof BaseFileHandle
@@ -9393,7 +9347,7 @@ declare namespace OS {
                 /**
                  * Move the current file to another location
                  *
-                 * This function calls the [[_mv]] function to perform the operation
+                 * This function calls the {@link _mv} function to perform the operation
                  *
                  * @param {string} d destination location
                  * @returns {Promise<RequestResult>} promise on the operation result
@@ -9405,7 +9359,7 @@ declare namespace OS {
                  *
                  * This action depends on each file protocol
                  *
-                 * This function calls the [[_exec]] function to perform the operation
+                 * This function calls the {@link _exec} function to perform the operation
                  *
                  * @returns {Promise<any>}
                  * @memberof BaseFileHandle
@@ -9443,7 +9397,7 @@ declare namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {any} t data type, see [[read]]
+                 * @param {any} t data type, see {@link read}
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
@@ -9455,7 +9409,7 @@ declare namespace OS {
                  * that supports the operation
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof BaseFileHandle
                  */
@@ -9587,7 +9541,7 @@ declare namespace OS {
                  * Otherwise, file content will be returned
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof RemoteFileHandle
                  */
@@ -9596,7 +9550,7 @@ declare namespace OS {
                  * Write file cache to the remote file
                  *
                  * @protected
-                 * @param {string} t data type see [[write]]
+                 * @param {string} t data type see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof RemoteFileHandle
                  */
@@ -9659,7 +9613,7 @@ declare namespace OS {
                 protected _pub(): Promise<RequestResult>;
             }
             /**
-             * Package file is remote file ([[RemoteFileHandle]]) located either in
+             * Package file is remote file ({@link RemoteFileHandle}) located either in
              * the local user packages location or system packages
              * location, it should be in the following format:
              *
@@ -9769,7 +9723,7 @@ declare namespace OS {
                  * Read file content stored in the file cached
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof BufferFileHandle
                  */
@@ -9778,7 +9732,7 @@ declare namespace OS {
                  * Write data to the file cache
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof BufferFileHandle
                  */
@@ -9851,7 +9805,7 @@ declare namespace OS {
                  * Read URL content
                  *
                  * @protected
-                 * @param {string} t data type see [[read]]
+                 * @param {string} t data type see {@link read}
                  * @returns {Promise<any>}
                  * @memberof URLFileHandle
                  */
@@ -9886,7 +9840,7 @@ declare namespace OS {
                  * Read file content
                  *
                  * @protected
-                 * @param {string} t data type, see [[read]]
+                 * @param {string} t data type, see {@link read}
                  * @returns {Promise<any>}
                  * @memberof SharedFileHandle
                  */
@@ -9895,7 +9849,7 @@ declare namespace OS {
                  * write data to shared file
                  *
                  * @protected
-                 * @param {string} t data type, see [[write]]
+                 * @param {string} t data type, see {@link write}
                  * @returns {Promise<RequestResult>}
                  * @memberof SharedFileHandle
                  */
@@ -10284,7 +10238,7 @@ declare namespace OS {
             };
             /**
              * Package repositories setting.
-             * This configuration is used by [[MarketPlace]]
+             * This configuration is used by {@link OS.application.MarketPlace}
              * for package management
              *
              * @type {{
@@ -10431,7 +10385,7 @@ declare namespace OS {
             domel: HTMLElement;
             /**
              * Reference to the timer that periodically executes the callback
-             * defined in [[watch]].
+             * defined in {@link watch}.
              *
              * @private
              * @type {number}
@@ -10646,7 +10600,7 @@ declare namespace OS {
         class Announcer {
             /**
              * The observable object that stores event name
-             * and its corresponding callback in [[ObservableEntryType]]
+             * and its corresponding callback in {@link ObservableEntryType}
              *
              * @type {GenericObject<ObservableEntryType>}
              * @memberof Announcer
@@ -10814,115 +10768,6 @@ declare namespace OS {
     }
 }
 declare namespace OS {
-    namespace API {
-        /**
-         * Simple Virtual Database (VDB) application API.
-         *
-         * This API abstracts and provides a standard way to
-         * connect to a server-side relational database (e.g. sqlite).
-         *
-         * Each user when connected has their own database previously
-         * created. All VDB operations related to that user will be
-         * performed on this database.
-         *
-         * The creation of user database need to be managed by the server-side API.
-         * The VDB API assumes that the database already exist. All operations
-         * is performed in tables level
-         *
-         * @export
-         * @class DB
-         */
-        class DB {
-            /**
-             * A table name on the user's database
-             *
-             * @private
-             * @type {string}
-             * @memberof DB
-             */
-            private table;
-            /**
-             *Creates an instance of DB.
-             * @param {string} table table name
-             * @memberof DB
-             */
-            constructor(table: string);
-            /**
-             * Save data to the current table. The input
-             * data must conform to the table record format.
-             *
-             * On the server side, if the table doest not
-             * exist yet, it should be created automatically
-             * by inferring the data structure of the input
-             * object
-             *
-             * @param {GenericObject<any>} d data object represents a current table record
-             * @returns {Promise<API.RequestResult>}
-             * @memberof DB
-             */
-            save(d: GenericObject<any>): Promise<API.RequestResult>;
-            /**
-             * delete record(s) from the current table by
-             * a conditional object
-             *
-             * @param {*} c conditional object, c can be:
-             *
-             * * a `number`: the operation will delete the record with `id = c`
-             * * a `string`: The SQL string condition that selects record to delete
-             * * a conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2` is represented by:
-             *
-             * ```typescript
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *  }
-             * ```
-             *
-             * @returns {Promise<API.RequestResult>}
-             * @memberof DB
-             */
-            delete(c: GenericObject<any> | number | string): Promise<API.RequestResult>;
-            /**
-             * Get a record in the table by its primary key
-             *
-             * @param {number} id the primary key value
-             * @returns {Promise<GenericObject<any>>} Promise on returned record data
-             * @memberof DB
-             */
-            get(id: number): Promise<GenericObject<any>>;
-            /**
-             * Find records by a condition
-             *
-             * @param {GenericObject<any>} cond conditional object
-             *
-             * a conditional object represents a SQL condition statement as an object,
-             * example: `pid = 10 AND cid = 2 ORDER BY date DESC` is represented by:
-             *
-             * ```typescript
-             *  {
-             *      exp: {
-             *          "and": {
-             *              pid: 10,
-             *              cid: 2
-             *          }
-             *      },
-             *      order: {
-             *          date: "DESC"
-             *      }
-             *  }
-             * ```
-             * @returns {Promise<GenericObject<any>[]>}
-             * @memberof DB
-             */
-            find(cond: GenericObject<any>): Promise<GenericObject<any>[]>;
-        }
-    }
-}
-declare namespace OS {
     /**
      * This namespace dedicated to all operations related to system
      * process management
@@ -10933,7 +10778,7 @@ declare namespace OS {
          */
         type ProcessType = application.BaseApplication | application.BaseService;
         /**
-         * Alias to  all classes that extends [[BaseModel]]
+         * Alias to  all classes that extends {@link BaseModel}
          */
         type ModelTypeClass = {
             new <T extends BaseModel>(args: AppArgumentsType[]): T;
