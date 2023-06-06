@@ -1191,9 +1191,10 @@ declare namespace OS {
          *
          * @export
          * @param {string} ph
+         * @param {AppArgumentsType[]} [params] service arguments
          * @returns {Promise<PM.ProcessType>}
          */
-        function pushService(ph: string): Promise<PM.ProcessType>;
+        function pushService(ph: string, params?: AppArgumentsType[]): Promise<PM.ProcessType>;
         /**
          * Synchronously start a list of services
          *
@@ -10802,7 +10803,7 @@ declare namespace OS {
          * @export
          * @param {string} app class name string
          * @param {ProcessTypeClass} cls prototype class
-         * @param {GUI.AppArgumentsType[]} [args] process arguments
+         * @param {AppArgumentsType[]} [args] process arguments
          * @returns {Promise<ProcessType>} a promise on the created process
          */
         function createProcess(app: string, cls: ModelTypeClass, args?: AppArgumentsType[]): Promise<ProcessType>;
