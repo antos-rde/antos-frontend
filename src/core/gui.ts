@@ -644,9 +644,10 @@ namespace OS {
          *
          * @export
          * @param {string} ph
+         * @param {AppArgumentsType[]} [params] service arguments
          * @returns {Promise<PM.ProcessType>}
          */
-        export function pushService(ph: string): Promise<PM.ProcessType> {
+        export function pushService(ph: string, params?: AppArgumentsType[]): Promise<PM.ProcessType> {
             return new Promise(async function (resolve, reject) {
                 const arr = ph.split("/");
                 const srv = arr[1];
@@ -662,7 +663,8 @@ namespace OS {
                     }
                     const d = await PM.createProcess(
                         srv,
-                        application[srv]
+                        application[srv],
+                        params
                     );
                     return resolve(d);
                 }

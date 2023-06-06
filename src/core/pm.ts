@@ -35,7 +35,7 @@ namespace OS {
          * @export
          * @param {string} app class name string
          * @param {ProcessTypeClass} cls prototype class
-         * @param {GUI.AppArgumentsType[]} [args] process arguments
+         * @param {AppArgumentsType[]} [args] process arguments
          * @returns {Promise<ProcessType>} a promise on the created process
          */
         export function createProcess(
