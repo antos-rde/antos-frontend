@@ -25,7 +25,7 @@ pipeline{
           [ -d "$WORKSPACE/node_modules" ] && rm -rf "$WORKSPACE/node_modules" || true
           npm install terser
           npm install uglifycss
-          npm install typescript
+          npm install typescript@5.0
           npm install @types/jquery
           npm i typedoc@0.24
           npm i typedoc-plugin-merge-modules
