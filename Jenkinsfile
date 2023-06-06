@@ -23,6 +23,8 @@ pipeline{
         sh'''
           cd $WORKSPACE
           [ -d "$WORKSPACE/node_modules" ] && rm -rf "$WORKSPACE/node_modules" || true
+          [ -f "$WORKSPACE/package.json"] && rm "$WORKSPACE/package*.json" || true
+          
           npm install terser
           npm install uglifycss
           npm install typescript@5.0
