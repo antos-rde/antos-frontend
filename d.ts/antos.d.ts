@@ -2034,13 +2034,21 @@ declare namespace OS {
          */
         var lang: GenericObject<string>;
         /**
-         * Re-export the system announcement {@link OS.announcer.getMID} function to the
-         * core API
+         * A task is a Promise object that is tracked by AntOS via the
+         * Announcerment system
+         *
+         * Task manager implementation can subscribe to the following global events
+         * - ANTOS-TASK-PENDING : a new task/promise is created and executing
+         * - ANTOS-TASK-FULFILLED: a fullfilled task is a resolved promise
+         * - ANTOS-TASK-REJECTED: a rejected task is a rejected or error promise
+         *
+         * Whenever a task is created by this API, it states will be automatically announced
+         * to any subscribers of these events
          *
          * @export
-         * @returns {number}
+         * @param {Promise} a Promise object
          */
-        function mid(): number;
+        function Task(fn: (resolve: (any: any) => void, reject: (any: any) => void) => void): Promise<any>;
         /**
          * REST-based API.
          *
@@ -2086,28 +2094,6 @@ declare namespace OS {
          * @param {*} b file content
          */
         function saveblob(name: string, b: any): void;
-        /**
-         * Helper function to trigger the global `loading`
-         * event. This event should be triggered in the
-         * beginning of a heavy task
-         *
-         * @export
-         * @param {number} q message id, see {@link mid}
-         * @param {string} p message string
-         */
-        function loading(q: number, p: string): void;
-        /**
-         * Helper function to trigger the global `loaded`
-         * event: This event should be triggered in the
-         * end of a heavy task that has previously triggered
-         * the `loading` event
-         *
-         * @export
-         * @param {number} q the message id of the corresponding `loading` event
-         * @param {string} p the message string
-         * @param {string} m message status  (`OK` of `FAIL`)
-         */
-        function loaded(q: number, p: string, m: string): void;
         /**
          * Perform an REST GET request
          *
@@ -2349,21 +2335,6 @@ declare namespace OS {
              */
             sysdock: GUI.tag.AppDockTag;
             /**
-             * Loading animation check timeout
-             *
-             * @private
-             * @memberof BaseApplication
-             */
-            private _loading_toh;
-            /**
-         * Store pending loading task
-         *
-         * @private
-         * @type {number[]}
-         * @memberof BaseApplication
-         */
-            private _pending_task;
-            /**
              *Creates an instance of BaseApplication.
              * @param {string} name application name
              * @param {AppArgumentsType[]} args application arguments
@@ -2393,9 +2364,8 @@ declare namespace OS {
             protected loadScheme(): void;
             /**
              * API function to perform an heavy task.
-             * This function will trigger the global `loading`
-             * event at the beginning of the task, and the `loaded`
-             * event after finishing the task
+             * This function will create a Task that is tracked by any
+             * task manager implementation
              *
              * @protected
              * @param {Promise<any>} promise the promise on a task to be performed
@@ -2569,14 +2539,6 @@ declare namespace OS {
              * @memberof BaseApplication
              */
             protected cleanup(e: BaseEvent): void;
-            /**
-             * Check if the loading tasks ended,
-             * if it the case, stop the animation
-             *
-             * @private
-             * @memberof BaseApplication
-             */
-            private animation_check;
         }
     }
 }
@@ -6452,7 +6414,7 @@ declare namespace OS {
                  * Store pending loading task
                  *
                  * @private
-                 * @type {number[]}
+                 * @type {Promise<any>[]}
                  * @memberof SystemPanelTag
                  */
                 private _pending_task;
@@ -10682,12 +10644,6 @@ declare namespace OS {
          */
         var observable: API.Announcer;
         /**
-         * This variable is used to allocate the `id` of all messages
-         * passing between publishers and subscribers in the
-         * system announcement
-         */
-        var quota: 0;
-        /**
          * Placeholder of all global events listeners
          */
         var listeners: Map<BaseModel | 0, API.AnnouncerListenerType[]>;
@@ -10759,13 +10715,6 @@ declare namespace OS {
          * @returns {void}
          */
         function unregister(app: BaseModel): void;
-        /**
-         * Allocate message id
-         *
-         * @export
-         * @returns {number}
-         */
-        function getMID(): number;
     }
 }
 declare namespace OS {
