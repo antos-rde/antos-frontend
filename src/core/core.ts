@@ -878,7 +878,6 @@ namespace OS {
         $("#wrapper").empty();
         GUI.clearTheme();
         announcer.observable = new API.Announcer();
-        announcer.quota = 0;
         resetSetting();
         PM.processes = {};
         PM.pidalloc = 0;
@@ -1183,14 +1182,44 @@ namespace OS {
         export var lang: GenericObject<string> = {};
 
         /**
-         * Re-export the system announcement {@link OS.announcer.getMID} function to the
-         * core API
-         *
+         * A task is a Promise object that is tracked by AntOS via the
+         * Announcerment system
+         * 
+         * Task manager implementation can subscribe to the following global events
+         * - ANTOS-TASK-PENDING : a new task/promise is created and executing
+         * - ANTOS-TASK-FULFILLED: a fullfilled task is a resolved promise
+         * - ANTOS-TASK-REJECTED: a rejected task is a rejected or error promise
+         * 
+         * Whenever a task is created by this API, it states will be automatically announced
+         * to any subscribers of these events
+         * 
          * @export
-         * @returns {number}
+         * @param {Promise} a Promise object 
          */
-        export function mid(): number {
-            return announcer.getMID();
+        export function Task(fn: ( resolve: (any)=>void,reject:(any)=>void) => void ): Promise<any>
+        {
+            return new Promise(async (ok,nok) =>{
+                const promise = new Promise(fn);
+                const ann:API.AnnouncementDataType<Promise<any>> = {} as API.AnnouncementDataType<Promise<any>>;
+                ann.name = "OS";
+                ann.u_data = promise;
+                ann.id = Math.floor(Math.random() * 1e6);
+                try
+                {
+                    ann.message = "ANTOS-TASK-PENDING";
+                    announcer.trigger(ann.message, ann);
+                    const data = await promise;
+                    ok(data);
+                    ann.message = "ANTOS-TASK-FULFILLED";
+                    announcer.trigger(ann.message, ann);
+                }
+                catch(e)
+                {
+                    ann.message = "ANTOS-TASK-REJECTED";
+                    announcer.trigger(ann.message, ann);
+                    nok(__e(e));
+                }
+            });
         }
 
         /**
@@ -1205,9 +1234,7 @@ namespace OS {
          * @returns {Promise<any>} a promise on the result data
          */
         export function post(p: string, d: any): Promise<any> {
-            return new Promise(function (resolve, reject) {
-                const q = announcer.getMID();
-                API.loading(q, p);
+            return API.Task(function (resolve, reject) {
                 return $.ajax({
                     type: "POST",
                     url: p,
@@ -1226,11 +1253,9 @@ namespace OS {
                     success: null,
                 })
                     .done(function (data) {
-                        API.loaded(q, p, "OK");
                         return resolve(data);
                     })
                     .fail(function (j, s, e) {
-                        API.loaded(q, p, "FAIL");
                         return reject(API.throwe(s));
                     });
             });
@@ -1248,21 +1273,17 @@ namespace OS {
          * @returns {Promise<ArrayBuffer>} a promise on the returned binary data
          */
         export function blob(p: string): Promise<ArrayBuffer> {
-            return new Promise(function (resolve, reject) {
-                const q = announcer.getMID();
+            return API.Task(function (resolve, reject) {
                 const r = new XMLHttpRequest();
                 r.open("GET", p, true);
                 r.responseType = "arraybuffer";
                 r.onload = function (e) {
                     if (this.status === 200 && this.readyState === 4) {
-                        API.loaded(q, p, "OK");
                         resolve(this.response);
                     } else {
-                        API.loaded(q, p, "FAIL");
                         reject(API.throwe(__("Unable to get blob: {0}", p)));
                     }
                 };
-                API.loading(q, p);
                 r.send();
             });
         }
@@ -1278,8 +1299,7 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function upload(p: string, d: string): Promise<any> {
-            return new Promise(function (resolve, reject) {
-                const q = announcer.getMID();
+            return API.Task(function (resolve, reject) {
                 //insert a temporal file selector
                 const o =
                     $("<input>")
@@ -1287,9 +1307,6 @@ namespace OS {
                         .attr("multiple", "true");
                 o.on("change", function () {
                     const files = (o[0] as HTMLInputElement).files;
-                    const n_files = files.length;
-                    if (n_files > 0)
-                        API.loading(q, p);
                     const formd = new FormData();
                     formd.append("path", d);
                     jQuery.each(files, (i, file) => {
@@ -1303,11 +1320,9 @@ namespace OS {
                         processData: false,
                     })
                         .done(function (data) {
-                            API.loaded(q, p, "OK");
                             resolve(data);
                         })
                         .fail(function (j, s, e) {
-                            API.loaded(q, p, "FAIL");
                             o.remove();
                             reject(API.throwe(s));
                         });
@@ -1338,44 +1353,6 @@ namespace OS {
         }
 
         /**
-         * Helper function to trigger the global `loading`
-         * event. This event should be triggered in the
-         * beginning of a heavy task
-         *
-         * @export
-         * @param {number} q message id, see {@link mid}
-         * @param {string} p message string
-         */
-        export function loading(q: number, p: string): void {
-            const data: API.AnnouncementDataType<number> = {} as API.AnnouncementDataType<number>;
-            data.id = q;
-            data.message = p;
-            data.name = p;
-            data.u_data = 0; //PM.pidactive;
-            announcer.trigger("loading", data);
-        }
-
-        /**
-         * Helper function to trigger the global `loaded`
-         * event: This event should be triggered in the
-         * end of a heavy task that has previously triggered
-         * the `loading` event
-         *
-         * @export
-         * @param {number} q the message id of the corresponding `loading` event
-         * @param {string} p the message string
-         * @param {string} m message status  (`OK` of `FAIL`)
-         */
-        export function loaded(q: number, p: string, m: string): void {
-            const data: API.AnnouncementDataType<boolean> = {} as API.AnnouncementDataType<boolean>;
-            data.id = q;
-            data.message = p;
-            data.name = "OS";
-            data.u_data = false;
-            announcer.trigger("loaded", data);
-        }
-
-        /**
          * Perform an REST GET request
          *
          * @export
@@ -1388,7 +1365,7 @@ namespace OS {
          * @returns {Promise<any>} a Promise on the requested data
          */
         export function get(p: string, t: string = undefined): Promise<any> {
-            return new Promise(function (resolve, reject) {
+            return API.Task(function (resolve, reject) {
                 const conf: any = {
                     type: "GET",
                     url: p,
@@ -1396,15 +1373,11 @@ namespace OS {
                 if (t) {
                     conf.dataType = t;
                 }
-                const q = announcer.getMID();
-                API.loading(q, p);
                 return $.ajax(conf)
                     .done(function (data) {
-                        API.loaded(q, p, "OK");
                         return resolve(data);
                     })
                     .fail(function (j, s, e) {
-                        API.loaded(q, p, "FAIL");
                         return reject(API.throwe(s));
                     });
             });

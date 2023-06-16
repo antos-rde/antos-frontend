@@ -34,10 +34,10 @@ namespace OS {
                  * Store pending loading task
                  *
                  * @private
-                 * @type {number[]}
+                 * @type {Promise<any>[]}
                  * @memberof SystemPanelTag
                  */
-                private _pending_task: number[];
+                private _pending_task: Promise<any>[];
                 
                 /**
                  * Flag indicate where the selected application shall be openned
@@ -519,17 +519,13 @@ namespace OS {
                     this.refs.osmenu.contextmenuHandle = (e, m) => { };
                     systray.contextmenuHandle = (e, m) => { };
                     this.refs.panel.contextmenuHandle = (e, m) => { };
-                    announcer.on("loading", (o: API.AnnouncementDataType<number>) => {
-                        if(o.u_data != 0)
-                        {
-                            return;
-                        }
+                    announcer.on("ANTOS-TASK-PENDING", (o: API.AnnouncementDataType<Promise<any>>) => {
                         if(this._pending_task.length == 0)
                         {
                             $(this.refs.panel).addClass("loading");
                             systray.iconclass = "fa-spin fa fa-cog";
                         }
-                        this._pending_task.push(o.id);
+                        this._pending_task.push(o.u_data);
                             
                         $(GUI.workspace).css("cursor", "wait");
                     });
@@ -538,8 +534,8 @@ namespace OS {
                         e.data.stopPropagation();
                         this.show_systray();
                     };
-                    announcer.on("loaded", (o: API.AnnouncementDataType<number>) => {
-                        const i = this._pending_task.indexOf(o.id);
+                    const remove_task = (o: Promise<any>) => {
+                        const i = this._pending_task.indexOf(o);
                         if (i >= 0) {
                             this._pending_task.splice(i, 1);
                         }
@@ -549,7 +545,15 @@ namespace OS {
                             if(!this._loading_toh)
                                 this._loading_toh = setTimeout(() => this.animation_check(),1000);
                         }
+                    };
+                    announcer.on("ANTOS-TASK-FULFILLED", (o: API.AnnouncementDataType<Promise<any>>) => {
+                        remove_task(o.u_data);
                     });
+
+                    announcer.on("ANTOS-TASK-REJECTED", (o: API.AnnouncementDataType<Promise<any>>) => {
+                        remove_task(o.u_data);
+                    });
+
                     announcer.on("desktopresize", (e) => {
                         this.calibrate();
                     });

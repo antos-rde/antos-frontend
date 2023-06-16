@@ -291,12 +291,6 @@ namespace OS {
          */
         export var observable: API.Announcer = new API.Announcer();
         /**
-         * This variable is used to allocate the `id` of all messages
-         * passing between publishers and subscribers in the
-         * system announcement
-         */
-        export var quota: 0;
-        /**
          * Placeholder of all global events listeners
          */
         export var listeners: Map<BaseModel | 0, API.AnnouncerListenerType[]> = new Map();
@@ -411,17 +405,6 @@ namespace OS {
                 announcer.observable.off(i.e, i.f);
             }
             announcer.listeners.delete(app);
-        }
-
-        /**
-         * Allocate message id
-         *
-         * @export
-         * @returns {number}
-         */
-        export function getMID(): number {
-            quota += 1;
-            return quota;
         }
     }
 }
