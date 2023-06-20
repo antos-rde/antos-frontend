@@ -730,7 +730,6 @@ namespace OS {
                         let settings = {};
                         try
                         {
-                            console.log("load setting for", app);
                             if(mt.path.asFileHandle().protocol === "home")
                             {
                                 settings = await `${mt.path}/.settings.json`.asFileHandle().read("json");
@@ -745,7 +744,6 @@ namespace OS {
                         {
                         }
                         application[app].setting_wdg = API.watcher(settings, (o,k,v,p) => {
-                            console.log("Changed detected", o, k,v, p);
                             let key = k;
                             if(p.length > 0)
                             {
@@ -761,7 +759,6 @@ namespace OS {
                             data.message = key;
                             data.iconclass = mt?mt.iconclass:undefined;
                             data.u_data = undefined;
-                            console.log(data);
                             return announcer.trigger("appregistry", data);
                         });
                         const p = await PM.createProcess(
