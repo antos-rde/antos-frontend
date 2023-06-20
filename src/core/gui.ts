@@ -180,23 +180,24 @@ namespace OS {
          * @param {string} path VFS path to the scheme file
          * @param {BaseModel} app the target application
          * @param {(HTMLElement | string)} parent The parent HTML element where the application is rendered.
+         * @return {Promise<any>} a promise object
          */
         export function loadScheme(
             path: string,
             app: BaseModel,
             parent: HTMLElement | string
-        ): void {
-            path.asFileHandle()
-                .read()
-                .then(function (x) {
-                    if (!x) {
-                        return;
-                    }
+        ): Promise<any> {
+            return new Promise(async (ok,nok) =>{
+                try {
+                    const x = await path.asFileHandle().read();
                     htmlToScheme(x, app, parent);
-                })
-                .catch((e) => {
-                    announcer.oserror(__("Cannot load scheme: {0}", path), e);
-                });
+                    ok(true);
+                }
+                catch(e)
+                {
+                    nok(__e(e));
+                }
+            });
         }
 
         /**
@@ -724,6 +725,45 @@ namespace OS {
                                 e);
                             return reject(e);
                         }
+                        const mt = application[app].meta;
+                        // load application setting if any
+                        let settings = {};
+                        try
+                        {
+                            console.log("load setting for", app);
+                            if(mt.path.asFileHandle().protocol === "home")
+                            {
+                                settings = await `${mt.path}/.settings.json`.asFileHandle().read("json");
+                            }
+                            else
+                            {
+                                // system package
+                                settings = await `home:///.antos/settings/${app}.json`.asFileHandle().read("json");
+                            } 
+                        }
+                        catch(_)
+                        {
+                        }
+                        application[app].setting_wdg = API.watcher(settings, (o,k,v,p) => {
+                            console.log("Changed detected", o, k,v, p);
+                            let key = k;
+                            if(p.length > 0)
+                            {
+                                key = p[0];
+                            }
+                            const data: API.AnnouncementDataType<any> = {} as API.AnnouncementDataType<any>;
+                            data.icon = undefined;
+                            if (mt && mt.icon) {
+                                data.icon = `${mt.path}/${mt.icon}`;
+                            }
+                            data.id = 0;
+                            data.name = app;
+                            data.message = key;
+                            data.iconclass = mt?mt.iconclass:undefined;
+                            data.u_data = undefined;
+                            console.log(data);
+                            return announcer.trigger("appregistry", data);
+                        });
                         const p = await PM.createProcess(
                             app,
                             application[app],

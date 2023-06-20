@@ -288,7 +288,7 @@ namespace OS {
                         return GUI.htmlToScheme(this.markup, this, this.host);
                     } else {
                         // a file handle
-                        return this.render(this.markup.path);
+                        this.render(this.markup.path);
                     }
                 } else if (
                     this.constructor.scheme

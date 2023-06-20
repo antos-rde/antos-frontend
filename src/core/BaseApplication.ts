@@ -35,9 +35,21 @@ namespace OS {
          */
         export abstract class BaseApplication extends BaseModel {
             /**
-             * Placeholder of all settings specific to the application.
-             * The settings stored in this object will be saved to system
-             * setting when logout and can be reused in the next login session
+             * Watcher of all settings specific to the application.
+             * The settings stored in this object will be saved to application folder
+             * in JSON format as .settings.json and will be loaded automatically
+             * when application is initialized.
+             * 
+             * This object is globally acessible to all processes of the same application
+             *
+             * @type {GenericObject<any>}
+             * @memberof BaseApplication
+             */
+            static setting_wdg: GenericObject<any>;
+
+
+            /**
+             * Reference to per application setting i.e. setting_wdg
              *
              * @type {GenericObject<any>}
              * @memberof BaseApplication
@@ -69,10 +81,7 @@ namespace OS {
              */
             constructor(name: string, args: AppArgumentsType[]) {
                 super(name, args);
-                if (!setting.applications[this.name]) {
-                    setting.applications[this.name] = {};
-                }
-                this.setting = setting.applications[this.name];
+                this.setting = (this.constructor as any).setting_wdg;
                 this.keycomb = {};
             }
 
@@ -87,43 +96,52 @@ namespace OS {
              * @returns {void}
              * @memberof BaseApplication
              */
-            init(): void {
-                this.off("*");
-                this.on("exit", () => this.quit(false));
-                // first register some base event to the app
-                this.on("focus", () => {
-                    //if(this.sysdock.selectedApp != this)
-                    this.sysdock.selectedApp = this;
-                    (this.scheme as GUI.tag.WindowTag).onmenuopen = (el) => el.nodes = this.baseMenu() || [];
-                    OS.PM.pidactive = this.pid;
-                    this.trigger("focused", undefined);
-                    if (this.dialog) {
-                        return this.dialog.show();
+            init(): Promise<any> {
+                return new Promise(async (ok, nok) =>{
+                    try {
+                        this.off("*");
+                        this.on("exit", () => this.quit(false));
+                        // first register some base event to the app
+                        this.on("focus", () => {
+                            //if(this.sysdock.selectedApp != this)
+                            this.sysdock.selectedApp = this;
+                            (this.scheme as GUI.tag.WindowTag).onmenuopen = (el) => el.nodes = this.baseMenu() || [];
+                            OS.PM.pidactive = this.pid;
+                            this.trigger("focused", undefined);
+                            if (this.dialog) {
+                                return this.dialog.show();
+                            }
+                        });
+                        this.on("hide", () => {
+                            this.sysdock.selectedApp = null;
+                            if (this.dialog) {
+                                return this.dialog.hide();
+                            }
+                        });
+                        this.on("menuselect", (d) => {
+                            switch (d.data.item.data.dataid) {
+                                case `${this.name}-about`:
+                                    return this.openDialog("AboutDialog");
+                                case `${this.name}-exit`:
+                                    return this.trigger("exit", undefined);
+                            }
+                        });
+                        this.on("apptitlechange", () => this.sysdock.update(this));
+                        this.subscribe("appregistry", (m) => {
+                            if (m.name === this.name) {
+                                this.applySetting(m.message as string);
+                            }
+                        });
+                        
+                        this.updateLocale(this.systemsetting.system.locale);
+                        await this.loadScheme();
+                        this.applyAllSetting();
+                    }
+                    catch(e)
+                    {
+                        nok(__e(e));
                     }
                 });
-                this.on("hide", () => {
-                    this.sysdock.selectedApp = null;
-                    if (this.dialog) {
-                        return this.dialog.hide();
-                    }
-                });
-                this.on("menuselect", (d) => {
-                    switch (d.data.item.data.dataid) {
-                        case `${this.name}-about`:
-                            return this.openDialog("AboutDialog");
-                        case `${this.name}-exit`:
-                            return this.trigger("exit", undefined);
-                    }
-                });
-                this.on("apptitlechange", () => this.sysdock.update(this));
-                this.subscribe("appregistry", (m) => {
-                    if (m.name === this.name) {
-                        this.applySetting(m.message as string);
-                    }
-                });
-                
-                this.updateLocale(this.systemsetting.system.locale);
-                return this.loadScheme();
             }
 
             /**
@@ -131,10 +149,10 @@ namespace OS {
              * and then mount this scheme to the DOM tree
              *
              * @protected
-             * @returns {void}
+             * @returns {Promise<any>}
              * @memberof BaseApplication
              */
-            protected loadScheme(): void {
+            protected loadScheme(): Promise<any> {
                 //now load the scheme
                 const path = `${this.meta().path}/scheme.html`;
                 return this.render(path);
@@ -268,21 +286,6 @@ namespace OS {
                     const v = this.setting[k];
                     this.applySetting(k);
                 }
-            }
-
-            /**
-             * Set a setting value to the application setting
-             * registry
-             *
-             * @protected
-             * @param {string} k setting name
-             * @param {*} v setting value
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected registry(k: string, v: any): void {
-                this.setting[k] = v;
-                return this.publish("appregistry", k);
             }
 
             /**

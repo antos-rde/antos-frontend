@@ -1234,30 +1234,37 @@ namespace OS {
          * @returns {Promise<any>} a promise on the result data
          */
         export function post(p: string, d: any): Promise<any> {
-            return API.Task(function (resolve, reject) {
-                return $.ajax({
-                    type: "POST",
-                    url: p,
-                    contentType: "application/json",
-                    data: JSON.stringify(
-                        d,
-                        function (k, v) {
-                            if (k === "domel") {
-                                return undefined;
-                            }
-                            return v;
-                        },
-                        4
-                    ),
-                    dataType: "json",
-                    success: null,
-                })
-                    .done(function (data) {
-                        return resolve(data);
+            return API.Task(async (resolve, reject) => {
+                try
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: p,
+                        contentType: "application/json",
+                        data: JSON.stringify(
+                            d,
+                            function (k, v) {
+                                if (k === "domel") {
+                                    return undefined;
+                                }
+                                return v;
+                            },
+                            4
+                        ),
+                        dataType: "json",
+                        success: null,
                     })
-                    .fail(function (j, s, e) {
-                        return reject(API.throwe(s));
-                    });
+                        .done(function (data) {
+                            return resolve(data);
+                        })
+                        .fail(function (j, s, e) {
+                            reject(e);
+                        });
+                }
+                catch(e)
+                {
+                    reject(__e(e));
+                }
             });
         }
 
@@ -1776,5 +1783,38 @@ namespace OS {
             });
             return o;
         }
+
+        /**
+         * A watcher is a Proxy wrapper to an object
+         * 
+         * It is used to automatically detect changes in the
+         * target object and notify the change to a callback
+         * handler
+         * 
+         * @export
+         * @param {Object} target object
+         * @param {(obj: Object, key: string, value: any, path: any[]) => void} callback function
+         * @returns {Proxy} the wrapper object
+         */
+        export function watcher(target: GenericObject<any>, callback: (obj: Object, key: any, value: any, path:any[]) => void): Object
+        {
+            const create_handle_for = (path:any[]) => {
+                return {
+                    get: (obj: Object, key: any) => {
+                        if(typeof obj[key] === "object" && obj[key] !== null) {
+                            return new Proxy(obj[key], create_handle_for(path.concat(key)));
+                        }
+                        return obj[key];
+                    },
+                    set: (obj: Object, prop:any, value: any) => {
+                        obj[prop] = value;
+                        callback(obj, prop, value, path);
+                        return true;
+                    }
+                }
+            };
+            return new Proxy(target, create_handle_for([]));
+        }
+
     }
 }

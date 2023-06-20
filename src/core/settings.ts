@@ -398,7 +398,7 @@ namespace OS {
      */
     export function resetSetting(): void {
         setting.desktop = {
-            path: "home://.desktop",
+            path: "home://.antos/desktop",
             menu: [],
             showhidden: false,
         };
@@ -476,13 +476,13 @@ namespace OS {
             menu: [],
             packages: {},
             pkgpaths: {
-                user: "home://.packages",
+                user: "home://.antos/packages",
                 system: "os://packages",
             },
             repositories: [],
             startup: {
                 apps: [],
-                services: ["Syslog/PushNotification", "Syslog/Calendar"],
+                services: ["SystemServices/PushNotification", "SystemServices/Calendar"],
                 pinned: [],
             },
         };

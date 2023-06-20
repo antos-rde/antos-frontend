@@ -564,13 +564,13 @@ namespace OS {
                 switch (data.dataid) {
                     case `${this.name}-hidden`:
                         //@.view.set "showhidden", e.item.data.checked
-                        return this.registry("showhidden", data.checked);
+                        this.setting.showhidden = data.checked;
                     //@.setting.showhidden = e.item.data.checked
                     case `${this.name}-refresh`:
                         this.view.path = this.currdir.path;
                         return;
                     case `${this.name}-nav`:
-                        return this.registry("nav", data.checked);
+                        this.setting.nav = data.checked;
                 }
             }
             //@setting.nav = e.item.data.checked
