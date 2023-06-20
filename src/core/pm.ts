@@ -147,7 +147,6 @@ namespace OS {
                         }
                         file.cache = app_class.setting_wdg;
                         //file.cache = JSON.stringify(app_class.setting_wdg, undefined, 4);
-                        console.log("save setting file");
                         file
                             .write("object")
                             .catch((e) =>{
