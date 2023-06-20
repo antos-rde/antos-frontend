@@ -1037,8 +1037,9 @@ declare namespace OS {
          * @param {string} path VFS path to the scheme file
          * @param {BaseModel} app the target application
          * @param {(HTMLElement | string)} parent The parent HTML element where the application is rendered.
+         * @return {Promise<any>} a promise object
          */
-        function loadScheme(path: string, app: BaseModel, parent: HTMLElement | string): void;
+        function loadScheme(path: string, app: BaseModel, parent: HTMLElement | string): Promise<any>;
         /**
          * Clear the current system theme
          *
@@ -2289,6 +2290,19 @@ declare namespace OS {
          * @returns {*}
          */
         function switcher(...args: string[]): any;
+        /**
+         * A watcher is a Proxy wrapper to an object
+         *
+         * It is used to automatically detect changes in the
+         * target object and notify the change to a callback
+         * handler
+         *
+         * @export
+         * @param {Object} target object
+         * @param {(obj: Object, key: string, value: any, path: any[]) => void} callback function
+         * @returns {Proxy} the wrapper object
+         */
+        function watcher(target: GenericObject<any>, callback: (obj: Object, key: any, value: any, path: any[]) => void): Object;
     }
 }
 /// <reference types="jquery" />
@@ -2311,9 +2325,19 @@ declare namespace OS {
          */
         abstract class BaseApplication extends BaseModel {
             /**
-             * Placeholder of all settings specific to the application.
-             * The settings stored in this object will be saved to system
-             * setting when logout and can be reused in the next login session
+             * Watcher of all settings specific to the application.
+             * The settings stored in this object will be saved to application folder
+             * in JSON format as .settings.json and will be loaded automatically
+             * when application is initialized.
+             *
+             * This object is globally acessible to all processes of the same application
+             *
+             * @type {GenericObject<any>}
+             * @memberof BaseApplication
+             */
+            static setting_wdg: GenericObject<any>;
+            /**
+             * Reference to per application setting i.e. setting_wdg
              *
              * @type {GenericObject<any>}
              * @memberof BaseApplication
@@ -2352,16 +2376,16 @@ declare namespace OS {
              * @returns {void}
              * @memberof BaseApplication
              */
-            init(): void;
+            init(): Promise<any>;
             /**
              * Render the application UI by first loading its scheme
              * and then mount this scheme to the DOM tree
              *
              * @protected
-             * @returns {void}
+             * @returns {Promise<any>}
              * @memberof BaseApplication
              */
-            protected loadScheme(): void;
+            protected loadScheme(): Promise<any>;
             /**
              * API function to perform an heavy task.
              * This function will create a Task that is tracked by any
@@ -2420,17 +2444,6 @@ declare namespace OS {
              * @memberof BaseApplication
              */
             protected applyAllSetting(): void;
-            /**
-             * Set a setting value to the application setting
-             * registry
-             *
-             * @protected
-             * @param {string} k setting name
-             * @param {*} v setting value
-             * @returns {void}
-             * @memberof BaseApplication
-             */
-            protected registry(k: string, v: any): void;
             /**
              * Show the appliation
              *
@@ -2803,10 +2816,10 @@ declare namespace OS {
          *
          * @protected
          * @param {string} p VFS path to the UI scheme definition
-         * @returns {void}
+         * @returns {Promise<any>}
          * @memberof BaseModel
          */
-        protected render(p: string): void;
+        protected render(p: string): Promise<any>;
         /**
          * Exit the model
          *

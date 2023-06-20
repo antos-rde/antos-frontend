@@ -322,10 +322,10 @@ namespace OS {
          *
          * @protected
          * @param {string} p VFS path to the UI scheme definition
-         * @returns {void}
+         * @returns {Promise<any>}
          * @memberof BaseModel
          */
-        protected render(p: string): void {
+        protected render(p: string): Promise<any> {
             return GUI.loadScheme(p, this, this.host);
         }
 

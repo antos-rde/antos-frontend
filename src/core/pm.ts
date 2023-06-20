@@ -136,6 +136,25 @@ namespace OS {
             if (i >= 0) {
                 if (application[app.name].type === ModelType.Application) {
                     GUI.undock(app as application.BaseApplication);
+                    // save setting file if any
+                    if(PM.processes[app.name].length == 1)
+                    {
+                        const app_class = application[app.name] as typeof OS.application.BaseApplication;
+                        let file = `${app_class.meta.path}/.settings.json`.asFileHandle();
+                        if(file.protocol !== "home")
+                        {
+                            file = `home:///.antos/settings/${app.name}.json`.asFileHandle();
+                        }
+                        file.cache = app_class.setting_wdg;
+                        //file.cache = JSON.stringify(app_class.setting_wdg, undefined, 4);
+                        console.log("save setting file");
+                        file
+                            .write("object")
+                            .catch((e) =>{
+                                return announcer.osinfo(
+                                    __("Unable to save settings for application {0}: {1}", app.name, e.toString()));
+                            });
+                    }
                 } else {
                     GUI.detachservice(app as application.BaseService);
                 }
