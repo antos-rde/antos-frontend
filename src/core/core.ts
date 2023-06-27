@@ -1306,33 +1306,42 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function upload(p: string, d: string): Promise<any> {
-            return API.Task(function (resolve, reject) {
+            return new Promise( (resolve, reject) => {
                 //insert a temporal file selector
                 const o =
                     $("<input>")
                         .attr("type", "file")
                         .attr("multiple", "true");
-                o.on("change", function () {
-                    const files = (o[0] as HTMLInputElement).files;
-                    const formd = new FormData();
-                    formd.append("path", d);
-                    jQuery.each(files, (i, file) => {
-                        formd.append(`upload-${i}`, file);
-                    });
-                    return $.ajax({
-                        url: p,
-                        data: formd,
-                        type: "POST",
-                        contentType: false,
-                        processData: false,
-                    })
-                        .done(function (data) {
-                            resolve(data);
-                        })
-                        .fail(function (j, s, e) {
-                            o.remove();
-                            reject(API.throwe(s));
+                o.on("change", async () => {
+                    try{
+                        const files = (o[0] as HTMLInputElement).files;
+                        const formd = new FormData();
+                        formd.append("path", d);
+                        jQuery.each(files, (i, file) => {
+                            formd.append(`upload-${i}`, file);
                         });
+                        const ret = await API.Task((ok, nok) => {
+                            $.ajax({
+                                url: p,
+                                data: formd,
+                                type: "POST",
+                                contentType: false,
+                                processData: false,
+                            })
+                                .done(function (data) {
+                                    ok(data);
+                                })
+                                .fail(function (j, s, e) {
+                                    //o.remove();
+                                    nok(API.throwe(s));
+                                });
+                        });
+                        resolve(ret);
+                    }
+                    catch(e)
+                    {
+                        reject(__e(e));
+                    }
                 });
                 return o.trigger("click");
             });
