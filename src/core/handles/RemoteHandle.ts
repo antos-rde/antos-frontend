@@ -231,7 +231,7 @@ namespace OS {
              */
             export function readfile(p: string, t: string): Promise<any> {
                 const path = `${API.REST}/VFS/get/`;
-                return API.get(path + p, t);
+                return API.get(path + encodeURIComponent(p), t);
             }
 
             /**
