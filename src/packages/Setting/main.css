@@ -5,13 +5,13 @@ afx-app-window[data-id = "setting-window"] afx-label.header i.label-text{
 /*APPEARANCE*/
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] div[data-id = "wp-preview"]{
     display: block;
-    border:1px solid #cbcbcb;
+    border:1px solid var(--border-quaternary);
     border-radius: 10px;
 }
 
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-list-view[data-id="wplist"]
 {
-    border:1px solid #cbcbcb;
+    border:1px solid var(--border-quaternary);
 }
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-resizer{
     border:0;
@@ -20,7 +20,7 @@ afx-app-window[data-id = "setting-window"] afx-hbox[data-id="appearance"] afx-re
 /*VFS*/
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="vfs"] afx-list-view[data-id="mplist"]
 {
-    border: 1px solid #cbcbcb;
+    border: 1px solid var(--border-quaternary);
 }
 
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="vfs"] afx-button.btnsel button{
@@ -31,15 +31,15 @@ afx-app-window[data-id = "setting-window"] afx-hbox[data-id="vfs"] afx-button.bt
 /*LANGUAGES*/
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="locale"] afx-list-view[data-id="lglist"]
 {
-    border: 1px solid #cbcbcb;
+    border: 1px solid var(--border-quaternary);
 }
 /*STARTUP*/
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="startup"] afx-list-view
 {
-    border: 1px solid #cbcbcb;
+    border: 1px solid var(--border-quaternary);
 }
 
 afx-app-window[data-id = "setting-window"] afx-hbox[data-id="app-services"] afx-list-view
 {
-    border: 1px solid #cbcbcb;
+    border: 1px solid var(--border-quaternary);
 }

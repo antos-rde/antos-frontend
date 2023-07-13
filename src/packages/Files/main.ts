@@ -49,7 +49,7 @@ namespace OS {
 
 
             /**
-             *
+             * main entry point
              *
              * @returns
              * @memberof Files
@@ -179,7 +179,7 @@ namespace OS {
                 };
 
                 this.favo.onlistselect = (e) => {
-                    if(this.currdir.path == e.data.item.data.path)
+                    if(this.currdir.path.startsWith(e.data.item.data.path))
                     {
                         return;
                     }
@@ -209,10 +209,45 @@ namespace OS {
                             .catch((e) => reject(__e(e)));
                     });
                 };
+                const p_list = this.find<GUI.tag.TabBarTag>("path-nav");
+                p_list.ontabselect = (e) => {
+                    const handle: API.VFS.BaseFileHandle = e.data.item.data.handle;
+                    if(this.currdir.path == handle.path)
+                    {
+                        return;
+                    }
+                    this.view.path = handle.path;
+                }
                 this.view.onchdir = (e) => {
-                    const dir = e.data.path.asFileHandle();
+                    const dir = (e.data.path as string).asFileHandle();
                     this.currdir = dir;
-                    (this.scheme as GUI.tag.WindowTag).apptitle = dir.path;
+                    if(dir.genealogy)
+                    {
+                        (this.scheme as GUI.tag.WindowTag).apptitle = dir.filename;
+                    }
+                    else
+                    {
+                        (this.scheme as GUI.tag.WindowTag).apptitle = `${dir.protocol}://`;
+                    }
+                    // update the path-nav
+                    let base_vfs = `${dir.protocol}://`.asFileHandle();
+                    let segments = [{
+                        text: base_vfs.path,
+                        handle: base_vfs
+                    }]
+                    if(dir.genealogy)
+                    {
+                        
+                        segments = segments.concat(dir.genealogy.map((e)=> {
+                            base_vfs = `${base_vfs.path}/${e}`.asFileHandle();
+                            return {
+                                text: e,
+                                handle: base_vfs
+                            }
+                        }));
+                    }
+                    p_list.items = segments;
+                    p_list.scroll_to_end();
                     // update the current favo
                     const matched = this.favo.data.map((e,i) => {
                         return {
@@ -221,21 +256,11 @@ namespace OS {
                         }
                     })
                     .filter(e => {
-                        return e.path == dir.path
+                        return dir.path.startsWith(e.path as string);
                     });
-                    if(matched.length == 0)
+                    if(matched.length != 0)
                     {
-                        this.favo.push({
-                            text: dir.basename,
-                            path: dir.path,
-                            description: {text: dir.path},
-                            selected: true,
-                            tag: "afx-dbline-list-item",
-                            iconclass: "fa fa-folder"
-                        }, true);
-                    }
-                    else
-                    {
+                        //console.log(matched[0]);
                         this.favo.selected = matched[0].index;
                     }
                 }
@@ -323,6 +348,48 @@ namespace OS {
                         d.u_data.parent().hash() === this.currdir.hash()
                     ) {
                         return this.view.path = this.currdir.path;
+                    }
+                });
+
+                // register responsive event
+                this.morphon(GUI.RESPONSIVE.MEDIUM, (fulfilled:boolean) => {
+                    /**
+                     * If the Window is bigger than medium size, then
+                     * we enable the side bar
+                     * 
+                     * otherwise, use the top bar
+                     */
+                    const box = this.find("container") as GUI.tag.TileLayoutTag;
+                    const nav = this.find("nav-bar") as GUI.tag.TileLayoutTag;
+                    const fav = this.find("favouri") as GUI.tag.ListViewTag;
+                    const resizer = this.find("resizer") as GUI.tag.ResizerTag;
+                    if(fulfilled)
+                    {
+                        box.name = "hbox";
+                        box.dir = "row";
+
+                        nav.reversed = true;
+                        nav.name = "vbox";
+                        nav.dir = "column";
+
+                        fav.dropdown = false;
+
+                        resizer.dir = "hz";
+                        resizer.disable = false;
+                    }
+                    else
+                    {
+                        box.name = "vbox";
+                        box.dir = "column";
+
+                        nav.reversed = false;
+                        nav.name = "hbox";
+                        nav.dir = "row";
+
+                        fav.dropdown = true;
+
+                        resizer.dir = "ve";
+                        resizer.disable = true;
                     }
                 });
 
@@ -496,6 +563,10 @@ namespace OS {
                         text: "__(View)",
                         nodes: [
                             {
+                                text: "__(Toggle responsive)",
+                                dataid: `${this.name}-responsive`,
+                            },
+                            {
                                 text: "__(Refresh)",
                                 dataid: `${this.name}-refresh`,
                                 shortcut: "C-A-R"
@@ -568,6 +639,10 @@ namespace OS {
                     //@.setting.showhidden = e.item.data.checked
                     case `${this.name}-refresh`:
                         this.view.path = this.currdir.path;
+                        return;
+                    case `${this.name}-responsive`:
+                        const win = (this.scheme as GUI.tag.WindowTag);
+                        win.responsive = !win.responsive;
                         return;
                     case `${this.name}-nav`:
                         this.setting.nav = data.checked;

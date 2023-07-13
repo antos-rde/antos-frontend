@@ -3,5 +3,5 @@ afx-app-window[data-id="NotePad"] textarea[data-id="editor"]
     margin: 0;
     padding:10px;
     border: 0;
-    background-color: transparent;
+    background-color: var(--background-tertiary);
 }
