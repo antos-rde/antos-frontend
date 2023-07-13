@@ -1,12 +1,12 @@
 afx-sys-panel > div{
-     background-color: #363636;
-     border-top: 1px solid #262626;
+     background-color: var(--background-secondary);
+     border-top: 1px solid var(--border-primary);
      box-shadow: none;
  }
 
 afx-sys-panel .afx-panel-os-menu button
 {
-    background-color: #5F548E;
+    background-color: var(--antos-ant-color);
     border-radius: 0;
     border: 0;
 }
@@ -17,23 +17,22 @@ afx-sys-panel .afx-panel-os-menu button .label-text
 }
 
 afx-sys-panel .afx-panel-os-menu {
-    color: white;
+    color: var(--text-primary);
 }
 
 afx-sys-panel .afx-panel-os-stray button{
     border-radius: 0;
     border: 0;
 }
-
 afx-sys-panel afx-overlay
 {
-    background-color: #363636;
-    border: 1px solid #262626;
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-primary);
 }
 afx-sys-panel afx-list-view[data-id="applist"],
 afx-sys-panel afx-tab-bar[data-id="catlist"]
 {
-    border-top: 1px solid #262626;
+    border-top: 1px solid var(--border-primary);
 }
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li
 {
@@ -45,21 +44,21 @@ afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li
 afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
 {
     border: 0;
-    border-left: 1px solid #262626;
-    border-top: 1px solid #262626;
+    border-left: 1px solid var(--border-primary);
+    border-top: 1px solid var(--border-primary);
     font-size: 24px;
 }
 
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li:hover
 {
-    background-color: #cecece;
-    color: #262626;
+    background-color: var(--antos-ant-color)/*#cecece*/;
+    color: var(--text-tertiary);
     border-radius: 10px;
 }
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li.selected
 {
-    background-color: #116cd6;
-    color:white;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
 }
 
 afx-sys-panel afx-tab-bar[data-id="catlist"] .afx-list-view i.label-text {
@@ -75,7 +74,7 @@ afx-sys-panel div[data-id="searchicon"]:before{
     content: "\f002";
     display: block;
     background-color:transparent;
-    color:#afafaf;
+    color:var(--text-disable);
     font-family: "FontAwesome";
     padding-left:3px;
     font-size: 25px;
@@ -83,7 +82,7 @@ afx-sys-panel div[data-id="searchicon"]:before{
 afx-sys-panel input{
     border:0;
     height: 30px;
-    color:#afafaf;
+    color:var(--text-disable);
     font-size: 16px;
     background-color: transparent;
 }

@@ -1,0 +1,18 @@
+afx-button button{
+    border: 1px solid var(--border-primary);
+    background-color: var(--background-tertiary);
+    color: var(--text-primary);
+    border-radius: 3px;
+    font-family: "Ubuntu";
+}
+
+
+afx-button button[disabled]{
+    color: var(--text-disable);
+}
+
+afx-button button:active, afx-button button.btactive {
+    background-color: var(--item-bg-active);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-secondary);
+}

@@ -1,0 +1,29 @@
+afx-app-window div.afx-window-wrapper{
+    border:1px solid var(--border-primary);
+    box-shadow: 0px 3px 6px 0px var(--shadow-primary);
+    border-radius: 0px;
+    background-color:var(--background-primary);
+}
+afx-app-window.unactive > div.afx-window-wrapper{
+    box-shadow: none;
+}
+
+afx-app-window ul.afx-window-top{
+    border-bottom: 1px solid var(--border-primary);
+}
+
+afx-app-window ul li.afx-window-title{
+    text-align: left;
+}
+
+afx-app-window div.afx-window-content
+{
+    background-color: var(--background-secondary);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+afx-app-window ul.afx-window-top button:hover
+{
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+}

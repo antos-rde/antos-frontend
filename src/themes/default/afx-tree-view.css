@@ -1,0 +1,13 @@
+
+afx-tree-view div.afx_tree_item_selected{
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
+}
+afx-tree-view div.afx_tree_item_selected:hover{
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
+}
+
+afx-tree-view .afx_folder_item{
+    font-weight: bold;
+}

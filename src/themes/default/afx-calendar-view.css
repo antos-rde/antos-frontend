@@ -6,14 +6,19 @@ afx-calendar-view > div afx-label i{
     font-weight: bold;
 }
 
+
 afx-calendar-view afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
 {
     background-color: transparent;
-    color:black;
+}
+afx-calendar-view afx-grid-view  afx-grid-row.afx-grid-row-selected afx-grid-cell
+{
+    color:var(--text-primary);
 }
 afx-calendar-view afx-grid-view  afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-selected
 {
-    background-color: #116cd6;
-    color:white;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
     border-radius: 6px;
 }
+

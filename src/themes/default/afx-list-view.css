@@ -1,36 +1,41 @@
+/*
 afx-list-view  > div.list-container > ul  li{
-    background-color: #363636;
-}
-afx-list-view > div.list-container > ul .afx-list-item:nth-child(even) li{
-    background-color:#3b3b3b;
+    background-color: var(--background-tertiary);
 }
 
+afx-list-view > div.list-container > ul .afx-list-item:nth-child(even) li{
+    background-color:var(--item-bg-even);
+}
+afx-list-view > div.list-container > ul .afx-list-item:nth-child(odd) li{
+    background-color:var(--item-bg-odd);
+}
+*/
 afx-list-view  i.closable:before{
-    color: #868686;
+    color: var(--icon-secondary);
 }
 afx-list-view.dropdown > div.list-container > ul  li:hover{
-    background-color: #464646;
+    background-color: var(--item-bg-hover);
 }
 afx-list-view > div.list-container > ul >  .afx-list-item li.selected{
-    background-color: #116cd6;
-    color:white;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
 }
 
 afx-list-view.dropdown > div.list-container > ul{
-    border:1px solid #262626;
-    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
+    border:1px solid var(--border-primary);
+    box-shadow: 0px 3px 6px 0px var(--shadow-primary);
     border-radius: 3px;
-    background-color: #363636;
+    background-color: var(--background-secondary);
     border-top-left-radius: 0px;
 }
 afx-list-view.dropdown div.list-container > div > afx-label
 {
-    border:1px solid #262626;
+    border:1px solid var(--border-primary);
     border-radius: 3px;
-    background-color: #474747;
+    background-color: var(--background-tertiary);
 }
 afx-list-view.dropdown {
-    color: white;
+    color: var(--text-primary);
     background-color: transparent;
 }
 
@@ -42,11 +47,11 @@ afx-list-view ul.complex-content{
 afx-list-view ul.complex-content li{
     padding:0;
     background-color: transparent;
-    color:#5e5f59;
+    color:var(--text-disable);
     list-style: none;
 }
 afx-list-view  > div.list-container > ul  li.selected ul.complex-content li{
-    color:white;
+    color:var(--text-tertiary);
 }
 afx-list-view  div.button_container afx-button{
     margin-right: 2px;

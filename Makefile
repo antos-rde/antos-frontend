@@ -150,6 +150,7 @@ build_themes: antos_light antos_dark
 	cp -r src/themes/system/icons $(BUILDDIR)/resources/themes/system
 	cp -r src/themes/system/wp $(BUILDDIR)/resources/themes/system
 	for f in src/themes/system/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/system/system.css;done
+	for f in src/themes/default/*.css; do (cat "$${f}"; echo) >> $(BUILDDIR)/resources/themes/system/antos.css;done
 
 antos_light:
 	@echo "$(BLUE)Building themes name: antos-light$(NC)"

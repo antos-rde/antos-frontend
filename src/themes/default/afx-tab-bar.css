@@ -1,0 +1,14 @@
+
+afx-tab-bar[dir="horizontal"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
+{
+    background-color: var(--background-tertiary);
+    color:var(--text-primary);
+    border-bottom:2px solid var(--border-tertiary); /* #262626;*/
+}
+
+afx-tab-bar[dir="vertical"] afx-list-view > div.list-container > ul > afx-list-item > li.selected
+{
+    background-color: var(--background-tertiary);
+    color:var(--text-primary);
+    border-right:2px solid var(--border-tertiary); /* #262626;*/
+}

@@ -1,66 +1,34 @@
-html,body{
-    color: white;
-}
-#desktop > div > ul afx-list-item {
-    color: white;
-}
+:root {
+    --antos-ant-color: #5F548E;
 
-#desktop > div > ul afx-list-item li.selected {
-    background-color: #116cd6;
-    color:white;
-    border-radius: 6px;
-}
+    --text-primary: white;
+    --text-secondary: #bb86fc;
+    --text-tertiary: white;
+    --text-disable: #868686;
+    --text-warning: orangered;
+    --text-error: #df3154;
+    --text-info: green;
 
-#desktop > div > ul afx-list-item i.file:before{
-    content: "\f15b\a"; 
-    font-family: "FontAwesome";
-    font-size: 32px;
-    display: block;
-    color: white;
-    font-style: normal;
-    font-weight: normal;
-}
+    --background-primary: #333333;
+    --background-secondary: #363636;
+    --background-tertiary: #464646;
+    --background-quaternary: #464646;
+    
+    --background-overlay: rgba(54,54,54,0.7);
 
-#desktop > div > ul afx-list-item i.dir:before{
-    display: block;
-    content: "\f07b\a"; 
-    font-family: "FontAwesome";
-    font-size: 32px;
-    color: #76D2F9;
-    font-weight: normal;
-    font-style: normal;
-}
+    --icon-primary: white;
+    --icon-secondary: #868686;
+    --icon-tertiary:  #76D2F9;
 
-#systooltip {
-    border:1px solid #363636;
-    border-radius: 3px;
-    padding-left:3px;
-    padding-right:3px;
-    box-shadow: none;
-    background-color: #464646;
-}
+    --item-bg-odd: #474747;
+    --item-bg-even: #3b3b3b;
+    --item-bg-active: #116cd6;
+    --item-bg-hover: #464646;
 
-input {
-    outline: none;
-    padding: 2px;
-    border: 1px solid #262626;
-    background-color:#464646;
-    color: white;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
+    --border-primary:#262626;
+    --border-secondary: #363636;
+    --border-tertiary: #bb86fc;
+    --border-quaternary: #646363;
 
-textarea {
-    color: white;
-    background-color: #464646;
-    outline: none;
-    border: 1px solid #262626;
-    box-sizing: border-box;
-}
-
-a:link,
-a:visited,
-a:hover
-{
-    color:#df3154;
+    --shadow-primary: rgba(0,0,0,0.65);
 }
