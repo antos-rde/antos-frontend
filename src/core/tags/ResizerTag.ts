@@ -187,7 +187,10 @@ namespace OS {
                                 ? $(this).prev()[0]
                                 : undefined;
                     }
-
+                    if(this.dir)
+                    {
+                        return;
+                    }
                     if (tagname === "AFX-HBOX") {
                         this.dir = "hz";
                     } else if (tagname === "AFX-VBOX") {
@@ -195,6 +198,20 @@ namespace OS {
                     } else {
                         this.dir = "hz";
                     }
+                }
+
+                /**
+                 * Setter Disable or enable the resize event
+                 * 
+                 * @memberof ResizerTag
+                 */
+                set disable(v: boolean)
+                {
+                    this.attsw(v, "disable");
+                }
+                get disable(): boolean
+                {
+                    return this.hasattr("disable");
                 }
 
                 /**
@@ -210,6 +227,10 @@ namespace OS {
                     }
                     $(this).on("pointerdown", (e) => {
                         e.preventDefault();
+                        if(this.disable)
+                        {
+                            return;
+                        }
                         $(window).on("pointermove", (evt) => {
                             if (!this._resizable_el) {
                                 return;

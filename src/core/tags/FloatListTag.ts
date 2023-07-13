@@ -101,6 +101,7 @@ namespace OS {
                  * @memberof FloatListTag
                  */
                 protected mount(): void {
+                    $(this.refs.current).hide();
                     $(this.refs.container)
                         .css("width", "100%")
                         .css("height", "100%");

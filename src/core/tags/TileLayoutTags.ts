@@ -1,6 +1,9 @@
 namespace OS {
     export namespace GUI {
         export namespace tag {
+            
+            type TileItemDirection = "row" | "column" | "row-reverse" | "column-reverse";
+
             /**
              * A tile layout organize it child elements
              * in a fixed horizontal or vertical direction.
@@ -77,15 +80,15 @@ namespace OS {
                  *
                  * @memberof TileLayoutTag
                  */
-                set dir(v: "row" | "column") {
+                set dir(v: TileItemDirection) {
                     if (!v) {
                         return;
                     }
                     $(this).attr("dir", v);
-                    $(this.refs.yield).css("flex-direction", v);
+                    this.reversed = this.reversed;
                     this.calibrate();
                 }
-                get dir(): "row" | "column" {
+                get dir(): TileItemDirection {
                     return $(this).attr("dir") as any;
                 }
                 /**
@@ -107,6 +110,35 @@ namespace OS {
                 get padding(): number
                 {
                     return this._padding;
+                }
+                /**
+                 * setter: Reverse order of the content in the tile
+                 * 
+                 * getter: return if the tile's content is in reversed order
+                 * 
+                 * @meberof TileLayoutTags
+                 */
+                set reversed(v: boolean)
+                {
+                    this.attsw(v, "reversed");
+                    if(!this.dir)
+                    {
+                        return;
+                    }
+                    let newdir = "row";
+                    if(this.dir.startsWith("column"))
+                    {
+                        newdir = "column"
+                    }
+                    if(v)
+                    {
+                        newdir += "-reverse";
+                    }
+                    $(this.refs.yield).css("flex-direction", newdir);
+                }
+                get reversed(): boolean
+                {
+                     return this.hasattr("reversed");
                 }
 
                 /**

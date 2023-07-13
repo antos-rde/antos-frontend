@@ -242,6 +242,13 @@ namespace OS {
              * @memberof TagEventType
              */
             originalEvent?: any;
+            /**
+             * is root tag?
+             * 
+             * @type {boolean}
+             * @memberof TagEventType
+             */
+            root?: boolean;
         }
 
         /**
@@ -270,8 +277,163 @@ namespace OS {
         }
         /**
          * Tag event callback type
+         * 
+         * @export
          */
         export type TagEventCallback<T> = (e: TagEventType<T>) => void;
+        /**
+         * Tag responsive envent callback type
+         *
+         * @export
+         */
+        export type TagResponsiveCallback = (fullfilled: boolean) => void;
+        
+        /**
+         * A callback record with history of last fulfilled
+         * 
+         * @interface TagResponsiveCallbackRecord
+         */
+        interface TagResponsiveCallbackRecord {
+            /**
+             * Callback function
+             *
+             * @type {TagResponsiveCallback}
+             * @memberof TagResponsiveCallbackRecord
+             */
+            callback: TagResponsiveCallback,
+            /**
+             * has the event been previously fulfilled?
+             * 
+             * @type {boolean}
+             * @memberof TagResponsiveCallbackRecord
+             */
+            fulfilled: boolean,
+        }
+        
+        /**
+         * Tag responsive validator type
+         * 
+         * @export
+         */
+        export type TagResponsiveValidator = (w: number, h: number) => boolean;
+
+        /**
+         * Definitions of some default tag responsive validators
+         *
+         * @export
+         */
+
+        export const RESPONSIVE = {
+            /**
+             * Extra small devices (phones, 600px and down)
+             */
+            TINY: function(w: number,_h: number){
+                return w <= 600;
+            },
+            /*  
+            Small devices (portrait tablets and large phones, 600px and up)
+            */
+            SMALL: function(w: number, _h: number){
+                return  w <= 768;
+            },
+            /*  
+             Medium devices (landscape tablets, 768px and up) 
+            */
+            MEDIUM: function(w: number, _h: number){
+                return w > 768;
+            },
+            /**
+             * Large devices (laptops/desktops, 992px and up)
+             */
+            LARGE: function(w: number, _h: number){
+                return w > 992;
+            },
+            /**
+             * Extra large devices (large laptops and desktops, 1200px and up)
+             */
+            HUGE: function(w: number, _h: number){
+                return w > 1200;
+            },
+            /**
+             * Portrait mode
+             */
+            PORTRAIT: function(w: number, h: number){
+                return h > w;
+            },
+            /**
+             * Landscape mode
+             */
+            LANDSCAPE: function(w: number, h: number){
+                return h < w;
+            },
+        }
+
+        /**
+         * A custom map to handle responsive events, a responsive event
+         * consists of a validator and a callback
+         * 
+         * When avalidator return true, its corresponding callback will
+         * be called
+         */
+        class ResponsiveHandle extends Map<TagResponsiveValidator,TagResponsiveCallbackRecord> {
+            /**
+             * Register a responsive envent to this map
+             * 
+             * @param {TagResponsiveValidator} a validator
+             * @param {TagResponsiveCallback} event callback
+             * @memberof ResponsiveHandle
+             */
+            on(validator: TagResponsiveValidator, callback: TagResponsiveCallback)
+            {
+                let record: TagResponsiveCallbackRecord = {
+                    callback: callback,
+                    fulfilled: false,
+                }
+                this.set(validator, record);
+            }
+
+            /**
+             * unregister a responsive event
+             * 
+             * @param {TagResponsiveValidator} a validator
+             * @memberof ResponsiveHandle
+             */
+            off(validator: TagResponsiveValidator)
+            {
+                this.delete(validator);
+            }
+
+            /**
+             * Verify validators and execute callbacks
+             * 
+             * @param {number} root tag width
+             * @param {number} root tag height
+             * @memberof ResponsiveHandle
+             */
+            morph(rootw: number, rooth: number)
+            {
+                for (const [validator, record] of this.entries()) {
+                    const val = validator(rootw, rooth);
+                    if(record.fulfilled && val)
+                    {
+                        // the record has been previously fulfilled
+                        // and the validator returns true
+                        // nothing changed
+                        continue;
+                    }
+                    if(!record.fulfilled && !val)
+                    {
+                        // the record has been previously unfulfilled
+                        // and the validator returns false
+                        // nothing changed
+                        continue;
+                    }
+                    record.fulfilled =val;
+                    record.callback(val);
+                }
+            }
+        }
+
         /**
          * Base abstract class for tag implementation, any AFX tag should be
          * subclass of this class
@@ -313,7 +475,17 @@ namespace OS {
             protected _mounted: boolean;
 
             /**
-             *Creates an instance of AFXTag.
+             * a {@link ResponsiveHandle} to handle all responsive event
+             * related to this tag
+             * 
+             * @private
+             * @memberof AFXTag
+             */
+            private _responsive_handle: ResponsiveHandle;
+
+            private _responsive_check: (evt: TagEventType<{w: number, h: number}>) => void;
+            /**
+             * Creates an instance of AFXTag.
              * @memberof AFXTag
              */
             constructor() {
@@ -324,6 +496,8 @@ namespace OS {
                 }
                 this._mounted = false;
                 this.refs = {};
+                this._responsive_handle = new ResponsiveHandle();
+                this._responsive_check = undefined;
             }
 
             /**
@@ -392,6 +566,60 @@ namespace OS {
 
             get aid(): string | number {
                 return $(this).attr("data-id");
+            }
+
+            /**
+             * Setter: Enable/disable responsive tag
+             * 
+             * Getter: get responsive status
+             */
+            set responsive(v:boolean) {
+                if(!v)
+                {
+                    this.attsw(false,"responsive");
+                    this.observable.off("resize",this._responsive_check);
+                    this._responsive_check = undefined;
+                    return;
+                }
+                if(this._responsive_check)
+                {
+                    return;
+                }
+                this._responsive_check = (evt: TagEventType<{w: number, h: number}>) => {
+                    if(!evt || !evt.root || !evt.data.w || !evt.data.h )
+                    {
+                        return;
+                    }
+                    this._responsive_handle.morph(evt.data.w, evt.data.h);
+                }
+                this.observable.on("resize", this._responsive_check);
+                this.attsw(true, "responsive");
+            }
+            get responsive(): boolean {
+                return this.hasattr("responsive");
+            }
+
+            /**
+             * Register a responsive event to this tag
+             * 
+             * @param {TagResponsiveValidator} responsive validator
+             * @param {TagResponsiveCallback} responsive callback
+             * @memberof AFXTag
+             */
+            morphon(validator: TagResponsiveValidator, callback:TagResponsiveCallback)
+            {
+                this._responsive_handle.on(validator, callback);
+            }
+
+            /**
+             * Unregister a responsive event from this tag
+             * 
+             * @param {TagResponsiveValidator} responsive validator
+             * @memberof AFXTag
+             */
+            morphoff(validator: TagResponsiveValidator)
+            {
+                this._responsive_handle.off(validator);
             }
 
             /**

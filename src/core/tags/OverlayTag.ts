@@ -136,6 +136,7 @@ namespace OS {
                             w: this.width,
                             h: this.height,
                         },
+                        root: true
                     });
                 }
 

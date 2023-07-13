@@ -548,6 +548,9 @@ namespace OS {
                  */
                 private _data: GenericObject<any>[];
 
+                private _drop: (any) => void;
+                private _show: (any) => void;
+
                 /**
                  * Event data passing between mouse event when performing
                  * drag and drop on the list
@@ -577,6 +580,8 @@ namespace OS {
                     ) => {};
                     this._selectedItems = [];
                     this._selectedItem = undefined;
+                    this._drop = (e) => {this.dropoff(e)};
+                    this._show = (e) => {this.showlist(e)};
                 }
 
                 /**
@@ -617,23 +622,18 @@ namespace OS {
                     $(this.refs.container).removeAttr("style");
                     $(this.refs.mlist).removeAttr("style");
                     $(this).removeClass("dropdown");
-                    const drop = (e: any) => {
-                        return this.dropoff(e);
-                    };
-                    const show = (e: any) => {
-                        return this.showlist(e);
-                    };
                     if (v) {
                         $(this).addClass("dropdown");
                         $(this.refs.current).show();
-                        $(document).on("click", drop);
-                        $(this.refs.current).on("click", show);
+                        $(document).on("click", this._drop);
+                        $(this.refs.current).on("click", this._show);
                         $(this.refs.mlist).hide();
                         this.calibrate();
                     } else {
+                        $(document).off("click", this._drop);
+                        $(this.refs.current).off("click", this._show);
                         $(this.refs.current).hide();
-                        $(document).off("click", drop);
-                        $(this.refs.current).off("click", show);
+                        $(this.refs.mlist).show();
                     }
                 }
 
@@ -1157,10 +1157,11 @@ namespace OS {
                             );
                         }
                     }
-
+                    
+                    // set the label content event it is hidden
+                    const label = this.refs.drlabel as LabelTag;
+                    label.set(e.data.data);
                     if (this.dropdown) {
-                        const label = this.refs.drlabel as LabelTag;
-                        label.set(e.data.data);
                         $(this.refs.mlist).hide();
                     }
                     const evt = { id: this.aid, data: edata };
@@ -1350,23 +1351,37 @@ namespace OS {
                 }
 
                 /**
-                 * Scroll the list view to bottom
+                 * Scroll the list view to end
                  * 
                  * @memberof ListViewTag
                  */
-                scroll_to_bottom()
+                scroll_to_end()
                 {
-                    this.refs.mlist.scrollTo({ top: this.refs.mlist.scrollHeight, behavior: 'smooth' })
+                    if(this.dir == "vertical")
+                    {
+                        this.refs.mlist.scrollTo({ top: this.refs.mlist.scrollHeight, behavior: 'smooth' });
+                    }
+                    else
+                    {
+                        this.refs.mlist.scrollTo({ left: this.refs.mlist.scrollWidth, behavior: 'smooth' });
+                    }
                 }
 
                 /**
-                 * Scroll the list view to top
+                 * Scroll the list view to beginning
                  * 
                  * @memberof ListViewTag
                  */
-                scroll_to_top()
+                scroll_to_start()
                 {
-                    this.refs.mlist.scrollTo({ top: 0, behavior: 'smooth' });
+                    if(this.dir == "vertical")
+                    {
+                        this.refs.mlist.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    else
+                    {
+                        this.refs.mlist.scrollTo({ left: 0, behavior: 'smooth' });
+                    }
                 }
 
                 /**
