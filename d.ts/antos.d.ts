@@ -2378,6 +2378,25 @@ declare namespace OS {
              */
             init(): Promise<any>;
             /**
+             * API function to register responsive UI event to the current window tag
+             *
+             * @protected
+             * @param {GUI.TagResponsiveValidator} responsive validator
+             * @param {GUI.TagResponsiveCallback} responsive callback
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected morphon(validator: GUI.TagResponsiveValidator, callback: GUI.TagResponsiveCallback): void;
+            /**
+             * API function to unregister responsive UI event from current window tag
+             *
+             * @protected
+             * @param {GUI.TagResponsiveValidator} responsive validator
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected morphoff(validator: GUI.TagResponsiveValidator): void;
+            /**
              * Render the application UI by first loading its scheme
              * and then mount this scheme to the DOM tree
              *
@@ -3063,7 +3082,7 @@ declare namespace OS {
          * @returns {HTMLElement}
          * @memberof BaseModel
          */
-        protected find(id: string): HTMLElement;
+        protected find<T extends HTMLElement>(id: string): T;
         /**
          * Select all DOM Element inside the UI of the model
          * using JQuery selector
@@ -3753,6 +3772,13 @@ declare namespace OS {
              * @memberof TagEventType
              */
             originalEvent?: any;
+            /**
+             * is root tag?
+             *
+             * @type {boolean}
+             * @memberof TagEventType
+             */
+            root?: boolean;
         }
         /**
          * Drag and Drop data type sent between mouse events
@@ -3779,8 +3805,51 @@ declare namespace OS {
         }
         /**
          * Tag event callback type
+         *
+         * @export
          */
         type TagEventCallback<T> = (e: TagEventType<T>) => void;
+        /**
+         * Tag responsive envent callback type
+         *
+         * @export
+         */
+        type TagResponsiveCallback = (fullfilled: boolean) => void;
+        /**
+         * Tag responsive validator type
+         *
+         * @export
+         */
+        type TagResponsiveValidator = (w: number, h: number) => boolean;
+        /**
+         * Definitions of some default tag responsive validators
+         *
+         * @export
+         */
+        const RESPONSIVE: {
+            /**
+             * Extra small devices (phones, 600px and down)
+             */
+            TINY: (w: number, _h: number) => boolean;
+            SMALL: (w: number, _h: number) => boolean;
+            MEDIUM: (w: number, _h: number) => boolean;
+            /**
+             * Large devices (laptops/desktops, 992px and up)
+             */
+            LARGE: (w: number, _h: number) => boolean;
+            /**
+             * Extra large devices (large laptops and desktops, 1200px and up)
+             */
+            HUGE: (w: number, _h: number) => boolean;
+            /**
+             * Portrait mode
+             */
+            PORTRAIT: (w: number, h: number) => boolean;
+            /**
+             * Landscape mode
+             */
+            LANDSCAPE: (w: number, h: number) => boolean;
+        };
         /**
          * Base abstract class for tag implementation, any AFX tag should be
          * subclass of this class
@@ -3819,7 +3888,16 @@ declare namespace OS {
              */
             protected _mounted: boolean;
             /**
-             *Creates an instance of AFXTag.
+             * a {@link ResponsiveHandle} to handle all responsive event
+             * related to this tag
+             *
+             * @private
+             * @memberof AFXTag
+             */
+            private _responsive_handle;
+            private _responsive_check;
+            /**
+             * Creates an instance of AFXTag.
              * @memberof AFXTag
              */
             constructor();
@@ -3863,6 +3941,28 @@ declare namespace OS {
              */
             set aid(v: string | number);
             get aid(): string | number;
+            /**
+             * Setter: Enable/disable responsive tag
+             *
+             * Getter: get responsive status
+             */
+            set responsive(v: boolean);
+            get responsive(): boolean;
+            /**
+             * Register a responsive event to this tag
+             *
+             * @param {TagResponsiveValidator} responsive validator
+             * @param {TagResponsiveCallback} responsive callback
+             * @memberof AFXTag
+             */
+            morphon(validator: TagResponsiveValidator, callback: TagResponsiveCallback): void;
+            /**
+             * Unregister a responsive event from this tag
+             *
+             * @param {TagResponsiveValidator} responsive validator
+             * @memberof AFXTag
+             */
+            morphoff(validator: TagResponsiveValidator): void;
             /**
              * Attach a data to this tag
              *
@@ -4396,6 +4496,8 @@ declare namespace OS {
                  * @memberof ListViewTag
                  */
                 private _data;
+                private _drop;
+                private _show;
                 /**
                  * Event data passing between mouse event when performing
                  * drag and drop on the list
@@ -4703,17 +4805,17 @@ declare namespace OS {
                  */
                 protected dropoff(e: any): void;
                 /**
-                 * Scroll the list view to bottom
+                 * Scroll the list view to end
                  *
                  * @memberof ListViewTag
                  */
-                scroll_to_bottom(): void;
+                scroll_to_end(): void;
                 /**
-                 * Scroll the list view to top
+                 * Scroll the list view to beginning
                  *
                  * @memberof ListViewTag
                  */
-                scroll_to_top(): void;
+                scroll_to_start(): void;
                 /**
                  * calibrate the list layout
                  *
@@ -5131,6 +5233,18 @@ declare namespace OS {
                  */
                 protected mount(): void;
                 /**
+                 * Scroll the tabbar to end
+                 *
+                 * @memberof TabBarTag
+                 */
+                scroll_to_end(): void;
+                /**
+                 * Scroll the tabbar to begin
+                 *
+                 * @memberof TabBarTag
+                 */
+                scroll_to_start(): void;
+                /**
                  * TabBar layout definition
                  *
                  * @protected
@@ -5403,6 +5517,13 @@ declare namespace OS {
                  * @memberof ResizerTag
                  */
                 protected mount(): void;
+                /**
+                 * Setter Disable or enable the resize event
+                 *
+                 * @memberof ResizerTag
+                 */
+                set disable(v: boolean);
+                get disable(): boolean;
                 /**
                  * Enable draggable on the element
                  *
@@ -6725,6 +6846,7 @@ declare namespace OS {
 declare namespace OS {
     namespace GUI {
         namespace tag {
+            type TileItemDirection = "row" | "column" | "row-reverse" | "column-reverse";
             /**
              * A tile layout organize it child elements
              * in a fixed horizontal or vertical direction.
@@ -6738,7 +6860,7 @@ declare namespace OS {
              * @class TileLayoutTag
              * @extends {AFXTag}
              */
-            class TileLayoutTag extends AFXTag {
+            export class TileLayoutTag extends AFXTag {
                 /**
                  *C reates an instance of TileLayoutTag.
                  * @memberof TileLayoutTag
@@ -6782,8 +6904,8 @@ declare namespace OS {
                  *
                  * @memberof TileLayoutTag
                  */
-                set dir(v: "row" | "column");
-                get dir(): "row" | "column";
+                set dir(v: TileItemDirection);
+                get dir(): TileItemDirection;
                 /**
                  * Setter:
                  *
@@ -6797,6 +6919,15 @@ declare namespace OS {
                  */
                 set padding(v: number);
                 get padding(): number;
+                /**
+                 * setter: Reverse order of the content in the tile
+                 *
+                 * getter: return if the tile's content is in reversed order
+                 *
+                 * @meberof TileLayoutTags
+                 */
+                set reversed(v: boolean);
+                get reversed(): boolean;
                 /**
                  * Mount the element
                  *
@@ -6848,7 +6979,7 @@ declare namespace OS {
              * @class HBoxTag
              * @extends {TileLayoutTag}
              */
-            class HBoxTag extends TileLayoutTag {
+            export class HBoxTag extends TileLayoutTag {
                 /**
                  * Creates an instance of HBoxTag.
                  * @memberof HBoxTag
@@ -6869,7 +7000,7 @@ declare namespace OS {
              * @class VBoxTag
              * @extends {TileLayoutTag}
              */
-            class VBoxTag extends TileLayoutTag {
+            export class VBoxTag extends TileLayoutTag {
                 /**
                  *Creates an instance of VBoxTag.
                  * @memberof VBoxTag
@@ -6883,6 +7014,7 @@ declare namespace OS {
                  */
                 protected mount(): void;
             }
+            export {};
         }
     }
 }
