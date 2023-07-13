@@ -468,6 +468,7 @@ namespace OS {
                     this.observable.trigger("resize", {
                         id: this.aid,
                         data: o,
+                        root: true
                     });
                 }
 

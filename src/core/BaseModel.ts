@@ -701,11 +701,15 @@ namespace OS {
          * @returns {HTMLElement}
          * @memberof BaseModel
          */
-        protected find(id: string): HTMLElement {
+        protected find<T extends HTMLElement>(id: string): T {
             if (this.scheme) {
-                return $(`[data-id='${id}']`, this.scheme)[0];
+                return $(`[data-id='${id}']`, this.scheme)[0] as T;
             }
         }
+
+        /*protected $(id: string) : T {
+            return this.find(id) as T;
+        }*/
 
         /**
          * Select all DOM Element inside the UI of the model

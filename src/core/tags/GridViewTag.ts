@@ -1248,6 +1248,7 @@ namespace OS {
                         {
                             el: "div",
                             ref: "container",
+                            class: "grid_content_container",
                             children: [{ el: "div", ref: "grid" }],
                         },
                     ];

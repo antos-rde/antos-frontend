@@ -258,6 +258,42 @@ namespace OS {
                 }
 
                 /**
+                 * Scroll the tabbar to end
+                 * 
+                 * @memberof TabBarTag
+                 */
+                scroll_to_end()
+                {
+                    const list_container = $(".list-container", this.refs.list)[0];
+                    if(this.dir == "vertical")
+                    {
+                        list_container.scrollTo({ top: list_container.scrollHeight, behavior: 'smooth' });
+                    }
+                    else
+                    {
+                        list_container.scrollTo({ left: list_container.scrollWidth, behavior: 'smooth' });
+                    }
+                }
+
+                /**
+                 * Scroll the tabbar to begin
+                 * 
+                 * @memberof TabBarTag
+                 */
+                scroll_to_start()
+                {
+                    const list_container = $(".list-container", this.refs.list)[0];
+                    if(this.dir == "vertical")
+                    {
+                        list_container.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    else
+                    {
+                        list_container.scrollTo({ left: 0, behavior: 'smooth' });
+                    }
+                }
+
+                /**
                  * TabBar layout definition
                  *
                  * @protected

@@ -145,6 +145,33 @@ namespace OS {
             }
 
             /**
+             * API function to register responsive UI event to the current window tag
+             *
+             * @protected
+             * @param {GUI.TagResponsiveValidator} responsive validator
+             * @param {GUI.TagResponsiveCallback} responsive callback
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected morphon(validator: GUI.TagResponsiveValidator, callback: GUI.TagResponsiveCallback)
+            {
+                const win = this.scheme as GUI.tag.WindowTag;
+                win.morphon(validator, callback);
+            }
+            /**
+             * API function to unregister responsive UI event from current window tag
+             *
+             * @protected
+             * @param {GUI.TagResponsiveValidator} responsive validator
+             * @returns {void}
+             * @memberof BaseApplication
+             */
+            protected morphoff(validator: GUI.TagResponsiveValidator)
+            {
+                const win = this.scheme as GUI.tag.WindowTag;
+                win.morphoff(validator);
+            }
+            /**
              * Render the application UI by first loading its scheme
              * and then mount this scheme to the DOM tree
              *
