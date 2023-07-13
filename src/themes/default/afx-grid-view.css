@@ -1,0 +1,47 @@
+/*afx-grid-view afx-grid-row:nth-child(even) afx-grid-cell
+{
+    background-color: var(--item-bg-even);
+}
+
+afx-grid-view afx-grid-row:nth-child(odd) afx-grid-cell
+{
+    background-color: var(--item-bg-odd);
+}
+
+afx-grid-view .grid_content_container {
+    background-color: var(--background-tertiary);
+}
+*/
+afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
+{
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
+}
+afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-selected
+{
+    font-weight: normal;
+}
+
+
+afx-grid-view .grid_row_header afx-grid-cell{
+    border:0;
+}
+
+afx-grid-view afx-grid-row.grid_row_header div{
+    border-top:1px solid var(--border-quaternary);
+}
+
+
+afx-grid-view afx-resizer.horizontal{
+    background-color: transparent;
+    border-left: 1px solid var(--border-primary);
+    border-right: 1px solid var(--border-primary);
+    /* border-left: 1px solid #cbcbcb; */
+}
+
+afx-grid-view .grid_row_header afx-grid-cell{
+    background-color: var(--background-secondary);
+    border-top: 1px solid var(--border-primary);
+    /*border-right: 1px solid #262626;*/
+    border-bottom: 1px solid var(--border-primary);
+}

@@ -6,13 +6,12 @@ afx-switch span{
 }
 afx-switch span:before{
     content: "\f204"; 
-    color: #414339;
     font-style: normal;
     font-weight: normal;
 }
 afx-switch span.swon:before{
     content: "\f205";
-    color: #116cd6;
+    color: var(--item-bg-active);
     font-style: normal;
     font-weight: normal;
 }

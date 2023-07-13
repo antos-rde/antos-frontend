@@ -1,17 +1,17 @@
 
 afx-slider div.container{
     border-radius: 3px;
-    background-color: #868686;
+    background-color: var(--background-quaternary);
 }
 
 afx-slider div.progress {
-    background-color: #116cd6;
+    background-color: var(--item-bg-active);
     border-radius: 3px;
 }
 
 afx-slider div.dragpoint {
-    border:1px solid #262626;
-    background-color:#868686;
+    border:1px solid var(--border-primary);
+    background-color:var(--background-quaternary);
 }
 
 afx-slider div.dragpoint::before
@@ -22,7 +22,7 @@ afx-slider div.dragpoint::before
     left: 0;
     right: 0;
     text-align: center;
-    color:#868686;
+    color:var(--text-disable);
     bottom: -15px;
     display: block;
     height: 20px;

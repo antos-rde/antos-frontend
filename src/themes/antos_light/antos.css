@@ -1,59 +1,33 @@
-html,body{
-    color:#414339;
-}
+:root {
+    --antos-ant-color: #8685EF;
 
-#desktop > div > ul afx-list-item {
-    color: white;
-}
+    --text-primary: #414339;
+    --text-secondary: #5F548E; /*alternative to primary*/
+    --text-tertiary: white; /*usually for highlight text*/
+    --text-disable: #a6a6a6;
+    --text-warning: orangered;
+    --text-error: #df3154;
+    --text-info: green;
 
-#desktop > div > ul afx-list-item li.selected {
-    background-color: #116cd6;
-    border-radius: 6px;
-    color: white;
-}
+    --background-primary: #d0d0d0; /*main window*/
+    --background-secondary: #dfdfdf; /*main content*/
+    --background-tertiary: #e0e0e0; /* element content*/
+    --background-quaternary: #d2d2d2; /* highlight content element*/
+    --background-overlay: rgba(231,231,231,0.7); /*default overlay*/
 
-#desktop > div > ul afx-list-item i.file:before{
-    content: "\f15b\a"; 
-    font-family: "FontAwesome";
-    font-size: 32px;
-    display: block;
-    color: white;
-    font-style: normal;
-    font-weight: normal;
-}
+    --icon-primary: #414339;
+    --icon-secondary: #414339;
+    --icon-tertiary:  #76D2F9; /*#5F548E;*/
 
-#desktop > div > ul afx-list-item i.dir:before{
-    display: block;
-    content: "\f07b\a"; 
-    font-family: "FontAwesome";
-    font-size: 32px;
-    color: #76D2F9;
-    font-weight: normal;
-    font-style: normal;
-}
+    --item-bg-odd: #E6E6E6;
+    --item-bg-even: #f5F5F5;
+    --item-bg-active: #8685EF;/*#116cd6*/
+    --item-bg-hover: #C8C2E7;
 
-#systooltip {
-    border:1px solid #a6a6a6;
-    border-radius: 3px;
-    padding-left:3px;
-    padding-right:3px;
-    box-shadow: 1px 1px 1px #9f9F9F;
-    background-color: #e7e7e7;
-}
+    --border-primary:#a6a6a6;
+    --border-secondary: #a6a6a6;
+    --border-tertiary: #5F548E;
+    --border-quaternary: #A6A6A6;
 
-input {
-    outline: none;
-    padding: 2px;
-    border: 1px solid #a6a6a6;
-    background-color: #f6F6F6;
-    color: #414339;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-textarea {
-    color: #414339;
-    background-color: #f6F6F6;
-    outline: none;
-    border: 1px solid #a6a6a6;
-    box-sizing: border-box;
+    --shadow-primary: rgba(0,0,0,0.65);
 }

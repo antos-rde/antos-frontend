@@ -1,4 +1,4 @@
 afx-color-picker canvas.color-palette, afx-color-picker div.color-sample{
-    border: 1px solid #a6a6a6;
+    border: 1px solid var(--border-primary);
     /*border-radius: 3px;*/
 }

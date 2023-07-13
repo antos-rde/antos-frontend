@@ -1,5 +1,5 @@
 afx-nspinner ul li{
-    border: 1px solid #262626;
+    border: 1px solid var(--border-primary);
 }
 
 afx-nspinner ul li.incr{
@@ -14,5 +14,5 @@ afx-nspinner ul li.decr{
 }
 
 afx-nspinner ul li:hover{
-    color:#116cD6;
+    color:var(--item-bg-active);
 }

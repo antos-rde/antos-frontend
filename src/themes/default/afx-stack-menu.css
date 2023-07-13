@@ -1,24 +1,26 @@
 afx-list-view > div.list-container > ul afx-stack-menu-item.afx-list-item li:hover  {
-    background-color: #cecece;
-}
-afx-list-view > div.list-container > ul afx-stack-menu-item.afx-list-item li.selected afx-switch span:before
-{
-    color:white;
+    background-color: var(--item-bg-hover);
 }
 
-afx-list-view > div.list-container > ul > afx-stack-menu-item.afx-list-item > li.selected{
-    background-color: #116cd6;
-    color:white;
+afx-list-view > div.list-container > ul afx-stack-menu-item.afx-list-item li.selected afx-switch span:before
+{
+    color:var(--text-tertiary);
 }
+
+
+afx-list-view > div.list-container > ul > afx-stack-menu-item.afx-list-item > li.selected{
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
+}
+
 afx-stack-menu > afx-button button
 {
     border-radius: 0;
 }
-
 afx-stack-menu.context {
-    border:1px solid #a6a6a6;
+    border:1px solid var(--border-primary);
     border-radius: 5px;
     border-top-left-radius: 0px;
-    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
-    background-color: #e7e7e7;
+    box-shadow: 0px 3px 6px 0px var(--shadow-primary);
+    background-color: var(--background-secondary);
 }

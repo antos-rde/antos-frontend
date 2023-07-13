@@ -1,6 +1,7 @@
 afx-file-view afx-label.status{
-    background-color: #f6F6F6;
-    border-top: 1px solid #cbcbcb;
+    background-color: var(--background-tertiary);
+    border-top: 1px solid var(--border-primary);
+
 }
 afx-file-view afx-list-view > div.list-container > ul  li{
     background-color: transparent;
@@ -12,7 +13,7 @@ afx-file-view afx-list-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
     font-size: 35px;
-    color: #76D2F9;
+    color: var(--icon-tertiary);
     font-weight: normal;
     font-style: normal;
 }
@@ -26,29 +27,33 @@ afx-file-view afx-list-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
     font-size: 30px;
+    color: var(--text-primary);
     font-style: normal;
     font-weight: normal;
 }
-afx-file-view afx-list-view > div.list-container > ul > .afx-list-item > li.selected
+
+afx-file-view afx-list-view > div.list-container > ul > .afx-list-item > li.selected,
+afx-file-view afx-list-view > div.list-container > ul > .afx-list-item > li.selected i.dir::before
 {
-    background-color: #116cd6;
-    color:white;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
     border-radius: 6px;
 }
+
 afx-file-view afx-grid-view{
     padding:0;
 }
 afx-file-view afx-grid-view i.file:before{
     content: "\f016"; 
     font-family: "FontAwesome";
-    color: #414339;
+    color: var(--text-primary);
     font-style: normal;
     font-weight: normal;
 }
 afx-file-view afx-grid-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
-    color: #76D2F9;
+    color: var(--icon-tertiary);
     font-style: normal;
     font-weight: normal;
 }
@@ -56,18 +61,18 @@ afx-file-view afx-grid-view i{
     margin-right: 5px;
 }
 afx-file-view afx-grid-view afx-grid-row.afx-grid-row-selected  i:before{
-    color:white;
+    color:var(--text-tertiary);
 }
 
 afx-file-view afx-tree-view .afx-tree-view-folder-close:before{
     content: "\f07b"; 
     font-family: "FontAwesome";
-    color:#76D2F9;
+    color:var(--icon-tertiary);
 }
 afx-file-view afx-tree-view .afx-tree-view-folder-open:before{
     content: "\f07c"; 
     font-family: "FontAwesome";
-    color:#76D2F9;
+    color:var(--icon-tertiary);
 }
 
 afx-file-view afx-tree-view .afx-tree-view-item:before{
@@ -82,13 +87,16 @@ afx-file-view afx-tree-view div.afx_tree_item_selected, afx-file-view afx-tree-v
 }
 
 afx-file-view afx-tree-view div.afx_tree_item_selected ul{
-    background-color: #116cd6;
-    color:white;
-    border-radius: 0x;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
+    border-radius: 0;
     
 }
-afx-file-view afx-tree-view div.afx_tree_item_selected i.file:before{
-    color:white;
+afx-file-view afx-tree-view div.afx_tree_item_selected i:before,
+afx-file-view afx-tree-view div.afx_tree_item_selected .afx-tree-view-folder-close:before,
+afx-file-view afx-tree-view div.afx_tree_item_selected .afx-tree-view-folder-open:before
+{
+    color:var(--text-tertiary);
 }
 
 afx-file-view afx-tree-view .afx_folder_item{

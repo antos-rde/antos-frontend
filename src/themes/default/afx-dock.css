@@ -1,0 +1,27 @@
+afx-apps-dock{
+    background-color:var(--background-primary);
+    padding:0;
+    padding-top: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-left:1px solid var(--border-primary);
+    border-right:1px solid var(--border-primary);
+    box-shadow: none;
+}
+
+afx-apps-dock afx-button > button:hover {
+    background-color: var(--item-bg-hover);
+}
+afx-apps-dock afx-button.plural > button:hover
+{
+    border-top: 3px double var(--border-quaternary);
+}
+afx-apps-dock afx-button.selected > button {
+    background-color: var(--background-tertiary);
+    color: var(--text-primary);
+    border: 0;
+    border-bottom: 2px solid var(--border-tertiary);
+}
+afx-apps-dock afx-button.plural.selected > button {
+    border-top: 3px double var(--border-quaternary);
+}
