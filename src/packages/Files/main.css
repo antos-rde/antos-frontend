@@ -1,9 +1,6 @@
-/*afx-app-window[data-id ='files-app-window'] afx-list-view{
-    border-top:1px solid #A6A6A6;
-}*/
+
 afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri']{
     border-right: 0;
-    /* border-top:1px solid #A6A6A6; */
     padding:0;
 }
 afx-app-window[data-id ='files-app-window'] afx-file-view afx-list-view i:before{
@@ -12,20 +9,37 @@ afx-app-window[data-id ='files-app-window'] afx-file-view afx-list-view i:before
     font-style: normal;
     text-align: center;
 }
-afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri'] li{
-    background-color: transparent;
+
+afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri'] li.selected {
+    background-color: var(--background-quaternary) !important;
+    color:var(--text-secondary) !important;
 }
-afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri']   li.selected {
-    background-color: #cecece;
-    color:#414339;
-}
-afx-app-window[data-id ='files-app-window'] .afx-window-top{
-    border-bottom: 0;
-}
-afx-app-window[data-id ='files-app-window'] afx-vbox[data-id = "nav-bar"]{
-    background-color: #dfdfdf;
+
+afx-app-window[data-id ='files-app-window'] afx-file-view {
+    background-color: var(--background-tertiary);
 }
 
 afx-app-window[data-id ='files-app-window'] button{
     border-radius: 0;
+}
+afx-app-window[data-id ='files-app-window'] afx-tab-bar[data-id ='path-nav'] afx-list-view > div.list-container > ul li{
+    padding: 0;
+    padding-right: 7px;
+    padding-left: 7px;
+    border: 0;
+}
+
+afx-app-window[data-id ='files-app-window'] afx-hbox[data-id ='nav-bar'] {
+    border-bottom: 1px solid var(--border-primary);
+}
+
+afx-app-window[data-id ='files-app-window'] afx-tab-bar[data-id ='path-nav'] afx-list-view > div.list-container > ul li::before{
+    content: "\F27B";
+    font-family: "bootstrap-icons";
+    font-style: normal;
+    /* font-size: 41px; */
+    display: block;
+    position: absolute;
+    color: var(--text-secondary);
+    right: -7px
 }

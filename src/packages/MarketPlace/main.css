@@ -25,8 +25,8 @@ afx-app-window[data-id="marketplace-win"] ul[data-id='app-detail'] {
     font-size: 13px;
 }
 afx-app-window[data-id="marketplace-win"] afx-tab-bar {
-    border-top: 1px solid #c3c3c3;
-    border-bottom: 1px solid #c3c3c3;
+    border-top: 1px solid var(--border-quaternary);
+    border-bottom: 1px solid var(--border-quaternary);
 }
 afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] input{
     border: 0;
@@ -35,7 +35,7 @@ afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="search-container"] i
 afx-app-window[data-id="marketplace-win"] div[data-id="searchicon"]:before{
     content: "\f002";
     background-color:transparent;
-    color:#afafaf;
+    color: var(--text-disable);
     font-family: "FontAwesome";
     padding-left:5px;
     display: flex;
@@ -63,7 +63,7 @@ afx-app-window[data-id="marketplace-win"] span.info-detail
 }
 afx-app-window[data-id="marketplace-win"] afx-label[data-id="vstat"] {
     font-size: 11px;
-    color: chocolate;
+    color: var(--text-warning);
 }
 afx-app-window[data-id="marketplace-win"] p.stat {
     margin: 0;
@@ -124,14 +124,14 @@ afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"]> div.
 }
 afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li:hover
 {
-    background-color: #cecece;
-    color: #262626;
+    background-color: var(--item-bg-hover);
+    color: var(--text-primary);
     border-radius: 10px;
 }
 afx-app-window[data-id="marketplace-win"] afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li.selected
 {
-    background-color: #116cd6;
-    color:white;
+    background-color: var(--item-bg-active);
+    color:var(--text-tertiary);
     border-radius: 10px;
 }
 
@@ -142,7 +142,7 @@ afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"] afx-but
 afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"]
 {
     border-radius: 0;
-    border-bottom: 1px solid #c3c3c3;
+    border-bottom: 1px solid var(--border-quaternary);
 }
 afx-app-window[data-id="marketplace-win"] afx-hbox[data-id="app-header"] afx-button[data-id="appname"] i.label-text
 {

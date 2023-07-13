@@ -15,7 +15,8 @@ afx-list-view[data-id = "notifylist"]
     padding:0;
 }
 afx-list-view[data-id = "notifylist"] > div.list-container > ul li{
-    border:1px solid #464646;
+    border:1px solid var(--border-quaternary);
+    background-color: var(--item-bg-odd);
     border-radius: 3px;
     margin-bottom: 5px;
     -ms-word-break: break-all;

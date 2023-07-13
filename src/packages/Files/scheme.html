@@ -1,12 +1,17 @@
-<afx-app-window data-id = "files-app-window" apptitle="Files" width="600" height="500">
-        <afx-vbox>
-            <afx-hbox data-height = "35" data-id = "nav-bar">
+<afx-app-window data-id = "files-app-window" apptitle="Files" width="600" height="500" responsive="true">
+        <afx-tile data-id="container" name="vbox" dir="column">
+            <afx-tile data-height = "35" min-width="120" data-width="180" data-id = "nav-bar" name="hbox" dir="row">
                 <afx-list-view data-id = "favouri" dropdown="true"></afx-list-view>
-                <div data-width = "2"></div>
-                <afx-button data-width = "40" data-id = "btback" iconclass = "fa fa-arrow-up"></afx-button>
-                <afx-button data-width = "40" data-id = "btgrid" iconclass = "fa fa-th"></afx-button>
-                <afx-button data-width = "40" data-id = "btlist" iconclass = "fa fa-th-list"></afx-button>
-            </afx-hbox>
-            <afx-file-view data-id = "fileview"></afx-file-view>           
-        </afx-vbox>
+            </afx-tile>
+            <afx-resizer data-id="resizer" dir="ve" disable="true" data-width="3" data-height="0"></afx-resizer>
+            <afx-vbox>
+                <afx-hbox data-width="120" data-height="35" data-id="nav-bar">
+                    <afx-tab-bar data-id = "path-nav" dir="horizontal" ></afx-tab-bar>
+                    <afx-button data-width = "40" data-id = "btback" iconclass = "fa fa-arrow-up"></afx-button>
+                    <afx-button data-width = "40"  data-id = "btgrid" iconclass = "fa fa-th"></afx-button>
+                    <afx-button data-width = "40"  data-id = "btlist" iconclass = "fa fa-th-list"></afx-button>
+                </afx-hbox>
+                <afx-file-view data-id = "fileview"></afx-file-view>
+            </afx-vbox>           
+        </afx-tile>
     </afx-app-window>

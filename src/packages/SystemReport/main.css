@@ -8,7 +8,7 @@ afx-app-window[data-id ='SystemReport'] .afx-bug-list-item-error {
 }
 
 afx-app-window[data-id ='SystemReport'] .afx-bug-list-item-error i::before {
-    color: chocolate;
+    color: var(--text-error);
 }
 afx-app-window[data-id ='SystemReport'] .afx-bug-list-item-time{
     display: block;
@@ -19,10 +19,11 @@ afx-app-window[data-id ='SystemReport'] .afx-bug-list-item-time i.label-text{
     font-style: italic;
 }
 
+/*
 afx-app-window[data-id ='SystemReport'] afx-bug-list-item li.selected {
     background-color: #116cd6;
     color: white;
-}
+}*/
 
 afx-app-window[data-id ='SystemReport'] pre {
     padding: 10px;

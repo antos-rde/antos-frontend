@@ -130,6 +130,17 @@ namespace OS {
                             );
                         });
                 };
+                this.morphon(GUI.RESPONSIVE.MEDIUM, (fulfilled:boolean) => {
+
+                    if(fulfilled)
+                    {
+                        containter.dir = "row";
+                    }
+                    else
+                    {
+                        containter.dir = "column";
+                    }
+                });
             }
         }
         Setting.singleton = true;
