@@ -109,7 +109,6 @@ namespace OS {
                     if (!v) {
                         return;
                     }
-                    console.log("direction is", v);
                     (this.refs.list as ListViewTag).dir = v;
                 }
                 get dir(): string {
