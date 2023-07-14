@@ -4624,9 +4624,9 @@ declare namespace OS {
                  */
                 set buttons(v: GenericObject<any>[]);
                 /**
-                 * Getter: Get list direction: horizontal or vertical (default)
+                 * Getter: Get list direction: row or column (default)
                  *
-                 * Setter: Get list direction: horizontal or vertical
+                 * Setter: Get list direction: row or column
                  *
                  * @type {string}
                  * @memberof ListViewTag
@@ -5155,8 +5155,8 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set the tab bar direction:
-                 * - `horizontal`: horizontal direction
-                 * - `vertical`: vertical direction
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
                  *
                  * Getter:
                  *
@@ -5477,8 +5477,8 @@ declare namespace OS {
                  * Setter:
                  *
                  * Set resize direction, two possible values:
-                 * - `hz` - horizontal direction, resize by width
-                 * - `ve` - vertical direction, resize by height
+                 * - `row` - horizontal direction, resize by width
+                 * - `column` - vertical direction, resize by height
                  *
                  * Getter:
                  *

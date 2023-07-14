@@ -1267,7 +1267,7 @@ namespace OS {
         schemes.ws = `\
 <afx-sys-panel id = "syspanel"></afx-sys-panel>
 <div id = "workspace">
-    <afx-desktop id = "desktop" dir="vertical" ></afx-desktop>
+    <afx-desktop id = "desktop" dir="column" ></afx-desktop>
     <afx-notification id="sys_notification" ></afx-notification>
 </div>
 <afx-stack-menu id="contextmenu" data-id="contextmenu" context="true" style="display:none;"></afx-stack-menu>

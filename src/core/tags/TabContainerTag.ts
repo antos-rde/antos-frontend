@@ -133,13 +133,13 @@ namespace OS {
                         return;
                     }
                     (this.refs.wrapper as TileLayoutTag).dir = v;
-                    if(v === "row")
+                    if(v == "row")
                     {
-                        (this.refs.bar as TabBarTag).dir = "vertical";
+                        (this.refs.bar as TabBarTag).dir = "column";
                     }
                     else
                     {
-                        (this.refs.bar as TabBarTag).dir = "horizontal";
+                        (this.refs.bar as TabBarTag).dir = "row";
                     }
                 }
                 get dir(): "row" | "column" {

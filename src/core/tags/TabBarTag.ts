@@ -64,7 +64,7 @@ namespace OS {
                  */
                 protected init(): void {
                     this.selected = -1;
-                    this.dir = "horizontal";
+                    this.dir = "row";
                     this._previous_touch = {x: 0, y:0};
                 }
 
@@ -95,8 +95,8 @@ namespace OS {
                  * Setter:
                  * 
                  * Set the tab bar direction:
-                 * - `horizontal`: horizontal direction
-                 * - `vertical`: vertical direction
+                 * - `row`: horizontal direction
+                 * - `column`: vertical direction
                  * 
                  * Getter:
                  * 
@@ -109,6 +109,7 @@ namespace OS {
                     if (!v) {
                         return;
                     }
+                    console.log("direction is", v);
                     (this.refs.list as ListViewTag).dir = v;
                 }
                 get dir(): string {
@@ -233,7 +234,7 @@ namespace OS {
                             const offset = {x:0, y:0};
                             offset.x = this._previous_touch.x - e.touches[0].pageX ;
                             offset.y = this._previous_touch.y - e.touches[0].pageY; 
-                            if(this.dir == "horizontal")
+                            if(this.dir == "row")
                             {
                                 el.scrollLeft += offset.x;
                             }
@@ -245,7 +246,7 @@ namespace OS {
                             this._previous_touch.y = e.touches[0].pageY;
                         }, {passive: true});
                         el.addEventListener("wheel", (evt)=>{
-                            if(this.dir == "horizontal")
+                            if(this.dir == "row")
                             {
                                 el.scrollLeft += (evt as WheelEvent).deltaY;
                             }
@@ -265,7 +266,7 @@ namespace OS {
                 scroll_to_end()
                 {
                     const list_container = $(".list-container", this.refs.list)[0];
-                    if(this.dir == "vertical")
+                    if(this.dir == "column")
                     {
                         list_container.scrollTo({ top: list_container.scrollHeight, behavior: 'smooth' });
                     }
@@ -283,7 +284,7 @@ namespace OS {
                 scroll_to_start()
                 {
                     const list_container = $(".list-container", this.refs.list)[0];
-                    if(this.dir == "vertical")
+                    if(this.dir == "column")
                     {
                         list_container.scrollTo({ top: 0, behavior: 'smooth' });
                     }
