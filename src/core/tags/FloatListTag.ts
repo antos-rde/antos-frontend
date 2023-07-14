@@ -169,7 +169,7 @@ namespace OS {
                                 .css("left", `${cleft}px`);
                             const w = $(e).width();
                             const h = $(e).height();
-                            if (this.dir === "vertical") {
+                            if (this.dir === "column") {
                                 ctop += h + 20;
                                 if (ctop + h > gh) {
                                     ctop = 20;

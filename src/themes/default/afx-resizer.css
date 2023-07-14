@@ -1,13 +1,16 @@
-afx-resizer.vertical {
+afx-resizer[dir='column'] {
     background-color: transparent;
     border-top: 1px solid var(--border-primary);
+    cursor: row-resize;
 }
-afx-resizer.horizontal {
+afx-resizer[dir='row']  {
     background-color: transparent;
     border-left: 1px solid var(--border-primary);
+    cursor: col-resize;
 }
 
-afx-resizer.horizontal:hover, afx-resizer.vertical:hover
+afx-resizer[dir='row']:hover,
+afx-resizer[dir='column']:hover
 {
     background-color: var(--item-bg-active);
 }

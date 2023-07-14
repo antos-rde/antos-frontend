@@ -92,8 +92,8 @@ namespace OS {
                  * Setter:
                  *
                  * Set resize direction, two possible values:
-                 * - `hz` - horizontal direction, resize by width
-                 * - `ve` - vertical direction, resize by height
+                 * - `row` - horizontal direction, resize by width
+                 * - `column` - vertical direction, resize by height
                  *
                  * Getter:
                  *
@@ -105,18 +105,14 @@ namespace OS {
                     let att: string;
                     $(this).attr("dir", v);
                     $(this).off("pointerdown", null);
-                    if (v === "hz") {
-                        $(this).css("cursor", "col-resize");
-                        $(this).addClass("horizontal");
+                    if (v === "row") {
                         if (this._resizable_el) {
                             att = $(this._resizable_el).attr("min-width");
                             if (att) {
                                 this._minsize = parseInt(att);
                             }
                         }
-                    } else if (v === "ve") {
-                        $(this).css("cursor", "row-resize");
-                        $(this).addClass("vertical");
+                    } else if (v === "column") {
                         if (this._resizable_el) {
                             att = $(this._resizable_el).attr("min-height");
                             if (att) {
@@ -192,11 +188,11 @@ namespace OS {
                         return;
                     }
                     if (tagname === "AFX-HBOX") {
-                        this.dir = "hz";
+                        this.dir = "row";
                     } else if (tagname === "AFX-VBOX") {
-                        this.dir = "ve";
+                        this.dir = "column";
                     } else {
-                        this.dir = "hz";
+                        this.dir = "row";
                     }
                 }
 
@@ -235,9 +231,9 @@ namespace OS {
                             if (!this._resizable_el) {
                                 return;
                             }
-                            if (this.dir === "hz") {
+                            if (this.dir === "row") {
                                 return this.horizontalResize(evt as JQuery.MouseEventBase);
-                            } else if (this.dir === "ve") {
+                            } else if (this.dir === "column") {
                                 return this.verticalResize(evt as JQuery.MouseEventBase);
                             }
                         });

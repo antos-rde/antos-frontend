@@ -777,9 +777,9 @@ namespace OS {
                     }
                 }
                 /**
-                 * Getter: Get list direction: horizontal or vertical (default)
+                 * Getter: Get list direction: row or column (default)
                  *
-                 * Setter: Get list direction: horizontal or vertical
+                 * Setter: Get list direction: row or column
                  *
                  * @type {string}
                  * @memberof ListViewTag
@@ -787,7 +787,7 @@ namespace OS {
                 set dir(v: string) {
                     if(this.dropdown)
                     {
-                        $(this).attr("dir", "vertical");
+                        $(this).attr("dir", "column");
                     }
                     else
                     {
@@ -1357,7 +1357,7 @@ namespace OS {
                  */
                 scroll_to_end()
                 {
-                    if(this.dir == "vertical")
+                    if(this.dir == "column")
                     {
                         this.refs.mlist.scrollTo({ top: this.refs.mlist.scrollHeight, behavior: 'smooth' });
                     }
@@ -1374,7 +1374,7 @@ namespace OS {
                  */
                 scroll_to_start()
                 {
-                    if(this.dir == "vertical")
+                    if(this.dir == "column")
                     {
                         this.refs.mlist.scrollTo({ top: 0, behavior: 'smooth' });
                     }

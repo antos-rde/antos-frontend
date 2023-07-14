@@ -16,12 +16,12 @@ afx-tab-bar afx-list-view > div.list-container > ul li
     padding-right: 10px;
 }
 
-afx-tab-bar[dir="vertical"] afx-list-view > div.list-container
+afx-tab-bar[dir="column"] afx-list-view > div.list-container
 {
     overflow: hidden;
 }
 
-afx-tab-bar[dir="horizontal"] afx-list-view > div.list-container
+afx-tab-bar[dir="row"] afx-list-view > div.list-container
 {
     overflow: hidden;
 }

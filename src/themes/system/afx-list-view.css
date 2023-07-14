@@ -35,7 +35,7 @@ afx-list-view  > div.list-container > ul  li{
 afx-list-view  > div.list-container > ul afx-dbline-list-item li{
     min-height: 40px;
 }
-.afx-list-view[dir='horizontal']  > div.list-container > ul
+.afx-list-view[dir='row']  > div.list-container > ul
 {
     display: flex;
     flex-direction: row;

@@ -374,7 +374,7 @@ namespace OS {
 
                         fav.dropdown = false;
 
-                        resizer.dir = "hz";
+                        resizer.dir = "row";
                         resizer.disable = false;
                     }
                     else
@@ -388,7 +388,7 @@ namespace OS {
 
                         fav.dropdown = true;
 
-                        resizer.dir = "ve";
+                        resizer.dir = "column";
                         resizer.disable = true;
                     }
                 });
