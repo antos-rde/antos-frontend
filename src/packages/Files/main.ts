@@ -252,15 +252,20 @@ namespace OS {
                     const matched = this.favo.data.map((e,i) => {
                         return {
                             path: e.path,
-                            index:i
+                            index:i,
                         }
                     })
                     .filter(e => {
                         return dir.path.startsWith(e.path as string);
+                    })
+                    .sort((x,y) => {
+                        if(x.path.length < y.path.length) return 1;
+                        if(x == y) return 0;
+                        return -1;
                     });
                     if(matched.length != 0)
                     {
-                        //console.log(matched[0]);
+                        // get the longest matched
                         this.favo.selected = matched[0].index;
                     }
                 }
@@ -482,7 +487,6 @@ namespace OS {
             }
 
             private mnFile(): GUI.BasicItemType{
-                //console.log file
                 const arr: GUI.BasicItemType = {
                     text: "__(File)",
                     nodes: [
