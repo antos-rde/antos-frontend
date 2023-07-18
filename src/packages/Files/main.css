@@ -43,3 +43,11 @@ afx-app-window[data-id ='files-app-window'] afx-tab-bar[data-id ='path-nav'] afx
     color: var(--text-secondary);
     right: -7px
 }
+afx-app-window[data-id ='files-app-window'] afx-tab-bar[data-id ='path-nav'] afx-list-view > div.list-container > ul > afx-list-item > li:hover{
+    color: var(--text-secondary);
+}
+
+afx-app-window[data-id ='files-app-window'] afx-tab-bar[data-id ='path-nav'] afx-list-view > div.list-container > ul > afx-list-item > li.selected {
+    background-color: transparent;
+    border: 0;
+}
