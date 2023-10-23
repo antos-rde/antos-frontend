@@ -19,8 +19,8 @@ html,body{
 body
 {
     background-image: url("wp/wp2.jpg");
-    background-size: "cover";
-    background-repeat: "repeat";
+    background-size: cover;
+    background-repeat: repeat;
 }
 #wrapper{
     margin: 0;
