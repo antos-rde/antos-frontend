@@ -42,7 +42,7 @@ namespace OS {
                  * @type {TagEventCallback<ListItemEventData>}
                  * @memberof ListViewItemTag
                  */
-                private _onctxmenu: TagEventCallback<ListItemEventData>;
+                //private _onctxmenu: TagEventCallback<ListItemEventData>;
 
                 /**
                  * Click event callback placeholder
@@ -77,7 +77,7 @@ namespace OS {
                  */
                 constructor() {
                     super();
-                    this._onselect = this._onctxmenu = this._onclick = this._ondbclick = this._onclose = (
+                    this._onselect /*= this._onctxmenu*/ = this._onclick = this._ondbclick = this._onclose = (
                         e
                     ) => {};
                 }
@@ -134,9 +134,11 @@ namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
+                /*
                 set onctxmenu(v: TagEventCallback<ListViewItemTag>) {
                     this._onctxmenu = v;
                 }
+                */
 
                 /**
                  * Set the item click event handle
@@ -173,10 +175,11 @@ namespace OS {
                  */
                 protected mount(): void {
                     $(this).addClass("afx-list-item");
-                    $(this.refs.item).on("contextmenu", (e) => {
+                    /*
+                    $(this.refs.item).on(OS.mobile?"longtouch":"contextmenu", (e) => {
                         this._onctxmenu({ id: this.aid, data: this });
                     });
-                    
+                    */
                     $(this.refs.item).on("click",(e) => {
                         this._onclick({ id: this.aid, data: this, originalEvent: e });
                         //e.stopPropagation();
@@ -960,9 +963,10 @@ namespace OS {
                     el[0].uify(this.observable);
                     const element = el[0] as ListViewItemTag;
                     $(element).attr("list-id",this.aid);
+                    /*
                     element.onctxmenu = (e) => {
                         return this.iclick(e, true);
-                    };
+                    };*/
                     element.onitemdbclick = (e) => {
                         this.idbclick(e);
                         this.iclick(e, false);

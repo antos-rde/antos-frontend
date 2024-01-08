@@ -4164,7 +4164,6 @@ declare namespace OS {
                  * @type {TagEventCallback<ListItemEventData>}
                  * @memberof ListViewItemTag
                  */
-                private _onctxmenu;
                 /**
                  * Click event callback placeholder
                  *
@@ -4223,7 +4222,6 @@ declare namespace OS {
                  *
                  * @memberof ListViewItemTag
                  */
-                set onctxmenu(v: TagEventCallback<ListViewItemTag>);
                 /**
                  * Set the item click event handle
                  *

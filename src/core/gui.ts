@@ -1099,7 +1099,7 @@ namespace OS {
             
             const ctxmenu = $("#contextmenu")[0];
             ctxmenu.uify(undefined);
-            $("#wrapper").on("contextmenu", (e) => bindContextMenu(e));
+            $("#wrapper").on(OS.mobile?"longtouch":"contextmenu", (e) => bindContextMenu(e as JQuery.MouseEventBase));
             // tooltip
             $(document).on("mouseover", function (e) {
                 const el: any = $(e.target).closest("[tooltip]");

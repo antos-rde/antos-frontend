@@ -2,6 +2,7 @@ afx-apps-dock{
     display: flex;
     flex-direction: row;
     overflow: hidden;
+    -webkit-user-select:none;
 }
 afx-apps-dock afx-button button{
     width: 40px;
