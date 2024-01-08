@@ -179,7 +179,7 @@ namespace OS {
                     
                     $(this.refs.item).on("click",(e) => {
                         this._onclick({ id: this.aid, data: this, originalEvent: e });
-                        e.stopPropagation();
+                        //e.stopPropagation();
                     });
 
                     $(this.refs.item).on(OS.mobile?"dbltap":"dblclick",(e) => {
