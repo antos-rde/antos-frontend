@@ -245,11 +245,11 @@ jQuery.event.special.dbltap = {
         var handleObj = event.handleObj,
             targetData = jQuery.data(event.target),
             now = new Date().getTime(),
-            delta = targetData.lastTouch ? now - targetData.lastTouch : 0,
+            delta = targetData.lastTouchEnd ? now - targetData.lastTouchEnd : 0,
             delay = delay == null ? 300 : delay;
 
         if (delta < delay && delta > 30) {
-            targetData.lastTouch = null;
+            targetData.lastTouchEnd = null;
             event.type = handleObj.origType;
             ['clientX', 'clientY', 'pageX', 'pageY'].forEach(function (property) {
                 event[property] = event.originalEvent.changedTouches[0][property];
@@ -258,8 +258,43 @@ jQuery.event.special.dbltap = {
             // let jQuery handle the triggering of "dbltap" event handlers
             handleObj.handler.apply(this, arguments);
         } else {
-            targetData.lastTouch = now;
+            targetData.lastTouchEnd = now;
         }
+    }
+};
+
+
+/**
+ * JQuery event-extensions to support long touch event on
+ * mobile device
+ */
+jQuery.event.special.longtouch = {
+    bindType: 'touchstart',
+    //delegateType: 'touchstart',
+
+    handle: function (evt: any) {
+        let targetData = jQuery.data(evt.target);
+        let handleObj = evt.handleObj;
+        targetData.lastTouchStart = new Date().getTime();
+        
+        $(evt.target).on("touchend", (event) => {
+            let now = new Date().getTime();
+            let end_targetData = jQuery.data(event.target);
+            let delta = end_targetData.lastTouchStart ? now - end_targetData.lastTouchStart : 0;
+            $(event.target).off("touchend");
+            const offset_top = Math.abs(event.originalEvent.changedTouches[0].clientY - evt.originalEvent.changedTouches[0].clientY);
+            const offset_left = Math.abs(event.originalEvent.changedTouches[0].clientX - evt.originalEvent.changedTouches[0].clientX);
+            console.log(offset_left, offset_top);
+            if(delta > 1000 && offset_top < 10 && offset_left < 10)
+            {
+                ['clientX', 'clientY', 'pageX', 'pageY'].forEach(function (property) {
+                    evt[property] = event.originalEvent.changedTouches[0][property];
+                })    
+                event.preventDefault();
+                evt.type = handleObj.origType;
+                handleObj.handler.apply(this, arguments);
+            }
+        });
     }
 };
 

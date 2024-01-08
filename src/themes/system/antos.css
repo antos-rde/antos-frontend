@@ -49,6 +49,7 @@ body
     margin: 0;
     right: 0;
     user-select:none;
+    -webkit-user-select:none;
     cursor: default;
     padding:0px;
     overflow: hidden;
