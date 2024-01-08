@@ -384,7 +384,7 @@ namespace OS {
                     $(this.refs.wrapper).on("click",(e) => {
                         this.selected = true;
                     });
-                    $(this.refs.wrapper).on("dblclick", (e) => {
+                    $(this.refs.wrapper).on(OS.mobile?"dbltap":"dblclick", (e) => {
                         this._evt.data.dblclick = true;
                         this.selected = true;
                     });

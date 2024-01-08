@@ -176,13 +176,13 @@ namespace OS {
                     $(this.refs.item).on("contextmenu", (e) => {
                         this._onctxmenu({ id: this.aid, data: this });
                     });
-
+                    
                     $(this.refs.item).on("click",(e) => {
                         this._onclick({ id: this.aid, data: this, originalEvent: e });
                         e.stopPropagation();
                     });
 
-                    $(this.refs.item).on("dblclick",(e) => {
+                    $(this.refs.item).on(OS.mobile?"dbltap":"dblclick",(e) => {
                         this._ondbclick({ id: this.aid, data: this, originalEvent: e });
                         e.stopPropagation();
                     });

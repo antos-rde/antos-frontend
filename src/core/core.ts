@@ -234,6 +234,36 @@ declare function __(...args: any[]): OS.FormattedString | string;
 declare function __e(e: Error): Error;
 
 /**
+ * JQuery event-extensions to support doubletap on
+ * mobile device
+ */
+jQuery.event.special.dbltap = {
+    bindType: 'touchend',
+    delegateType: 'touchend',
+
+    handle: function (event: any) {
+        var handleObj = event.handleObj,
+            targetData = jQuery.data(event.target),
+            now = new Date().getTime(),
+            delta = targetData.lastTouch ? now - targetData.lastTouch : 0,
+            delay = delay == null ? 300 : delay;
+
+        if (delta < delay && delta > 30) {
+            targetData.lastTouch = null;
+            event.type = handleObj.origType;
+            ['clientX', 'clientY', 'pageX', 'pageY'].forEach(function (property) {
+                event[property] = event.originalEvent.changedTouches[0][property];
+            })
+
+            // let jQuery handle the triggering of "dbltap" event handlers
+            handleObj.handler.apply(this, arguments);
+        } else {
+            targetData.lastTouch = now;
+        }
+    }
+};
+
+/**
  * This namespace is the main entry point of AntOS
  * API
  */
@@ -1196,16 +1226,14 @@ namespace OS {
          * @export
          * @param {Promise} a Promise object 
          */
-        export function Task(fn: ( resolve: (any)=>void,reject:(any)=>void) => void ): Promise<any>
-        {
-            return new Promise(async (ok,nok) =>{
+        export function Task(fn: (resolve: (any) => void, reject: (any) => void) => void): Promise<any> {
+            return new Promise(async (ok, nok) => {
                 const promise = new Promise(fn);
-                const ann:API.AnnouncementDataType<Promise<any>> = {} as API.AnnouncementDataType<Promise<any>>;
+                const ann: API.AnnouncementDataType<Promise<any>> = {} as API.AnnouncementDataType<Promise<any>>;
                 ann.name = "OS";
                 ann.u_data = promise;
                 ann.id = Math.floor(Math.random() * 1e6);
-                try
-                {
+                try {
                     ann.message = "ANTOS-TASK-PENDING";
                     announcer.trigger(ann.message, ann);
                     const data = await promise;
@@ -1213,8 +1241,7 @@ namespace OS {
                     ann.message = "ANTOS-TASK-FULFILLED";
                     announcer.trigger(ann.message, ann);
                 }
-                catch(e)
-                {
+                catch (e) {
                     ann.message = "ANTOS-TASK-REJECTED";
                     announcer.trigger(ann.message, ann);
                     nok(__e(e));
@@ -1235,8 +1262,7 @@ namespace OS {
          */
         export function post(p: string, d: any): Promise<any> {
             return API.Task(async (resolve, reject) => {
-                try
-                {
+                try {
                     $.ajax({
                         type: "POST",
                         url: p,
@@ -1261,8 +1287,7 @@ namespace OS {
                             reject(e);
                         });
                 }
-                catch(e)
-                {
+                catch (e) {
                     reject(__e(e));
                 }
             });
@@ -1306,14 +1331,14 @@ namespace OS {
          * @returns {Promise<any>}
          */
         export function upload(p: string, d: string): Promise<any> {
-            return new Promise( (resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 //insert a temporal file selector
                 const o =
                     $("<input>")
                         .attr("type", "file")
                         .attr("multiple", "true");
                 o.on("change", async () => {
-                    try{
+                    try {
                         const files = (o[0] as HTMLInputElement).files;
                         const formd = new FormData();
                         formd.append("path", d);
@@ -1338,8 +1363,7 @@ namespace OS {
                         });
                         resolve(ret);
                     }
-                    catch(e)
-                    {
+                    catch (e) {
                         reject(__e(e));
                     }
                 });
@@ -1805,17 +1829,16 @@ namespace OS {
          * @param {(obj: Object, key: string, value: any, path: any[]) => void} callback function
          * @returns {Proxy} the wrapper object
          */
-        export function watcher(target: GenericObject<any>, callback: (obj: Object, key: any, value: any, path:any[]) => void): Object
-        {
-            const create_handle_for = (path:any[]) => {
+        export function watcher(target: GenericObject<any>, callback: (obj: Object, key: any, value: any, path: any[]) => void): Object {
+            const create_handle_for = (path: any[]) => {
                 return {
                     get: (obj: Object, key: any) => {
-                        if(typeof obj[key] === "object" && obj[key] !== null) {
+                        if (typeof obj[key] === "object" && obj[key] !== null) {
                             return new Proxy(obj[key], create_handle_for(path.concat(key)));
                         }
                         return obj[key];
                     },
-                    set: (obj: Object, prop:any, value: any) => {
+                    set: (obj: Object, prop: any, value: any) => {
                         obj[prop] = value;
                         callback(obj, prop, value, path);
                         return true;

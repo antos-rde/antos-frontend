@@ -305,7 +305,7 @@ namespace OS {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, false);
                     });
-                    $(this).on("dblclick", (e) => {
+                    $(this).on(OS.mobile?"dbltap":"dblclick", (e) => {
                         let evt = { id: this.aid, data: this };
                         return this.cellselect(evt, true);
                     });
