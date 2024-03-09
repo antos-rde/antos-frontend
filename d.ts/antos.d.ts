@@ -9008,7 +9008,7 @@ declare namespace OS {
         }
     }
 }
-declare type VFSFileHandleClass = {
+type VFSFileHandleClass = {
     new (...args: any[]): OS.API.VFS.BaseFileHandle;
 };
 interface String {

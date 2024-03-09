@@ -236,6 +236,7 @@ test: build_javascripts
 	jest
 
 install_dev:
+	npm init -y
 	npm install terser
 	npm install uglifycss
 	npm install typescript@5.0
