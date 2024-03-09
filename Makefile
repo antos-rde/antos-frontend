@@ -235,6 +235,14 @@ doc:
 test: build_javascripts
 	jest
 
+install_dev:
+	npm install terser
+	npm install uglifycss
+	npm install typescript@5.0
+	npm install @types/jquery
+	npm i typedoc@0.24
+	npm i typedoc-plugin-merge-modules
+
 clean:
 	rm -rf $(BUILDDIR)/resources
 	rm -rf $(BUILDDIR)/scripts
