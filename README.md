@@ -1,31 +1,23 @@
-# ![https://github.com/lxsang/antos/raw/2.0.x/antos-64.png](https://github.com/lxsang/antos/raw/2.0.x/antos-64.png) antOS v2.0.0
-[![Build Status](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)](https://ci.iohub.dev/buildStatus/icon?job=gitea-sync%2Fantos%2F2.0.x)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flxsang%2Fantos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flxsang%2Fantos?ref=badge_shield)
+# AntOS frontend
 
-> *Warning: v2.0.0 is the experimental version of AntOS which is strongly redesigned to support mobile device.*
-> *For a plus stable AntOS system, please use v.1.x for production.*
+Frontend implementation of AntOS remote desktop environment: [https://github.com/antos-rde](https://github.com/antos-rde).
 
-AntOS is a web-based desktop platform that provides an all-in-one solution for setting up a cloud-based, self-hosted working environment. It features a backend API and services, a front-end web-based window manager, application APIs, a GUI toolkit, and file system abstractions. It also includes an application store and an SDK for in-browser application development, deployment, and packaging. AntOS is designed to work across devices, including desktop computers and mobile devices.
+The frontend is developed in typescript/javascript + CSS, it provides the
+Core API, web-based window manager, application APIs, a GUI toolkit, and file system abstractions. It also includes an application store and an SDK for in-browser application development, deployment, and packaging. The frontend is designed to work across devices, including desktop computers and mobile devices.
 
-![https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png](https://github.com/lxsang/antos/raw/2.0.x/antos-shot.png)
+## Build
 
-AntOS can be used in several application contexts, such as:
-- Providing visual tools to access and control resources on remote servers and embedded Linux environments
-- Providing and developing SaaS web-based applications
-- Self-hosting a cloud-based working environment
-- Creating a customized, user-friendly interface for managing and interacting with cloud-based resources and services
-- Setting up a collaborative, online workspace for remote teams and distributed organizations
-- Building a web-based operating system that can run on various devices, including laptops, tablets, and smartphones
-- Creating a virtualized environment for testing and deploying web-based applications in a sandboxed environment
-- Building a platform for creating and hosting web-based educational or training content
-- Setting up a web-based development environment for prototyping and building web-based applications quickly and easily
-- Etc, You name it!
+`Nodejs` and `npm` is necessary to build the project:
 
-With the provided application API and SDK, AntOS facilitates the development and deployment of user-specific applications inside the VDE environment
+```sh
+# install dependencies packages
+make install_dev
+# build release
+BUILDDIR=/path/to/output make release
+# see more in Makefile for more build target
+```
 
-Github: [https://github.com/lxsang/antos](https://github.com/lxsang/antos)
-
-## Demo
+## demo
 A demo of the VDE is available at  [https://app.iohub.dev/antos/](https://app.iohub.dev/antos/) using username: demo and password: demo.
 
 If one want to run AntOS VDE locally in their system, a docker image is available at:
@@ -34,10 +26,9 @@ If one want to run AntOS VDE locally in their system, a docker image is availabl
 ## AntOS applications (Available on the MarketPlace)
 [https://github.com/lxsang/antosdk-apps](https://github.com/lxsang/antosdk-apps)
 
-## Documentation
+## Frontend Documentation
 
-- Documentation: [https://doc.iohub.dev/antos](https://doc.iohub.dev/antos)
-- API: [https://doc.iohub.dev/antos/api/](https://doc.iohub.dev/antos/api/)
+- API: [https://ci.iohub.dev/public/antos%2Drelease/doc/2.0.x/](https://ci.iohub.dev/public/antos%2Drelease/doc/2.0.x/)
 
 ## Change logs
 ### v.2.0.0
