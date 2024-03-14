@@ -8,9 +8,8 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION=2.0.0
-BRANCH = a
-BUILDID=$(shell git rev-parse  --short HEAD)
+VERSION?=2.0.0-b
+BUILDID?=master
 
 GSED=sed
 UNAME_S := $(shell uname -s)
@@ -122,7 +121,7 @@ build_javascripts: ts
 		(cat "$${f}"; echo) >> dist/antos.js;\
 		rm "$${f}";\
 	done
-	echo 'OS.VERSION.version_string = "$(VERSION)-$(BRANCH)-$(BUILDID)";' >> dist/antos.js
+	echo 'OS.VERSION.version_string = "$(VERSION)-$(BUILDID)";' >> dist/antos.js
 	cp dist/antos.js $(BUILDDIR)/scripts/
 	echo "if(exports){ exports.__esModule = true;exports.OS = OS; }" >> dist/antos.js
 	rm -r dist/core
@@ -229,8 +228,8 @@ release: main uglify
 doc:
 	#  npm install typedoc --save-dev
 	# npm install typedoc-plugin-merge-modules --save-dev
-	# ./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
-	./node_modules/.bin/typedoc --hideGenerator --plugin typedoc-plugin-merge-modules  --entryPointStrategy expand --name "AntOS $(VERSION)-$(BRANCH)-$(BUILDID) API" --out $(DOCDIR)
+	# ./node_modules/.bin/typedoc --mode file --excludeNotExported  --hideGenerator  --name "AntOS $(VERSION)-$(BUILDID) API" --out $(DOCDIR)
+	./node_modules/.bin/typedoc --hideGenerator --plugin typedoc-plugin-merge-modules  --entryPointStrategy expand --name "AntOS $(VERSION)-$(BUILDID) API" --out $(DOCDIR)
 
 test: build_javascripts
 	jest
