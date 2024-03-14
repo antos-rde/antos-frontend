@@ -885,7 +885,7 @@ namespace OS {
      * Variable represents the current AntOS source code repository
      * is an instance of string
      */
-    export const REPOSITORY: string = "https://github.com/lxsang/antos";
+    export const REPOSITORY: string = "https://github.com/antos-rde/antos";
 
     /**
     * Indicate whether the current de
