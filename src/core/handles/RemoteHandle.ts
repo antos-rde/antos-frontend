@@ -413,6 +413,17 @@ namespace OS {
                 const p = `${API.REST}/system/settings`;
                 return API.post(p, OS.setting);
             }
+
+            /**
+             * Query the current versions of all system components
+             *
+             * @export
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
+             */
+            export function versions(): Promise<RequestResult> {
+                const p = `${API.REST}/system/version`;
+                return API.get(p);
+            }
         }
     }
 }

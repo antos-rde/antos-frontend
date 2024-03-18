@@ -43,3 +43,8 @@ afx-app-window[data-id = "setting-window"] afx-hbox[data-id="app-services"] afx-
 {
     border: 1px solid var(--border-quaternary);
 }
+
+afx-app-window[data-id = "setting-window"] afx-hbox[data-id="app-about"] afx-grid-view
+{
+    border: 1px solid var(--border-quaternary);
+}

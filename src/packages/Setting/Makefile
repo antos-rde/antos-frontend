@@ -1,4 +1,4 @@
-module_files = main.js AppearanceHandle.js AppAndServiceHandle.js VFSHandle.js LocaleHandle.js StartupHandle.js
+module_files = main.js AppearanceHandle.js AppAndServiceHandle.js VFSHandle.js LocaleHandle.js StartupHandle.js VersionsHandle.js
 
 libfiles = 
 

@@ -284,6 +284,13 @@ declare namespace OS {
              * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
              */
             function setting(): Promise<RequestResult>;
+            /**
+             * Query the current versions of all system components
+             *
+             * @export
+             * @returns {Promise<RequestResult>} a promise on a {@link RequestResult}
+             */
+            function versions(): Promise<RequestResult>;
         }
     }
 }

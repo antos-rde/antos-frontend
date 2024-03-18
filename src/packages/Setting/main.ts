@@ -82,6 +82,7 @@ namespace OS {
             static StartupHandle: typeof SettingHandle;
             static SettingHandle: typeof SettingHandle;
             static AppAndServiceHandle: typeof SettingHandle;
+            static VersionsHandle: typeof SettingHandle;
 
             /**
              *Creates an instance of Setting.
@@ -105,6 +106,7 @@ namespace OS {
                 new Setting.LocaleHandle(this.find("locale"), this);
                 new Setting.StartupHandle(this.find("startup"), this);
                 new Setting.AppAndServiceHandle(this.find("app-services"), this);
+                new Setting.VersionsHandle(this.find("app-about"), this);
                 containter.selectedIndex = 0;
                 (this.find("btnsave") as GUI.tag.ButtonTag ).onbtclick = (e) => {
                     this._api
