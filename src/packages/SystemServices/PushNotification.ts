@@ -172,15 +172,19 @@ namespace OS {
                 } else {
                     $(this.nzone).show();
                 }
+                console.log(evt, evt.data.item.aid);
                 this.view = !this.view;
                 if (!this.cb) {
                     this.cb = (e) => {
+                        const list_id = $(evt.data.item).attr("list-id");
+                        console.log(e.target, list_id);
                         if (
                             !$(e.target).closest($(this.nzone)).length &&
-                            !$(e.target).closest(evt.data.item).length
+                            !$(e.target).closest(`[list-id="${list_id}"]`).length
+                            //!$(e.target).closest($(evt.data.item)).length
                         ) {
                             $(this.nzone).hide();
-                            $(document).unbind("click", this.cb);
+                            $(document).off("click", this.cb);
                             this.view = !this.view;
                         }
                     };
@@ -188,7 +192,7 @@ namespace OS {
                 if (this.view) {
                     $(document).on("click", this.cb);
                 } else {
-                    $(document).unbind("click", this.cb);
+                    $(document).off("click", this.cb);
                 }
             }
 
