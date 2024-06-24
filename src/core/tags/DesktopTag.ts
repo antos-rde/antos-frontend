@@ -107,7 +107,7 @@ namespace OS {
                                     height: $(this).height()
                                 }
                             }
-                            announcer.trigger("desktopresize", evt);
+                            announcer.trigger("DESKTOP-RESIZE", evt);
                             this.calibrate();
                         };
 
@@ -190,7 +190,7 @@ namespace OS {
                                 return this.refresh();
                             }
                         });
-                        return announcer.ostrigger("desktoploaded", undefined);
+                        return announcer.ostrigger("DESKTOP-LOADED", undefined);
                     };
                     super.mount();
                 }

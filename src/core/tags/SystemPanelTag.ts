@@ -40,7 +40,7 @@ namespace OS {
                 private _pending_task: Promise<any>[];
                 
                 /**
-                 * Flag indicate where the selected application shall be openned
+                 * Flag indicate where the selected application shall be opened
                  *
                  * @private
                  * @type {boolean}
@@ -117,7 +117,7 @@ namespace OS {
                 protected reload(d?: any): void { }
 
                 /**
-                 * Attach a service to the system tray on the pannel,
+                 * Attach a service to the system tray on the panel,
                  * this operation is performed when a service is started
                  *
                  * @param {BaseService} s
@@ -384,7 +384,7 @@ namespace OS {
                         (this.refs.search as HTMLInputElement).value = "";
                         if(!OS.mobile)
                         {
-                            $(this.refs.search).focus();
+                            $(this.refs.search).trigger("focus");
                         }
                         
                     } else {
@@ -498,6 +498,11 @@ namespace OS {
                             return this.toggle(false);
                         }
                     });
+                    Ant.OS.GUI.bindKey("ESC", (e) => {
+                        if (this._view === true) {
+                            return this.toggle(false);
+                        }
+                    });
                     const catlist = (this.refs.catlist as tag.TabBarTag);
                     catlist.ontabselect = (e) => {
                         const applist = (this.refs.applist as ListViewTag);
@@ -554,14 +559,18 @@ namespace OS {
                         remove_task(o.u_data);
                     });
 
-                    announcer.on("desktopresize", (e) => {
+                    announcer.on("DESKTOP-RESIZE", (e) => {
                         this.calibrate();
                     });
-                    announcer.on("appselect", (e) => {
+                    announcer.on("APP-SELECT", (e) => {
                         if(this._view)
                             this.toggle(false);
                     });
-                    Ant.OS.announcer.trigger("syspanelloaded", undefined);
+                    announcer.on("APP-LOADING", (e) => {
+                        if(this._view)
+                            this.toggle(false);
+                    });
+                    Ant.OS.announcer.trigger("SYS-PANEL-LOADED", undefined);
                 }
             }
 

@@ -1711,7 +1711,7 @@ namespace OS {
          * Set the current system locale: This function will
          * find and load the locale dictionary definition file in the
          * system asset resource, then trigger the global event
-         * `systemlocalechange` to translated all translatable text
+         * `SYSTEM-LOCALE-CHANGED` to translated all translatable text
          * to the target language
          *
          * @export
@@ -1725,7 +1725,7 @@ namespace OS {
                     const d = await API.get(path, "json");
                     OS.setting.system.locale = name;
                     API.lang = d;
-                    announcer.ostrigger("systemlocalechange", name);
+                    announcer.ostrigger("SYSTEM-LOCALE-CHANGED", name);
                     return resolve(d);
                 } catch (e) {
                     return reject(__e(e));

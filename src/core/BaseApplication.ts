@@ -127,7 +127,7 @@ namespace OS {
                             }
                         });
                         this.on("apptitlechange", () => this.sysdock.update(this));
-                        this.subscribe("appregistry", (m) => {
+                        this.subscribe("APP-REGISTRY", (m) => {
                             if (m.name === this.name) {
                                 this.applySetting(m.message as string);
                             }
@@ -222,7 +222,7 @@ namespace OS {
                 f: (e: JQuery.KeyboardEventBase) => void
             ): void {
                 const arr = k.toUpperCase().split("-");
-                const c = arr.pop();
+                let c = arr.pop();
                 let fnk = "";
                 if (arr.includes("META")) {
                     fnk += "META";
@@ -236,7 +236,10 @@ namespace OS {
                 if (arr.includes("SHIFT")) {
                     fnk += "SHIFT";
                 } 
-
+                if (fnk == "" && arr.length == 0 && c == "ESC") {
+                    fnk = "ESC";
+                    c = String.fromCharCode(27).toUpperCase();
+                }
                 if ( fnk == "") {
                     return;
                 }

@@ -161,7 +161,7 @@ namespace OS {
                 }
                 return result1;
             })();
-            announcer.ostrigger("app-pinned", "app-pinned", this.applist.data);
+            announcer.ostrigger("APP-PINNED", "APP-PINNED", this.applist.data);
         }
     }
     App.AppAndServiceHandle = AppAndServiceHandle;

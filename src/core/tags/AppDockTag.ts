@@ -166,7 +166,7 @@ namespace OS {
                         id: this.aid,
                         data: v
                     };
-                    announcer.trigger("appselect", evt);
+                    announcer.trigger("APP-SELECT", evt);
                 }
 
                 get selectedApp(): application.BaseApplication {
@@ -403,7 +403,7 @@ namespace OS {
                             .css("bottom", $(this).height());
                         return m.show();
                     };
-                    announcer.trigger("sysdockloaded", undefined);
+                    announcer.trigger("SYS-DOCK-LOADED", undefined);
                     GUI.bindKey("CTRL-ALT-2", (e) =>{
                         if(!this.items || this.items.length === 0)
                         {
@@ -455,7 +455,7 @@ namespace OS {
                     this.addEventListener("wheel", (evt)=>{
                         (this as any).scrollLeft += (evt as WheelEvent).deltaY;
                     },{ passive: true});
-                    announcer.on("app-pinned", (_) => {
+                    announcer.on("APP-PINNED", (_) => {
                         this.refresh_pinned_app();
                     });
                     this.refresh_pinned_app();

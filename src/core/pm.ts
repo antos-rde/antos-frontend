@@ -67,7 +67,7 @@ namespace OS {
                         obj.birth = new Date().getTime();
                         PM.pidalloc++;
                         obj.pid = PM.pidalloc;
-                        obj.subscribe("systemlocalechange", (d) => {
+                        obj.subscribe("SYSTEM-LOCALE-CHANGED", (d) => {
                             obj.updateLocale(d.message as string);
                             return obj.update();
                         });

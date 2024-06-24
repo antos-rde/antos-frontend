@@ -297,7 +297,7 @@ namespace OS {
             this.host = this._gui.desktop();
             this.dialog = undefined;
             // relay global events to local events
-            this.subscribe("desktopresize", (e) => this.observable.trigger("desktopresize", e));
+            this.subscribe("DESKTOP-RESIZE", (e) => this.observable.trigger("desktopresize", e));
         }
 
         /**

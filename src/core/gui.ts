@@ -542,7 +542,7 @@ namespace OS {
                 if(OS.setting.system.startup.apps)
                     OS.setting.system.startup.apps = OS.setting.system.startup.apps.filter((e) => e != app);
                 // refresh pinned list
-                announcer.ostrigger("app-pinned", "app-pinned", undefined);
+                announcer.ostrigger("APP-PINNED", "APP-PINNED", undefined);
                 // remove application setting
                 if(OS.setting.applications[app])
                     delete OS.setting.applications[app];
@@ -581,6 +581,11 @@ namespace OS {
          * @returns {Promise<string>}
          */
         function loadApp(app: string): Promise<string> {
+            const ann: API.AnnouncementDataType<Promise<any>> = {} as API.AnnouncementDataType<Promise<any>>;
+            ann.name = "OS";
+            ann.message = app;
+            ann.id = Math.floor(Math.random() * 1e6);
+            announcer.trigger("APP-LOADING",ann);
             return new Promise(async function (resolve, reject) {
                 let path: string = undefined;
                 try {
@@ -630,8 +635,10 @@ namespace OS {
                             application[app].style = el[0];
                         }
                     } catch(e_1){}
+                    announcer.trigger("APP-LOADED", ann);
                     return resolve(app);
                 } catch (e) {
+                    announcer.trigger("APP-LOAD-ERROR", ann);
                     return reject(__e(e));
                 }
             });
@@ -759,7 +766,7 @@ namespace OS {
                             data.message = key;
                             data.iconclass = mt?mt.iconclass:undefined;
                             data.u_data = undefined;
-                            return announcer.trigger("appregistry", data);
+                            return announcer.trigger("APP-REGISTRY", data);
                         });
                         const p = await PM.createProcess(
                             app,
@@ -939,7 +946,7 @@ namespace OS {
             force: boolean = true
         ): void {
             const arr = k.toUpperCase().split("-");
-            const c = arr.pop();
+            let c = arr.pop();
             let fnk = "";
             if (arr.includes("META")) {
                 fnk += "META";
@@ -953,7 +960,10 @@ namespace OS {
             if (arr.includes("SHIFT")) {
                 fnk += "SHIFT";
             }
-
+            if (fnk == "" && arr.length == 0 && c == "ESC") {
+                fnk = "ESC";
+                c = String.fromCharCode(27).toUpperCase();
+            }
             if (fnk == "") {
                 return;
             }
@@ -1052,7 +1062,7 @@ namespace OS {
             const scheme = $.parseHTML(schemes.ws);
             $("#wrapper").append(scheme);
 
-            announcer.one("sysdockloaded", () => {
+            announcer.one("SYS-DOCK-LOADED", () => {
                 $(window).on("keydown", function (event) {
                     const dock = systemDock();
                     if (!dock) {
@@ -1073,6 +1083,9 @@ namespace OS {
                     }
                     if (event.shiftKey) {
                         fnk += "SHIFT";
+                    }
+                    if (fnk == "" && event.which == 27) {
+                        fnk = "ESC";
                     }
                     //console.log(fnk, c);
                     if (fnk == "") {
@@ -1195,8 +1208,8 @@ namespace OS {
             // load theme
             loadTheme(setting.appearance.theme, true);
             wallpaper(undefined);
-            OS.announcer.one("syspanelloaded", async function () {
-                OS.announcer.on("systemlocalechange", (_) =>
+            OS.announcer.one("SYS-PANEL-LOADED", async function () {
+                OS.announcer.on("SYSTEM-LOCALE-CHANGED", (_) =>
                     $("#syspanel")[0].update()
                 );
 
