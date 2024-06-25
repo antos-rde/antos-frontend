@@ -241,14 +241,26 @@ namespace OS {
                     this.attsw(v, "resizable");
                     if (v) {
                         $(this.refs["maxbt"]).show();
-                        $(this.refs["grip"]).show();
+                        $(this.refs["grip_br"]).show();
+                        $(this.refs["grip_tl"]).show();
+                        $(this.refs["grip_tr"]).show();
+                        $(this.refs["grip_bl"]).show();
+
                         $(this.refs["grip_bottom"]).show();
                         $(this.refs["grip_right"]).show();
+                        $(this.refs["grip_top"]).show();
+                        $(this.refs["grip_left"]).show();
                     } else {
                         $(this.refs["maxbt"]).hide();
-                        $(this.refs["grip"]).hide();
+                        $(this.refs["grip_br"]).hide();
+                        $(this.refs["grip_tl"]).hide();
+                        $(this.refs["grip_tr"]).hide();
+                        $(this.refs["grip_bl"]).hide();
+
                         $(this.refs["grip_bottom"]).hide();
                         $(this.refs["grip_right"]).hide();
+                        $(this.refs["grip_top"]).hide();
+                        $(this.refs["grip_left"]).hide();
                     }
                 }
                 get resizable(): boolean {
@@ -534,18 +546,37 @@ namespace OS {
                     const mouse_move_hdl = (e) => {
                         let w = $(this).width();
                         let h = $(this).height();
+                        let coord = $(this).offset();
+
                         $(this.refs.win_overlay).show();
-                        if (target != this.refs.grip_bottom) {
-                            w += e.clientX - offset.left;
-                        }
-                        if (target != this.refs.grip_right) {
+                        if ((target == this.refs.grip_bottom) || (target == this.refs.grip_bl) || (target == this.refs.grip_br)) {
                             h += e.clientY - offset.top;
                         }
+                        if ((target == this.refs.grip_right) || (target == this.refs.grip_br) || (target == this.refs.grip_tr)) {
+                            w += e.clientX - offset.left;
+                        }
+                        
+                        if ((target == this.refs.grip_left) || (target == this.refs.grip_bl) || (target == this.refs.grip_tl)) {
+                            w -= e.clientX - offset.left;
+                            coord.left += e.clientX - offset.left;
+                        }
+
+                        if ((target == this.refs.grip_top) || (target == this.refs.grip_tr) || (target == this.refs.grip_tl)) {
+                            h -= e.clientY - offset.top;
+                            coord.top += e.clientY - offset.top;
+                        }
+
                         w = w < 100 ? 100 : w;
                         h = h < 100 ? 100 : h;
+                        coord.top = coord.top < 0 ? 0: coord.top;
+                        coord.left = coord.left < 0 ? 0: coord.left;
+
                         offset.top = e.clientY;
                         offset.left = e.clientX;
                         this._isMaxi = false;
+                        $(this)
+                                .css("top", `${coord.top}px`)
+                                .css("left", `${coord.left}px`);
                         this.setsize({ w, h });
                     }
                     const mouse_up_hdl = (e) => {
@@ -553,29 +584,25 @@ namespace OS {
                         $(window).off("pointermove", mouse_move_hdl);
                         return $(window).off("pointerup", mouse_up_hdl);
                     }
-                    $(this.refs["grip"]).on("pointerdown", (e) => {
-                        e.preventDefault();
-                        offset.top = e.clientY;
-                        offset.left = e.clientX;
-                        target = this.refs.grip;
-                        $(window).on("pointermove", mouse_move_hdl);
-                        $(window).on("pointerup", mouse_up_hdl);
-                    });
-                    $(this.refs.grip_bottom).on("pointerdown", (e) => {
-                        e.preventDefault();
-                        offset.top = e.clientY;
-                        offset.left = e.clientX;
-                        target = this.refs.grip_bottom;
-                        $(window).on("pointermove", mouse_move_hdl);
-                        $(window).on("pointerup", mouse_up_hdl);
-                    });
-                    $(this.refs.grip_right).on("pointerdown", (e) => {
-                        e.preventDefault();
-                        offset.top = e.clientY;
-                        offset.left = e.clientX;
-                        target = this.refs.grip_right;
-                        $(window).on("pointermove", mouse_move_hdl);
-                        $(window).on("pointerup", mouse_up_hdl);
+                    $.each(
+                        [
+                            this.refs.grip_bl,
+                            this.refs.grip_br,
+                            this.refs.grip_tl,
+                            this.refs.grip_tr,
+                            this.refs.grip_left,
+                            this.refs.grip_bottom,
+                            this.refs.grip_right,
+                            this.refs.grip_top
+                        ], function(){
+                            $(this).on("pointerdown", (e) => {
+                                e.preventDefault();
+                                offset.top = e.clientY;
+                                offset.left = e.clientX;
+                                target = this;
+                                $(window).on("pointermove", mouse_move_hdl);
+                                $(window).on("pointerup", mouse_up_hdl);
+                            });
                     });
                 }
                 /**
@@ -693,8 +720,23 @@ namespace OS {
                                 },
                                 {
                                     el: "div",
-                                    ref: "grip",
-                                    class: "afx-window-grip",
+                                    ref: "grip_br",
+                                    class: "afx-window-grip-bottom-right",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_tl",
+                                    class: "afx-window-grip-top-left",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_bl",
+                                    class: "afx-window-grip-bottom-left",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_tr",
+                                    class: "afx-window-grip-top-right",
                                 },
                                 {
                                     el: "div",
@@ -705,6 +747,16 @@ namespace OS {
                                     el: "div",
                                     ref: "grip_right",
                                     class: "afx-window-grip-right",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_top",
+                                    class: "afx-window-grip-top",
+                                },
+                                {
+                                    el: "div",
+                                    ref: "grip_left",
+                                    class: "afx-window-grip-left",
                                 },
                                 {
                                     el: "div",
