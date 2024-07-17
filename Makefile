@@ -240,7 +240,7 @@ install_dev:
 	npm install uglifycss
 	npm install typescript@5.0
 	npm install @types/jquery
-	npm i typedoc@0.24
+	npm i typedoc
 	npm i typedoc-plugin-merge-modules
 
 clean:

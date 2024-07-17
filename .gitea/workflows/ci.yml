@@ -1,0 +1,16 @@
+name: AntOS front-end
+run-name: build Ant-OS front end
+on: [push]
+
+jobs:
+  Build-AntOS-Frontend:
+    runs-on: ci-tools
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Building AntOS
+        run: |
+          ls ${{ gitea.workspace }}
+          mkdir build
+          BUILDDIR=$(realpath build) make install_dev main
+      - run: echo "Build status ${{ job.status }}."
