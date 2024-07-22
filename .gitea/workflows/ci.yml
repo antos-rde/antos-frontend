@@ -13,4 +13,10 @@ jobs:
           ls ${{ gitea.workspace }}
           mkdir build
           BUILDDIR=$(realpath build) make install_dev main
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-AntOS
+          path: build/
+          retention-days: 5
       - run: echo "Build status ${{ job.status }}."
