@@ -6,7 +6,7 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.10-b",
+    "version":"0.1.11-b",
     "category":"System",
     "iconclass":"fa fa-hdd-o",
     "mimes":["dir"],

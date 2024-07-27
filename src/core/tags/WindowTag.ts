@@ -436,7 +436,7 @@ namespace OS {
                         w: this.width,
                         h: this.height,
                     });
-                    $(this).attr("tabindex", 0).css("outline", "none");
+                    this.focusable = true
                     if(OS.mobile)
                     {
                         this.toggle_window();

@@ -121,10 +121,11 @@ afx-sys-panel afx-list-view[data-id="applist"] afx-label span
 {
     flex-direction: column;
 }
+/*
 afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul li:hover {
     background-color: transparent;
-}
-afx-sys-panel afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item:nth-child(even) li
+}*/
+afx-sys-panel afx-list-view[data-id="applist"]> div.list-container > ul .afx-list-item li
 {
     background-color: transparent;
 }

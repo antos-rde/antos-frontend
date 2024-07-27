@@ -65,3 +65,7 @@ afx-list-view .afx-list-item li afx-label.description
     padding-left: 10px;
 }
 
+afx-list-view  > div.list-container > ul > .listview_nav_focus > li{
+    background-color: var(--item-bg-hover);
+}
+

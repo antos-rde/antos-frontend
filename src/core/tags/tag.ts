@@ -532,6 +532,19 @@ namespace OS {
                 }
                 $(this).attr("tooltip", v);
             }
+            
+            /**
+             * Setter to activate or deactivate focus on a Tag
+             *
+             * @memberof AFXTag
+             */
+            set focusable(v: boolean) {
+                if(v) {
+                    $(this).attr("tabindex", 0).css("outline", "none");
+                } else  {
+                    $(this).removeAttr("tabindex");
+                }
+            }
 
             /**
              *

@@ -6,9 +6,10 @@ afx-file-view afx-label.status{
 afx-file-view afx-list-view > div.list-container > ul  li{
     background-color: transparent;
 }
+/*
 afx-file-view afx-list-view > div.list-container > ul .afx-list-item:nth-child(even) li {
     background-color: transparent;
-}
+}*/
 afx-file-view afx-list-view i.dir:before{
     content: "\f07b"; 
     font-family: "FontAwesome";

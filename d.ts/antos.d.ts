@@ -2337,7 +2337,7 @@ declare namespace OS {
              * in JSON format as .settings.json and will be loaded automatically
              * when application is initialized.
              *
-             * This object is globally acessible to all processes of the same application
+             * This object is globally accessible to all processes of the same application
              *
              * @type {GenericObject<any>}
              * @memberof BaseApplication
@@ -3928,6 +3928,12 @@ declare namespace OS {
              */
             set tooltip(v: string);
             /**
+             * Setter to activate or deactivate focus on a Tag
+             *
+             * @memberof AFXTag
+             */
+            set focusable(v: boolean);
+            /**
              *
              * This function looking for a property name of the tag
              * in its prototype chain. The descriptor of the property
@@ -4501,6 +4507,14 @@ declare namespace OS {
                  * @memberof ListViewTag
                  */
                 private _data;
+                /**
+                 * Navigation index, used for keyboard navigation only
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof ListViewTag
+                 */
+                private _nav_index;
                 private _drop;
                 private _show;
                 /**
@@ -4754,6 +4768,43 @@ declare namespace OS {
                  */
                 private iclick;
                 /**
+                 * Reset the navigation indicator
+                 *
+                 * @private
+                 */
+                private nav_reset;
+                /**
+                 * Navigate the list up
+                 *
+                 * @public
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_next(): void;
+                /**
+                 * Navigate the list down
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_prev(): void;
+                /**
+                 * Commit the navigated item
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_commit(): void;
+                /**
+                 * Handle special key event such as key up and down
+                 *
+                 * @private
+                 * @param {JQuery.KeyboardEventBase} event
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                private handle_special_key;
+                /**
                  * This function triggers the double click event on an item
                  *
                  * @protected
@@ -4762,6 +4813,15 @@ declare namespace OS {
                  * @memberof ListViewTag
                  */
                 protected idbclick(e: TagEventType<ListViewItemTag>): void;
+                /**
+                 * This function scroll to item if it is not visible
+                 *
+                 * @public
+                 * @param {ListViewItemTag} item tag event object
+                 * @returns
+                 * @memberof ListViewTag
+                 */
+                scroll_to_item(item: ListViewItemTag): void;
                 /**
                  * This function triggers the list item select event
                  *
@@ -6557,14 +6617,6 @@ declare namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private _pending_task;
-                /**
-                 * Flag indicate where the selected application shall be opened
-                 *
-                 * @private
-                 * @type {boolean}
-                 * @memberof SystemPanelTag
-                 */
-                private _prevent_open;
                 /**
                  * Store the current attached service
                  *

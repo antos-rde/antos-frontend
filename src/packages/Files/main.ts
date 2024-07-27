@@ -433,6 +433,14 @@ namespace OS {
                 this.bindKey("CTRL-ALT-R", ()=>{
                     this.view.path = this.currdir.path;
                 });
+                this.bindKey("CTRL-B", () => {
+                    if (this.currdir.isRoot()) {
+                        return;
+                    }
+                    const p = this.currdir.parent();
+                    this.favo.selected = -1;
+                    return this.view.path = p.path;
+                });
                 (this.find("btgrid") as GUI.tag.ButtonTag).onbtclick = (e) => {
                     this.view.view = "icon";
                     this.viewType.icon = true;
@@ -454,15 +462,6 @@ namespace OS {
                     }
                 });
                  $(this.scheme).on("keyup", (evt)=>{
-                    if(evt.which === 38)
-                    {
-                        if (this.currdir.isRoot()) {
-                            return;
-                        }
-                        const p = this.currdir.parent();
-                        this.favo.selected = -1;
-                        return this.view.path = p.path;
-                    }
                     if(!evt.ctrlKey)
                     {
                         this.view.multiselect = false;

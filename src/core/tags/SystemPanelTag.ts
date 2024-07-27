@@ -40,14 +40,6 @@ namespace OS {
                 private _pending_task: Promise<any>[];
                 
                 /**
-                 * Flag indicate where the selected application shall be opened
-                 *
-                 * @private
-                 * @type {boolean}
-                 * @memberof SystemPanelTag
-                 */
-                private _prevent_open: boolean;
-                /**
                  * Store the current attached service
                  *
                  * @private
@@ -96,7 +88,6 @@ namespace OS {
                     this._loading_toh = undefined;
                     this.app_list= [];
                     this._services = [];
-                    this._prevent_open = false;
                 }
 
                 /**
@@ -137,11 +128,6 @@ namespace OS {
                  * @memberof SystemPanelTag
                  */
                 private open(): void {
-                    if(this._prevent_open)
-                    {
-                        this._prevent_open = false;
-                        return;
-                    }
                     const applist = this.refs.applist as ListViewTag;
                     const el = applist.selectedItem;
                     if (!el) {
@@ -170,20 +156,18 @@ namespace OS {
                             return this.toggle(false);
 
                         case 37:
-                            this._prevent_open = true;
-                            applist.selectPrev();
+                            applist.nav_next();
                             return e.preventDefault();
                         case 38:
                             return e.preventDefault();
                         case 39:
-                            this._prevent_open = true;
-                            applist.selectNext();
+                            applist.nav_prev();
                             return e.preventDefault();
                         case 40:
                             return e.preventDefault();
                         case 13:
                             e.preventDefault();
-                            return this.open();
+                            return applist.nav_commit();
                         default:
                             catlist.selected = 0;
                             var text = (this.refs.search as HTMLInputElement)

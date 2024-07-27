@@ -550,6 +550,15 @@ namespace OS {
                  * @memberof ListViewTag
                  */
                 private _data: GenericObject<any>[];
+                
+                /**
+                 * Navigation index, used for keyboard navigation only
+                 *
+                 * @private
+                 * @type {number}
+                 * @memberof ListViewTag
+                 */
+                private _nav_index: number;
 
                 private _drop: (any) => void;
                 private _show: (any) => void;
@@ -601,6 +610,7 @@ namespace OS {
                     this.dragndrop = false;
                     this._anchor = undefined;
                     this.itemtag = "afx-list-item";
+                    this._nav_index = -1;
                     $(this).addClass("afx-list-view");
                 }
 
@@ -624,6 +634,7 @@ namespace OS {
                     this.attsw(v, "dropdown");
                     $(this.refs.container).removeAttr("style");
                     $(this.refs.mlist).removeAttr("style");
+                    this.dir = "column";
                     $(this).removeClass("dropdown");
                     if (v) {
                         $(this).addClass("dropdown");
@@ -799,7 +810,11 @@ namespace OS {
                     this.calibrate();
                 }
                 get dir(): string {
-                    return $(this).attr("dir");
+                    const v = $(this).attr("dir");
+                    if(!v) {
+                        return "column";
+                    }
+                    return v;
                 }
                 /**
                  * Getter: Get data of the list
@@ -861,14 +876,17 @@ namespace OS {
                         const el = data[i].domel as ListViewItemTag;
                         el.selected = true;
                     };
+                    this.nav_reset();
                     if (Array.isArray(idx)) {
                         if (this.multiselect) {
                             for (const i of idx as number[]) {
                                 select(i);
+                                this._nav_index = i;
                             }
                         }
                     } else {
                         select(idx as number);
+                        this._nav_index = idx;
                     }
                 }
 
@@ -1074,13 +1092,105 @@ namespace OS {
                     if (!e.data) {
                         return;
                     }
+                    this.nav_reset();
+                    this._nav_index = -1;
                     const list = this.selectedItems;
                     if (this.multiselect && list.includes(e.data) && !flag) {
                         list.splice(list.indexOf(e.data), 1);
                         e.data.selected = false;
                         return;
                     }
+                    this._nav_index = $(e.data).index();
                     e.data.selected = true;
+                }
+                
+                /**
+                 * Reset the navigation indicator
+                 * 
+                 * @private
+                 */
+                private nav_reset() {
+                    if(this._nav_index >= 0 && this._nav_index < this.data.length)
+                    {
+                        $(this.data[this._nav_index].domel as ListViewItemTag).removeClass("listview_nav_focus");
+                    }
+                }
+                /**
+                 * Navigate the list up
+                 *
+                 * @public
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_next() {
+                    if(this._nav_index <= 0) {
+                        return;
+                    }
+                    this.nav_reset();
+                    this._nav_index--;
+                    const new_el = this.data[this._nav_index].domel as ListViewItemTag;
+                    if(new_el) {
+                        $(new_el).addClass("listview_nav_focus");
+                        this.scroll_to_item(new_el);
+                    }
+                }
+                
+                /**
+                 * Navigate the list down
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_prev() {
+                    if(this._nav_index >= this.data.length - 1) {
+                        return;
+                    }
+                    this.nav_reset();
+                    this._nav_index++;
+                    const new_el = this.data[this._nav_index].domel as ListViewItemTag;
+                    if(new_el) {
+                        $(new_el).addClass("listview_nav_focus");
+                        this.scroll_to_item(new_el);
+                    }
+                }
+
+                /**
+                 * Commit the navigated item
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_commit() {
+                    if(this._nav_index > this.data.length - 1 || this._nav_index < 0) {
+                        return;
+                    }
+                    this.selected = this._nav_index;
+                }
+
+                /**
+                 * Handle special key event such as key up and down
+                 *
+                 * @private
+                 * @param {JQuery.KeyboardEventBase} event
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                private handle_special_key(event: JQuery.KeyboardEventBase) {
+                    switch (event.which) {
+                        case 37:
+                        case 38:
+                            this.nav_next();
+                            return event.preventDefault();
+                        case 39:
+                        case 40:
+                            this.nav_prev();
+                            return event.preventDefault();
+                        case 13:
+                            event.preventDefault();
+                            return this.nav_commit();
+                        default:
+                            break;
+                    }
                 }
 
                 /**
@@ -1098,6 +1208,56 @@ namespace OS {
                     };
                     this._onlistdbclick(evt);
                     return this.observable.trigger("listdbclick", evt);
+                }
+                
+                /**
+                 * This function scroll to item if it is not visible
+                 *
+                 * @public
+                 * @param {ListViewItemTag} item tag event object
+                 * @returns
+                 * @memberof ListViewTag
+                 */
+                public scroll_to_item(item: ListViewItemTag) {
+                    const li = $(item).children()[0];
+                    const offset = $(this.refs.container).offset();
+                    const li_offset = $(li).offset();
+
+                    if(this.dir == "column") {
+                        const top = $(this.refs.container).scrollTop();
+                        const li_height = $(li).outerHeight();
+                        const container_height = $(this.refs.container).outerHeight();
+                        if (li_offset.top + li_height > container_height + offset.top)
+                        {
+                            $(this.refs.container).scrollTop(
+                                top +
+                                    (li_offset.top + li_height - offset.top - container_height)
+                            );
+                        } else if ($(li).offset().top < offset.top) {
+                            $(this.refs.container).scrollTop(
+                                top -
+                                    (offset.top - li_offset.top)
+                            );
+                        }
+                    }
+                    else
+                    {
+                        const left = $(this.refs.container).scrollLeft();
+                        const li_w = $(li).outerWidth();
+                        const container_w = $(this.refs.container).outerWidth();
+                        if (li_offset.left + li_w >  offset.left + container_w)
+                        {
+                            $(this.refs.container).scrollLeft(
+                                left +
+                                    (li_offset.left + li_w - offset.left - container_w)
+                            );
+                        } else if ($(li).offset().left < offset.left) {
+                            $(this.refs.container).scrollLeft(
+                                left -
+                                    (offset.left - li_offset.left)
+                            );
+                        }
+                    }
                 }
 
                 /**
@@ -1141,25 +1301,7 @@ namespace OS {
                         this._selectedItems = [e.data];
                         edata.items = [e.data];
                         //scroll element
-                        const li = $(e.data).children()[0];
-                        const offset = $(this.refs.container).offset();
-                        const top = $(this.refs.container).scrollTop();
-                        if (
-                            $(li).offset().top + $(li).height() >
-                            $(this.refs.container).height() + offset.top
-                        ) {
-                            $(this.refs.container).scrollTop(
-                                top +
-                                    $(this.refs.container).height() -
-                                    $(li).height()
-                            );
-                        } else if ($(li).offset().top < offset.top) {
-                            $(this.refs.container).scrollTop(
-                                top -
-                                    $(this.refs.container).height() +
-                                    $(li).height()
-                            );
-                        }
+                        this.scroll_to_item(e.data);
                     }
                     
                     // set the label content event it is hidden
@@ -1185,6 +1327,12 @@ namespace OS {
                         from: undefined,
                         to: undefined,
                     };
+                    $(this).on("keyup", (e) => {
+                        this.handle_special_key(e);
+                    });
+                    //$(this.refs.search).on("click",(e) => {
+                    //    console.log("focus")
+                    //})
                     this._onmousedown = (e) => {
                         if(this.multiselect || this.selectedItems == undefined || this.selectedItems.length == 0)
                         {

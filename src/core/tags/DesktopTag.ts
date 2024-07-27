@@ -65,7 +65,7 @@ namespace OS {
                      * TRICKY HACK
                      * When focusing on a window which overflows the desktop,
                      * the desktop scrolls automatically to bottom,
-                     * even when `overflow: hiddle` is set on CSS.
+                     * even when `overflow: hidden` is set on CSS.
                      * 
                      * The following event listener  prevents
                      * the desktop to scroll down in this case

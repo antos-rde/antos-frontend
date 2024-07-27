@@ -833,7 +833,7 @@ namespace OS {
             SelectionDialog.scheme = `\
 <afx-app-window  width='350' height='300' apptitle = "Selection">
     <afx-vbox padding = "10">
-        <afx-list-view data-id = "list" ></afx-list-view>
+        <afx-list-view data-id = "list" focusable="true"></afx-list-view>
         <div data-height="35" style = "text-align: right;">
             <afx-button data-id = "btnOk" text = "__(Ok)" ></afx-button>
             <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
@@ -1114,18 +1114,6 @@ namespace OS {
                     if (this.data && this.data.hidden) {
                         return (fileview.showhidden = this.data.hidden);
                     }
-
-                    $(this.scheme).on("keyup", (evt)=>{
-                        if(evt.which === 38)
-                        {
-                            const currdir = fileview.path.asFileHandle();
-                            if (currdir.isRoot()) {
-                                return;
-                            }
-                            const p = currdir.parent();
-                            return fileview.path = p.path;
-                        }
-                    });
                 }
             }
 

@@ -8,7 +8,7 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION?=2.0.1-b
+VERSION?=2.0.2-b
 BUILDID?=master
 
 GSED=sed

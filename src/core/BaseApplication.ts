@@ -40,7 +40,7 @@ namespace OS {
              * in JSON format as .settings.json and will be loaded automatically
              * when application is initialized.
              * 
-             * This object is globally acessible to all processes of the same application
+             * This object is globally accessible to all processes of the same application
              *
              * @type {GenericObject<any>}
              * @memberof BaseApplication

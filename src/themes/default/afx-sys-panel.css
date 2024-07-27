@@ -49,7 +49,8 @@ afx-sys-panel afx-hbox[data-id="btlist"]  afx-button button
     font-size: 24px;
 }
 
-afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li:hover
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul .afx-list-item li:hover,
+afx-sys-panel afx-list-view[data-id="applist"] > div.list-container > ul .listview_nav_focus > li
 {
     background-color: var(--antos-ant-color)/*#cecece*/;
     color: var(--text-tertiary);

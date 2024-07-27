@@ -733,6 +733,11 @@ namespace OS {
                     };
                     const grid = this.refs.gridview as GridViewTag;
                     const list = this.refs.listview as ListViewTag;
+
+                    list.focusable = true;
+                    grid.focusable = true;
+                    tree.focusable = true;
+
                     grid.resizable = true;
                     grid.header = this._header;
                     tree.dragndrop = true;

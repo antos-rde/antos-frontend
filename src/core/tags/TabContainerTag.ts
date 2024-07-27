@@ -169,7 +169,7 @@ namespace OS {
                     }
                     $(v.container).show();
                     this.observable.trigger("resize", undefined);
-                    $(v.container).attr("tabindex",-1).css("outline", "none").trigger("focus");
+                    $(v.container).trigger("focus");
                 }
                 get selectedTab(): TabContainerTabType {
                     return this._selectedTab;
@@ -230,6 +230,7 @@ namespace OS {
                     $(item.container)
                         .css("width", "100%")
                         .css("height", "100%")
+                        .attr("tabindex",-1).css("outline", "none") // allow focus this tab
                         .hide();
                     const el = (this.refs.bar as TabBarTag).push(
                         item

@@ -10,14 +10,17 @@ afx-app-window[data-id ='files-app-window'] afx-file-view afx-list-view i:before
     text-align: center;
 }
 
+/*
 afx-app-window[data-id ='files-app-window'] afx-list-view[data-id='favouri'] li.selected {
     background-color: var(--background-quaternary) !important;
     color:var(--text-secondary) !important;
 }
-
+    */
+/*
 afx-app-window[data-id ='files-app-window'] afx-file-view {
     background-color: var(--background-tertiary);
 }
+    */
 
 afx-app-window[data-id ='files-app-window'] button{
     border-radius: 0;
