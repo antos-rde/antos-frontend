@@ -6,6 +6,19 @@ afx-calendar-view > div afx-label i{
     font-weight: bold;
 }
 
+afx-calendar-view  afx-button button,
+afx-calendar-view afx-button button:active,
+afx-calendar-view afx-button button.btactive
+{
+    border: 0;
+    background-color: transparent;
+}
+
+afx-calendar-view afx-button button:active,
+afx-calendar-view afx-button button.btactive
+{
+    color: var(--item-bg-active);
+}
 
 afx-calendar-view afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
 {

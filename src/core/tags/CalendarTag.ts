@@ -115,8 +115,18 @@ namespace OS {
                 protected mount(): void {
                     (this.refs.prev as ButtonTag).iconclass = "fa fa-angle-left";
                     (this.refs.next as ButtonTag).iconclass = "fa fa-angle-right";
+                    (this.refs.prev_year as ButtonTag).iconclass = "fa fa-angle-left";
+                    (this.refs.next_year as ButtonTag).iconclass = "fa fa-angle-right";
                     (this.refs.prev as ButtonTag).onbtclick = (e) => this.prevmonth();
                     (this.refs.next as ButtonTag).onbtclick = (e) => this.nextmonth();
+                    (this.refs.next_year as ButtonTag).onbtclick = (e) => {
+                        this._year++;
+                        this.calendar(new Date(this._year, this._month, 1));
+                    }
+                    (this.refs.prev_year as ButtonTag).onbtclick = (e) => {
+                        this._year--;
+                        this.calendar(new Date(this._year, this._month, 1));
+                    }
                     const grid = this.refs.grid as GridViewTag;
                     grid.header = [
                         { text: "__(Sun)" },
@@ -304,7 +314,8 @@ namespace OS {
                     grid.rows = rows;
                     (this.refs.mlbl as LabelTag).text = `${
                         months[this._month]
-                    } ${this._year}`;
+                    }`;
+                    (this.refs.ylbl as LabelTag).text = `${this._year}`;
                 }
 
                 /**
@@ -320,9 +331,13 @@ namespace OS {
                             el: "div",
                             ref: "ctrl",
                             children: [
-                                { el: "afx-button", class: "prevmonth", ref: "prev" },
+                                { el: "afx-button", ref: "prev" },
                                 { el: "afx-label", ref: "mlbl" },
-                                { el: "afx-button", class: "nextmonth", ref: "next" },
+                                { el: "afx-button", ref: "next" },
+                                { el: "div"},
+                                { el: "afx-button", ref: "prev_year" },
+                                { el: "afx-label", ref: "ylbl" },
+                                { el: "afx-button", ref: "next_year" },
                             ],
                         },
                         { el: "afx-grid-view", ref: "grid" },

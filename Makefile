@@ -8,11 +8,11 @@ TSC=./node_modules/typescript/bin/tsc
 UGLIFYJS=./node_modules/terser/bin/terser
 UGLIFYCSS=./node_modules/uglifycss/uglifycss
 
-VERSION?=2.0.0-b
+VERSION?=2.0.1-b
 BUILDID?=master
 
 GSED=sed
-UNAME_S := $(shell uname -s)
+UNAME_S := $(shell uname -s)cd
 ifeq ($(UNAME_S),Darwin)
 	GSED=gsed
 endif
