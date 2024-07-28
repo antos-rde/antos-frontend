@@ -156,12 +156,12 @@ namespace OS {
                             return this.toggle(false);
 
                         case 37:
-                            applist.nav_next();
+                            applist.nav_prev();
                             return e.preventDefault();
                         case 38:
                             return e.preventDefault();
                         case 39:
-                            applist.nav_prev();
+                            applist.nav_next();
                             return e.preventDefault();
                         case 40:
                             return e.preventDefault();

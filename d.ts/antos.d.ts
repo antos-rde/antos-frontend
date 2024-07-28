@@ -4780,14 +4780,14 @@ declare namespace OS {
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                nav_next(): void;
+                nav_prev(): void;
                 /**
                  * Navigate the list down
                  *
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                nav_prev(): void;
+                nav_next(): void;
                 /**
                  * Commit the navigated item
                  *
@@ -6301,6 +6301,13 @@ declare namespace OS {
                  */
                 private _dnd;
                 /**
+                 * Grid navigation index
+                 *
+                 * @private
+                 * @type {number}
+                 */
+                private _nav_index;
+                /**
                  * placeholder of list drag and drop event handle
                  *
                  * @private
@@ -6481,6 +6488,12 @@ declare namespace OS {
                  */
                 delete(row: GridRowTag): void;
                 /**
+                 * Scroll the grid view to item
+                 *
+                 * @memberof GridViewTag
+                 */
+                scroll_to_item(item: GridRowTag): void;
+                /**
                  * Scroll the grid view to bottom
                  *
                  * @memberof GridViewTag
@@ -6559,6 +6572,42 @@ declare namespace OS {
                  * @memberof GridViewTag
                  */
                 private calibrate_header;
+                /**
+                 * Reset the navigation indicator
+                 *
+                 * @private
+                 */
+                private nav_reset;
+                /**
+                 * Navigate the list up
+                 *
+                 * @public
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_prev(): void;
+                /**
+                 * Navigate the list down
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_next(): void;
+                /**
+                 * Commit the navigated item
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                nav_commit(): void;
+                /**
+                 * Handle special key event such as key up and down
+                 *
+                 * @private
+                 * @param {JQuery.KeyboardEventBase} event
+                 * @returns {void}
+                 */
+                private handle_special_key;
                 /**
                  * Mount the grid view tag
                  *

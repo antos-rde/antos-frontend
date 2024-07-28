@@ -17,6 +17,10 @@ afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell
     background-color: var(--item-bg-active);
     color:var(--text-tertiary);
 }
+afx-grid-view afx-grid-row.gridview-nav-focus afx-grid-cell
+{
+    background-color: var(--item-bg-hover);
+}
 afx-grid-view afx-grid-row.afx-grid-row-selected afx-grid-cell.afx-grid-cell-selected
 {
     font-weight: normal;

@@ -498,6 +498,14 @@ namespace OS {
                 private _dnd: { from: GridRowTag[]; to: GridRowTag };
 
                 /**
+                 * Grid navigation index
+                 * 
+                 * @private
+                 * @type {number}
+                 */
+                private _nav_index: number;
+
+                /**
                  * placeholder of list drag and drop event handle
                  *
                  * @private
@@ -514,6 +522,7 @@ namespace OS {
                  */
                 constructor() {
                     super();
+                    this._nav_index = -1;
                 }
 
                 /**
@@ -883,6 +892,35 @@ namespace OS {
                     }
                     $(row).remove();
                 }
+
+                /**
+                 * Scroll the grid view to item
+                 * 
+                 * @memberof GridViewTag
+                 */
+                scroll_to_item(item: GridRowTag)
+                {
+                    const cell = $(item).children()[0];
+                    const offset = $(this.refs.container).offset();
+                    const cell_offset = $(cell).offset();
+
+                    const top = $(this.refs.container).scrollTop();
+                    const cell_height = $(cell).outerHeight();
+                    const container_height = $(this.refs.container).outerHeight();
+                    if (cell_offset.top + cell_height > container_height + offset.top)
+                    {
+                        $(this.refs.container).scrollTop(
+                            top +
+                                (cell_offset.top + cell_height - offset.top - container_height)
+                        );
+                    } else if (cell_offset.top < offset.top) {
+                        $(this.refs.container).scrollTop(
+                            top -
+                                (offset.top - cell_offset.top)
+                        );
+                    }
+                }
+
                 /**
                  * Scroll the grid view to bottom
                  * 
@@ -1042,6 +1080,7 @@ namespace OS {
                     }
                     evt.data.item = row;
                     this._selectedRow = row;
+                    this._nav_index = $(row).index();
                     this._onrowselect(evt);
                     return this.observable.trigger("rowselect", evt);
                 }
@@ -1153,6 +1192,101 @@ namespace OS {
                 }
 
                 /**
+                 * Reset the navigation indicator
+                 * 
+                 * @private
+                 */
+                private nav_reset() {
+                    const el = $(this.refs.grid).children().eq(this._nav_index);
+                    if(el)
+                    {
+                        $(el).removeClass("gridview-nav-focus");
+                    }
+                }
+
+                /**
+                 * Navigate the list up
+                 *
+                 * @public
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_prev() {
+                    console.log("nav_prev");
+                    if(this._nav_index <= 0) {
+                        return;
+                    }
+                    this.nav_reset();
+                    this._nav_index--;
+                    const el = $(this.refs.grid).children().eq(this._nav_index);
+                    if(el) {
+                        $(el).addClass("gridview-nav-focus");
+                        this.scroll_to_item(el[0] as GridRowTag);
+                    }
+                }
+                
+                /**
+                 * Navigate the list down
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_next() {
+                    console.log("nav_next");
+                    if(this._nav_index >= this.rows.length - 1) {
+                        return;
+                    }
+                    this.nav_reset();
+                    this._nav_index++;
+                    const el = $(this.refs.grid).children().eq(this._nav_index);
+                    if(el) {
+                        $(el).addClass("gridview-nav-focus");
+                        this.scroll_to_item(el[0] as GridRowTag);
+                    }
+                }
+
+                /**
+                 * Commit the navigated item
+                 *
+                 * @returns {void}
+                 * @memberof ListViewTag
+                 */
+                public nav_commit() {
+                    if(this._nav_index > this.rows.length - 1 || this._nav_index < 0) {
+                        return;
+                    }
+                    const el = $(this.refs.grid).children().eq(this._nav_index);
+                    if(el) {
+                        (el[0] as GridRowTag).selected = true;
+                    }
+                }
+
+                /**
+                 * Handle special key event such as key up and down
+                 *
+                 * @private
+                 * @param {JQuery.KeyboardEventBase} event
+                 * @returns {void}
+                 */
+                private handle_special_key(event: JQuery.KeyboardEventBase) {
+                    switch (event.which) {
+                        case 37:
+                        case 38:
+                            this.nav_prev();
+                            return event.preventDefault();
+                        case 39:
+                        case 40:
+                            this.nav_next();
+                            return event.preventDefault();
+                        case 13:
+                            event.preventDefault();
+                            return this.nav_commit();
+                        default:
+                            break;
+                    }
+                }
+
+                /**
                  * Mount the grid view tag
                  *
                  * @protected
@@ -1160,6 +1294,9 @@ namespace OS {
                  * @memberof GridViewTag
                  */
                 protected mount(): void {
+                    $(this).on("keyup", (e) => {
+                        this.handle_special_key(e);
+                    });
                     $(this).css("overflow", "hidden");
                     $(this.refs.grid).css("display", "grid");
                     $(this.refs.header).css("display", "grid");

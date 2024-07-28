@@ -685,7 +685,7 @@ namespace OS {
             InfoDialog.scheme = `\
 <afx-app-window  width='300' height='350' apptitle = "Info" >
     <afx-vbox padding = "10">
-        <afx-grid-view data-id = "grid" ></afx-grid-view>
+        <afx-grid-view data-id = "grid" focusable="true"></afx-grid-view>
         <div data-height="35" style="text-align: right;">
             <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
         </div>

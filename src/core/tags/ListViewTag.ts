@@ -1122,7 +1122,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                public nav_next() {
+                public nav_prev() {
                     if(this._nav_index <= 0) {
                         return;
                     }
@@ -1141,7 +1141,7 @@ namespace OS {
                  * @returns {void}
                  * @memberof ListViewTag
                  */
-                public nav_prev() {
+                public nav_next() {
                     if(this._nav_index >= this.data.length - 1) {
                         return;
                     }
@@ -1179,11 +1179,11 @@ namespace OS {
                     switch (event.which) {
                         case 37:
                         case 38:
-                            this.nav_next();
+                            this.nav_prev();
                             return event.preventDefault();
                         case 39:
                         case 40:
-                            this.nav_prev();
+                            this.nav_next();
                             return event.preventDefault();
                         case 13:
                             event.preventDefault();
